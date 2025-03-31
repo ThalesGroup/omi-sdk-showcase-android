@@ -1,3 +1,7 @@
+rootProject.name = "Showcase App"
+include(":app")
+include(":data")
+
 pluginManagement {
   repositories {
     google {
@@ -11,14 +15,31 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
+
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
     google()
     mavenCentral()
+    mavenLocal()
+    setupOneginiRepo()
   }
 }
 
-rootProject.name = "Showcase App"
-include(":app")
-include(":data")
+private fun RepositoryHandler.setupOneginiRepo() {
+  try {
+    val artifactoryUser = providers.gradleProperty("artifactory_user").get()
+    val artifactoryPassword = providers.gradleProperty("artifactory_password").get()
+    maven {
+      url = uri("https://repo.onewelcome.com/artifactory/public")
+      credentials {
+        username = artifactoryUser
+        password = artifactoryPassword
+      }
+    }
+  } catch (_: Throwable) {
+    throw InvalidUserDataException(
+      "You must configure the 'artifactory_user' and 'artifactory_password' properties in your project before you can build it."
+    )
+  }
+}

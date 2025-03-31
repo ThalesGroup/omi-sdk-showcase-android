@@ -17,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.showcaseapp.ui.screens.HomeScreen
 import com.onewelcome.showcaseapp.ui.screens.InfoScreen
+import com.onewelcome.showcaseapp.ui.screens.SdkInitializationScreen
 
 @Composable
 fun BottomNavigationBar() {
@@ -41,11 +42,9 @@ fun BottomNavigationBar() {
             },
             onClick = {
               navController.navigate(navigationItem.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
+                popUpTo(navController.graph.startDestinationId) {
                   saveState = true
                 }
-                launchSingleTop = true
-                restoreState = true
               }
             }
           )
@@ -60,6 +59,7 @@ fun BottomNavigationBar() {
     ) {
       composable(Screens.Home.route) { HomeScreen(navController) }
       composable(Screens.Info.route) { InfoScreen(navController) }
+      composable(Screens.SdkInitialization.route) { SdkInitializationScreen(navController) }
     }
   }
 }

@@ -16,6 +16,8 @@ lifecycleRuntimeKtx = "2.8.7"
 dataStore = "1.1.3"
 navigation = "2.8.9"
 kotlinCompilerExtensionVersion = "1.5.15"
+hiltCompose = "1.2.0"
+omiSdk = "13.0.0"
 
 [libraries]
 # Compose
@@ -52,6 +54,11 @@ androidx-datastore = { group = "androidx.datastore", name = "datastore-preferenc
 # Hilt
 hilt-library = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompose" }
+
+# Onegini SDK
+omiSdk-secure = { group = "com.onegini.mobile.sdk.android", name = "onegini-sdk", version.ref = "omiSdk" }
+omiSdk-developer = { group = "com.onegini.mobile.sdk.android", name = "onegini-sdk-developer", version.ref = "omiSdk" }
 
 [plugins]
 # Android

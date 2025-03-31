@@ -82,10 +82,19 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.library)
+  implementation(libs.hilt.compose)
   kapt(libs.hilt.compiler)
 
   // DataStore
   implementation(libs.androidx.datastore)
+
+  // OMI SDK
+  debugApi("com.onegini.mobile.sdk.android:onegini-sdk-developer:13.0.0@aar") {
+    isTransitive = true
+  }
+  releaseApi("com.onegini.mobile.sdk.android:onegini-sdk:13.0.0@aar") {
+    isTransitive = true
+  }
 
   // Test
   testImplementation(libs.androidx.junit)

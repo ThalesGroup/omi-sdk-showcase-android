@@ -1,4 +1,5 @@
 <resources>
   <string name="app_name">Showcase App</string>
   <string name="showcase_activity_name">Showcase Activity</string>
+  <string name="logo_content_description">Thales logo</string>
 </resources>
