@@ -2,4 +2,6 @@
   <string name="app_name">Showcase App</string>
   <string name="showcase_activity_name">Showcase Activity</string>
   <string name="logo_content_description">Thales logo</string>
+  <string name="home_screen_name">Home</string>
+  <string name="info_screen_name">Info</string>
 </resources>

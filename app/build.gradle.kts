@@ -1,8 +1,9 @@
 import com.onewelcome.buildsrc.AndroidConfig.APPLICATION_ID
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
-import com.onewelcome.buildsrc.AndroidConfig.JVM_TARGET
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
+import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
+import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_SDK
 import com.onewelcome.buildsrc.AndroidConfig.TEST_INSTRUMENTATION_RUNNER
 import com.onewelcome.buildsrc.AndroidConfig.VERSION_CODE
@@ -12,7 +13,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
-  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.hilt.plugin)
 }
 
@@ -30,9 +31,14 @@ android {
 
   buildTypes {
     release {
-      isMinifyEnabled = false
+      isMinifyEnabled = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
+  }
+
+  compileOptions {
+    sourceCompatibility = SOURCE_COMPATIBILITY
+    targetCompatibility = TARGET_COMPATIBILITY
   }
 
   buildFeatures {
@@ -41,12 +47,6 @@ android {
 
   composeOptions {
     kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
-  }
-
-  android {
-    kotlinOptions {
-      jvmTarget = JVM_TARGET
-    }
   }
 }
 
@@ -82,8 +82,7 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.library)
-  implementation(libs.hilt.compose)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
 
   // DataStore
   implementation(libs.androidx.datastore)
@@ -102,8 +101,4 @@ dependencies {
   androidTestImplementation(platform(libs.androidx.compose.bom))
   debugImplementation(libs.androidx.compose.ui.tooling)
   debugImplementation(libs.androidx.compose.ui.test.manifest)
-}
-
-kapt {
-  correctErrorTypes = true
 }

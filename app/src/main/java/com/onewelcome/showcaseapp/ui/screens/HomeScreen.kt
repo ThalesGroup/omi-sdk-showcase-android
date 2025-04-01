@@ -17,23 +17,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.navigation.Screens
-import com.onewelcome.showcaseapp.ui.theme.ShowcaseAppTheme
 
 @Composable
 fun HomeScreen(navController: NavController) {
-  ShowcaseAppTheme {
-    Surface(
-      modifier = Modifier.fillMaxSize(),
-      color = MaterialTheme.colorScheme.background
-    ) {
-      Column {
-        Image(
-          modifier = Modifier.fillMaxWidth(),
-          painter = painterResource(id = R.drawable.thales_logo),
-          contentDescription = stringResource(id = R.string.logo_content_description)
-        )
-        Sections(navController)
-      }
+
+  Surface(
+    modifier = Modifier.fillMaxSize(),
+    color = MaterialTheme.colorScheme.background
+  ) {
+    Column {
+      Image(
+        modifier = Modifier.fillMaxWidth(),
+        painter = painterResource(id = R.drawable.thales_logo),
+        contentDescription = stringResource(id = R.string.logo_content_description)
+      )
+      Sections(navController)
     }
   }
 }

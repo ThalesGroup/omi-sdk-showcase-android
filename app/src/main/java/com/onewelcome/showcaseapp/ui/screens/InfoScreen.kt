@@ -16,22 +16,18 @@ import com.onewelcome.showcaseapp.ui.theme.ShowcaseAppTheme
 
 @Composable
 fun InfoScreen(navController: NavController) {
-  ShowcaseAppTheme {
-    ShowcaseAppTheme {
-      Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-      ) {
-        Column(
-          modifier = Modifier
-            .fillMaxSize()
-            .padding(15.dp),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center
-        ) {
-          Text("Info Screen")
-        }
-      }
+  Surface(
+    modifier = Modifier.fillMaxSize(),
+    color = MaterialTheme.colorScheme.background
+  ) {
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(15.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
+    ) {
+      Text("Info Screen")
     }
   }
 }
