@@ -19,6 +19,10 @@ android {
   defaultConfig {
     minSdk = MIN_SDK
   }
+  compileOptions {
+    sourceCompatibility = SOURCE_COMPATIBILITY
+    targetCompatibility = TARGET_COMPATIBILITY
+  }
 }
 
 dependencies {

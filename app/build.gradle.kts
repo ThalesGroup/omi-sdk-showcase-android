@@ -37,6 +37,11 @@ android {
     }
   }
 
+  compileOptions {
+    sourceCompatibility = SOURCE_COMPATIBILITY
+    targetCompatibility = TARGET_COMPATIBILITY
+  }
+
   buildFeatures {
     compose = true
   }

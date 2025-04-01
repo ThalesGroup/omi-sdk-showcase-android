@@ -15,18 +15,16 @@ import com.onewelcome.showcaseapp.ui.theme.ShowcaseAppTheme
 
 @Composable
 fun HomeScreen(navController: NavController) {
-  ShowcaseAppTheme {
-    Surface(
+  Surface(
+    modifier = Modifier.fillMaxSize(),
+    color = MaterialTheme.colorScheme.background
+  ) {
+    Column(
       modifier = Modifier.fillMaxSize(),
-      color = MaterialTheme.colorScheme.background
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
     ) {
-      Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-      ) {
-        LabelText()
-      }
+      LabelText()
     }
   }
 }
