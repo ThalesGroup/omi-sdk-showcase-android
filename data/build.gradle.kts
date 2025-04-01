@@ -1,12 +1,15 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
+import com.onewelcome.buildsrc.AndroidConfig.JVM_TARGET
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
+import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
+import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.hilt.plugin)
+  alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
@@ -16,10 +19,6 @@ android {
   defaultConfig {
     minSdk = MIN_SDK
   }
-
-  kotlinOptions {
-    jvmTarget = "1.8"
-  }
 }
 
 dependencies {
@@ -28,10 +27,9 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.library)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
 
   // Test
   testImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.junit)
-
 }

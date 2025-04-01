@@ -9,5 +9,4 @@ object AndroidConfig {
   const val NAMESPACE = "com.onewelcome.showcaseapp"
   const val APPLICATION_ID = "com.onewelcome.showcaseapp"
   const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
-  const val JVM_TARGET = "1.8"
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +28,7 @@ fun BottomNavigationBar() {
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
       NavigationBar {
-        BottomNavigationItem().bottomNavigationItems().forEachIndexed { _, navigationItem ->
+        BottomNavigationItem.getBottomNavigationItems(LocalContext.current).forEachIndexed { _, navigationItem ->
           NavigationBarItem(
             selected = navigationItem.route == currentDestination?.route,
             label = {
