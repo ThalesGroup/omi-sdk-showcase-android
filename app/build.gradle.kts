@@ -82,17 +82,24 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.library)
+  implementation(libs.hilt.navigation.compose)
   ksp(libs.hilt.compiler)
 
   // DataStore
   implementation(libs.androidx.datastore)
 
   // OMI SDK
-  debugApi("com.onegini.mobile.sdk.android:onegini-sdk-developer:13.0.0@aar") {
-    isTransitive = true
+  debugApi(libs.omiSdk.developer) {
+    artifact {
+      type = "aar"
+      isTransitive = true
+    }
   }
-  releaseApi("com.onegini.mobile.sdk.android:onegini-sdk:13.0.0@aar") {
-    isTransitive = true
+  releaseApi(libs.omiSdk.secure) {
+    artifact {
+      type = "aar"
+      isTransitive = true
+    }
   }
 
   // Test

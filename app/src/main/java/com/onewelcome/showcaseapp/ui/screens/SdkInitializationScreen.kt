@@ -37,7 +37,6 @@ fun SdkInitializationScreen(
           }) {
           Text("INIT SDK")
         }
-        Text("Result: ")
       }
     }
   }
