@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.onewelcome.showcaseapp.ui.theme.ShowcaseAppTheme
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
 
 @Composable
@@ -21,22 +20,20 @@ fun SdkInitializationScreen(
   navController: NavController,
   viewModel: SdkInitializationViewModel = hiltViewModel()
 ) {
-  ShowcaseAppTheme {
-    Surface(
-      modifier = Modifier.fillMaxSize(),
-      color = MaterialTheme.colorScheme.background
+  Surface(
+    modifier = Modifier.fillMaxSize(),
+    color = MaterialTheme.colorScheme.background
+  ) {
+    Column(
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Button(
-          modifier = Modifier.wrapContentSize(),
-          onClick = {
-            viewModel.init()
-          }) {
-          Text("INIT SDK")
-        }
+      Button(
+        modifier = Modifier.wrapContentSize(),
+        onClick = {
+          viewModel.init()
+        }) {
+        Text("INIT SDK")
       }
     }
   }

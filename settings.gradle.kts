@@ -22,11 +22,11 @@ dependencyResolutionManagement {
     google()
     mavenCentral()
     mavenLocal()
-    setupOneginiRepo()
+    setupOmiSdkRepo()
   }
 }
 
-private fun RepositoryHandler.setupOneginiRepo() {
+private fun RepositoryHandler.setupOmiSdkRepo() {
   try {
     val artifactoryUser = providers.gradleProperty("artifactory_user").get()
     val artifactoryPassword = providers.gradleProperty("artifactory_password").get()

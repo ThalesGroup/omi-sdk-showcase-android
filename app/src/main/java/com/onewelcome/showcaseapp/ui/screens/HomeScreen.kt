@@ -13,6 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
@@ -20,7 +23,6 @@ import com.onewelcome.showcaseapp.navigation.Screens
 
 @Composable
 fun HomeScreen(navController: NavController) {
-
   Surface(
     modifier = Modifier.fillMaxSize(),
     color = MaterialTheme.colorScheme.background
@@ -44,9 +46,9 @@ private fun Sections(navController: NavController) {
   }
 }
 
-//@Preview
+@Preview(showBackground = true)
 @Composable
-private fun Section(section: String, navController: NavController) {
+private fun Section(@PreviewParameter(SectionDataProvider::class) section: String, navController: NavController) {
   Card(
     modifier = Modifier
       .fillMaxWidth()
@@ -57,4 +59,13 @@ private fun Section(section: String, navController: NavController) {
   ) {
     Text(modifier = Modifier.padding(16.dp), text = section)
   }
+}
+
+private class SectionDataProvider : PreviewParameterProvider<String> {
+  override val values: Sequence<String>
+    get() = sequenceOf(
+      "Section 1",
+      "Section 2",
+      "Section 3"
+    )
 }
