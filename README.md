@@ -1,1 +1,0 @@
-# omi-sdk-showcase-android
