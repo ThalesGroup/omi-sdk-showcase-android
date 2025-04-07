@@ -17,12 +17,12 @@ data class BottomNavigationItem(
       BottomNavigationItem(
         label = context.getString(R.string.home_screen_name),
         icon = Icons.Filled.Home,
-        route = Screens.Home.route
+        route = ScreenNavigation.Home.route
       ),
       BottomNavigationItem(
         label = context.getString(R.string.info_screen_name),
         icon = Icons.Filled.Info,
-        route = Screens.Info.route
+        route = ScreenNavigation.Info.route
       ),
     )
   }

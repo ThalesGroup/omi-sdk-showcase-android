@@ -17,7 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.showcaseapp.ui.screens.HomeScreen
 import com.onewelcome.showcaseapp.ui.screens.InfoScreen
-import com.onewelcome.showcaseapp.ui.screens.SdkInitializationScreen
+import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 
 @Composable
 fun BottomNavigationBar() {
@@ -42,6 +42,7 @@ fun BottomNavigationBar() {
             },
             onClick = {
               navController.navigate(navigationItem.route) {
+                launchSingleTop = true
                 popUpTo(navController.graph.startDestinationId) {
                   saveState = true
                 }
@@ -54,12 +55,12 @@ fun BottomNavigationBar() {
   ) { paddingValues ->
     NavHost(
       navController = navController,
-      startDestination = Screens.Home.route,
+      startDestination = ScreenNavigation.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(Screens.Home.route) { HomeScreen(navController) }
-      composable(Screens.Info.route) { InfoScreen(navController) }
-      composable(Screens.SdkInitialization.route) { SdkInitializationScreen(navController) }
+      composable(ScreenNavigation.Home.route) { HomeScreen(navController) }
+      composable(ScreenNavigation.Info.route) { InfoScreen(navController) }
+      composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(navController) }
     }
   }
 }

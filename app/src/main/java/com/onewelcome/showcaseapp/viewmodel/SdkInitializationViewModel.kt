@@ -9,7 +9,7 @@ import javax.inject.Inject
 class SdkInitializationViewModel @Inject constructor(
   private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase
 ) : ViewModel() {
-  fun init() {
+  fun initializeOneginiSdk() {
     omiSdkInitializationUseCase.initialize()
   }
 }

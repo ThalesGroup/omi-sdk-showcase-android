@@ -10,19 +10,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.navigation.Screens
+import com.onewelcome.showcaseapp.navigation.ScreenNavigation
+import com.onewelcome.showcaseapp.ui.screens.sections.SectionItem
 
 @Composable
 fun HomeScreen(navController: NavController) {
+  HomeScreenContent(onNavigateToSection = { navController.navigate(it) })
+}
+
+@Composable
+fun HomeScreenContent(onNavigateToSection: (route: String) -> Unit) {
   Surface(
     modifier = Modifier.fillMaxSize(),
     color = MaterialTheme.colorScheme.background
@@ -33,39 +38,43 @@ fun HomeScreen(navController: NavController) {
         painter = painterResource(id = R.drawable.thales_logo),
         contentDescription = stringResource(id = R.string.logo_content_description)
       )
-      Sections(navController)
+      Sections(onNavigateToSection)
     }
   }
 }
 
 @Composable
-private fun Sections(navController: NavController) {
-  val sections = listOf("SDK initialization")
-  sections.forEach { section ->
-    Section(section, navController)
+private fun Sections(onNavigateToSection: (route: String) -> Unit) {
+  getSections().forEach { section ->
+    Section(section, onNavigateToSection)
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun Section(@PreviewParameter(SectionDataProvider::class) section: String, navController: NavController) {
+@ReadOnlyComposable
+private fun getSections(): List<SectionItem> {
+  return listOf(
+    SectionItem(stringResource(R.string.section_title_sdk_initialization), ScreenNavigation.SdkInitialization)
+  )
+}
+
+
+@Composable
+private fun Section(section: SectionItem, onNavigateToSection: (route: String) -> Unit) {
   Card(
     modifier = Modifier
       .fillMaxWidth()
       .padding(16.dp),
     onClick = {
-      navController.navigate(Screens.SdkInitialization.route)
+      onNavigateToSection.invoke(section.navigation.route)
     }
   ) {
-    Text(modifier = Modifier.padding(16.dp), text = section)
+    Text(modifier = Modifier.padding(16.dp), text = section.title)
   }
 }
 
-private class SectionDataProvider : PreviewParameterProvider<String> {
-  override val values: Sequence<String>
-    get() = sequenceOf(
-      "Section 1",
-      "Section 2",
-      "Section 3"
-    )
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+  HomeScreenContent {}
 }
