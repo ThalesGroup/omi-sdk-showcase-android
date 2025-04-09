@@ -96,29 +96,25 @@ private fun TopBar(onNavigateBack: () -> Unit) {
 private fun SettingsSection(modifier: Modifier, uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     modifier = modifier
-      .verticalScroll(rememberScrollState())
+      .verticalScroll(rememberScrollState()),
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     Text(
-      modifier = Modifier.padding(bottom = Dimensions.smallPadding),
       text = stringResource(R.string.required),
       style = MaterialTheme.typography.titleSmall
     )
     ExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
     Text(
-      modifier = Modifier.padding(top = Dimensions.standardPadding, bottom = Dimensions.smallPadding),
       text = stringResource(R.string.optional),
       style = MaterialTheme.typography.titleSmall
     )
     ExpandableCard(
-      modifier = Modifier.padding(bottom = Dimensions.smallPadding),
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
     ExpandableCard(
-      modifier = Modifier.padding(bottom = Dimensions.smallPadding),
       title = stringResource(R.string.label_custom_authenticators)
     ) { } //TODO To be done in scope of EXAMPLEAND-155
     ExpandableCard(
-      modifier = Modifier.padding(bottom = Dimensions.smallPadding),
       title = stringResource(R.string.label_custom_identity_providers)
     ) { } //TODO To be done in scope of EXAMPLEAND-156
   }
