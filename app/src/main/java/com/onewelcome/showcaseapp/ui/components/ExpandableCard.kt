@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +67,8 @@ fun ExpandableCard(
         ) {
           Text(
             text = title,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.titleMedium
           )
           Icon(
             imageVector = Icons.Filled.KeyboardArrowDown,
@@ -77,7 +79,6 @@ fun ExpandableCard(
       }
 
       AnimatedVisibility(
-        modifier = Modifier.padding(Dimensions.standardPadding),
         visible = expanded,
         enter = expandVertically(
           expandFrom = Alignment.Top,

@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.ui.screens.sections
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +26,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ExpandableCard
+import com.onewelcome.showcaseapp.ui.components.NumberSettingTextField
+import com.onewelcome.showcaseapp.ui.components.SettingToggle
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
+import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
+import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
 
 @Composable
 fun SdkInitializationScreen(
@@ -34,14 +39,16 @@ fun SdkInitializationScreen(
   viewModel: SdkInitializationViewModel = hiltViewModel()
 ) {
   SdkInitializationScreenContent(
-    onInitializeSdkClicked = { viewModel.initializeOneginiSdk() },
-    onNavigateBack = { navController.popBackStack() })
+    uiState = viewModel.uiState,
+    onNavigateBack = { navController.popBackStack() },
+    onEvent = { viewModel.onEvent(it) })
 }
 
 @Composable
 private fun SdkInitializationScreenContent(
-  onInitializeSdkClicked: () -> Unit,
-  onNavigateBack: () -> Unit
+  uiState: State,
+  onNavigateBack: () -> Unit,
+  onEvent: (UiEvent) -> Unit
 ) {
   Scaffold(
     topBar = { TopBar(onNavigateBack) },
@@ -55,11 +62,13 @@ private fun SdkInitializationScreenContent(
         modifier =
           Modifier
             .weight(1f)
-            .padding(bottom = Dimensions.smallPadding)
+            .padding(bottom = Dimensions.smallPadding),
+        uiState = uiState,
+        onEvent = onEvent
       )
       Button(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { onInitializeSdkClicked.invoke() }
+        onClick = { onEvent(UiEvent.InitializeOneginiSdk) }
       ) {
         Text(stringResource(R.string.button_initialize_sdk))
       }
@@ -84,7 +93,7 @@ private fun TopBar(onNavigateBack: () -> Unit) {
 }
 
 @Composable
-private fun SettingsSection(modifier: Modifier) {
+private fun SettingsSection(modifier: Modifier, uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     modifier = modifier
       .verticalScroll(rememberScrollState())
@@ -103,7 +112,7 @@ private fun SettingsSection(modifier: Modifier) {
     ExpandableCard(
       modifier = Modifier.padding(bottom = Dimensions.smallPadding),
       title = stringResource(R.string.label_http_settings)
-    ) { HttpSettings() }
+    ) { HttpSettings(uiState, onEvent) }
     ExpandableCard(
       modifier = Modifier.padding(bottom = Dimensions.smallPadding),
       title = stringResource(R.string.label_custom_authenticators)
@@ -116,12 +125,35 @@ private fun SettingsSection(modifier: Modifier) {
 }
 
 @Composable
-private fun HttpSettings(){
-
+private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
+  Column(
+    modifier = Modifier.padding(Dimensions.standardPadding),
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+  ) {
+    SettingToggle(
+      text = stringResource(R.string.option_should_store_cookies),
+      checked = uiState.shouldStoreCookies
+    ) { onEvent(UiEvent.ChangeShouldStoreCookiesValue(it)) }
+    NumberSettingTextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = uiState.httpConnectTimeout,
+      onValueChange = { onEvent(UiEvent.ChangeHttpConnectTimeoutValue(it)) },
+      label = { Text(stringResource(R.string.option_set_http_connect_timeout)) }
+    )
+    NumberSettingTextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = uiState.httpReadTimeout,
+      onValueChange = { onEvent(UiEvent.ChangeHttpReadTimeoutValue(it)) },
+      label = { Text(stringResource(R.string.option_set_http_read_timeout)) }
+    )
+  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-  SdkInitializationScreenContent({}, {})
+  SdkInitializationScreenContent(
+    uiState = State(),
+    onNavigateBack = {},
+    onEvent = {})
 }
