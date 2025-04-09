@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.onewelcome.showcaseapp.entity.OmiSdkInitializationSettings
 import com.onewelcome.showcaseapp.usecase.OmiSdkInitializationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,8 +22,17 @@ class SdkInitializationViewModel @Inject constructor(
       is UiEvent.ChangeHttpConnectTimeoutValue -> uiState = uiState.copy(httpConnectTimeout = event.value)
       is UiEvent.ChangeHttpReadTimeoutValue -> uiState = uiState.copy(httpReadTimeout = event.value)
       is UiEvent.ChangeShouldStoreCookiesValue -> uiState = uiState.copy(shouldStoreCookies = event.value)
-      is UiEvent.InitializeOneginiSdk -> omiSdkInitializationUseCase.initialize()
+      is UiEvent.InitializeOneginiSdk -> initializeOmiSdk()
     }
+  }
+
+  private fun initializeOmiSdk() {
+    val settings = OmiSdkInitializationSettings(
+      shouldStoreCookies = uiState.shouldStoreCookies,
+      httpConnectTimeout = uiState.httpConnectTimeout,
+      httpReadTimeout = uiState.httpReadTimeout
+    )
+    omiSdkInitializationUseCase.initialize(settings)
   }
 
   data class State(

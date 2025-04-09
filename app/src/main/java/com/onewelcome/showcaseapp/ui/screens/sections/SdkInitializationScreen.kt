@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ExpandableCard
 import com.onewelcome.showcaseapp.ui.components.NumberSettingTextField
-import com.onewelcome.showcaseapp.ui.components.SettingToggle
+import com.onewelcome.showcaseapp.ui.components.SettingCheckbox
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
@@ -130,7 +130,7 @@ private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
     modifier = Modifier.padding(Dimensions.standardPadding),
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
-    SettingToggle(
+    SettingCheckbox(
       text = stringResource(R.string.option_should_store_cookies),
       checked = uiState.shouldStoreCookies
     ) { onEvent(UiEvent.ChangeShouldStoreCookiesValue(it)) }

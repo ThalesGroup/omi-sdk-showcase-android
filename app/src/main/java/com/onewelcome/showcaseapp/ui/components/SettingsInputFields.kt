@@ -37,7 +37,7 @@ fun NumberSettingTextField(
 }
 
 @Composable
-fun SettingToggle(modifier: Modifier = Modifier, text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun SettingCheckbox(modifier: Modifier = Modifier, text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
   Row(
     modifier = modifier
       .toggleable(
@@ -82,7 +82,7 @@ private fun NumberSettingTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun SettingsCheckBoxPreview() {
-  SettingToggle(
+  SettingCheckbox(
     text = "Label",
     checked = true,
     onCheckedChange = {}
