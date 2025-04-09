@@ -1,0 +1,9 @@
+package com.onewelcome.showcaseapp.ui.theme
+
+import androidx.compose.ui.unit.dp
+
+object Dimensions {
+  val smallPadding = 8.dp
+  val standardPadding = 16.dp
+  val horizontalSpacing = 12.dp
+}

@@ -1,13 +1,23 @@
 <resources>
   <string name="app_name">Showcase App</string>
   <string name="showcase_activity_name">Showcase Activity</string>
-  <string name="logo_content_description">Thales logo</string>
   <string name="home_screen_name">Home</string>
   <string name="info_screen_name">Info</string>
+  <string name="required">Required</string>
+  <string name="optional">Optional</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
 
   <!-- SDK Initialization -->
   <string name="button_initialize_sdk">Initialize SDK</string>
+  <string name="label_title_handlers">Registration &amp; Authentication handlers</string>
+  <string name="label_http_settings">Http settings</string>
+  <string name="label_custom_authenticators">Custom authenticators</string>
+  <string name="label_custom_identity_providers">Custom Identity Providers</string>
+
+  <!-- Content descriptions-->
+  <string name="content_description_logo">Thales logo</string>
+  <string name="content_description_navigate_back">Navigate back</string>
+  <string name="content_description_expand_collapse">Expand or collapse card</string>
 </resources>
