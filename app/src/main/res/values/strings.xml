@@ -5,19 +5,25 @@
   <string name="info_screen_name">Info</string>
   <string name="required">Required</string>
   <string name="optional">Optional</string>
+  <string name="read_more">Read more</string>
+  <string name="here">here</string>
+  <string name="result">Result</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
 
   <!-- SDK Initialization -->
+  <string name="sdk_initialization_description">First method that should be called on the Android SDK is the OneginiClient#start method. The method is responsible for asynchronous initialization of the OMI SDK.</string>
   <string name="button_initialize_sdk">Initialize SDK</string>
   <string name="label_title_handlers">Registration &amp; Authentication handlers</string>
+  <string name="label_sdk_settings">SDK settings</string>
   <string name="label_http_settings">Http settings</string>
   <string name="label_custom_authenticators">Custom authenticators</string>
   <string name="label_custom_identity_providers">Custom Identity Providers</string>
   <string name="option_should_store_cookies">shouldStoreCookies</string>
   <string name="option_set_http_connect_timeout">setHttpConnectTimeout</string>
   <string name="option_set_http_read_timeout">setHttpReadTimeout</string>
+  <string name="option_set_device_config_cache_duration">setDeviceConfigCacheDurationSeconds</string>
 
   <!-- Content descriptions-->
   <string name="content_description_logo">Thales logo</string>

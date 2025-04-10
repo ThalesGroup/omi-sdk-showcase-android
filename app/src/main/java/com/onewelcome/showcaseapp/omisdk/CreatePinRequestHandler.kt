@@ -7,7 +7,7 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallba
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import javax.inject.Inject
 
-class PinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
+class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
   override fun startPinCreation(
     userProfile: UserProfile,
     callback: OneginiPinCallback,
