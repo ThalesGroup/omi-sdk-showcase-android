@@ -7,4 +7,6 @@ object Dimensions {
   val standardPadding = 16.dp
   val horizontalSpacing = 12.dp
   val verticalSpacing = 12.dp
+
+  val actionButtonHeight = 64.dp
 }

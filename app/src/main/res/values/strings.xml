@@ -8,6 +8,7 @@
   <string name="read_more">Read more</string>
   <string name="here">here</string>
   <string name="result">Result</string>
+  <string name="none">None</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
@@ -20,6 +21,8 @@
   <string name="label_http_settings">Http settings</string>
   <string name="label_custom_authenticators">Custom authenticators</string>
   <string name="label_custom_identity_providers">Custom Identity Providers</string>
+  <string name="label_initialization_success">SDK Initialization success</string>
+  <string name="label_removed_profiles">Removed user profiles</string>
   <string name="option_should_store_cookies">shouldStoreCookies</string>
   <string name="option_set_http_connect_timeout">setHttpConnectTimeout</string>
   <string name="option_set_http_read_timeout">setHttpReadTimeout</string>

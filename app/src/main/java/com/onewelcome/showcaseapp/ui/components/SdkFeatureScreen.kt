@@ -15,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,7 +33,7 @@ fun SdkFeatureScreen(
   onNavigateBack: () -> Unit,
   description: @Composable () -> Unit,
   settings: @Composable () -> Unit,
-  result: @Composable () -> Unit,
+  result: @Composable (() -> Unit)?,
   action: @Composable () -> Unit
 ) {
   Scaffold(
@@ -56,10 +57,14 @@ fun SdkFeatureScreen(
           }
         }
         Box { settings() }
-        Text(stringResource(R.string.result))
-        Card(modifier = Modifier.fillMaxWidth()) {
-          Box(modifier = Modifier.padding(Dimensions.standardPadding)) {
-            result()
+        result?.let {
+          Text(
+            text = stringResource(R.string.result),
+            style = MaterialTheme.typography.titleSmall)
+          Card(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.padding(Dimensions.standardPadding)) {
+              result()
+            }
           }
         }
       }

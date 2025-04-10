@@ -3,8 +3,10 @@ package com.onewelcome.showcaseapp.ui.screens.sections
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,11 +16,17 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ExpandableCard
@@ -51,22 +59,15 @@ private fun SdkInitializationScreenContent(
     title = stringResource(R.string.section_title_sdk_initialization),
     onNavigateBack = onNavigateBack,
     description = { FeatureDescription() },
-    settings = { SettingsSection(uiState = uiState, onEvent = onEvent) },
-    result = { InitializationResult() },
-    action = {
-      Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { onEvent(UiEvent.InitializeOneginiSdk) }
-      ) {
-        Text(stringResource(R.string.button_initialize_sdk))
-      }
-    }
+    settings = { SettingsSection(uiState, onEvent) },
+    result = uiState.result?.let { { InitializationResult(uiState) } },
+    action = { InitializeSdkButton(uiState, onEvent) }
   )
 }
 
 @Composable
 private fun FeatureDescription() {
-  Column {
+  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     Text(
       style = MaterialTheme.typography.bodyLarge,
       text = stringResource(R.string.sdk_initialization_description)
@@ -154,9 +155,50 @@ private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun InitializationResult() {
+private fun InitializationResult(uiState: State) {
   Column {
+    uiState.result
+      ?.onSuccess { removedUserProfiles ->
+        Text(
+          buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+              appendLine(stringResource(R.string.label_initialization_success))
+            }
+            append(stringResource(R.string.label_removed_profiles))
+            append(": ")
+            if (removedUserProfiles.isEmpty()) {
+              append(stringResource(R.string.none))
+            } else {
+              appendLine()
+              removedUserProfiles.forEach { userProfile ->
+                append("\u2022 ")
+                appendLine(userProfile.profileId)
+              }
+            }
+          })
+      }
+      ?.onFailure {
+        Text("${it.errorType.code}: ${it.message}")
+      }
+  }
+}
 
+@Composable
+private fun InitializeSdkButton(uiState: State, onEvent: (UiEvent) -> Unit) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(Dimensions.actionButtonHeight),
+    onClick = { if (uiState.isLoading.not()) onEvent(UiEvent.InitializeOneginiSdk) },
+  ) {
+    if (uiState.isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+      )
+    } else {
+      Text(stringResource(R.string.button_initialize_sdk))
+    }
   }
 }
 
@@ -164,7 +206,7 @@ private fun InitializationResult() {
 @Composable
 private fun Preview() {
   SdkInitializationScreenContent(
-    uiState = State(),
+    uiState = State(isLoading = true, result = Ok(setOf(UserProfile("123456"), UserProfile("QWERTY")))),
     onNavigateBack = {},
     onEvent = {})
 }
