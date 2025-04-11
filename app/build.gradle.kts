@@ -48,6 +48,12 @@ android {
   composeOptions {
     kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
   }
+
+  testOptions {
+    unitTests {
+      isIncludeAndroidResources = true
+    }
+  }
 }
 
 dependencies {
@@ -107,6 +113,10 @@ dependencies {
 
   // Test
   testImplementation(libs.androidx.junit)
+  testImplementation(libs.robolectric)
+  testImplementation(libs.hilt.testing)
+  testImplementation(libs.mockito.kotlin)
+  testImplementation(libs.assertj)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(platform(libs.androidx.compose.bom))
   debugImplementation(libs.androidx.compose.ui.tooling)
