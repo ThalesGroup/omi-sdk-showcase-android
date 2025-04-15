@@ -2,6 +2,7 @@ package com.onewelcome.showcaseapp.navigation
 
 import android.content.Context
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,6 +25,11 @@ data class BottomNavigationItem(
         icon = Icons.Filled.Info,
         route = ScreenNavigation.Info.route
       ),
+      BottomNavigationItem(
+        label = context.getString(R.string.os_compatibility_screen_name),
+        icon = Icons.Filled.Face,
+        route = ScreenNavigation.OsCompatiblity.route
+      )
     )
   }
 }

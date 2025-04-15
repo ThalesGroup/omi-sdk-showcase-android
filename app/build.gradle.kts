@@ -57,6 +57,9 @@ android {
 }
 
 dependencies {
+  // Internal module
+  implementation(project(":internal"))
+
   // Android
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)

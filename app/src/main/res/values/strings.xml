@@ -3,6 +3,7 @@
   <string name="showcase_activity_name">Showcase Activity</string>
   <string name="home_screen_name">Home</string>
   <string name="info_screen_name">Info</string>
+  <string name="os_compatibility_screen_name">OS Compatibility</string>
   <string name="required">Required</string>
   <string name="optional">Optional</string>
   <string name="read_more">Read more</string>
