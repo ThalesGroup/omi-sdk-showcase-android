@@ -1,7 +1,9 @@
 import com.onewelcome.buildsrc.AndroidConfig.APPLICATION_ID
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
+import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
 import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
+import com.onewelcome.buildsrc.AndroidConfig.IS_INTERNAL_VERSION
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -35,6 +37,26 @@ android {
     release {
       isMinifyEnabled = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+  }
+
+  buildFeatures {
+    buildConfig = true
+  }
+
+  flavorDimensions += ENVIRONMENT_FLAVOR_DIMENSION
+  productFlavors {
+    create("internal") {
+      dimension = ENVIRONMENT_FLAVOR_DIMENSION
+      applicationIdSuffix = ".internal"
+      versionNameSuffix = "-internal"
+      buildConfigField("Boolean", IS_INTERNAL_VERSION, "true")
+    }
+    create("developer") {
+      dimension = ENVIRONMENT_FLAVOR_DIMENSION
+      applicationIdSuffix = ".developer"
+      versionNameSuffix = "-developer"
+      buildConfigField("Boolean", IS_INTERNAL_VERSION, "false")
     }
   }
 

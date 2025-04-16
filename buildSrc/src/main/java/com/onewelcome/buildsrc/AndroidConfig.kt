@@ -13,7 +13,8 @@ object AndroidConfig {
   const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
   const val CORE_MODULE = ":core"
   const val INTERNAL_MODULE = ":internal"
+  const val ENVIRONMENT_FLAVOR_DIMENSION = "environment"
+  const val IS_INTERNAL_VERSION = "IS_INTERNAL_VERSION"
   val SOURCE_COMPATIBILITY = JavaVersion.VERSION_21
   val TARGET_COMPATIBILITY = JavaVersion.VERSION_21
-
 }
