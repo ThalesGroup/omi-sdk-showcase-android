@@ -49,5 +49,5 @@ private fun SdkInitializationScreenContent(onInitializeSdkClicked: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-  SdkInitializationScreenContent({})
+  SdkInitializationScreenContent {}
 }

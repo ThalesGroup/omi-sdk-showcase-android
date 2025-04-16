@@ -13,13 +13,16 @@ class PinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
     callback: OneginiPinCallback,
     pinLength: Int
   ) {
+    //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
     callback.acceptAuthenticationRequest(charArrayOf('6', '6', '6', '7', '7'))
   }
 
+  //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
   override fun onNextPinCreationAttempt(error: OneginiPinValidationError) {
     Log.d("PinRequestHandler onNextPinCreationAttempt", error.toString())
   }
 
+  //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
   override fun finishPinCreation() {
     Log.d("PinRequestHandler finishPinCreation", "")
   }
