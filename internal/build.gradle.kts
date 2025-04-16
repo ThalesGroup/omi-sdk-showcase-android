@@ -1,4 +1,5 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
+import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -44,8 +45,8 @@ android {
 }
 
 dependencies {
-  // Core module
-  implementation(project(":core"))
+  // Project modules
+  implementation(project(CORE_MODULE))
 
   // Android
   implementation(libs.androidx.core.ktx)

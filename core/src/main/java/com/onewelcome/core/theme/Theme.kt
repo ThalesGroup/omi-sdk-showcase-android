@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.theme
+package com.onewelcome.core.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

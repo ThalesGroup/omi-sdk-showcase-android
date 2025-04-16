@@ -60,4 +60,10 @@ dependencies {
 
   // Coroutines
   implementation(libs.kotlinx.coroutines.android)
+
+  // Compose
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.androidx.compose.ui.tooling)
+  implementation(libs.androidx.compose.material3)
+
 }

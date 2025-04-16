@@ -27,13 +27,13 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ExpandableCard
 import com.onewelcome.showcaseapp.ui.components.NumberSettingTextField
 import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.SettingCheckbox
-import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent

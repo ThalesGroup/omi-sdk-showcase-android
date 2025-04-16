@@ -1,5 +1,7 @@
 import com.onewelcome.buildsrc.AndroidConfig.APPLICATION_ID
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
+import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
+import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -57,8 +59,9 @@ android {
 }
 
 dependencies {
-  // Internal module
-  implementation(project(":internal"))
+  // Project modules
+  implementation(project(CORE_MODULE))
+  implementation(project(INTERNAL_MODULE))
 
   // Android
   implementation(libs.androidx.core.ktx)
