@@ -27,8 +27,8 @@ import com.onewelcome.showcaseapp.ui.screens.sections.SectionItem
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 
 @Composable
-fun HomeScreen(navController: NavController) {
-  HomeScreenContent(onNavigateToSection = { navController.navigate(it) })
+fun HomeScreen(homeNavController: NavController) {
+  HomeScreenContent(onNavigateToSection = { homeNavController.navigate(it) })
 }
 
 @Composable

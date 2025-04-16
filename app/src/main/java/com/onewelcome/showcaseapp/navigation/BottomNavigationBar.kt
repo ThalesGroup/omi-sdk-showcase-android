@@ -21,8 +21,8 @@ import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 
 @Composable
 fun BottomNavigationBar() {
-  val navController = rememberNavController()
-  val navBackStackEntry by navController.currentBackStackEntryAsState()
+  val rootNavController = rememberNavController()
+  val navBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentDestination = navBackStackEntry?.destination
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -41,11 +41,12 @@ fun BottomNavigationBar() {
               )
             },
             onClick = {
-              navController.navigate(navigationItem.route) {
+              rootNavController.navigate(navigationItem.route) {
                 launchSingleTop = true
-                popUpTo(navController.graph.startDestinationId) {
+                popUpTo(rootNavController.graph.startDestinationId) {
                   saveState = true
                 }
+                restoreState = true
               }
             }
           )
@@ -54,13 +55,21 @@ fun BottomNavigationBar() {
     }
   ) { paddingValues ->
     NavHost(
-      navController = navController,
+      navController = rootNavController,
       startDestination = ScreenNavigation.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(ScreenNavigation.Home.route) { HomeScreen(navController) }
-      composable(ScreenNavigation.Info.route) { InfoScreen(navController) }
-      composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(navController) }
+      composable(ScreenNavigation.Home.route) { HomeScreenNavHost() }
+      composable(ScreenNavigation.Info.route) { InfoScreen() }
     }
+  }
+}
+
+@Composable
+private fun HomeScreenNavHost() {
+  val homeNavController = rememberNavController()
+  NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
+    composable(ScreenNavigation.Home.route) { HomeScreen(homeNavController) }
+    composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
   }
 }
