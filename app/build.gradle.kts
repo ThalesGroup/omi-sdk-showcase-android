@@ -1,6 +1,5 @@
 import com.onewelcome.buildsrc.AndroidConfig.APPLICATION_ID
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
-import com.onewelcome.buildsrc.AndroidConfig.JVM_TARGET
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -83,10 +82,25 @@ dependencies {
 
   // Hilt
   implementation(libs.hilt.library)
+  implementation(libs.hilt.navigation.compose)
   ksp(libs.hilt.compiler)
 
   // DataStore
   implementation(libs.androidx.datastore)
+
+  // OMI SDK
+  debugApi(libs.omiSdk.developer) {
+    artifact {
+      type = "aar"
+      isTransitive = true
+    }
+  }
+  releaseApi(libs.omiSdk.secure) {
+    artifact {
+      type = "aar"
+      isTransitive = true
+    }
+  }
 
   // Test
   testImplementation(libs.androidx.junit)
