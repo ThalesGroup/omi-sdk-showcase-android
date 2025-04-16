@@ -14,7 +14,7 @@ object AndroidConfig {
   const val CORE_MODULE = ":core"
   const val INTERNAL_MODULE = ":internal"
   const val ENVIRONMENT_FLAVOR_DIMENSION = "environment"
-  const val IS_INTERNAL_VERSION = "IS_INTERNAL_VERSION"
+  const val IS_INTERNAL_VARIANT = "IS_INTERNAL_VARIANT"
   val SOURCE_COMPATIBILITY = JavaVersion.VERSION_21
   val TARGET_COMPATIBILITY = JavaVersion.VERSION_21
 }
