@@ -17,12 +17,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.showcaseapp.ui.screens.HomeScreen
 import com.onewelcome.showcaseapp.ui.screens.InfoScreen
-import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 
 @Composable
 fun BottomNavigationBar() {
-  val navController = rememberNavController()
-  val navBackStackEntry by navController.currentBackStackEntryAsState()
+  val rootNavController = rememberNavController()
+  val navBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentDestination = navBackStackEntry?.destination
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -41,11 +40,12 @@ fun BottomNavigationBar() {
               )
             },
             onClick = {
-              navController.navigate(navigationItem.route) {
+              rootNavController.navigate(navigationItem.route) {
                 launchSingleTop = true
-                popUpTo(navController.graph.startDestinationId) {
+                popUpTo(rootNavController.graph.startDestinationId) {
                   saveState = true
                 }
+                restoreState = true
               }
             }
           )
@@ -54,13 +54,12 @@ fun BottomNavigationBar() {
     }
   ) { paddingValues ->
     NavHost(
-      navController = navController,
+      navController = rootNavController,
       startDestination = ScreenNavigation.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(ScreenNavigation.Home.route) { HomeScreen(navController) }
-      composable(ScreenNavigation.Info.route) { InfoScreen(navController) }
-      composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(navController) }
+      composable(ScreenNavigation.Home.route) { HomeScreen() }
+      composable(ScreenNavigation.Info.route) { InfoScreen() }
     }
   }
 }

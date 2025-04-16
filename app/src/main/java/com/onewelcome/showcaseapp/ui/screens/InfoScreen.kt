@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.onewelcome.showcaseapp.ui.theme.ShowcaseAppTheme
 
 @Composable
-fun InfoScreen(navController: NavController) {
+fun InfoScreen() {
   Surface(
     modifier = Modifier.fillMaxSize(),
     color = MaterialTheme.colorScheme.background
