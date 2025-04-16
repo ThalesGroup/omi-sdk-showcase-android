@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.onewelcome.core.theme.Dimensions
 
@@ -84,4 +85,10 @@ private fun TestRow(testItem: TestItem) {
     }
     HorizontalDivider()
   }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+  OsCompatibilityScreen()
 }
