@@ -10,6 +10,7 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.hilt.plugin)
+  alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -30,6 +31,14 @@ android {
   compileOptions {
     sourceCompatibility = SOURCE_COMPATIBILITY
     targetCompatibility = TARGET_COMPATIBILITY
+  }
+
+  buildFeatures {
+    compose = true
+  }
+
+  composeOptions {
+    kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
   }
 }
 

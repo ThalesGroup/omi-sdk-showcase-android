@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.onewelcome.core.theme.ShowcaseAppTheme
 import com.onewelcome.showcaseapp.navigation.BottomNavigationBar
-import com.onewelcome.showcaseapp.ui.theme.ShowcaseAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.navigation
 
+import OsCompatibilityScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -15,7 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.onewelcome.internal.ui.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.ui.screens.HomeScreen
 import com.onewelcome.showcaseapp.ui.screens.InfoScreen
 import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
@@ -62,7 +62,7 @@ fun BottomNavigationBar() {
       composable(ScreenNavigation.Home.route) { HomeScreen(navController) }
       composable(ScreenNavigation.Info.route) { InfoScreen(navController) }
       composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(navController) }
-      composable(ScreenNavigation.OsCompatiblity.route) { OsCompatibilityScreen(navController) }
+      composable(ScreenNavigation.OsCompatiblity.route) { OsCompatibilityScreen() }
     }
   }
 }
