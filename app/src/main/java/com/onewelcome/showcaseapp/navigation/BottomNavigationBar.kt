@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,15 +23,16 @@ import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 @Composable
 fun BottomNavigationBar() {
   val rootNavController = rememberNavController()
-  val navBackStackEntry by rootNavController.currentBackStackEntryAsState()
-  val currentDestination = navBackStackEntry?.destination
+  val homeNavController = rememberNavController()
+  val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
+  val currentRootDestination = rootNavBackStackEntry?.destination
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
       NavigationBar {
         BottomNavigationItem.getBottomNavigationItems(LocalContext.current).forEachIndexed { _, navigationItem ->
           NavigationBarItem(
-            selected = navigationItem.route == currentDestination?.route,
+            selected = navigationItem.route == currentRootDestination?.route,
             label = {
               Text(navigationItem.label)
             },
@@ -48,6 +50,9 @@ fun BottomNavigationBar() {
                 }
                 restoreState = true
               }
+              if (navigationItem.route == currentRootDestination?.route && currentRootDestination.route == ScreenNavigation.Home.route) {
+                homeNavController.popBackStack(homeNavController.graph.startDestinationId, false)
+              }
             }
           )
         }
@@ -59,15 +64,14 @@ fun BottomNavigationBar() {
       startDestination = ScreenNavigation.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(ScreenNavigation.Home.route) { HomeScreenNavHost() }
+      composable(ScreenNavigation.Home.route) { HomeScreenNavHost(homeNavController) }
       composable(ScreenNavigation.Info.route) { InfoScreen() }
     }
   }
 }
 
 @Composable
-private fun HomeScreenNavHost() {
-  val homeNavController = rememberNavController()
+private fun HomeScreenNavHost(homeNavController: NavHostController) {
   NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
     composable(ScreenNavigation.Home.route) { HomeScreen(homeNavController) }
     composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
