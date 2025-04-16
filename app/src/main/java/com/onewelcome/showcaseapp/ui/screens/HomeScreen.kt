@@ -16,21 +16,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.navigation.ScreenNavigation
-import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 import com.onewelcome.showcaseapp.ui.screens.sections.SectionItem
 
 @Composable
-fun HomeScreen() {
-  val homeNavController = rememberNavController()
-  NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
-    composable(ScreenNavigation.Home.route) { HomeScreenContent(onNavigateToSection = { homeNavController.navigate(it) }) }
-    composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
-  }
+fun HomeScreen(homeNavController: NavController) {
+  HomeScreenContent(onNavigateToSection = { homeNavController.navigate(it) })
 }
 
 @Composable

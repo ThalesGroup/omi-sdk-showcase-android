@@ -17,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.showcaseapp.ui.screens.HomeScreen
 import com.onewelcome.showcaseapp.ui.screens.InfoScreen
+import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 
 @Composable
 fun BottomNavigationBar() {
@@ -58,8 +59,17 @@ fun BottomNavigationBar() {
       startDestination = ScreenNavigation.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(ScreenNavigation.Home.route) { HomeScreen() }
+      composable(ScreenNavigation.Home.route) { HomeScreenNavHost() }
       composable(ScreenNavigation.Info.route) { InfoScreen() }
     }
+  }
+}
+
+@Composable
+private fun HomeScreenNavHost() {
+  val homeNavController = rememberNavController()
+  NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
+    composable(ScreenNavigation.Home.route) { HomeScreen(homeNavController) }
+    composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
   }
 }
