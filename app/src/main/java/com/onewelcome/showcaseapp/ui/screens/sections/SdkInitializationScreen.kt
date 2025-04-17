@@ -56,13 +56,13 @@ private fun SdkInitializationScreenContent(
     Column(
       modifier = Modifier
         .padding(innerPadding)
-        .padding(start = Dimensions.standardPadding, end = Dimensions.standardPadding)
+        .padding(start = Dimensions.mPadding, end = Dimensions.mPadding)
     ) {
       SettingsSection(
         modifier =
           Modifier
             .weight(1f)
-            .padding(bottom = Dimensions.smallPadding),
+            .padding(bottom = Dimensions.sPadding),
         uiState = uiState,
         onEvent = onEvent
       )
@@ -123,7 +123,7 @@ private fun SettingsSection(modifier: Modifier, uiState: State, onEvent: (UiEven
 @Composable
 private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
-    modifier = Modifier.padding(Dimensions.standardPadding),
+    modifier = Modifier.padding(Dimensions.mPadding),
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     SettingCheckbox(

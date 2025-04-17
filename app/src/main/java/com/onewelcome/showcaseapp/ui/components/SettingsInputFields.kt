@@ -3,6 +3,7 @@ package com.onewelcome.showcaseapp.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 
@@ -37,7 +37,12 @@ fun NumberSettingTextField(
 }
 
 @Composable
-fun SettingCheckbox(modifier: Modifier = Modifier, text: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun SettingCheckbox(
+  modifier: Modifier = Modifier,
+  text: String,
+  checked: Boolean,
+  onCheckedChange: (Boolean) -> Unit
+) {
   Row(
     modifier = modifier
       .toggleable(
@@ -45,17 +50,16 @@ fun SettingCheckbox(modifier: Modifier = Modifier, text: String, checked: Boolea
         role = Role.Checkbox,
         onValueChange = onCheckedChange
       )
-      .padding(top = Dimensions.smallPadding, bottom = Dimensions.smallPadding),
+      .padding(top = Dimensions.sPadding, bottom = Dimensions.sPadding)
+      .fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing)
   ) {
     Checkbox(
-      modifier = Modifier.padding(start = 0.dp),
       checked = checked,
       onCheckedChange = null
     )
     Text(
-      modifier = Modifier.weight(1f),
       text = text,
       style = MaterialTheme.typography.labelLarge
     )

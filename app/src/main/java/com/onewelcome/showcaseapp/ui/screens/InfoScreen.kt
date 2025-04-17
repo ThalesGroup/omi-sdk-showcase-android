@@ -8,14 +8,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.onewelcome.showcaseapp.ui.theme.Dimensions
 
 @Composable
 fun InfoScreen() {
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .padding(15.dp),
+      .padding(Dimensions.mPadding),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
