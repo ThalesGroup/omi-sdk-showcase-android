@@ -42,6 +42,7 @@ android {
 
   buildFeatures {
     buildConfig = true
+    compose = true
   }
 
   flavorDimensions += ENVIRONMENT_FLAVOR_DIMENSION
@@ -63,10 +64,6 @@ android {
   compileOptions {
     sourceCompatibility = SOURCE_COMPATIBILITY
     targetCompatibility = TARGET_COMPATIBILITY
-  }
-
-  buildFeatures {
-    compose = true
   }
 
   composeOptions {

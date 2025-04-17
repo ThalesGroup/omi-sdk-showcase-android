@@ -1,4 +1,5 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
+import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -46,6 +47,18 @@ dependencies {
   // Android
   implementation(libs.androidx.core.ktx)
 
+  // Compose
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.androidx.compose.ui.tooling)
+  implementation(libs.androidx.compose.material3)
+
+  // Coroutines
+  implementation(libs.kotlinx.coroutines.android)
+
+  // Hilt
+  implementation(libs.hilt.library)
+  ksp(libs.hilt.compiler)
+
   // Kotlin Result
   implementation(libs.kotlin.result)
 
@@ -63,16 +76,14 @@ dependencies {
     }
   }
 
-  // Hilt
-  implementation(libs.hilt.library)
-  ksp(libs.hilt.compiler)
-
-  // Coroutines
-  implementation(libs.kotlinx.coroutines.android)
-
-  // Compose
-  implementation(platform(libs.androidx.compose.bom))
-  implementation(libs.androidx.compose.ui.tooling)
-  implementation(libs.androidx.compose.material3)
-
+  // Test
+  testImplementation(libs.androidx.junit)
+  testImplementation(libs.robolectric)
+  testImplementation(libs.hilt.testing)
+  testImplementation(libs.mockito.kotlin)
+  testImplementation(libs.assertj)
+  androidTestImplementation(libs.androidx.junit)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+  debugImplementation(libs.androidx.compose.ui.tooling)
+  debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

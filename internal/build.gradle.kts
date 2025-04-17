@@ -5,6 +5,7 @@ import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TEST_INSTRUMENTATION_RUNNER
+import com.onewelcome.buildsrc.AndroidConfig.VERSION_NAME
 import org.gradle.kotlin.dsl.implementation
 
 plugins {
@@ -21,6 +22,8 @@ android {
     namespace = NAMESPACE
     minSdk = MIN_SDK
     testInstrumentationRunner = TEST_INSTRUMENTATION_RUNNER
+    buildConfigField("String", "VERSION_NAME", "\"${VERSION_NAME}\"")
+    buildConfigField("String", "OMI_SDK_VERSION", "\"${libs.versions.omiSdk.get()}\"")
   }
 
   buildTypes {
@@ -30,13 +33,14 @@ android {
     }
   }
 
+  buildFeatures {
+    buildConfig = true
+    compose = true
+  }
+
   compileOptions {
     sourceCompatibility = SOURCE_COMPATIBILITY
     targetCompatibility = TARGET_COMPATIBILITY
-  }
-
-  buildFeatures {
-    compose = true
   }
 
   composeOptions {
@@ -56,18 +60,17 @@ dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.compose.material3)
-  implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.ui.tooling)
   implementation(libs.androidx.compose.runtime.livedata)
-  implementation(libs.androidx.navigation)
 
   // Hilt
   implementation(libs.hilt.library)
+  implementation(libs.hilt.navigation.compose)
   ksp(libs.hilt.compiler)
 
   // Kotlin Result
   implementation(libs.kotlin.result)
 
   // Test
-  testImplementation(libs.junit)
+  testImplementation(libs.androidx.junit)
 }

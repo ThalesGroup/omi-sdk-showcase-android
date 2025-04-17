@@ -30,7 +30,7 @@ data class BottomNavigationItem(
           route = ScreenNavigation.Info.route
         )
       )
-      if (BuildConfig.IS_INTERNAL_VERSION) {
+      if (BuildConfig.IS_INTERNAL_VARIANT) {
         add(
           BottomNavigationItem(
             label = context.getString(R.string.os_compatibility_screen_name),

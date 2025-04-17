@@ -22,11 +22,7 @@ omiSdk = "13.0.0"
 kotlinResult = "2.0.1"
 robolectic = "4.14.1"
 mockito-kotlin = "5.4.0"
-assertj = "3.27.2"
-junit = "4.13.2"
-espressoCore = "3.6.1"
-material = "1.12.0"
-materialVersion = "1.12.0"
+assertj = "3.27.3"
 
 [libraries]
 # Compose
@@ -81,9 +77,6 @@ mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", versio
 
 #AssertJ
 assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 # Android

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- OS Compatibility -->
+  <string name="save_result">Save result</string>
+  <string name="run_tests">Run tests</string>
+</resources>
