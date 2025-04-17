@@ -128,19 +128,22 @@ private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   ) {
     SettingCheckbox(
       text = stringResource(R.string.option_should_store_cookies),
-      checked = uiState.shouldStoreCookies
+      checked = uiState.shouldStoreCookies,
+      tooltipContent = { Text(stringResource(R.string.documentation_should_store_cookies)) }
     ) { onEvent(UiEvent.ChangeShouldStoreCookiesValue(it)) }
     NumberSettingTextField(
       modifier = Modifier.fillMaxWidth(),
       value = uiState.httpConnectTimeout,
       onValueChange = { onEvent(UiEvent.ChangeHttpConnectTimeoutValue(it)) },
-      label = { Text(stringResource(R.string.option_set_http_connect_timeout)) }
+      label = { Text(stringResource(R.string.option_set_http_connect_timeout)) },
+      tooltipContent = { Text(stringResource(R.string.documentation_set_http_connect_timeout)) }
     )
     NumberSettingTextField(
       modifier = Modifier.fillMaxWidth(),
       value = uiState.httpReadTimeout,
       onValueChange = { onEvent(UiEvent.ChangeHttpReadTimeoutValue(it)) },
-      label = { Text(stringResource(R.string.option_set_http_read_timeout)) }
+      label = { Text(stringResource(R.string.option_set_http_read_timeout)) },
+      tooltipContent = { Text(stringResource(R.string.documentation_set_http_read_timeout)) }
     )
   }
 }
