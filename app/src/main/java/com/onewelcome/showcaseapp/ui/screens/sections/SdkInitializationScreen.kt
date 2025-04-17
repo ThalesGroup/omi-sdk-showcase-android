@@ -118,7 +118,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Composable
 fun SdkSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
-    modifier = Modifier.padding(Dimensions.standardPadding)
+    modifier = Modifier.padding(Dimensions.mPadding)
   ) {
     NumberSettingTextField(
       modifier = Modifier.fillMaxWidth(),
