@@ -24,11 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
-import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent

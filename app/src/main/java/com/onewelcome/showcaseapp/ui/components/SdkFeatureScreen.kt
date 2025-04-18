@@ -42,7 +42,7 @@ fun SdkFeatureScreen(
     Column(
       modifier = Modifier
         .padding(innerPadding)
-        .padding(start = Dimensions.standardPadding, end = Dimensions.standardPadding),
+        .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
       Column(
@@ -52,7 +52,7 @@ fun SdkFeatureScreen(
         verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
       ) {
         Card(modifier = Modifier.fillMaxWidth()) {
-          Box(modifier = Modifier.padding(Dimensions.standardPadding)) {
+          Box(modifier = Modifier.padding(Dimensions.mPadding)) {
             description()
           }
         }
@@ -62,7 +62,7 @@ fun SdkFeatureScreen(
             text = stringResource(R.string.result),
             style = MaterialTheme.typography.titleSmall)
           Card(modifier = Modifier.fillMaxWidth()) {
-            Box(modifier = Modifier.padding(Dimensions.standardPadding)) {
+            Box(modifier = Modifier.padding(Dimensions.mPadding)) {
               result()
             }
           }

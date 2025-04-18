@@ -38,7 +38,7 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .padding(Dimensions.standardPadding),
+      .padding(Dimensions.mPadding),
     verticalArrangement = Arrangement.SpaceBetween
   ) {
     AndroidVersionInfoSection()
@@ -46,7 +46,7 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     Button(
       modifier = Modifier
         .fillMaxWidth()
-        .padding(top = Dimensions.standardPadding)
+        .padding(top = Dimensions.mPadding)
         .height(Dimensions.actionButtonHeight),
       onClick = { viewModel.runTests() }
     ) {
@@ -92,7 +92,7 @@ private fun AndroidVersionInfoSection() {
 
   Column {
     Text(
-      modifier = Modifier.padding(bottom = Dimensions.smallPadding),
+      modifier = Modifier.padding(bottom = Dimensions.sPadding),
       text = stringResource(R.string.android_os),
       style = MaterialTheme.typography.titleMedium
     )
@@ -110,7 +110,7 @@ private fun AppInfoSection() {
 
   Column {
     Text(
-      modifier = Modifier.padding(top = Dimensions.standardPadding, bottom = Dimensions.smallPadding),
+      modifier = Modifier.padding(top = Dimensions.mPadding, bottom = Dimensions.sPadding),
       text = stringResource(R.string.app_name),
       style = MaterialTheme.typography.titleMedium
     )
@@ -125,7 +125,7 @@ private fun TestItem(testCase: TestCase) {
     Row(
       modifier = Modifier
         .fillMaxWidth()
-        .padding(Dimensions.standardPadding),
+        .padding(Dimensions.mPadding),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -141,7 +141,7 @@ private fun TestStatusIcon(status: TestStatus) {
   when (status) {
     TestStatus.Pending -> Text("Pending")
     TestStatus.Running -> CircularProgressIndicator(
-      modifier = Modifier.size(Dimensions.standardPadding)
+      modifier = Modifier.size(Dimensions.mPadding)
     )
 
     TestStatus.Passed -> Icon(

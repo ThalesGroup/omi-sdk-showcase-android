@@ -15,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

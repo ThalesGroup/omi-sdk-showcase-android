@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import com.onewelcome.showcaseapp.ui.theme.Dimensions
+import com.onewelcome.core.theme.Dimensions
 
 @Composable
 fun ShowcaseCheckbox(
