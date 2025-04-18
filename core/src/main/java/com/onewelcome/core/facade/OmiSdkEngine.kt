@@ -17,7 +17,7 @@ class OmiSdkEngine @Inject constructor(
 ) : OmiSdkFacade {
 
   override val oneginiClient
-    get() = OneginiClient.instance ?: throw IllegalStateException("Onegini SDK instance not yet built")
+    get() = OneginiClient.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
 
   override fun initialize(settings: OmiSdkInitializationSettings): OneginiClient {
     return OneginiClientBuilder(context, createPinRequestHandler, pinAuthenticationRequestHandler)

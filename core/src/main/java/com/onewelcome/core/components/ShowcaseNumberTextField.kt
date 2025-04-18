@@ -27,6 +27,7 @@ fun ShowcaseNumberTextField(
     verticalAlignment = Alignment.CenterVertically
   ) {
     OutlinedTextField(
+      modifier = Modifier.weight(1f),
       value = value?.toString() ?: "",
       onValueChange = { if (it.isDigitsOnly()) onValueChange.invoke(it.toIntOrNull()) },
       label = label,
