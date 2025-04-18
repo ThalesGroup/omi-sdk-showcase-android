@@ -9,7 +9,7 @@ class OmiSdkEngineFake(private val oneginiClientMock: OneginiClient) : OmiSdkFac
   private var isInitialized: Boolean = false
 
   override val oneginiClient: OneginiClient
-    get() = if (isInitialized) oneginiClientMock else throw IllegalStateException("Onegini SDK instance not yet built")
+    get() = if (isInitialized) oneginiClientMock else throw IllegalStateException("Onegini SDK instance not yet initialized")
 
   override fun initialize(settings: OmiSdkInitializationSettings): OneginiClient {
     isInitialized = true
