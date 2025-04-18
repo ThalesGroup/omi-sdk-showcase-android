@@ -1,4 +1,4 @@
-rootProject.name = "OMI Showcase App"
+rootProject.name = "OMI SDK Showcase App"
 include(":app")
 include(":data")
 

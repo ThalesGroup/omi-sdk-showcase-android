@@ -36,20 +36,24 @@ import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.ui.theme.darken
 
+private const val ARROW_POINT_DOWN_ROTATION = 0f
+private const val ARROW_POINT_UP_ROTATION = 180f
+private const val CONTAINER_COLOR_DARKEN_FACTOR = 0.9f
+
 @Composable
-fun ExpandableCard(
+fun ShowcaseExpandableCard(
   modifier: Modifier = Modifier,
   title: String,
-  content: @Composable () -> Unit
+  expandableContent: @Composable () -> Unit
 ) {
   var expanded by remember { mutableStateOf(false) }
   val arrowRotation by animateFloatAsState(
-    targetValue = if (expanded) 180f else 0f
+    targetValue = if (expanded) ARROW_POINT_UP_ROTATION else ARROW_POINT_DOWN_ROTATION
   )
   Box(
     modifier = modifier
       .background(
-        color = CardDefaults.cardColors().containerColor.darken(0.9f),
+        color = CardDefaults.cardColors().containerColor.darken(CONTAINER_COLOR_DARKEN_FACTOR),
         shape = CardDefaults.shape
       )
   ) {
@@ -61,7 +65,7 @@ fun ExpandableCard(
         color = CardDefaults.cardColors().containerColor
       ) {
         Row(
-          modifier = Modifier.padding(Dimensions.standardPadding),
+          modifier = Modifier.padding(Dimensions.mPadding),
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing)
         ) {
@@ -89,7 +93,7 @@ fun ExpandableCard(
           animationSpec = tween()
         )
       ) {
-        content.invoke()
+        expandableContent.invoke()
       }
     }
   }
@@ -98,7 +102,7 @@ fun ExpandableCard(
 @Preview
 @Composable
 private fun Preview(@PreviewParameter(LoremIpsum::class) text: String) {
-  ExpandableCard(title = "Expandable Card title") {
+  ShowcaseExpandableCard(title = "Expandable Card title") {
     Text(text)
   }
 }
