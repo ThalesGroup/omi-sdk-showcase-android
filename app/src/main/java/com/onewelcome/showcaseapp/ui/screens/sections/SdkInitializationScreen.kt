@@ -78,7 +78,7 @@ private fun FeatureDescription() {
         append(stringResource(R.string.read_more) + " ")
         withLink(
           LinkAnnotation.Url(
-            Constants.DOCUMENTATION_SK_INITIALIZATION,
+            Constants.DOCUMENTATION_SDK_INITIALIZATION,
             TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
           )
         ) {
