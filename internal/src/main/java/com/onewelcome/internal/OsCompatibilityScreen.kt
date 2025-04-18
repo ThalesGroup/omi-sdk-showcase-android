@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -25,6 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.internal.entity.TestCase
@@ -40,8 +45,9 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .padding(Dimensions.mPadding),
-    verticalArrangement = Arrangement.SpaceBetween
+      .padding(Dimensions.mPadding)
+      .verticalScroll(rememberScrollState()),
+    verticalArrangement = Arrangement.SpaceBetween,
   ) {
     AndroidVersionInfoSection()
     AppInfoSection()
@@ -54,31 +60,12 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     ) {
       Text(stringResource(R.string.run_tests))
     }
+    TestResults(viewModel.testResult)
     Text(
       modifier = Modifier.padding(top = Dimensions.mPadding),
       text = "Tests",
       style = MaterialTheme.typography.titleMedium
     )
-    //TODO: Make visible only once test finished
-//    Button(
-//      modifier = Modifier
-//        .padding(top = Dimensions.smallPadding)
-//        .fillMaxWidth()
-//        .height(Dimensions.actionButtonHeight),
-//      onClick = { viewModel.runTests() }
-//    ) {
-//      Text(stringResource(R.string.save_result))
-//    }
-//    Row(
-//      horizontalArrangement = Arrangement.SpaceBetween
-//    ) {
-//      Text(stringResource(R.string.test_results))
-//      return if (viewModel.testCases.any { it.status == TestStatus.Failed }) {
-//        TestStatusIcon(TestStatus.Failed)
-//      } else {
-//        TestStatusIcon(TestStatus.Pending)
-//      }
-//    }
     LazyColumn(
       modifier = Modifier.weight(1f)
     ) {
@@ -137,6 +124,31 @@ private fun AppInfoSection() {
     Text(stringResource(R.string.version, versionName))
     Text(stringResource(R.string.omi_sdk_version, omiSdkVersion))
   }
+}
+
+@Composable
+private fun TestResults(testResult: Result<Unit, List<String>>?) {
+  Column {
+    testResult
+      ?.onSuccess {
+        TestResultHeader()
+        Text("All tests passed successfully ✅")
+      }
+      ?.onFailure {
+        TestResultHeader()
+        Text("Tests failed ❌ ")
+        Text("${it}")
+      }
+  }
+}
+
+@Composable
+private fun TestResultHeader() {
+  Text(
+    modifier = Modifier.padding(Dimensions.mPadding),
+    text = "Test results",
+    style = MaterialTheme.typography.titleMedium
+  )
 }
 
 @Composable

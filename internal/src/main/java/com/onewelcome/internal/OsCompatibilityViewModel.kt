@@ -23,13 +23,13 @@ class OsCompatibilityViewModel : ViewModel() {
       name = "Feature ${featureIndex + 1}",
       testCases = List(10) { testCaseIndex ->
         TestCase(
-          name = "TestCase ${testCaseIndex + 1}"
+          name = "Feature ${featureIndex + 1} TestCase ${testCaseIndex + 1}"
         )
       }
     )
   }
 
-  var testResult: Result<List<TestCase>, List<TestCase>>? by mutableStateOf(null)
+  var testResult: Result<Unit, List<String>>? by mutableStateOf(null)
     private set
 
   var testFeatures: List<TestFeature> by mutableStateOf(dummyTests)
@@ -72,10 +72,12 @@ class OsCompatibilityViewModel : ViewModel() {
 
   private fun evaluateFinalResult() {
     val allCases = testFeatures.flatMap { it.testCases }
-    val failed = allCases.filter { it.status == TestStatus.Failed }
+    val failed = allCases
+      .filter { it.status == TestStatus.Failed }
+      .map { it.name }
 
     testResult = if (failed.isEmpty()) {
-      Ok(allCases)
+      Ok(Unit)
     } else {
       Err(failed)
     }
@@ -83,8 +85,8 @@ class OsCompatibilityViewModel : ViewModel() {
 
   private suspend fun runTest(testCase: TestCase): TestStatus {
     return withContext(Dispatchers.Default) {
-      Thread.sleep(500)
-      if (Math.random() > 0.5) TestStatus.Passed else TestStatus.Failed
+      Thread.sleep(100)
+      if (Math.random() > 0.1) TestStatus.Passed else TestStatus.Failed
     }
   }
 }
