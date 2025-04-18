@@ -15,7 +15,7 @@
   <string name="section_title_sdk_initialization">SDK Initialization</string>
 
   <!-- SDK Initialization -->
-  <string name="sdk_initialization_description">This method initializes the SDK and connects the device with Access. It has to be called before using any of the SDK features. It returns a list of removed user profiles (in case any profile got removed on Access), so the App can update it\'s state.</string>
+  <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
   <string name="button_initialize_sdk">Initialize SDK</string>
   <string name="label_title_handlers">Registration &amp; Authentication handlers</string>
   <string name="label_sdk_settings">SDK settings</string>
