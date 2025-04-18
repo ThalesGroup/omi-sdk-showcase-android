@@ -118,7 +118,7 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
     ShowcaseExpandableCard(
       title = stringResource(R.string.label_sdk_settings)
     ) { SdkSettings(uiState, onEvent) }
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
     ShowcaseExpandableCard(
