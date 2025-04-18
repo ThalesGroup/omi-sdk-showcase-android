@@ -3,8 +3,8 @@ package com.onewelcome.core.theme
 import androidx.compose.ui.unit.dp
 
 object Dimensions {
-  val smallPadding = 8.dp
-  val standardPadding = 16.dp
+  val sPadding = 8.dp
+  val mPadding = 16.dp
   val horizontalSpacing = 12.dp
   val verticalSpacing = 12.dp
 

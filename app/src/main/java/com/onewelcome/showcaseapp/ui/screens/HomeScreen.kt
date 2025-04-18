@@ -27,8 +27,8 @@ import com.onewelcome.showcaseapp.navigation.ScreenNavigation
 import com.onewelcome.showcaseapp.ui.screens.sections.SectionItem
 
 @Composable
-fun HomeScreen(navController: NavController) {
-  HomeScreenContent(onNavigateToSection = { navController.navigate(it) })
+fun HomeScreen(homeNavController: NavController) {
+  HomeScreenContent(onNavigateToSection = { homeNavController.navigate(it) })
 }
 
 @Composable
@@ -64,15 +64,15 @@ private fun Section(section: SectionItem, onNavigateToSection: (route: String) -
   Card(
     modifier = Modifier
       .fillMaxWidth()
-      .padding(Dimensions.standardPadding),
+      .padding(Dimensions.mPadding),
     onClick = {
       onNavigateToSection.invoke(section.navigation.route)
     }
   ) {
     Row(
-      modifier = Modifier.padding(Dimensions.standardPadding),
+      modifier = Modifier.padding(Dimensions.mPadding),
       verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(Dimensions.standardPadding)
+      horizontalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
     ) {
       Text(
         modifier = Modifier

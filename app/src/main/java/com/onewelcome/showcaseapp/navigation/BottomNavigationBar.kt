@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,16 +23,17 @@ import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
 
 @Composable
 fun BottomNavigationBar() {
-  val navController = rememberNavController()
-  val navBackStackEntry by navController.currentBackStackEntryAsState()
-  val currentDestination = navBackStackEntry?.destination
+  val rootNavController = rememberNavController()
+  val homeNavController = rememberNavController()
+  val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
+  val currentRootDestination = rootNavBackStackEntry?.destination
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
       NavigationBar {
         BottomNavigationItem.getBottomNavigationItems(LocalContext.current).forEachIndexed { _, navigationItem ->
           NavigationBarItem(
-            selected = navigationItem.route == currentDestination?.route,
+            selected = navigationItem.route == currentRootDestination?.route,
             label = {
               Text(navigationItem.label)
             },
@@ -42,11 +44,15 @@ fun BottomNavigationBar() {
               )
             },
             onClick = {
-              navController.navigate(navigationItem.route) {
+              rootNavController.navigate(navigationItem.route) {
                 launchSingleTop = true
-                popUpTo(navController.graph.startDestinationId) {
+                popUpTo(rootNavController.graph.startDestinationId) {
                   saveState = true
                 }
+                restoreState = true
+              }
+              if (navigationItem.route == currentRootDestination?.route && currentRootDestination.route == ScreenNavigation.Home.route) {
+                homeNavController.popBackStack(homeNavController.graph.startDestinationId, false)
               }
             }
           )
@@ -55,14 +61,21 @@ fun BottomNavigationBar() {
     }
   ) { paddingValues ->
     NavHost(
-      navController = navController,
+      navController = rootNavController,
       startDestination = ScreenNavigation.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(ScreenNavigation.Home.route) { HomeScreen(navController) }
-      composable(ScreenNavigation.Info.route) { InfoScreen(navController) }
-      composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(navController) }
+      composable(ScreenNavigation.Home.route) { HomeScreenNavHost(homeNavController) }
+      composable(ScreenNavigation.Info.route) { InfoScreen() }
       composable(ScreenNavigation.OsCompatiblity.route) { OsCompatibilityScreen() }
     }
+  }
+}
+
+@Composable
+private fun HomeScreenNavHost(homeNavController: NavHostController) {
+  NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
+    composable(ScreenNavigation.Home.route) { HomeScreen(homeNavController) }
+    composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
   }
 }
