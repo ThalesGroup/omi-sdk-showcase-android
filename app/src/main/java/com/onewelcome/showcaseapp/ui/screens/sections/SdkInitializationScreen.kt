@@ -30,7 +30,7 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.ExpandableCard
+import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
@@ -107,7 +107,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
 
 @Composable
 private fun RequiredSettings() {
-  ExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
+  ShowcaseExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
 }
 
 @Composable
@@ -115,16 +115,16 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_sdk_settings)
     ) { SdkSettings(uiState, onEvent) }
     ExpandableCard(
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_custom_authenticators)
     ) { } //TODO To be done in scope of EXAMPLEAND-155
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_custom_identity_providers)
     ) { } //TODO To be done in scope of EXAMPLEAND-156  }
   }
