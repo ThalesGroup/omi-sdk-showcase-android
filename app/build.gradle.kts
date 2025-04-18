@@ -102,6 +102,9 @@ dependencies {
     }
   }
 
+  //Kotlin Result
+  implementation(libs.kotlin.result)
+
   // Test
   testImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.junit)

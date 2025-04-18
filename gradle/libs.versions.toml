@@ -19,6 +19,7 @@ kotlinCompilerExtensionVersion = "1.5.15"
 ksp = "2.1.0-1.0.29"
 hiltCompose = "1.2.0"
 omiSdk = "13.0.0"
+kotlinResult = "2.0.1"
 
 [libraries]
 # Compose
@@ -60,6 +61,9 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 # OMI SDK
 omiSdk-secure = { group = "com.onegini.mobile.sdk.android", name = "onegini-sdk", version.ref = "omiSdk" }
 omiSdk-developer = { group = "com.onegini.mobile.sdk.android", name = "onegini-sdk-developer", version.ref = "omiSdk" }
+
+# Kotlin Result
+kotlin-result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version.ref = "kotlinResult" }
 
 [plugins]
 # Android

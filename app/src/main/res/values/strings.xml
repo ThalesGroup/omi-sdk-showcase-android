@@ -5,23 +5,33 @@
   <string name="info_screen_name">Info</string>
   <string name="required">Required</string>
   <string name="optional">Optional</string>
+  <string name="read_more">Read more</string>
+  <string name="here">here</string>
+  <string name="result">Result</string>
+  <string name="none">None</string>
   <string name="details">Details</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
 
   <!-- SDK Initialization -->
+  <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
   <string name="button_initialize_sdk">Initialize SDK</string>
   <string name="label_title_handlers">Registration &amp; Authentication handlers</string>
+  <string name="label_sdk_settings">SDK settings</string>
   <string name="label_http_settings">Http settings</string>
   <string name="label_custom_authenticators">Custom authenticators</string>
   <string name="label_custom_identity_providers">Custom Identity Providers</string>
+  <string name="label_initialization_success">SDK Initialization success</string>
+  <string name="label_removed_profiles">Removed user profiles</string>
   <string name="option_should_store_cookies">shouldStoreCookies</string>
   <string name="option_set_http_connect_timeout">setHttpConnectTimeout</string>
   <string name="option_set_http_read_timeout">setHttpReadTimeout</string>
+  <string name="option_set_device_config_cache_duration">setDeviceConfigCacheDurationSeconds</string>
   <string name="documentation_should_store_cookies">Set if http client should store cookies between requests. The default value is TRUE.</string>
   <string name="documentation_set_http_connect_timeout">Set the http client connect timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
   <string name="documentation_set_http_read_timeout">Set the http client read timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
+  <string name="documentation_set_device_config_cache_duration">Set the device configuration cache duration in seconds. Default value is 300s (5min). After this time device configuration will be again fetched from the server.</string>
 
   <!-- Content descriptions-->
   <string name="content_description_logo">Thales logo</string>

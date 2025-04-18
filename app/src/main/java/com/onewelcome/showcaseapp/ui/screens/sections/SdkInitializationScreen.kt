@@ -2,30 +2,36 @@ package com.onewelcome.showcaseapp.ui.screens.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
+import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
@@ -50,55 +56,42 @@ private fun SdkInitializationScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit
 ) {
-  Scaffold(
-    topBar = { TopBar(onNavigateBack) },
-  ) { innerPadding ->
-    Column(
-      modifier = Modifier
-        .padding(innerPadding)
-        .padding(start = Dimensions.mPadding, end = Dimensions.mPadding)
-    ) {
-      SettingsSection(
-        modifier =
-          Modifier
-            .weight(1f)
-            .padding(bottom = Dimensions.sPadding),
-        uiState = uiState,
-        onEvent = onEvent
-      )
-      Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { onEvent(UiEvent.InitializeOneginiSdk) }
-      ) {
-        Text(stringResource(R.string.button_initialize_sdk))
-      }
-    }
+  SdkFeatureScreen(
+    title = stringResource(R.string.section_title_sdk_initialization),
+    onNavigateBack = onNavigateBack,
+    description = { FeatureDescription() },
+    settings = { SettingsSection(uiState, onEvent) },
+    result = uiState.result?.let { { InitializationResult(uiState) } },
+    action = { InitializeSdkButton(uiState, onEvent) }
+  )
+}
+
+@Composable
+private fun FeatureDescription() {
+  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
+    Text(
+      style = MaterialTheme.typography.bodyLarge,
+      text = stringResource(R.string.sdk_initialization_description)
+    )
+    Text(
+      style = MaterialTheme.typography.bodyLarge,
+      text = buildAnnotatedString {
+        append(stringResource(R.string.read_more) + " ")
+        withLink(
+          LinkAnnotation.Url(
+            Constants.DOCUMENTATION_SDK_INITIALIZATION,
+            TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
+          )
+        ) {
+          append(stringResource(R.string.here))
+        }
+      })
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(onNavigateBack: () -> Unit) {
-  TopAppBar(
-    windowInsets = WindowInsets(0.dp),
-    title = { Text(stringResource(R.string.section_title_sdk_initialization)) },
-    navigationIcon = {
-      IconButton(onClick = onNavigateBack) {
-        Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-          contentDescription = stringResource(R.string.content_description_navigate_back)
-        )
-      }
-    })
-}
-
-@Composable
-private fun SettingsSection(modifier: Modifier, uiState: State, onEvent: (UiEvent) -> Unit) {
-  Column(
-    modifier = modifier
-      .verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
-  ) {
+private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
+  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     Text(
       text = stringResource(R.string.required),
       style = MaterialTheme.typography.titleSmall
@@ -123,6 +116,9 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     ShowcaseExpandableCard(
+      title = stringResource(R.string.label_sdk_settings)
+    ) { SdkSettings(uiState, onEvent) }
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
     ShowcaseExpandableCard(
@@ -131,6 +127,27 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
     ShowcaseExpandableCard(
       title = stringResource(R.string.label_custom_identity_providers)
     ) { } //TODO To be done in scope of EXAMPLEAND-156  }
+  }
+}
+
+@Composable
+fun SdkSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
+  Column(
+    modifier = Modifier.padding(Dimensions.mPadding)
+  ) {
+    ShowcaseNumberTextField(
+      modifier = Modifier.fillMaxWidth(),
+      value = uiState.deviceConfigCacheDurationSeconds,
+      onValueChange = { onEvent(UiEvent.ChangeDeviceConfigCacheDurationValue(it)) },
+      label = {
+        Text(
+          text = stringResource(R.string.option_set_device_config_cache_duration),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis
+        )
+      },
+      tooltipContent = { Text(stringResource(R.string.documentation_set_device_config_cache_duration)) }
+    )
   }
 }
 
@@ -162,11 +179,59 @@ private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   }
 }
 
+@Composable
+private fun InitializationResult(uiState: State) {
+  Column {
+    uiState.result
+      ?.onSuccess { removedUserProfiles ->
+        Text(
+          buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+              appendLine(stringResource(R.string.label_initialization_success))
+            }
+            append(stringResource(R.string.label_removed_profiles))
+            append(": ")
+            if (removedUserProfiles.isEmpty()) {
+              append(stringResource(R.string.none))
+            } else {
+              appendLine()
+              removedUserProfiles.forEach { userProfile ->
+                append("\u2022 ")
+                appendLine(userProfile.profileId)
+              }
+            }
+          })
+      }
+      ?.onFailure {
+        Text("${it.errorType.code}: ${it.message}")
+      }
+  }
+}
+
+@Composable
+private fun InitializeSdkButton(uiState: State, onEvent: (UiEvent) -> Unit) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(Dimensions.actionButtonHeight),
+    onClick = { if (uiState.isLoading.not()) onEvent(UiEvent.InitializeOneginiSdk) },
+  ) {
+    if (uiState.isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+      )
+    } else {
+      Text(stringResource(R.string.button_initialize_sdk))
+    }
+  }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
   SdkInitializationScreenContent(
-    uiState = State(),
+    uiState = State(isLoading = true, result = Ok(setOf(UserProfile("123456"), UserProfile("QWERTY")))),
     onNavigateBack = {},
     onEvent = {})
 }

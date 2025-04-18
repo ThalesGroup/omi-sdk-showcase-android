@@ -1,27 +1,33 @@
 package com.onewelcome.showcaseapp.usecase
 
-import android.util.Log
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.entity.OmiSdkInitializationSettings
 import com.onewelcome.showcaseapp.omisdk.OmiSdkEngine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class OmiSdkInitializationUseCase @Inject constructor(
   private val omiSdkEngine: OmiSdkEngine
 ) {
 
-  fun initialize(settings: OmiSdkInitializationSettings) {
-    omiSdkEngine.init(settings)
-    omiSdkEngine.omiSdk.start(object : OneginiInitializationHandler {
-      override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
-        Log.d("InitializationHandler onSuccess", "OMI SDK successfully initialized")
-      }
+  suspend fun initialize(settings: OmiSdkInitializationSettings): Result<Set<UserProfile>, OneginiInitializationError> {
+    return suspendCancellableCoroutine { continuation ->
+      omiSdkEngine.init(settings)
+      omiSdkEngine.omiSdk.start(object : OneginiInitializationHandler {
+        override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
+          continuation.resume(Ok(removedUserProfiles))
+        }
 
-      override fun onError(error: OneginiInitializationError) {
-        Log.d("InitializationHandler onError", error.toString())
-      }
-    })
+        override fun onError(error: OneginiInitializationError) {
+          continuation.resume(Err(error))
+        }
+      })
+    }
   }
 }
