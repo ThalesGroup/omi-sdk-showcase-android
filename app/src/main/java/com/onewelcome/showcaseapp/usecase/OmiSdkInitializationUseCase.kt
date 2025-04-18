@@ -6,20 +6,20 @@ import com.github.michaelbull.result.Result
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.showcaseapp.core.facade.OmiSdkFacade
 import com.onewelcome.showcaseapp.entity.OmiSdkInitializationSettings
-import com.onewelcome.showcaseapp.omisdk.OmiSdkEngine
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
 class OmiSdkInitializationUseCase @Inject constructor(
-  private val omiSdkEngine: OmiSdkEngine
+  private val omiSdkEngine: OmiSdkFacade
 ) {
 
   suspend fun initialize(settings: OmiSdkInitializationSettings): Result<Set<UserProfile>, OneginiInitializationError> {
     return suspendCancellableCoroutine { continuation ->
-      omiSdkEngine.init(settings)
-      omiSdkEngine.omiSdk.start(object : OneginiInitializationHandler {
+      omiSdkEngine.initialize(settings)
+      omiSdkEngine.oneginiClient.start(object : OneginiInitializationHandler {
         override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
           continuation.resume(Ok(removedUserProfiles))
         }

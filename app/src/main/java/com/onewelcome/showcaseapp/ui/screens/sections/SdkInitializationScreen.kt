@@ -30,9 +30,9 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
+import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
