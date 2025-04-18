@@ -18,6 +18,15 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +39,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
+import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
 import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
@@ -78,7 +88,7 @@ private fun FeatureDescription() {
         append(stringResource(R.string.read_more) + " ")
         withLink(
           LinkAnnotation.Url(
-            Constants.DOCUMENTATION_SK_INITIALIZATION,
+            Constants.DOCUMENTATION_SDK_INITIALIZATION,
             TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
           )
         ) {
@@ -117,6 +127,9 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
     ShowcaseExpandableCard(
       title = stringResource(R.string.label_sdk_settings)
     ) { SdkSettings(uiState, onEvent) }
+    ShowcaseExpandableCard(
+      title = stringResource(R.string.label_sdk_settings)
+    ) { SdkSettings(uiState, onEvent) }
     ExpandableCard(
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
@@ -132,13 +145,20 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Composable
 fun SdkSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
-    modifier = Modifier.padding(Dimensions.standardPadding)
+    modifier = Modifier.padding(Dimensions.mPadding)
   ) {
-    NumberSettingTextField(
+    ShowcaseNumberTextField(
       modifier = Modifier.fillMaxWidth(),
       value = uiState.deviceConfigCacheDurationSeconds,
       onValueChange = { onEvent(UiEvent.ChangeDeviceConfigCacheDurationValue(it)) },
-      label = { Text(stringResource(R.string.option_set_device_config_cache_duration)) }
+      label = {
+        Text(
+          text = stringResource(R.string.option_set_device_config_cache_duration),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis
+        )
+      },
+      tooltipContent = { Text(stringResource(R.string.documentation_set_device_config_cache_duration)) }
     )
   }
 }
