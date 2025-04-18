@@ -21,14 +21,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -38,10 +30,9 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
-import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
+import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
@@ -128,9 +119,6 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
       title = stringResource(R.string.label_sdk_settings)
     ) { SdkSettings(uiState, onEvent) }
     ShowcaseExpandableCard(
-      title = stringResource(R.string.label_sdk_settings)
-    ) { SdkSettings(uiState, onEvent) }
-    ExpandableCard(
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
     ShowcaseExpandableCard(
