@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.components
+package com.onewelcome.core.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
