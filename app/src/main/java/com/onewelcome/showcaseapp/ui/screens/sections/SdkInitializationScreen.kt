@@ -30,9 +30,9 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.showcaseapp.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ExpandableCard
-import com.onewelcome.showcaseapp.ui.components.NumberSettingTextField
+import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
 import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
-import com.onewelcome.showcaseapp.ui.components.SettingCheckbox
+import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
@@ -95,11 +95,25 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
       text = stringResource(R.string.required),
       style = MaterialTheme.typography.titleSmall
     )
-    ExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
+    RequiredSettings()
     Text(
       text = stringResource(R.string.optional),
       style = MaterialTheme.typography.titleSmall
     )
+    OptionalSettings(uiState, onEvent)
+  }
+}
+
+@Composable
+private fun RequiredSettings() {
+  ExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
+}
+
+@Composable
+private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
+  Column(
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+  ) {
     ExpandableCard(
       title = stringResource(R.string.label_sdk_settings)
     ) { SdkSettings(uiState, onEvent) }
@@ -111,7 +125,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     ) { } //TODO To be done in scope of EXAMPLEAND-155
     ExpandableCard(
       title = stringResource(R.string.label_custom_identity_providers)
-    ) { } //TODO To be done in scope of EXAMPLEAND-156
+    ) { } //TODO To be done in scope of EXAMPLEAND-156  }
   }
 }
 
@@ -135,19 +149,19 @@ private fun HttpSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
     modifier = Modifier.padding(Dimensions.mPadding),
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
-    SettingCheckbox(
+    ShowcaseCheckbox(
       text = stringResource(R.string.option_should_store_cookies),
       checked = uiState.shouldStoreCookies,
       tooltipContent = { Text(stringResource(R.string.documentation_should_store_cookies)) }
     ) { onEvent(UiEvent.ChangeShouldStoreCookiesValue(it)) }
-    NumberSettingTextField(
+    ShowcaseNumberTextField(
       modifier = Modifier.fillMaxWidth(),
       value = uiState.httpConnectTimeout,
       onValueChange = { onEvent(UiEvent.ChangeHttpConnectTimeoutValue(it)) },
       label = { Text(stringResource(R.string.option_set_http_connect_timeout)) },
       tooltipContent = { Text(stringResource(R.string.documentation_set_http_connect_timeout)) }
     )
-    NumberSettingTextField(
+    ShowcaseNumberTextField(
       modifier = Modifier.fillMaxWidth(),
       value = uiState.httpReadTimeout,
       onValueChange = { onEvent(UiEvent.ChangeHttpReadTimeoutValue(it)) },

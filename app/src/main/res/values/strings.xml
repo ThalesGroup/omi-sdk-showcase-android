@@ -29,8 +29,8 @@
   <string name="option_set_http_read_timeout">setHttpReadTimeout</string>
   <string name="option_set_device_config_cache_duration">setDeviceConfigCacheDurationSeconds</string>
   <string name="documentation_should_store_cookies">Set if http client should store cookies between requests. The default value is TRUE.</string>
-  <string name="documentation_set_http_connect_timeout">Set the http client connect timeout. If set to a value &lt;= 0, 60000 (60 seconds) is used.</string>
-  <string name="documentation_set_http_read_timeout">Set the http client read timeout. If set to a value &lt;= 0, 60000 (60 seconds) is used.</string>
+  <string name="documentation_set_http_connect_timeout">Set the http client connect timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
+  <string name="documentation_set_http_read_timeout">Set the http client read timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
 
   <!-- Content descriptions-->
   <string name="content_description_logo">Thales logo</string>
