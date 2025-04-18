@@ -31,7 +31,6 @@ import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.showcaseapp.BuildConfig
 import com.onewelcome.showcaseapp.R
-import java.nio.file.WatchEvent
 
 private const val RELEASE_CODENAME = "REL"
 

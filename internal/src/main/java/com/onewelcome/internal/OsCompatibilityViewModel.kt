@@ -9,6 +9,7 @@ import com.github.michaelbull.result.Result
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestFeature
 import com.onewelcome.internal.entity.TestStatus
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -35,55 +36,50 @@ class OsCompatibilityViewModel : ViewModel() {
     private set
 
   fun runTests() {
-    // Step 1: Mark all test cases as Running
-    testFeatures = testFeatures.map { feature ->
-      feature.copy(
-        testCases = feature.testCases.map { it.copy(status = TestStatus.Running) }
-      )
-    }
-
+    markAllTestsAsRunning()
     viewModelScope.launch {
-      val jobs = mutableListOf<Deferred<Unit>>()
-
-      testFeatures.forEachIndexed { featureIndex, feature ->
-        feature.testCases.forEachIndexed { caseIndex, testCase ->
-          val job = async {
-            val result = withContext(Dispatchers.Default) {
-              runTest(testCase)
-            }
-
-            // Step 2: Apply update immediately for this test case
-            val updatedFeature = testFeatures[featureIndex]
-            val updatedCases = updatedFeature.testCases.toMutableList().apply {
-              this[caseIndex] = testCase.copy(status = result)
-            }
-
-            val updatedList = testFeatures.toMutableList().apply {
-              this[featureIndex] = updatedFeature.copy(testCases = updatedCases)
-            }
-
-            testFeatures = updatedList // triggers recomposition immediately
-          }
-
-          jobs += job
-        }
-      }
-
-      // Step 3: Wait for all tests to complete
-      jobs.awaitAll()
-
-      // Step 4: Emit final test result
-      val allTestCases = testFeatures.flatMap { it.testCases }
-      val failedTests = allTestCases.filter { it.status == TestStatus.Failed }
-
-      testResult = if (failedTests.isEmpty()) {
-        Ok(allTestCases)
-      } else {
-        Err(failedTests)
-      }
+      runTestsParallely().awaitAll()
+      evaluateFinalResult()
     }
   }
 
+  private fun markAllTestsAsRunning() {
+    testFeatures = testFeatures.map { feature ->
+      feature.copy(testCases = feature.testCases.map { it.copy(status = TestStatus.Running) })
+    }
+  }
+
+  private fun CoroutineScope.runTestsParallely(): List<Deferred<Unit>> =
+    testFeatures.flatMapIndexed { featureIndex, feature ->
+      feature.testCases.mapIndexed { caseIndex, testCase ->
+        async {
+          val result = withContext(Dispatchers.Default) { runTest(testCase) }
+          updateTestCase(featureIndex, caseIndex, result)
+        }
+      }
+    }
+
+  private fun updateTestCase(featureIndex: Int, caseIndex: Int, resultStatus: TestStatus) {
+    val currentFeature = testFeatures[featureIndex]
+    val updatedCases = currentFeature.testCases.toMutableList().apply {
+      this[caseIndex] = this[caseIndex].copy(status = resultStatus)
+    }
+    val updatedFeatures = testFeatures.toMutableList().apply {
+      this[featureIndex] = currentFeature.copy(testCases = updatedCases)
+    }
+    testFeatures = updatedFeatures
+  }
+
+  private fun evaluateFinalResult() {
+    val allCases = testFeatures.flatMap { it.testCases }
+    val failed = allCases.filter { it.status == TestStatus.Failed }
+
+    testResult = if (failed.isEmpty()) {
+      Ok(allCases)
+    } else {
+      Err(failed)
+    }
+  }
 
   private suspend fun runTest(testCase: TestCase): TestStatus {
     return withContext(Dispatchers.Default) {
