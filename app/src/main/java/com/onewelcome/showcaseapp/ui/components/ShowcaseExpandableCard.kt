@@ -41,7 +41,7 @@ private const val ARROW_POINT_UP_ROTATION = 180f
 private const val CONTAINER_COLOR_DARKEN_FACTOR = 0.9f
 
 @Composable
-fun ExpandableCard(
+fun ShowcaseExpandableCard(
   modifier: Modifier = Modifier,
   title: String,
   expandableContent: @Composable () -> Unit
@@ -102,7 +102,7 @@ fun ExpandableCard(
 @Preview
 @Composable
 private fun Preview(@PreviewParameter(LoremIpsum::class) text: String) {
-  ExpandableCard(title = "Expandable Card title") {
+  ShowcaseExpandableCard(title = "Expandable Card title") {
     Text(text)
   }
 }

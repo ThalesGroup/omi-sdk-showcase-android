@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.ExpandableCard
+import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
 import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
 import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
 import com.onewelcome.showcaseapp.ui.theme.Dimensions
@@ -114,7 +114,7 @@ private fun SettingsSection(modifier: Modifier, uiState: State, onEvent: (UiEven
 
 @Composable
 private fun RequiredSettings() {
-  ExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
+  ShowcaseExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
 }
 
 @Composable
@@ -122,13 +122,13 @@ private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_custom_authenticators)
     ) { } //TODO To be done in scope of EXAMPLEAND-155
-    ExpandableCard(
+    ShowcaseExpandableCard(
       title = stringResource(R.string.label_custom_identity_providers)
     ) { } //TODO To be done in scope of EXAMPLEAND-156  }
   }
