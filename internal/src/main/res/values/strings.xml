@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- OS Compatibility -->
+  <string name="app_name">OMI SDK Showcase App</string>
+  <string name="release">Release</string>
+  <string name="stable_release">Stable release</string>
   <string name="save_result">Save result</string>
   <string name="run_tests">Run tests</string>
+  <string name="test_results">Test results</string>
+  <string name="android_os">Android OS</string>
+  <string name="preview_sdk">Android OS</string>
+  <string name="beta_preview_version">Beta/Preview version %s</string>
+  <string name="sdk_version">SDK version: %s</string>
+  <string name="api_level">API level: %s</string>
+  <string name="codename">Codename: %s</string>
+  <string name="type">Type: %s</string>
+  <string name="version">Version: %s</string>
+  <string name="omi_sdk_version">OMI SDK version: %s</string>
 </resources>

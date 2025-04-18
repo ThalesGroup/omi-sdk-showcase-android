@@ -29,10 +29,6 @@
   <string name="option_set_http_read_timeout">setHttpReadTimeout</string>
   <string name="option_set_device_config_cache_duration">setDeviceConfigCacheDurationSeconds</string>
 
-  <!-- OS Compatibility -->
-  <string name="save_result">Save result</string>
-  <string name="run_tests">Run tests</string>
-
   <!-- Content descriptions-->
   <string name="content_description_logo">Thales logo</string>
   <string name="content_description_navigate_back">Navigate back</string>

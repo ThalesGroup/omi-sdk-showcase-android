@@ -1,12 +1,13 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
+import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
+import com.onewelcome.buildsrc.AndroidConfig.IS_INTERNAL_VARIANT
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TEST_INSTRUMENTATION_RUNNER
 import com.onewelcome.buildsrc.AndroidConfig.VERSION_NAME
-import org.gradle.kotlin.dsl.implementation
 
 plugins {
   alias(libs.plugins.android.library)
@@ -30,6 +31,20 @@ android {
     release {
       isMinifyEnabled = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+  }
+
+  flavorDimensions += ENVIRONMENT_FLAVOR_DIMENSION
+  productFlavors {
+    create("internal") {
+      dimension = ENVIRONMENT_FLAVOR_DIMENSION
+      buildConfigField("Boolean", IS_INTERNAL_VARIANT, "true")
+      buildConfigField("String", "VERSION_NAME", "\"${VERSION_NAME}\"")
+      buildConfigField("String", "OMI_SDK_VERSION", "\"${libs.versions.omiSdk.get()}\"")
+    }
+    create("developer") {
+      dimension = ENVIRONMENT_FLAVOR_DIMENSION
+      buildConfigField("Boolean", IS_INTERNAL_VARIANT, "false")
     }
   }
 

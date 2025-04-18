@@ -41,7 +41,6 @@ android {
   }
 
   buildFeatures {
-    buildConfig = true
     compose = true
   }
 
@@ -51,13 +50,11 @@ android {
       dimension = ENVIRONMENT_FLAVOR_DIMENSION
       applicationIdSuffix = ".internal"
       versionNameSuffix = "-internal"
-      buildConfigField("Boolean", IS_INTERNAL_VARIANT, "true")
     }
     create("developer") {
       dimension = ENVIRONMENT_FLAVOR_DIMENSION
       applicationIdSuffix = ".developer"
       versionNameSuffix = "-developer"
-      buildConfigField("Boolean", IS_INTERNAL_VARIANT, "false")
     }
   }
 

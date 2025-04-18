@@ -30,6 +30,8 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.BuildConfig
 import com.onewelcome.showcaseapp.R
 
+private const val RELEASE_CODENAME = "REL"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel()) {
@@ -40,61 +42,64 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     verticalArrangement = Arrangement.SpaceBetween
   ) {
     AndroidVersionInfoSection()
-    LazyColumn(
-      modifier = Modifier.weight(1f)
-    ) {
-      items(viewModel.testCases) { testCase -> TestItem(testCase) }
-    }
+    AppInfoSection()
     Button(
       modifier = Modifier
         .fillMaxWidth()
-        .padding(top = Dimensions.smallPadding)
+        .padding(top = Dimensions.standardPadding)
         .height(Dimensions.actionButtonHeight),
       onClick = { viewModel.runTests() }
     ) {
       Text(stringResource(R.string.run_tests))
     }
-    Row(
-      horizontalArrangement = Arrangement.SpaceBetween
+    //TODO: Make visible only once test finished
+//    Button(
+//      modifier = Modifier
+//        .padding(top = Dimensions.smallPadding)
+//        .fillMaxWidth()
+//        .height(Dimensions.actionButtonHeight),
+//      onClick = { viewModel.runTests() }
+//    ) {
+//      Text(stringResource(R.string.save_result))
+//    }
+//    Row(
+//      horizontalArrangement = Arrangement.SpaceBetween
+//    ) {
+//      Text(stringResource(R.string.test_results))
+//      return if (viewModel.testCases.any { it.status == TestStatus.Failed }) {
+//        TestStatusIcon(TestStatus.Failed)
+//      } else {
+//        TestStatusIcon(TestStatus.Pending)
+//      }
+//    }
+    LazyColumn(
+      modifier = Modifier.weight(1f)
     ) {
-      Text("OS compatibility program test result")
-      return if (viewModel.testCases.any { it.status == TestStatus.Failed }) {
-        TestStatusIcon(TestStatus.Failed)
-      } else {
-        TestStatusIcon(TestStatus.Pending)
-      }
+      items(viewModel.testCases) { testCase -> TestItem(testCase) }
     }
-    Button(
-      modifier = Modifier
-        .padding(top = Dimensions.smallPadding)
-        .fillMaxWidth()
-        .height(Dimensions.actionButtonHeight),
-      onClick = { viewModel.runTests() }
-    ) {
-      Text(stringResource(R.string.save_result))
-    }
+
   }
 }
 
 @Composable
 private fun AndroidVersionInfoSection() {
-  val sdkInt = Build.VERSION.SDK_INT
-  val release = Build.VERSION.RELEASE ?: "Unknown"
-  val codename = Build.VERSION.CODENAME ?: "Unknown"
-  val previewSdk = Build.VERSION.PREVIEW_SDK_INT
-  val isPreview = previewSdk > 0 || codename != "REL"
+  val sdkVersion = Build.VERSION.RELEASE
+  val apiLevel = Build.VERSION.SDK_INT
+  val codename = if (Build.VERSION.CODENAME == RELEASE_CODENAME) stringResource(R.string.release) else Build.VERSION.CODENAME
+  val previewSdkVersion = Build.VERSION.PREVIEW_SDK_INT
+  val isPreview = previewSdkVersion > 0 || Build.VERSION.CODENAME != RELEASE_CODENAME
+  val type = if (isPreview) stringResource(R.string.beta_preview_version, previewSdkVersion) else stringResource(R.string.stable_release)
 
   Column {
     Text(
       modifier = Modifier.padding(bottom = Dimensions.smallPadding),
-      text = "Android OS info",
+      text = stringResource(R.string.android_os),
       style = MaterialTheme.typography.titleMedium
     )
-    Text("Release: $release")
-    Text("API Level: $sdkInt")
-    Text("Codename: $codename")
-    Text("Preview SDK: $previewSdk")
-    Text("Type: ${if (isPreview) "Beta/Preview version" else "Stable release"}")
+    Text(stringResource(R.string.sdk_version, sdkVersion))
+    Text(stringResource(R.string.api_level, apiLevel))
+    Text(stringResource(R.string.codename, codename))
+    Text(stringResource(R.string.type, type))
   }
 }
 
@@ -106,11 +111,11 @@ private fun AppInfoSection() {
   Column {
     Text(
       modifier = Modifier.padding(top = Dimensions.standardPadding, bottom = Dimensions.smallPadding),
-      text = "Showcase app info",
+      text = stringResource(R.string.app_name),
       style = MaterialTheme.typography.titleMedium
     )
-    Text("VersionName: $versionName")
-    Text("OMI SDK version: $omiSdkVersion")
+    Text(stringResource(R.string.version, versionName))
+    Text(stringResource(R.string.omi_sdk_version, omiSdkVersion))
   }
 }
 
