@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,9 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.internal.entity.TestCase
+import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.showcaseapp.BuildConfig
 import com.onewelcome.showcaseapp.R
+import java.nio.file.WatchEvent
 
 private const val RELEASE_CODENAME = "REL"
 
@@ -52,6 +55,11 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     ) {
       Text(stringResource(R.string.run_tests))
     }
+    Text(
+      modifier = Modifier.padding(top = Dimensions.mPadding),
+      text = "Tests",
+      style = MaterialTheme.typography.titleMedium
+    )
     //TODO: Make visible only once test finished
 //    Button(
 //      modifier = Modifier
@@ -75,9 +83,22 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     LazyColumn(
       modifier = Modifier.weight(1f)
     ) {
-      items(viewModel.testCases) { testCase -> TestItem(testCase) }
+      items(viewModel.testFeatures) { testFeature ->
+        ShowcaseExpandableCard(
+          modifier = Modifier.padding(top = Dimensions.sPadding),
+          title = testFeature.name
+        ) { TestFeatureSection(testFeature.testCases) }
+      }
     }
+  }
+}
 
+@Composable
+private fun TestFeatureSection(testCases: List<TestCase>) {
+  Column(
+    modifier = Modifier.padding(top = Dimensions.sPadding)
+  ) {
+    testCases.forEach { TestItem(it) }
   }
 }
 
@@ -132,7 +153,6 @@ private fun TestItem(testCase: TestCase) {
       Text(testCase.name)
       TestStatusIcon(testCase.status)
     }
-    HorizontalDivider()
   }
 }
 
