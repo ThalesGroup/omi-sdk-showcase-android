@@ -7,7 +7,7 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.onewelcome.internal.entity.TestCase
-import com.onewelcome.internal.entity.TestFeature
+import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -18,69 +18,84 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class OsCompatibilityViewModel : ViewModel() {
-  private val dummyTests = List(10) { featureIndex ->
-    TestFeature(
-      name = "Feature ${featureIndex + 1}",
+  private val dummyTests = List(10) { categoryIndex ->
+    TestCategory(
+      name = "Category ${categoryIndex + 1}",
       testCases = List(10) { testCaseIndex ->
         TestCase(
-          name = "Feature ${featureIndex + 1} TestCase ${testCaseIndex + 1}"
+          name = "Category ${categoryIndex + 1} TestCase ${testCaseIndex + 1}"
         )
       }
     )
   }
 
-  var testResult: Result<Unit, List<String>>? by mutableStateOf(null)
+  var uiState by mutableStateOf(State(testCategories = dummyTests))
     private set
 
-  var testFeatures: List<TestFeature> by mutableStateOf(dummyTests)
-    private set
+  fun onEvent(event: UiEvent) {
+    when (event) {
+      UiEvent.runTests -> runTests()
+      UiEvent.saveResults -> saveResults()
+    }
+  }
 
-  fun runTests() {
+  private fun saveResults() {
+    TODO("Not yet implemented")
+  }
+
+  private fun runTests() {
+    uiState = uiState.copy(isLoading = true)
     markAllTestsAsRunning()
     viewModelScope.launch {
       runTestsParallely().awaitAll()
-      evaluateFinalResult()
+      evaluateResult()
     }
   }
 
   private fun markAllTestsAsRunning() {
-    testFeatures = testFeatures.map { feature ->
-      feature.copy(testCases = feature.testCases.map { it.copy(status = TestStatus.Running) })
-    }
+    uiState = uiState.copy(
+      testCategories = uiState.testCategories.map { feature ->
+        feature.copy(testCases = feature.testCases.map { it.copy(status = TestStatus.Running) })
+      })
   }
 
   private fun CoroutineScope.runTestsParallely(): List<Deferred<Unit>> =
-    testFeatures.flatMapIndexed { featureIndex, feature ->
+    uiState.testCategories.flatMapIndexed { categoryIndex, feature ->
       feature.testCases.mapIndexed { caseIndex, testCase ->
         async {
           val result = withContext(Dispatchers.Default) { runTest(testCase) }
-          updateTestCase(featureIndex, caseIndex, result)
+          updateTestCase(categoryIndex, caseIndex, result)
         }
       }
     }
 
   private fun updateTestCase(featureIndex: Int, caseIndex: Int, resultStatus: TestStatus) {
-    val currentFeature = testFeatures[featureIndex]
-    val updatedCases = currentFeature.testCases.toMutableList().apply {
+    val currentCategory = uiState.testCategories[featureIndex]
+    val updatedCases = currentCategory.testCases.toMutableList().apply {
       this[caseIndex] = this[caseIndex].copy(status = resultStatus)
     }
-    val updatedFeatures = testFeatures.toMutableList().apply {
-      this[featureIndex] = currentFeature.copy(testCases = updatedCases)
+    val updatedCategories = uiState.testCategories.toMutableList().apply {
+      this[featureIndex] = currentCategory.copy(testCases = updatedCases)
     }
-    testFeatures = updatedFeatures
+    uiState = uiState.copy(testCategories = updatedCategories)
   }
 
-  private fun evaluateFinalResult() {
-    val allCases = testFeatures.flatMap { it.testCases }
+  private fun evaluateResult() {
+    val allCases = uiState.testCategories.flatMap { it.testCases }
     val failed = allCases
       .filter { it.status == TestStatus.Failed }
       .map { it.name }
 
-    testResult = if (failed.isEmpty()) {
-      Ok(Unit)
-    } else {
-      Err(failed)
-    }
+    uiState = uiState.copy(
+      testResult = evaluateTestResult(failed),
+      isLoading = false
+    )
+  }
+
+  private fun evaluateTestResult(failed: List<String>): Result<Unit, String> = if (failed.isEmpty()) {
+    Ok(Unit)
+  } else {
+    Err(failed.toEnrichedString())
   }
 
   private suspend fun runTest(testCase: TestCase): TestStatus {
@@ -89,4 +104,19 @@ class OsCompatibilityViewModel : ViewModel() {
       if (Math.random() > 0.1) TestStatus.Passed else TestStatus.Failed
     }
   }
+}
+
+private fun List<String>.toEnrichedString(separator: String = "\n"): String {
+  return this.joinToString(separator = separator) { "❌ $it" }
+}
+
+data class State(
+  val testCategories: List<TestCategory>,
+  val testResult: Result<Unit, String>? = null,
+  val isLoading: Boolean = false,
+)
+
+sealed interface UiEvent {
+  data object runTests : UiEvent
+  data object saveResults : UiEvent
 }

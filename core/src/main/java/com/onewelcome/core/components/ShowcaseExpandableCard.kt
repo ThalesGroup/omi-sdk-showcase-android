@@ -44,9 +44,11 @@ private const val CONTAINER_COLOR_DARKEN_FACTOR = 0.9f
 fun ShowcaseExpandableCard(
   modifier: Modifier = Modifier,
   title: String,
-  expandableContent: @Composable () -> Unit
+  isExpanded: Boolean = false,
+  onExpandToggle: (() -> Unit)? = null,
+  expandableContent: @Composable () -> Unit,
 ) {
-  var expanded by remember { mutableStateOf(false) }
+  var expanded by remember { mutableStateOf(isExpanded) }
   val arrowRotation by animateFloatAsState(
     targetValue = if (expanded) ARROW_POINT_UP_ROTATION else ARROW_POINT_DOWN_ROTATION
   )
@@ -61,7 +63,10 @@ fun ShowcaseExpandableCard(
       Surface(
         modifier = Modifier
           .clip(CardDefaults.shape)
-          .clickable { expanded = !expanded },
+          .clickable {
+            expanded = !expanded
+            onExpandToggle?.invoke()
+          },
         color = CardDefaults.cardColors().containerColor
       ) {
         Row(

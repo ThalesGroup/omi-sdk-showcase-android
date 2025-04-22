@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -21,6 +19,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,38 +42,49 @@ private const val RELEASE_CODENAME = "REL"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel()) {
-  Column(
+  val expandedCategories = remember { mutableStateMapOf<Int, Boolean>() }
+
+  LazyColumn(
     modifier = Modifier
       .fillMaxSize()
-      .padding(Dimensions.mPadding)
-      .verticalScroll(rememberScrollState()),
+      .padding(Dimensions.mPadding),
     verticalArrangement = Arrangement.SpaceBetween,
   ) {
-    AndroidVersionInfoSection()
-    AppInfoSection()
-    Button(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = Dimensions.mPadding)
-        .height(Dimensions.actionButtonHeight),
-      onClick = { viewModel.runTests() }
-    ) {
-      Text(stringResource(R.string.run_tests))
+    item {
+      AndroidVersionInfoSection()
+      AppInfoSection()
+      Button(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(top = Dimensions.mPadding)
+          .height(Dimensions.actionButtonHeight),
+        onClick = { if (viewModel.uiState.isLoading.not()) viewModel.onEvent(UiEvent.runTests) },
+      ) {
+        if (viewModel.uiState.isLoading) {
+          CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+          )
+        } else {
+          Text(stringResource(R.string.run_tests))
+        }
+      }
+      TestResults(viewModel.uiState.testResult, viewModel)
+      Text(
+        modifier = Modifier.padding(top = Dimensions.mPadding),
+        text = "Tests",
+        style = MaterialTheme.typography.titleMedium
+      )
     }
-    TestResults(viewModel.testResult)
-    Text(
-      modifier = Modifier.padding(top = Dimensions.mPadding),
-      text = "Tests",
-      style = MaterialTheme.typography.titleMedium
-    )
-    LazyColumn(
-      modifier = Modifier.weight(1f)
-    ) {
-      items(viewModel.testFeatures) { testFeature ->
-        ShowcaseExpandableCard(
-          modifier = Modifier.padding(top = Dimensions.sPadding),
-          title = testFeature.name
-        ) { TestFeatureSection(testFeature.testCases) }
+    itemsIndexed(viewModel.uiState.testCategories) { index, testCategory ->
+      val isExpanded = expandedCategories[index] == true
+      ShowcaseExpandableCard(
+        modifier = Modifier.padding(top = Dimensions.sPadding),
+        title = testCategory.name,
+        isExpanded = isExpanded,
+        onExpandToggle = { expandedCategories[index] = !isExpanded }
+      ) {
+        TestFeatureSection(testCategory.testCases)
       }
     }
   }
@@ -127,7 +138,7 @@ private fun AppInfoSection() {
 }
 
 @Composable
-private fun TestResults(testResult: Result<Unit, List<String>>?) {
+private fun TestResults(testResult: Result<Unit, String>?, viewModel: OsCompatibilityViewModel) {
   Column {
     testResult
       ?.onSuccess {
@@ -136,16 +147,30 @@ private fun TestResults(testResult: Result<Unit, List<String>>?) {
       }
       ?.onFailure {
         TestResultHeader()
-        Text("Tests failed ❌ ")
-        Text("${it}")
+        Text("Tests failed ❌", modifier = Modifier.padding(bottom = Dimensions.sPadding))
+        Text("$it")
+        SaveResultsButton(viewModel)
       }
+  }
+}
+
+@Composable
+private fun SaveResultsButton(viewModel: OsCompatibilityViewModel) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(top = Dimensions.mPadding)
+      .height(Dimensions.actionButtonHeight),
+    onClick = { viewModel.onEvent(UiEvent.saveResults) }
+  ) {
+    Text(stringResource(R.string.save_result))
   }
 }
 
 @Composable
 private fun TestResultHeader() {
   Text(
-    modifier = Modifier.padding(Dimensions.mPadding),
+    modifier = Modifier.padding(top = Dimensions.mPadding, bottom = Dimensions.mPadding),
     text = "Test results",
     style = MaterialTheme.typography.titleMedium
   )
