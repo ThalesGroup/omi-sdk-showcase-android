@@ -100,15 +100,14 @@ class OsCompatibilityViewModel : ViewModel() {
 
   private suspend fun runTest(testCase: TestCase): TestStatus {
     return withContext(Dispatchers.Default) {
-      Thread.sleep(100)
-      if (Math.random() > 0.1) TestStatus.Passed else TestStatus.Failed
+      TestStatus.Passed
+//      Thread.sleep(100)
+//      if (Math.random() > 0.1) TestStatus.Passed else TestStatus.Failed
     }
   }
 }
 
-private fun List<String>.toEnrichedString(separator: String = "\n"): String {
-  return this.joinToString(separator = separator) { "❌ $it" }
-}
+private fun List<String>.toEnrichedString(separator: String = "\n"): String = joinToString(separator = separator)
 
 data class State(
   val testCategories: List<TestCategory>,

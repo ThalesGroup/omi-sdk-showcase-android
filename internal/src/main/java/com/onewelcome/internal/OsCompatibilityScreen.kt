@@ -1,4 +1,5 @@
-import android.os.Build
+import android.os.Environment
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,10 +36,12 @@ import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus
-import com.onewelcome.showcaseapp.BuildConfig
+import com.onewelcome.internal.util.TestResultFileCreator
+import com.onewelcome.internal.util.appVersionInfo
+import com.onewelcome.internal.util.osVersionInfo
 import com.onewelcome.showcaseapp.R
+import java.io.File
 
-private const val RELEASE_CODENAME = "REL"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +76,7 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
       TestResults(viewModel.uiState.testResult, viewModel)
       Text(
         modifier = Modifier.padding(top = Dimensions.mPadding),
-        text = "Tests",
+        text = stringResource(R.string.tests),
         style = MaterialTheme.typography.titleMedium
       )
     }
@@ -84,14 +88,14 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
         isExpanded = isExpanded,
         onExpandToggle = { expandedCategories[index] = !isExpanded }
       ) {
-        TestFeatureSection(testCategory.testCases)
+        TestCasesSection(testCategory.testCases)
       }
     }
   }
 }
 
 @Composable
-private fun TestFeatureSection(testCases: List<TestCase>) {
+private fun TestCasesSection(testCases: List<TestCase>) {
   Column(
     modifier = Modifier.padding(top = Dimensions.sPadding)
   ) {
@@ -101,39 +105,33 @@ private fun TestFeatureSection(testCases: List<TestCase>) {
 
 @Composable
 private fun AndroidVersionInfoSection() {
-  val sdkVersion = Build.VERSION.RELEASE
-  val apiLevel = Build.VERSION.SDK_INT
-  val codename = if (Build.VERSION.CODENAME == RELEASE_CODENAME) stringResource(R.string.release) else Build.VERSION.CODENAME
-  val previewSdkVersion = Build.VERSION.PREVIEW_SDK_INT
-  val isPreview = previewSdkVersion > 0 || Build.VERSION.CODENAME != RELEASE_CODENAME
-  val type = if (isPreview) stringResource(R.string.beta_preview_version, previewSdkVersion) else stringResource(R.string.stable_release)
-
   Column {
     Text(
       modifier = Modifier.padding(bottom = Dimensions.sPadding),
       text = stringResource(R.string.android_os),
       style = MaterialTheme.typography.titleMedium
     )
-    Text(stringResource(R.string.sdk_version, sdkVersion))
-    Text(stringResource(R.string.api_level, apiLevel))
-    Text(stringResource(R.string.codename, codename))
-    Text(stringResource(R.string.type, type))
+    osVersionInfo().apply {
+      Text(sdkVersion)
+      Text(apiLevel)
+      Text(codename)
+      Text(type)
+    }
   }
 }
 
 @Composable
 private fun AppInfoSection() {
-  val versionName = BuildConfig.VERSION_NAME
-  val omiSdkVersion = BuildConfig.OMI_SDK_VERSION
-
   Column {
     Text(
       modifier = Modifier.padding(top = Dimensions.mPadding, bottom = Dimensions.sPadding),
       text = stringResource(R.string.app_name),
       style = MaterialTheme.typography.titleMedium
     )
-    Text(stringResource(R.string.version, versionName))
-    Text(stringResource(R.string.omi_sdk_version, omiSdkVersion))
+    appVersionInfo().apply {
+      Text(version)
+      Text(omiSdkVersion)
+    }
   }
 }
 
@@ -143,12 +141,13 @@ private fun TestResults(testResult: Result<Unit, String>?, viewModel: OsCompatib
     testResult
       ?.onSuccess {
         TestResultHeader()
-        Text("All tests passed successfully ✅")
+        Text(stringResource(R.string.all_test_passed))
+        SaveResultsButton(viewModel)
       }
       ?.onFailure {
         TestResultHeader()
-        Text("Tests failed ❌", modifier = Modifier.padding(bottom = Dimensions.sPadding))
-        Text("$it")
+        Text(stringResource(R.string.tests_failed_emoji))
+        Text(it, modifier = Modifier.padding(top = Dimensions.sPadding))
         SaveResultsButton(viewModel)
       }
   }
@@ -156,14 +155,35 @@ private fun TestResults(testResult: Result<Unit, String>?, viewModel: OsCompatib
 
 @Composable
 private fun SaveResultsButton(viewModel: OsCompatibilityViewModel) {
+  val context = LocalContext.current
+  val androidVersionInfo = osVersionInfo()
+  val appVersionInfo = appVersionInfo()
+  val testResultSavedText = stringResource(R.string.test_result_saved)
+  val testResultValue = getResultValue(viewModel.uiState.testResult)
+  val testResultFileContent = TestResultFileCreator.getFileContent(appVersionInfo, androidVersionInfo, testResultValue)
   Button(
     modifier = Modifier
       .fillMaxWidth()
       .padding(top = Dimensions.mPadding)
       .height(Dimensions.actionButtonHeight),
-    onClick = { viewModel.onEvent(UiEvent.saveResults) }
+    onClick = {
+      File((Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)), "test_results.txt")
+        .writeText(testResultFileContent)
+      Toast.makeText(context, testResultSavedText, Toast.LENGTH_LONG).show()
+    }
   ) {
     Text(stringResource(R.string.save_result))
+  }
+}
+
+@Composable
+fun getResultValue(testResult: Result<Unit, String>?): String? {
+  return testResult?.let {
+    if (it.isOk) {
+      stringResource(R.string.test_succeed)
+    } else {
+      stringResource(R.string.tests_failed, "\n", testResult.error)
+    }
   }
 }
 
@@ -171,7 +191,7 @@ private fun SaveResultsButton(viewModel: OsCompatibilityViewModel) {
 private fun TestResultHeader() {
   Text(
     modifier = Modifier.padding(top = Dimensions.mPadding, bottom = Dimensions.mPadding),
-    text = "Test results",
+    text = stringResource(R.string.test_results),
     style = MaterialTheme.typography.titleMedium
   )
 }
@@ -195,20 +215,20 @@ private fun TestItem(testCase: TestCase) {
 @Composable
 private fun TestStatusIcon(status: TestStatus) {
   when (status) {
-    TestStatus.Pending -> Text("Pending")
+    TestStatus.Pending -> Text(stringResource(R.string.pending))
     TestStatus.Running -> CircularProgressIndicator(
       modifier = Modifier.size(Dimensions.mPadding)
     )
 
     TestStatus.Passed -> Icon(
       Icons.Default.Check,
-      contentDescription = "Passed",
+      contentDescription = stringResource(R.string.passed),
       tint = Color.Green
     )
 
     TestStatus.Failed -> Icon(
       Icons.Default.Close,
-      contentDescription = "Failed",
+      contentDescription = stringResource(R.string.failed),
       tint = Color.Red
     )
   }
