@@ -11,6 +11,10 @@
   <string name="none">None</string>
   <string name="details">Details</string>
 
+  <!-- Info Screen -->
+  <string name="title_sdk_status">OMI SDK Status</string>
+  <string name="status_sdk_initialized">SDK Initialized</string>
+
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
 
@@ -37,4 +41,6 @@
   <string name="content_description_logo">Thales logo</string>
   <string name="content_description_navigate_back">Navigate back</string>
   <string name="content_description_expand_collapse">Expand or collapse card</string>
+  <string name="content_description_yes">Yes</string>
+  <string name="content_description_no">No</string>
 </resources>
