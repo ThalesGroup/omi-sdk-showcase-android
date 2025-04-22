@@ -2,6 +2,7 @@ rootProject.name = "OMI SDK Showcase App"
 include(":app")
 include(":data")
 include(":internal")
+include(":core")
 
 pluginManagement {
   repositories {
@@ -44,4 +45,3 @@ private fun RepositoryHandler.setupOmiSdkRepo() {
     )
   }
 }
-include(":core")

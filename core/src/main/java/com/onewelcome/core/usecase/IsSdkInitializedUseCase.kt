@@ -1,7 +1,7 @@
-package com.onewelcome.showcaseapp.usecase
+package com.onewelcome.core.usecase
 
 import com.github.michaelbull.result.runCatching
-import com.onewelcome.showcaseapp.core.facade.OmiSdkFacade
+import com.onewelcome.core.facade.OmiSdkFacade
 import javax.inject.Inject
 
 class IsSdkInitializedUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {

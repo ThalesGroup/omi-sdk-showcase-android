@@ -1,5 +1,4 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
-import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY

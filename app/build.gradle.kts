@@ -40,10 +40,6 @@ android {
     }
   }
 
-  buildFeatures {
-    compose = true
-  }
-
   flavorDimensions += ENVIRONMENT_FLAVOR_DIMENSION
   productFlavors {
     create("internal") {
@@ -61,6 +57,10 @@ android {
   compileOptions {
     sourceCompatibility = SOURCE_COMPATIBILITY
     targetCompatibility = TARGET_COMPATIBILITY
+  }
+
+  buildFeatures {
+    compose = true
   }
 
   composeOptions {

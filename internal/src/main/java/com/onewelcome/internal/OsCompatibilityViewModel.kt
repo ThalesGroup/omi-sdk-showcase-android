@@ -34,13 +34,8 @@ class OsCompatibilityViewModel : ViewModel() {
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.runTests -> runTests()
-      UiEvent.saveResults -> saveResults()
+      UiEvent.RunTests -> runTests()
     }
-  }
-
-  private fun saveResults() {
-    TODO("Not yet implemented")
   }
 
   private fun runTests() {
@@ -60,8 +55,8 @@ class OsCompatibilityViewModel : ViewModel() {
   }
 
   private fun CoroutineScope.runTestsParallely(): List<Deferred<Unit>> =
-    uiState.testCategories.flatMapIndexed { categoryIndex, feature ->
-      feature.testCases.mapIndexed { caseIndex, testCase ->
+    uiState.testCategories.flatMapIndexed { categoryIndex, category ->
+      category.testCases.mapIndexed { caseIndex, testCase ->
         async {
           val result = withContext(Dispatchers.Default) { runTest(testCase) }
           updateTestCase(categoryIndex, caseIndex, result)
@@ -81,13 +76,13 @@ class OsCompatibilityViewModel : ViewModel() {
   }
 
   private fun evaluateResult() {
-    val allCases = uiState.testCategories.flatMap { it.testCases }
-    val failed = allCases
+    val failedTestCases = uiState.testCategories
+      .flatMap { it.testCases }
       .filter { it.status == TestStatus.Failed }
       .map { it.name }
 
     uiState = uiState.copy(
-      testResult = evaluateTestResult(failed),
+      testResult = evaluateTestResult(failedTestCases),
       isLoading = false
     )
   }
@@ -95,19 +90,18 @@ class OsCompatibilityViewModel : ViewModel() {
   private fun evaluateTestResult(failed: List<String>): Result<Unit, String> = if (failed.isEmpty()) {
     Ok(Unit)
   } else {
-    Err(failed.toEnrichedString())
+    Err(failed.addNewLineSeparator())
   }
 
   private suspend fun runTest(testCase: TestCase): TestStatus {
     return withContext(Dispatchers.Default) {
-      TestStatus.Passed
-//      Thread.sleep(100)
-//      if (Math.random() > 0.1) TestStatus.Passed else TestStatus.Failed
+      Thread.sleep(100)
+      if (Math.random() > 0.02) TestStatus.Passed else TestStatus.Failed
     }
   }
 }
 
-private fun List<String>.toEnrichedString(separator: String = "\n"): String = joinToString(separator = separator)
+private fun List<String>.addNewLineSeparator(): String = joinToString(separator = "\n")
 
 data class State(
   val testCategories: List<TestCategory>,
@@ -116,6 +110,5 @@ data class State(
 )
 
 sealed interface UiEvent {
-  data object runTests : UiEvent
-  data object saveResults : UiEvent
+  data object RunTests : UiEvent
 }

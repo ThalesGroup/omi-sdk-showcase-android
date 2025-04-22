@@ -24,5 +24,4 @@
   <string name="failed">Failed</string>
   <string name="passed">Passed</string>
   <string name="all_test_passed">All tests passed successfully ✅</string>
-
 </resources>

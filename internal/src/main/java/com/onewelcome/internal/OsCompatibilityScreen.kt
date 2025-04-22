@@ -34,6 +34,7 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.util.Constants
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.util.TestResultFileCreator
@@ -57,22 +58,7 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     item {
       AndroidVersionInfoSection()
       AppInfoSection()
-      Button(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(top = Dimensions.mPadding)
-          .height(Dimensions.actionButtonHeight),
-        onClick = { if (viewModel.uiState.isLoading.not()) viewModel.onEvent(UiEvent.runTests) },
-      ) {
-        if (viewModel.uiState.isLoading) {
-          CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.secondary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-          )
-        } else {
-          Text(stringResource(R.string.run_tests))
-        }
-      }
+      RunTestsButton(viewModel)
       TestResults(viewModel.uiState.testResult, viewModel)
       Text(
         modifier = Modifier.padding(top = Dimensions.mPadding),
@@ -90,6 +76,26 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
       ) {
         TestCasesSection(testCategory.testCases)
       }
+    }
+  }
+}
+
+@Composable
+private fun RunTestsButton(viewModel: OsCompatibilityViewModel) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(top = Dimensions.mPadding)
+      .height(Dimensions.actionButtonHeight),
+    onClick = { if (viewModel.uiState.isLoading.not()) viewModel.onEvent(UiEvent.RunTests) },
+  ) {
+    if (viewModel.uiState.isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+      )
+    } else {
+      Text(stringResource(R.string.run_tests))
     }
   }
 }
@@ -142,24 +148,24 @@ private fun TestResults(testResult: Result<Unit, String>?, viewModel: OsCompatib
       ?.onSuccess {
         TestResultHeader()
         Text(stringResource(R.string.all_test_passed))
-        SaveResultsButton(viewModel)
+        SaveResultsButton(viewModel.uiState.testResult)
       }
       ?.onFailure {
         TestResultHeader()
         Text(stringResource(R.string.tests_failed_emoji))
         Text(it, modifier = Modifier.padding(top = Dimensions.sPadding))
-        SaveResultsButton(viewModel)
+        SaveResultsButton(viewModel.uiState.testResult)
       }
   }
 }
 
 @Composable
-private fun SaveResultsButton(viewModel: OsCompatibilityViewModel) {
+private fun SaveResultsButton(testResult: Result<Unit, String>?) {
   val context = LocalContext.current
   val androidVersionInfo = osVersionInfo()
   val appVersionInfo = appVersionInfo()
   val testResultSavedText = stringResource(R.string.test_result_saved)
-  val testResultValue = getResultValue(viewModel.uiState.testResult)
+  val testResultValue = getResultValue(testResult)
   val testResultFileContent = TestResultFileCreator.getFileContent(appVersionInfo, androidVersionInfo, testResultValue)
   Button(
     modifier = Modifier
@@ -167,7 +173,10 @@ private fun SaveResultsButton(viewModel: OsCompatibilityViewModel) {
       .padding(top = Dimensions.mPadding)
       .height(Dimensions.actionButtonHeight),
     onClick = {
-      File((Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)), "test_results.txt")
+      File(
+        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)),
+        Constants.OS_COMPATIBILITY_TEST_RESULT_FILE_NAME
+      )
         .writeText(testResultFileContent)
       Toast.makeText(context, testResultSavedText, Toast.LENGTH_LONG).show()
     }
