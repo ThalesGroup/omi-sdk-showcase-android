@@ -40,9 +40,8 @@ import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.util.TestResultFileCreator
 import com.onewelcome.internal.util.appVersionInfo
 import com.onewelcome.internal.util.osVersionInfo
-import com.onewelcome.showcaseapp.R
 import java.io.File
-
+import com.onewelcome.showcaseapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
