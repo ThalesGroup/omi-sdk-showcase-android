@@ -192,7 +192,7 @@ private fun InitializationResult(uiState: State) {
             append(stringResource(R.string.label_removed_profiles))
             append(": ")
             if (removedUserProfiles.isEmpty()) {
-              append(stringResource(R.string.none))
+              append(stringResource(R.string.zero))
             } else {
               appendLine()
               removedUserProfiles.forEach { userProfile ->
