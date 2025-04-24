@@ -23,7 +23,6 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
@@ -38,20 +37,18 @@ fun UserRegistrationScreen(
 ) {
   UserRegistrationScreenContent(
     onNavigateBack = { navController.popBackStack() },
-    onNavigateDeeper = { navController.navigate(it) }
+    onNavigateDeeper = { navController.navigate(it) },
   )
 }
 
 @Composable
 private fun UserRegistrationScreenContent(
   onNavigateBack: () -> Unit,
-  onNavigateDeeper: (String) -> Unit
+  onNavigateDeeper: (String) -> Unit,
 ) {
   Scaffold(
     topBar = {
-      ShowcaseTopBar(stringResource(R.string.user_registration)) {
-        onNavigateBack.invoke()
-      }
+      ShowcaseTopBar(stringResource(R.string.user_registration)) { onNavigateBack.invoke() }
     }
   ) { innerPadding ->
     Column(
@@ -60,7 +57,7 @@ private fun UserRegistrationScreenContent(
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
     ) {
       FeatureDescription()
-      Sections { onNavigateDeeper }
+      Sections(onNavigateDeeper)
     }
   }
 }
@@ -89,21 +86,19 @@ private fun FeatureDescription() {
 }
 
 @Composable
-fun Sections(onNavigateToSection: (route: String) -> Unit) {
+fun Sections(onNavigateToSection: (String) -> Unit) {
   getSections().forEach { section ->
     Section(section, onNavigateToSection)
   }
 }
 
 @Composable
-private fun Section(section: SectionItem, onNavigateToSection: (route: String) -> Unit) {
+private fun Section(section: SectionItem, onNavigateToSection: (String) -> Unit) {
   Card(
     modifier = Modifier
       .fillMaxWidth()
       .padding(top = Dimensions.mPadding),
-    onClick = {
-      onNavigateToSection.invoke(section.navigation.route)
-    }
+    onClick = { onNavigateToSection.invoke(section.navigation.route) }
   ) {
     Row(
       modifier = Modifier.padding(Dimensions.mPadding),
@@ -131,12 +126,13 @@ private fun getSections(): List<SectionItem> {
     SectionItem(stringResource(R.string.section_title_browser_registration), ScreenNavigation.BrowserRegistration)
   )
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun Preview() {
-  UserRegistrationScreenContent(
-    onNavigateBack = {},
-    onNavigateDeeper = {},
-  )
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//private fun Preview() {
+//  UserRegistrationScreenContent(
+//    onNavigateBack = {},
+//    onNavigateDeeper = {},
+//    navController = navController,
+//  )
+//}
