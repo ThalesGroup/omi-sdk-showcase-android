@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.screens
+package com.onewelcome.showcaseapp.feature.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.ui.components.ShowcaseStatusCard
-import com.onewelcome.showcaseapp.viewmodel.InfoViewModel
-import com.onewelcome.showcaseapp.viewmodel.InfoViewModel.State
+import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 
 @Composable
 fun InfoScreen(

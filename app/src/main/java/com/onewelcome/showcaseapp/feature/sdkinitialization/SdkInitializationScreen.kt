@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.screens.sections
+package com.onewelcome.showcaseapp.feature.sdkinitialization
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,9 +35,8 @@ import com.onewelcome.core.components.ShowcaseNumberTextField
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.State
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 
 @Composable
 fun SdkInitializationScreen(

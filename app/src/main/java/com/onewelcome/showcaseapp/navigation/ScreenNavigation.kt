@@ -5,4 +5,6 @@ sealed class ScreenNavigation(val route: String) {
   data object Info : ScreenNavigation("info_route")
   data object SdkInitialization : ScreenNavigation("sdk_initialization")
   data object OsCompatiblity : ScreenNavigation("os_compatibility")
+  data object UserRegistration : ScreenNavigation("user_registration")
+  data object BrowserRegistration : ScreenNavigation("browser_registration")
 }

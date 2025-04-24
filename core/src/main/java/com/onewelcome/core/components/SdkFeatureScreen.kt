@@ -89,7 +89,6 @@ private fun TopBar(title: String, onNavigateBack: () -> Unit) {
     })
 }
 
-
 @Preview
 @Composable
 private fun SdkFeatureScreenPreview() {

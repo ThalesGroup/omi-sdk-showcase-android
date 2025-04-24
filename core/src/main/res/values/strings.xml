@@ -18,6 +18,8 @@
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
+  <string name="section_title_user_registration">User Registration</string>
+  <string name="section_title_browser_registration">Browser Registration</string>
 
   <!-- SDK Initialization -->
   <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
@@ -69,4 +71,8 @@
   <string name="failed">Failed</string>
   <string name="passed">Passed</string>
   <string name="all_test_passed">All tests passed successfully ✅</string>
+
+  <!-- Registration -->
+  <string name="user_registration_description">Add some nice description</string>
+
 </resources>

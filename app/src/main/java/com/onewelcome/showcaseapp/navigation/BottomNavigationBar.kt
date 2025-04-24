@@ -17,9 +17,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.onewelcome.showcaseapp.ui.screens.HomeScreen
-import com.onewelcome.showcaseapp.ui.screens.InfoScreen
-import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.home.HomeScreen
+import com.onewelcome.showcaseapp.feature.info.InfoScreen
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
 
 @Composable
 fun BottomNavigationBar() {
@@ -77,5 +79,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController) {
   NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
     composable(ScreenNavigation.Home.route) { HomeScreen(homeNavController) }
     composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
+    composable(ScreenNavigation.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
+    composable(ScreenNavigation.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController) }
   }
 }

@@ -9,7 +9,8 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication

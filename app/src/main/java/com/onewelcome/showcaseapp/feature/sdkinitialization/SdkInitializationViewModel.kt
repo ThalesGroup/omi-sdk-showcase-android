@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.viewmodel
+package com.onewelcome.showcaseapp.feature.sdkinitialization
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
