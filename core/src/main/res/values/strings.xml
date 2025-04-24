@@ -74,5 +74,6 @@
 
   <!-- Registration -->
   <string name="user_registration_description">Add some nice description</string>
+  <string name="user_registration">User registration</string>
 
 </resources>

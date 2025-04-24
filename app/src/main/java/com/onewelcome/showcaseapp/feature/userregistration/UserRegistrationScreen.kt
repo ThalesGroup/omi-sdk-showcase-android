@@ -3,20 +3,15 @@ package com.onewelcome.showcaseapp.feature.userregistration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
@@ -28,24 +23,34 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.home.SectionItem
-import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.navigation.ScreenNavigation
 
 @Composable
 fun UserRegistrationScreen(
   navController: NavController,
 ) {
+  UserRegistrationScreenContent(
+    onNavigateBack = { navController.popBackStack() },
+    onNavigateDeeper = { navController.navigate(it) }
+  )
+}
+
+@Composable
+private fun UserRegistrationScreenContent(
+  onNavigateBack: () -> Unit,
+  onNavigateDeeper: (String) -> Unit
+) {
   Scaffold(
     topBar = {
-      TopBar {
-        navController.popBackStack()
+      ShowcaseTopBar(stringResource(R.string.user_registration)) {
+        onNavigateBack.invoke()
       }
     }
   ) { innerPadding ->
@@ -55,7 +60,7 @@ fun UserRegistrationScreen(
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
     ) {
       FeatureDescription()
-      Sections({ navController.navigate(it) })
+      Sections { onNavigateDeeper }
     }
   }
 }
@@ -127,18 +132,11 @@ private fun getSections(): List<SectionItem> {
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
 @Composable
-private fun TopBar(onNavigateBack: () -> Unit) {
-  TopAppBar(
-    windowInsets = WindowInsets(0.dp),
-    title = { Text("User registration") },
-    navigationIcon = {
-      IconButton(onClick = onNavigateBack) {
-        Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-          contentDescription = stringResource(R.string.content_description_navigate_back)
-        )
-      }
-    })
+private fun Preview() {
+  UserRegistrationScreenContent(
+    onNavigateBack = {},
+    onNavigateDeeper = {},
+  )
 }

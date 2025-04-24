@@ -37,7 +37,7 @@ fun SdkFeatureScreen(
   action: @Composable () -> Unit
 ) {
   Scaffold(
-    topBar = { TopBar(title, onNavigateBack) },
+    topBar = { ShowcaseTopBar(title, onNavigateBack) },
   ) { innerPadding ->
     Column(
       modifier = Modifier
@@ -71,22 +71,6 @@ fun SdkFeatureScreen(
       Box { action() }
     }
   }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(title: String, onNavigateBack: () -> Unit) {
-  TopAppBar(
-    windowInsets = WindowInsets(0.dp),
-    title = { Text(title) },
-    navigationIcon = {
-      IconButton(onClick = onNavigateBack) {
-        Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-          contentDescription = stringResource(R.string.content_description_navigate_back)
-        )
-      }
-    })
 }
 
 @Preview
