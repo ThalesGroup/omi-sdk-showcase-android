@@ -43,6 +43,7 @@ android {
       buildConfigField("String", "OMI_SDK_VERSION", "\"${libs.versions.omiSdk.get()}\"")
     }
     create("developer") {
+      isDefault = true
       dimension = ENVIRONMENT_FLAVOR_DIMENSION
       buildConfigField("Boolean", IS_INTERNAL_VARIANT, "false")
     }

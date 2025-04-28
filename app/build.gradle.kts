@@ -3,7 +3,6 @@ import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
 import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
-import com.onewelcome.buildsrc.AndroidConfig.IS_INTERNAL_VARIANT
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -48,6 +47,7 @@ android {
       versionNameSuffix = "-internal"
     }
     create("developer") {
+      isDefault = true
       dimension = ENVIRONMENT_FLAVOR_DIMENSION
       applicationIdSuffix = ".developer"
       versionNameSuffix = "-developer"
