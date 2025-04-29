@@ -1,8 +1,8 @@
 package com.onewelcome.showcaseapp.fakes
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onewelcome.core.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 
 class OmiSdkEngineFake(private val oneginiClientMock: OneginiClient) : OmiSdkFacade {
 

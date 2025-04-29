@@ -1,12 +1,13 @@
-package com.onewelcome.core.facade
+package com.onewelcome.core.omisdk
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
-import com.onewelcome.core.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.omisdk.CreatePinRequestHandler
-import com.onewelcome.core.omisdk.PinAuthenticationRequestHandler
+import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -17,7 +18,7 @@ class OmiSdkEngine @Inject constructor(
 ) : OmiSdkFacade {
 
   override val oneginiClient
-    get() = OneginiClient.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
+    get() = OneginiClient.Companion.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
 
   override fun initialize(settings: OmiSdkInitializationSettings): OneginiClient {
     return OneginiClientBuilder(context, createPinRequestHandler, pinAuthenticationRequestHandler)

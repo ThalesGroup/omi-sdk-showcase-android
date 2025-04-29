@@ -1,7 +1,7 @@
 package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onewelcome.core.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel

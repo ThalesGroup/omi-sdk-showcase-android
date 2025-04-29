@@ -1,7 +1,7 @@
 package com.onewelcome.showcaseapp.di
 
 import com.onewelcome.core.di.FacadeModule
-import com.onewelcome.core.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import dagger.Binds
 import dagger.Module

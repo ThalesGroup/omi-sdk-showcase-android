@@ -1,4 +1,4 @@
-package com.onewelcome.core.omisdk
+package com.onewelcome.core.omisdk.handlers
 
 import android.util.Log
 import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
