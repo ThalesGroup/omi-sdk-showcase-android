@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,15 +34,16 @@ import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
+import com.onewelcome.internal.OsCompatibilityViewModel
+import com.onewelcome.internal.OsCompatibilityViewModel.UiEvent
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.util.TestResultFileCreator
 import com.onewelcome.internal.util.appVersionInfo
 import com.onewelcome.internal.util.osVersionInfo
-import java.io.File
 import com.onewelcome.showcaseapp.R
+import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel()) {
   val expandedCategories = remember { mutableStateMapOf<Int, Boolean>() }
@@ -185,7 +185,7 @@ private fun SaveResultsButton(testResult: Result<Unit, String>?) {
 }
 
 @Composable
-fun getResultValue(testResult: Result<Unit, String>?): String? {
+private fun getResultValue(testResult: Result<Unit, String>?): String? {
   return testResult?.let {
     if (it.isOk) {
       stringResource(R.string.test_succeed)

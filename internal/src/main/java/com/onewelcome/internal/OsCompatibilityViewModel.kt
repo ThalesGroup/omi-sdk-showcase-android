@@ -1,3 +1,5 @@
+package com.onewelcome.internal
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +18,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.bouncycastle.util.test.SimpleTest
+import org.bouncycastle.util.test.SimpleTest.runTest
+import kotlin.collections.get
+import kotlin.text.set
 
 class OsCompatibilityViewModel : ViewModel() {
   private val dummyTests = List(10) { categoryIndex ->
@@ -34,7 +40,7 @@ class OsCompatibilityViewModel : ViewModel() {
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.RunTests -> runTests()
+      is UiEvent.RunTests -> runTests()
     }
   }
 
@@ -42,27 +48,26 @@ class OsCompatibilityViewModel : ViewModel() {
     uiState = uiState.copy(isLoading = true)
     markAllTestsAsRunning()
     viewModelScope.launch {
-      runTestsParallely().awaitAll()
+      runTestsSequentially()
       evaluateResult()
     }
   }
 
   private fun markAllTestsAsRunning() {
     uiState = uiState.copy(
-      testCategories = uiState.testCategories.map { feature ->
-        feature.copy(testCases = feature.testCases.map { it.copy(status = TestStatus.Running) })
+      testCategories = uiState.testCategories.map { category ->
+        category.copy(testCases = category.testCases.map { it.copy(status = TestStatus.Running) })
       })
   }
 
-  private fun CoroutineScope.runTestsParallely(): List<Deferred<Unit>> =
-    uiState.testCategories.flatMapIndexed { categoryIndex, category ->
-      category.testCases.mapIndexed { caseIndex, testCase ->
-        async {
-          val result = withContext(Dispatchers.Default) { runTest(testCase) }
-          updateTestCase(categoryIndex, caseIndex, result)
-        }
+  private suspend fun runTestsSequentially() {
+    for ((categoryIndex, category) in uiState.testCategories.withIndex()) {
+      for ((caseIndex, testCase) in category.testCases.withIndex()) {
+        val result = withContext(Dispatchers.Default) { runTest(testCase) }
+        updateTestCase(categoryIndex, caseIndex, result)
       }
     }
+  }
 
   private fun updateTestCase(featureIndex: Int, caseIndex: Int, resultStatus: TestStatus) {
     val currentCategory = uiState.testCategories[featureIndex]
@@ -93,22 +98,20 @@ class OsCompatibilityViewModel : ViewModel() {
     Err(failed.addNewLineSeparator())
   }
 
-  private suspend fun runTest(testCase: TestCase): TestStatus {
-    return withContext(Dispatchers.Default) {
-      Thread.sleep(100)
-      if (Math.random() > 0.02) TestStatus.Passed else TestStatus.Failed
-    }
+  private fun runTest(testCase: TestCase): TestStatus {
+    Thread.sleep(100)
+    return if (Math.random() > 0.02) TestStatus.Passed else TestStatus.Failed
   }
-}
 
-private fun List<String>.addNewLineSeparator(): String = joinToString(separator = "\n")
+  private fun List<String>.addNewLineSeparator(): String = joinToString(separator = "\n")
 
-data class State(
-  val testCategories: List<TestCategory>,
-  val testResult: Result<Unit, String>? = null,
-  val isLoading: Boolean = false,
-)
+  data class State(
+    val testCategories: List<TestCategory>,
+    val testResult: Result<Unit, String>? = null,
+    val isLoading: Boolean = false,
+  )
 
-sealed interface UiEvent {
-  data object RunTests : UiEvent
+  sealed interface UiEvent {
+    data object RunTests : UiEvent
+  }
 }

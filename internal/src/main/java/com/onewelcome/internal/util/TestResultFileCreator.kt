@@ -11,25 +11,22 @@ class TestResultFileCreator {
     @SuppressLint("ConstantLocale")
     val formattedTime: String = SimpleDateFormat("HH:mm:ss dd-MM-yyyy", Locale.getDefault()).format(Date(currentTimeMillis()))
     fun getFileContent(appVersionInfo: AppVersionInfo, osVersionInfo: OSVersionInfo, testResultContent: String?): String {
-      return """
-Test run time $formattedTime
-----------------------------
-Android OS
-
-${osVersionInfo.sdkVersion}
-${osVersionInfo.apiLevel}
-${osVersionInfo.codename}
-${osVersionInfo.type}
-----------------------------
-OMI Showcase app
-
-${appVersionInfo.version}
-${appVersionInfo.omiSdkVersion}
-----------------------------
-Test results
-
-$testResultContent
-"""
+      return StringBuilder().apply {
+        append("Test run time ").append(formattedTime).append("\n")
+        append("----------------------------\n")
+        append("Android OS\n\n")
+        append(osVersionInfo.sdkVersion).append("\n")
+        append(osVersionInfo.apiLevel).append("\n")
+        append(osVersionInfo.codename).append("\n")
+        append(osVersionInfo.type).append("\n")
+        append("----------------------------\n")
+        append("OMI Showcase app\n\n")
+        append(appVersionInfo.version).append("\n")
+        append(appVersionInfo.omiSdkVersion).append("\n")
+        append("----------------------------\n")
+        append("Test results\n\n")
+        append(testResultContent).append("\n")
+      }.toString()
     }
   }
 }
