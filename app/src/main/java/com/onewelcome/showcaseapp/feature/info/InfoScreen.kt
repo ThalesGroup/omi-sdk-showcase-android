@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 
 @Composable

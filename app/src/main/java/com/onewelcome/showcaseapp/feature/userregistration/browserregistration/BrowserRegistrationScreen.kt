@@ -27,6 +27,7 @@ import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent
+import com.onewelcome.core.components.ShowcaseStatusCard
 
 @Composable
 fun BrowserRegistrationScreen(
@@ -81,7 +82,11 @@ private fun FeatureDescription() {
 
 @Composable
 fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
-
+  ShowcaseStatusCard(
+    title = stringResource(R.string.status_sdk_initialized),
+    status = uiState.isSdkInitialized,
+    tooltipContent = { Text("SDK needs to be initialized to perform registration") }
+  )
 }
 
 @Composable
