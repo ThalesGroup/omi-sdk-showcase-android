@@ -1,3 +1,5 @@
+package com.onewelcome.internal
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,7 +36,7 @@ class OsCompatibilityViewModel : ViewModel() {
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.RunTests -> runTests()
+      is UiEvent.RunTests -> runTests()
     }
   }
 
@@ -99,16 +101,18 @@ class OsCompatibilityViewModel : ViewModel() {
       if (Math.random() > 0.02) TestStatus.Passed else TestStatus.Failed
     }
   }
+
+  private fun List<String>.addNewLineSeparator(): String = joinToString(separator = "\n")
+
+  data class State(
+    val testCategories: List<TestCategory>,
+    val testResult: Result<Unit, String>? = null,
+    val isLoading: Boolean = false,
+  )
+
+  sealed interface UiEvent {
+    data object RunTests : UiEvent
+  }
 }
 
-private fun List<String>.addNewLineSeparator(): String = joinToString(separator = "\n")
 
-data class State(
-  val testCategories: List<TestCategory>,
-  val testResult: Result<Unit, String>? = null,
-  val isLoading: Boolean = false,
-)
-
-sealed interface UiEvent {
-  data object RunTests : UiEvent
-}

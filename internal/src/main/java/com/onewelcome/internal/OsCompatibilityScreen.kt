@@ -34,6 +34,8 @@ import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
+import com.onewelcome.internal.OsCompatibilityViewModel
+import com.onewelcome.internal.OsCompatibilityViewModel.UiEvent
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.util.TestResultFileCreator
@@ -183,7 +185,7 @@ private fun SaveResultsButton(testResult: Result<Unit, String>?) {
 }
 
 @Composable
-fun getResultValue(testResult: Result<Unit, String>?): String? {
+private fun getResultValue(testResult: Result<Unit, String>?): String? {
   return testResult?.let {
     if (it.isOk) {
       stringResource(R.string.test_succeed)
