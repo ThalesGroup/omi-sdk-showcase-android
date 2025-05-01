@@ -28,13 +28,13 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.showcaseapp.Constants
+import com.onewelcome.core.components.SdkFeatureScreen
+import com.onewelcome.core.components.ShowcaseCheckbox
+import com.onewelcome.core.components.ShowcaseExpandableCard
+import com.onewelcome.core.components.ShowcaseNumberTextField
+import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.SdkFeatureScreen
-import com.onewelcome.showcaseapp.ui.components.ShowcaseCheckbox
-import com.onewelcome.showcaseapp.ui.components.ShowcaseExpandableCard
-import com.onewelcome.showcaseapp.ui.components.ShowcaseNumberTextField
-import com.onewelcome.showcaseapp.ui.theme.Dimensions
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
@@ -192,7 +192,7 @@ private fun InitializationResult(uiState: State) {
             append(stringResource(R.string.label_removed_profiles))
             append(": ")
             if (removedUserProfiles.isEmpty()) {
-              append(stringResource(R.string.none))
+              append(stringResource(R.string.zero))
             } else {
               appendLine()
               removedUserProfiles.forEach { userProfile ->

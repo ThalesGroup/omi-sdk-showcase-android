@@ -22,7 +22,7 @@ omiSdk = "13.0.0"
 kotlinResult = "2.0.1"
 robolectic = "4.14.1"
 mockito-kotlin = "5.4.0"
-assertj = "3.27.2"
+assertj = "3.27.3"
 
 [libraries]
 # Compose

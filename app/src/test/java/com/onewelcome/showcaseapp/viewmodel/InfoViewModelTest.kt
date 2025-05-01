@@ -1,9 +1,9 @@
 package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onewelcome.showcaseapp.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.entity.OmiSdkInitializationSettings
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication

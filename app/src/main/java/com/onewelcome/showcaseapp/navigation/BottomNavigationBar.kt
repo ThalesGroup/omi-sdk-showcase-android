@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.navigation
 
+import OsCompatibilityScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -66,6 +67,7 @@ fun BottomNavigationBar() {
     ) {
       composable(ScreenNavigation.Home.route) { HomeScreenNavHost(homeNavController) }
       composable(ScreenNavigation.Info.route) { InfoScreen() }
+      composable(ScreenNavigation.OsCompatiblity.route) { OsCompatibilityScreen() }
     }
   }
 }

@@ -1,5 +1,8 @@
 import com.onewelcome.buildsrc.AndroidConfig.APPLICATION_ID
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
+import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
+import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
+import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -36,6 +39,21 @@ android {
     }
   }
 
+  flavorDimensions += ENVIRONMENT_FLAVOR_DIMENSION
+  productFlavors {
+    create("internal") {
+      dimension = ENVIRONMENT_FLAVOR_DIMENSION
+      applicationIdSuffix = ".internal"
+      versionNameSuffix = "-internal"
+    }
+    create("developer") {
+      isDefault = true
+      dimension = ENVIRONMENT_FLAVOR_DIMENSION
+      applicationIdSuffix = ".developer"
+      versionNameSuffix = "-developer"
+    }
+  }
+
   compileOptions {
     sourceCompatibility = SOURCE_COMPATIBILITY
     targetCompatibility = TARGET_COMPATIBILITY
@@ -57,6 +75,10 @@ android {
 }
 
 dependencies {
+  // Project modules
+  implementation(project(CORE_MODULE))
+  implementation(project(INTERNAL_MODULE))
+
   // Android
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)

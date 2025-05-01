@@ -21,10 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.navigation.ScreenNavigation
 import com.onewelcome.showcaseapp.ui.screens.sections.SectionItem
-import com.onewelcome.showcaseapp.ui.theme.Dimensions
 
 @Composable
 fun HomeScreen(homeNavController: NavController) {

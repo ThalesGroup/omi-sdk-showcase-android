@@ -6,9 +6,9 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.showcaseapp.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

@@ -11,6 +11,10 @@ object AndroidConfig {
   const val NAMESPACE = "com.onewelcome.showcaseapp"
   const val APPLICATION_ID = "com.onewelcome.showcaseapp"
   const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
+  const val CORE_MODULE = ":core"
+  const val INTERNAL_MODULE = ":internal"
+  const val ENVIRONMENT_FLAVOR_DIMENSION = "environment"
+  const val IS_INTERNAL_VARIANT = "IS_INTERNAL_VARIANT"
   val SOURCE_COMPATIBILITY = JavaVersion.VERSION_21
   val TARGET_COMPATIBILITY = JavaVersion.VERSION_21
 }
