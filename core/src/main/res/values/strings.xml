@@ -82,5 +82,6 @@
   <string name="browser_registration_description">Browser registration description, add some nice info about the feature</string>
   <string name="identity_providers">Identity providers</string>
   <string name="registration_scopes">Registration scopes</string>
+  <string name="cancel_registration">Cancel registration</string>
 
 </resources>

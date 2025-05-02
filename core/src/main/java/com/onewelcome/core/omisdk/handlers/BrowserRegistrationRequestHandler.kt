@@ -8,7 +8,9 @@ import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistratio
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class BrowserRegistrationRequestHandler @Inject constructor(
   @ApplicationContext private val context: Context,
 ) : OneginiBrowserRegistrationRequestHandler {
@@ -19,12 +21,16 @@ class BrowserRegistrationRequestHandler @Inject constructor(
   ) {
     Log.d("BrowserRegistrationRequestHandler", url.toString())
     browserRegistrationCallback = registrationCallback
-    val intent = Intent(Intent.ACTION_VIEW, url);
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+    Intent(Intent.ACTION_VIEW, url)
+      .apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+      }
+      .let { context.startActivity(it) }
+  }
 
-    context.startActivity(intent)
-    registrationCallback.handleRegistrationCallback(url)
+  fun cancelRegistration() {
+    browserRegistrationCallback?.denyRegistration()
   }
 
   fun handleRegistrationCallback(uri: Uri) {

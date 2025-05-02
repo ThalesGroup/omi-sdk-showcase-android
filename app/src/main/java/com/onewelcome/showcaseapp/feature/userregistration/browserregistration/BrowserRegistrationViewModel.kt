@@ -10,8 +10,6 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onegini.mobile.sdk.android.client.UserClient
-import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
@@ -45,6 +43,14 @@ class BrowserRegistrationViewModel @Inject constructor(
       is UiEvent.StartBrowserRegistration -> register()
       is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
+      is UiEvent.CancelRegistration -> cancelRegistration()
+    }
+  }
+
+  private fun cancelRegistration() {
+    viewModelScope.launch {
+      browserRegistrationUseCase.cancelRegistration()
+      uiState = uiState.copy(isLoading = false)
     }
   }
 
@@ -53,9 +59,8 @@ class BrowserRegistrationViewModel @Inject constructor(
       uiState = uiState.copy(isLoading = true)
       browserRegistrationUseCase
         .register(identityProvider = uiState.selectedIdentityProvider, scopes = uiState.selectedScopes)
-        .onSuccess { uiState = uiState.copy(result = Ok(it)) }
-        .onFailure { uiState = uiState.copy(result = Err(it)) }
-      uiState = uiState.copy(isLoading = false)
+        .onSuccess { uiState = uiState.copy(result = Ok(it), isLoading = false) }
+        .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
     }
   }
 
@@ -70,6 +75,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   sealed interface UiEvent {
     data object StartBrowserRegistration : UiEvent
+    data object CancelRegistration : UiEvent
     data class UpdateSelectedIdentityProvider(val identityProvider: BrowserIdentityProvider) : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
   }

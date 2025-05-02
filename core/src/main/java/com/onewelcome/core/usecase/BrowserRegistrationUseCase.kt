@@ -14,12 +14,14 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
 class BrowserRegistrationUseCase @Inject constructor(
-  private val omiSdkFacade: OmiSdkFacade
+  private val omiSdkFacade: OmiSdkFacade,
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 ) {
   suspend fun getBrowserIdentityProviders(): Result<List<BrowserIdentityProvider>, Throwable> {
     return suspendCancellableCoroutine { continuation ->
@@ -59,6 +61,10 @@ class BrowserRegistrationUseCase @Inject constructor(
         )
       }.onFailure { continuation.resume(Err(it)) }
     }
+  }
+
+  fun cancelRegistration() {
+    browserRegistrationRequestHandler.cancelRegistration()
   }
 
   companion object {

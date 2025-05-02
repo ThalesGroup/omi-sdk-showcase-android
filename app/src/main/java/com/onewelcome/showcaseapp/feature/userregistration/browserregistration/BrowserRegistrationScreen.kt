@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -125,13 +124,16 @@ private fun RegistrationButton(uiState: State, onEvent: (UiEvent) -> Unit) {
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.StartBrowserRegistration) }
+    onClick = {
+      if (uiState.isLoading) {
+        onEvent(UiEvent.CancelRegistration)
+      } else {
+        onEvent(UiEvent.StartBrowserRegistration)
+      }
+    }
   ) {
     if (uiState.isLoading) {
-      CircularProgressIndicator(
-        color = MaterialTheme.colorScheme.secondary,
-        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-      )
+      Text(stringResource(R.string.cancel_registration))
     } else {
       Text(stringResource(R.string.register))
     }
