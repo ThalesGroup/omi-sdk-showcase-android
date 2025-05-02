@@ -14,6 +14,7 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
     pinLength: Int
   ) {
     //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
+    Log.d("PinRequestHandler startPinCreation", "")
     callback.acceptAuthenticationRequest(charArrayOf('6', '6', '6', '7', '7'))
   }
 

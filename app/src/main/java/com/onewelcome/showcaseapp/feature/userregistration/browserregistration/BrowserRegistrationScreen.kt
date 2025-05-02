@@ -4,12 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -28,13 +27,14 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
@@ -100,7 +100,13 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
       status = uiState.isSdkInitialized,
       tooltipContent = { Text("SDK needs to be initialized to perform registration") }
     )
-    IdentityProviders()
+    if (uiState.identityProviders.isNotEmpty()) IdentityProviders(uiState.identityProviders, onEvent)
+    Text(
+      text = stringResource(R.string.registration_scopes),
+      style = MaterialTheme.typography.titleMedium,
+      modifier = Modifier.padding(top = Dimensions.mPadding, bottom = Dimensions.mPadding)
+    )
+    ShowcaseCheckboxList(onEvent)
   }
 }
 
@@ -108,12 +114,8 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
 private fun RegistrationResult(uiState: State) {
   Column {
     uiState.result
-      ?.onSuccess {
-        Text("Registration is a magnificent success")
-      }
-      ?.onFailure {
-        Text("${it.errorType.code}: ${it.message}")
-      }
+      ?.onSuccess { Text("Registration is a magnificent success") }
+      ?.onFailure { Text("$it") }
   }
 }
 
@@ -137,27 +139,77 @@ private fun RegistrationButton(uiState: State, onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun IdentityProviders() {
-  val options = listOf("Option A", "Option B", "Option C")
-  var selectedOption by remember { mutableStateOf(options[0]) }
+private fun IdentityProviders(identityProviders: List<BrowserIdentityProvider>, onEvent: (UiEvent) -> Unit) {
+  var selectedIdentityProvider by remember { mutableStateOf(identityProviders[0]) }
 
   Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
-    Text("Identity providers", style = MaterialTheme.typography.titleMedium)
-    options.forEach { text ->
+    Text(
+      text = stringResource(R.string.identity_providers),
+      modifier = Modifier.padding(bottom = Dimensions.mPadding),
+      style = MaterialTheme.typography.titleMedium,
+    )
+    identityProviders.forEach { identityProvider ->
       Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
           .fillMaxWidth()
-          .clickable { selectedOption = text }
-          .padding(8.dp)
+          .clickable { selectedIdentityProvider = identityProvider }
       ) {
         RadioButton(
-          selected = (text == selectedOption),
-          onClick = { selectedOption = text }
+          selected = (identityProvider == selectedIdentityProvider),
+          onClick = {
+            selectedIdentityProvider = identityProvider
+            onEvent.invoke(UiEvent.UpdateSelectedIdentityProvider(selectedIdentityProvider))
+          }
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text)
+        Text("Name: ${identityProvider.name}\nID: ${identityProvider.id}")
       }
     }
   }
+}
+
+@Composable
+fun ShowcaseCheckboxList(onEvent: (UiEvent) -> Unit) {
+  val scopes = Constants.DEFAULT_SCOPES
+  var selectedScopes by remember { mutableStateOf(Constants.DEFAULT_SCOPES) }
+  Column {
+    scopes.forEach { scope ->
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(scope, modifier = Modifier.weight(1f))
+        Checkbox(
+          checked = selectedScopes.contains(scope),
+          onCheckedChange = { isChecked ->
+            selectedScopes = if (isChecked) {
+              selectedScopes + scope
+            } else {
+              selectedScopes - scope
+            }
+            onEvent.invoke(UiEvent.UpdateSelectedScopes(selectedScopes))
+          }
+        )
+      }
+    }
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+  BrowserRegistrationScreenContent(
+    uiState = State(),
+    onNavigateBack = {},
+    onEvent = {}
+  )
+  val browserIdentityProviders = listOf(
+    BrowserIdentityProvider("Browser identity provider name", "browser_identity_provider_id"),
+    BrowserIdentityProvider("Another browser identity provider name with two lines", "another_browser_identity_provider_id"),
+  )
+  BrowserRegistrationScreenContent(
+    uiState = State(identityProviders = browserIdentityProviders),
+    onNavigateBack = {},
+    onEvent = {}
+  )
 }
