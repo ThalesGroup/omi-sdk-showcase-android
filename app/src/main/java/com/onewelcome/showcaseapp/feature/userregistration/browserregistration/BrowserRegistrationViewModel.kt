@@ -68,20 +68,12 @@ class BrowserRegistrationViewModel @Inject constructor(
       browserRegistrationUseCase
         .register(identityProvider = mapIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess { uiState = uiState.copy(result = Ok(it), isLoading = false) }
-        .onFailure { uiState = uiState.copy(result = mapError(it), isLoading = false) }
+        .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
     }
   }
 
   private fun mapIdentityProvider(): BrowserIdentityProvider? =
     if (uiState.selectedIdentityProvider == BrowserIdentityProvider.DEFAULT_IDENTITY_PROVIDER) null else uiState.selectedIdentityProvider
-
-  private fun mapError(throwable: Throwable): Result<Nothing, Throwable> {
-    return if (throwable is OneginiError) {
-      Err(throwable)
-    } else {
-      Err(throwable)
-    }
-  }
 
   data class State(
     val isLoading: Boolean = false,
