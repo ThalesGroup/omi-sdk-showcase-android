@@ -33,6 +33,7 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
@@ -103,7 +104,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     Text(
       text = stringResource(R.string.registration_scopes),
       style = MaterialTheme.typography.titleMedium,
-      modifier = Modifier.padding(top = Dimensions.mPadding, bottom = Dimensions.mPadding)
+      modifier = Modifier.padding(top = Dimensions.sPadding,)
     )
     ShowcaseCheckboxList(onEvent)
   }
@@ -143,19 +144,24 @@ private fun RegistrationButton(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Composable
 private fun IdentityProviders(identityProviders: List<BrowserIdentityProvider>, onEvent: (UiEvent) -> Unit) {
   var selectedIdentityProvider by remember { mutableStateOf(identityProviders[0]) }
-
   Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
-    Text(
-      text = stringResource(R.string.identity_providers),
-      modifier = Modifier.padding(bottom = Dimensions.mPadding),
-      style = MaterialTheme.typography.titleMedium,
-    )
+    Row {
+      Text(
+        text = stringResource(R.string.identity_providers),
+        modifier = Modifier
+          .padding(bottom = Dimensions.mPadding)
+          .weight(1f),
+        style = MaterialTheme.typography.titleMedium,
+      )
+      ShowcaseTooltip { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
+    }
     identityProviders.forEach { identityProvider ->
       Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
           .fillMaxWidth()
           .clickable { selectedIdentityProvider = identityProvider }
+          .padding(bottom = Dimensions.sPadding)
       ) {
         RadioButton(
           selected = (identityProvider == selectedIdentityProvider),

@@ -12,6 +12,10 @@ class BrowserIdentityProvider(override val name: String, override val id: String
     dest.writeString(id);
     dest.writeString(name);
   }
+
+  companion object {
+    val DEFAULT_IDENTITY_PROVIDER = BrowserIdentityProvider("Default identity provider", "Default-identity-provider-id")
+  }
 }
 
 @SuppressLint("ParcelCreator")

@@ -83,5 +83,6 @@
   <string name="identity_providers">Identity providers</string>
   <string name="registration_scopes">Registration scopes</string>
   <string name="cancel_registration">Cancel registration</string>
+  <string name="default_identity_provider_tooltip_text">Default identity provider is set in configuration on the server side.</string>
 
 </resources>

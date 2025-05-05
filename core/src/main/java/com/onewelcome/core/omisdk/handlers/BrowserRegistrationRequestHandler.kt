@@ -3,7 +3,6 @@ package com.onewelcome.core.omisdk.handlers
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,7 +18,6 @@ class BrowserRegistrationRequestHandler @Inject constructor(
     url: Uri,
     registrationCallback: OneginiBrowserRegistrationCallback
   ) {
-    Log.d("BrowserRegistrationRequestHandler", url.toString())
     browserRegistrationCallback = registrationCallback
     Intent(Intent.ACTION_VIEW, url)
       .apply {

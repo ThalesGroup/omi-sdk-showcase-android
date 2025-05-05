@@ -10,6 +10,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
@@ -33,7 +34,10 @@ class BrowserRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
       browserRegistrationUseCase.getBrowserIdentityProviders()
-        .onSuccess { uiState = uiState.copy(identityProviders = it) }
+        .onSuccess {
+          val updatedIdentityProviders = addDefaultIdentityProvider(it)
+          uiState = uiState.copy(identityProviders = updatedIdentityProviders)
+        }
         .onFailure { uiState = uiState.copy(identityProviders = emptyList()) }
     }
   }
@@ -47,6 +51,10 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
   }
 
+  private fun addDefaultIdentityProvider(identityProviders: List<BrowserIdentityProvider>): List<BrowserIdentityProvider> {
+    return listOf(BrowserIdentityProvider.DEFAULT_IDENTITY_PROVIDER) + identityProviders
+  }
+
   private fun cancelRegistration() {
     viewModelScope.launch {
       browserRegistrationUseCase.cancelRegistration()
@@ -58,14 +66,26 @@ class BrowserRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       uiState = uiState.copy(isLoading = true)
       browserRegistrationUseCase
-        .register(identityProvider = uiState.selectedIdentityProvider, scopes = uiState.selectedScopes)
+        .register(identityProvider = mapIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess { uiState = uiState.copy(result = Ok(it), isLoading = false) }
-        .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
+        .onFailure { uiState = uiState.copy(result = mapError(it), isLoading = false) }
+    }
+  }
+
+  private fun mapIdentityProvider(): BrowserIdentityProvider? =
+    if (uiState.selectedIdentityProvider == BrowserIdentityProvider.DEFAULT_IDENTITY_PROVIDER) null else uiState.selectedIdentityProvider
+
+  private fun mapError(throwable: Throwable): Result<Nothing, Throwable> {
+    return if (throwable is OneginiError) {
+      Err(throwable)
+    } else {
+      Err(throwable)
     }
   }
 
   data class State(
     val isLoading: Boolean = false,
+    //TODO: Przegadaj Throwable z Alkiem. Gubimy numer errora.
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
     val identityProviders: List<BrowserIdentityProvider> = emptyList(),
     val isSdkInitialized: Boolean = false,
