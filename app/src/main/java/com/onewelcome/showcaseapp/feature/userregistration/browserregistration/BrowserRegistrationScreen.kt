@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -100,11 +101,15 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
       status = uiState.isSdkInitialized,
       tooltipContent = { Text("SDK needs to be initialized to perform registration") }
     )
-    if (uiState.identityProviders.isNotEmpty()) IdentityProviders(uiState.identityProviders, onEvent)
+    if (uiState.identityProviders.isNotEmpty()) IdentityProviders(
+      uiState.shouldUseDefaultIdentityProvider,
+      uiState.identityProviders,
+      onEvent
+    )
     Text(
       text = stringResource(R.string.registration_scopes),
       style = MaterialTheme.typography.titleMedium,
-      modifier = Modifier.padding(top = Dimensions.sPadding,)
+      modifier = Modifier.padding(top = Dimensions.sPadding)
     )
     ShowcaseCheckboxList(onEvent)
   }
@@ -142,17 +147,24 @@ private fun RegistrationButton(uiState: State, onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun IdentityProviders(identityProviders: List<BrowserIdentityProvider>, onEvent: (UiEvent) -> Unit) {
+private fun IdentityProviders(
+  shouldUseDefaultIdentityProvider: Boolean,
+  identityProviders: List<BrowserIdentityProvider>,
+  onEvent: (UiEvent) -> Unit
+) {
   var selectedIdentityProvider by remember { mutableStateOf(identityProviders[0]) }
   Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
-    Row {
-      Text(
-        text = stringResource(R.string.identity_providers),
-        modifier = Modifier
-          .padding(bottom = Dimensions.mPadding)
-          .weight(1f),
-        style = MaterialTheme.typography.titleMedium,
-      )
+    Text(
+      text = stringResource(R.string.identity_providers),
+      style = MaterialTheme.typography.titleMedium,
+    )
+    Row(
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Text(stringResource(R.string.use_default_identity_provider), modifier = Modifier.weight(1f))
+      Switch(
+        checked = shouldUseDefaultIdentityProvider,
+        onCheckedChange = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) })
       ShowcaseTooltip { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
     }
     identityProviders.forEach { identityProvider ->

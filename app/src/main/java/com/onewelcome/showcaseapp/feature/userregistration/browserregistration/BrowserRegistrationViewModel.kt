@@ -33,10 +33,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
       browserRegistrationUseCase.getBrowserIdentityProviders()
-        .onSuccess {
-          val updatedIdentityProviders = addDefaultIdentityProvider(it)
-          uiState = uiState.copy(identityProviders = updatedIdentityProviders)
-        }
+        .onSuccess { uiState = uiState.copy(identityProviders = it) }
         .onFailure { uiState = uiState.copy(identityProviders = emptyList()) }
     }
   }
@@ -47,11 +44,8 @@ class BrowserRegistrationViewModel @Inject constructor(
       is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
       is UiEvent.CancelRegistration -> cancelRegistration()
+      is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
     }
-  }
-
-  private fun addDefaultIdentityProvider(identityProviders: List<BrowserIdentityProvider>): List<BrowserIdentityProvider> {
-    return listOf(BrowserIdentityProvider.DEFAULT_IDENTITY_PROVIDER) + identityProviders
   }
 
   private fun cancelRegistration() {
@@ -65,14 +59,14 @@ class BrowserRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       uiState = uiState.copy(isLoading = true)
       browserRegistrationUseCase
-        .register(identityProvider = mapIdentityProvider(), scopes = uiState.selectedScopes)
+        .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess { uiState = uiState.copy(result = Ok(it), isLoading = false) }
         .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
     }
   }
 
-  private fun mapIdentityProvider(): BrowserIdentityProvider? =
-    if (uiState.selectedIdentityProvider == BrowserIdentityProvider.DEFAULT_IDENTITY_PROVIDER) null else uiState.selectedIdentityProvider
+  private fun getIdentityProvider(): BrowserIdentityProvider? =
+    if (uiState.shouldUseDefaultIdentityProvider) null else uiState.selectedIdentityProvider
 
   data class State(
     val isLoading: Boolean = false,
@@ -82,6 +76,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     val isSdkInitialized: Boolean = false,
     val selectedIdentityProvider: BrowserIdentityProvider? = null,
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
+    val shouldUseDefaultIdentityProvider: Boolean = false,
   )
 
   sealed interface UiEvent {
@@ -89,5 +84,6 @@ class BrowserRegistrationViewModel @Inject constructor(
     data object CancelRegistration : UiEvent
     data class UpdateSelectedIdentityProvider(val identityProvider: BrowserIdentityProvider) : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
+    data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
   }
 }

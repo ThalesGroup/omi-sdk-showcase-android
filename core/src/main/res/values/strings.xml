@@ -85,5 +85,6 @@
   <string name="cancel_registration">Cancel registration</string>
   <string name="default_identity_provider_tooltip_text">Default identity provider is set in configuration on the server side.</string>
   <string name="user_profiles">User profiles</string>
+  <string name="use_default_identity_provider">Use default identity provider</string>
 
 </resources>
