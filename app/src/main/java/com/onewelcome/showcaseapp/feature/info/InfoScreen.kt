@@ -72,7 +72,7 @@ private fun StatusList(uiState: State) {
 
 @Composable
 private fun getUserProfiles(userProfiles: Result<List<String>, Throwable>?): String {
-  return if (userProfiles?.isOk == true) {
+  return if (userProfiles?.isOk == true && userProfiles.value.isNotEmpty()) {
     userProfiles.value.separateItemsWithComa()
   } else {
     stringResource(R.string.no_user_profiles)

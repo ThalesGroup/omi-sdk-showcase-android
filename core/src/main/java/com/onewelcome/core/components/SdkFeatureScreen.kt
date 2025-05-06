@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,17 +48,24 @@ fun SdkFeatureScreen(
         }
         Box { settings() }
       }
-      Column {
-        result?.let {
-          Card(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = Dimensions.sPadding, bottom = Dimensions.mPadding)) {
-            Box(modifier = Modifier.padding(Dimensions.mPadding)) {
-              result()
-            }
-          }
-        }
+      Column(verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)) {
+        HorizontalDivider()
+        ResultCard(result)
         action()
+      }
+    }
+  }
+}
+
+@Composable
+private fun ResultCard(result: @Composable (() -> Unit)?) {
+  result?.let {
+    Card(
+      modifier = Modifier
+        .fillMaxWidth()
+    ) {
+      Box(modifier = Modifier.padding(Dimensions.mPadding)) {
+        result()
       }
     }
   }
