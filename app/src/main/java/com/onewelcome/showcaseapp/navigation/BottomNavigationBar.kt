@@ -1,6 +1,6 @@
 package com.onewelcome.showcaseapp.navigation
 
-import OsCompatibilityScreen
+import com.onewelcome.internal.OsCompatibilityScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon

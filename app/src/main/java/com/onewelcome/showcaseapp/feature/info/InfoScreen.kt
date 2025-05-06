@@ -15,9 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.michaelbull.result.Result
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 
@@ -26,6 +26,7 @@ fun InfoScreen(
   viewModel: InfoViewModel = hiltViewModel()
 ) {
   InfoScreenContent(viewModel.uiState)
+  viewModel.updateStatus()
 }
 
 @Composable
@@ -69,11 +70,12 @@ private fun StatusList(uiState: State) {
   }
 }
 
-private fun getUserProfiles(userProfiles: Result<List<UserProfile>, Throwable>?): String {
+@Composable
+private fun getUserProfiles(userProfiles: Result<List<String>, Throwable>?): String {
   return if (userProfiles?.isOk == true) {
-    userProfiles.toString()
+    userProfiles.value.separateItemsWithComa()
   } else {
-    "No user profiles"
+    stringResource(R.string.no_user_profiles)
   }
 }
 

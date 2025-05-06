@@ -14,6 +14,7 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
+import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class BrowserRegistrationViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val browserRegistrationUseCase: BrowserRegistrationUseCase,
+  private val getUserProfilesUseCase: GetUserProfilesUseCase
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -32,10 +34,21 @@ class BrowserRegistrationViewModel @Inject constructor(
   init {
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
-      browserRegistrationUseCase.getBrowserIdentityProviders()
-        .onSuccess { uiState = uiState.copy(identityProviders = it) }
-        .onFailure { uiState = uiState.copy(identityProviders = emptyList()) }
+      updateIdentityProviders()
+      updateUserProfiles()
     }
+  }
+
+  private suspend fun updateIdentityProviders() {
+    browserRegistrationUseCase.getBrowserIdentityProviders()
+      .onSuccess { uiState = uiState.copy(identityProviders = it) }
+      .onFailure { uiState = uiState.copy(identityProviders = emptyList()) }
+  }
+
+  private suspend fun updateUserProfiles() {
+    getUserProfilesUseCase.execute()
+      .onSuccess { uiState = uiState.copy(userProfiles = Ok(it.map { it.profileId }.toList())) }
+      .onFailure { uiState = uiState.copy(userProfiles = Err(it)) }
   }
 
   fun onEvent(event: UiEvent) {
@@ -60,7 +73,10 @@ class BrowserRegistrationViewModel @Inject constructor(
       uiState = uiState.copy(isLoading = true)
       browserRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
-        .onSuccess { uiState = uiState.copy(result = Ok(it), isLoading = false) }
+        .onSuccess {
+          updateUserProfiles()
+          uiState = uiState.copy(result = Ok(it), isLoading = false)
+        }
         .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
     }
   }
@@ -77,6 +93,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     val selectedIdentityProvider: BrowserIdentityProvider? = null,
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
     val shouldUseDefaultIdentityProvider: Boolean = false,
+    val userProfiles: Result<List<String>, Throwable>? = null,
   )
 
   sealed interface UiEvent {

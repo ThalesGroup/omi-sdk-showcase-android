@@ -10,7 +10,6 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,13 +29,13 @@ class InfoViewModel @Inject constructor(
     uiState = uiState.copy(isSdkInitialized = isSdkInitializedUseCase.execute())
     viewModelScope.launch {
       getUserProfilesUseCase.execute()
-        .onSuccess { uiState = uiState.copy(userProfiles = Ok(it.toList())) }
+        .onSuccess { uiState = uiState.copy(userProfiles = Ok(it.map { it.profileId }.toList())) }
         .onFailure { uiState = uiState.copy(userProfiles = Err(it)) }
     }
   }
 
   data class State(
     val isSdkInitialized: Boolean = false,
-    val userProfiles: Result<List<UserProfile>, Throwable>? = null
+    val userProfiles: Result<List<String>, Throwable>? = null
   )
 }

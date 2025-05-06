@@ -1,3 +1,5 @@
+package com.onewelcome.internal
+
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +36,6 @@ import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
-import com.onewelcome.internal.OsCompatibilityViewModel
 import com.onewelcome.internal.OsCompatibilityViewModel.UiEvent
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus

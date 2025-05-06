@@ -37,6 +37,7 @@ import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.State
@@ -95,31 +96,46 @@ private fun FeatureDescription() {
 
 @Composable
 private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
-  Column {
+  Column(
+    verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
+  ) {
     ShowcaseStatusCard(
       title = stringResource(R.string.status_sdk_initialized),
       status = uiState.isSdkInitialized,
-      tooltipContent = { Text("SDK needs to be initialized to perform registration") }
+      tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_registration)) }
     )
-    if (uiState.identityProviders.isNotEmpty()) IdentityProviders(
-      uiState.shouldUseDefaultIdentityProvider,
-      uiState.identityProviders,
-      onEvent
-    )
+    uiState.userProfiles
+      ?.onSuccess { UserProfilesSection(it.separateItemsWithComa()) }
+      ?.onFailure { UserProfilesSection(stringResource(R.string.no_user_profiles)) }
+
+    if (uiState.identityProviders.isNotEmpty()) {
+      IdentityProviders(
+        shouldUseDefaultIdentityProvider = uiState.shouldUseDefaultIdentityProvider,
+        identityProviders = uiState.identityProviders,
+        onEvent = onEvent
+      )
+    }
     Text(
       text = stringResource(R.string.registration_scopes),
       style = MaterialTheme.typography.titleMedium,
-      modifier = Modifier.padding(top = Dimensions.sPadding)
     )
     ShowcaseCheckboxList(onEvent)
   }
 }
 
 @Composable
+private fun UserProfilesSection(userProfiles: String) {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.user_profiles),
+    description = userProfiles
+  )
+}
+
+@Composable
 private fun RegistrationResult(uiState: State) {
   Column {
     uiState.result
-      ?.onSuccess { Text("Registration is a magnificent success") }
+      ?.onSuccess { Text(stringResource(R.string.registration_successful)) }
       ?.onFailure { Text("$it") }
   }
 }
@@ -153,20 +169,12 @@ private fun IdentityProviders(
   onEvent: (UiEvent) -> Unit
 ) {
   var selectedIdentityProvider by remember { mutableStateOf(identityProviders[0]) }
-  Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
+  Column {
     Text(
       text = stringResource(R.string.identity_providers),
       style = MaterialTheme.typography.titleMedium,
+      modifier = Modifier.padding(bottom = Dimensions.mPadding)
     )
-    Row(
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      Text(stringResource(R.string.use_default_identity_provider), modifier = Modifier.weight(1f))
-      Switch(
-        checked = shouldUseDefaultIdentityProvider,
-        onCheckedChange = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) })
-      ShowcaseTooltip { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
-    }
     identityProviders.forEach { identityProvider ->
       Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -185,6 +193,23 @@ private fun IdentityProviders(
         Text("Name: ${identityProvider.name}\nID: ${identityProvider.id}")
       }
     }
+    DefaultIdentityProviderSection(shouldUseDefaultIdentityProvider, onEvent)
+  }
+}
+
+@Composable
+private fun DefaultIdentityProviderSection(
+  shouldUseDefaultIdentityProvider: Boolean,
+  onEvent: (UiEvent) -> Unit
+) {
+  Row(
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Text(stringResource(R.string.use_default_identity_provider), modifier = Modifier.weight(1f))
+    Switch(
+      checked = shouldUseDefaultIdentityProvider,
+      onCheckedChange = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) })
+    ShowcaseTooltip { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
   }
 }
 
