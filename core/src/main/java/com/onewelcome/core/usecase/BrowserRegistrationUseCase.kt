@@ -48,12 +48,10 @@ class BrowserRegistrationUseCase @Inject constructor(
               userProfile: UserProfile,
               customInfo: CustomInfo?
             ) {
-              Log.d("register onSuccess", "userProfile: $userProfile customInfo: $customInfo")
               continuation.resume(Ok(Pair(userProfile, customInfo)))
             }
 
             override fun onError(error: OneginiRegistrationError) {
-              Log.d("register onError", "error: $error")
               continuation.resume(Err(error))
             }
           }

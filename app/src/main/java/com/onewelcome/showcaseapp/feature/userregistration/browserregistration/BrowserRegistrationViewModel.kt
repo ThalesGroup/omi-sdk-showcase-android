@@ -74,8 +74,8 @@ class BrowserRegistrationViewModel @Inject constructor(
       browserRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess {
-          updateUserProfiles()
           uiState = uiState.copy(result = Ok(it), isLoading = false)
+          updateUserProfiles()
         }
         .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
     }
