@@ -40,6 +40,7 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.R.string.identity_providers
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent
 
@@ -74,24 +75,34 @@ private fun BrowserRegistrationScreenContent(
 @Composable
 private fun FeatureDescription() {
   Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
-    Text(
-      style = MaterialTheme.typography.bodyLarge,
-      text = stringResource(R.string.browser_registration_description)
-    )
-    Text(
-      style = MaterialTheme.typography.bodyLarge,
-      text = buildAnnotatedString {
-        append(stringResource(R.string.read_more) + " ")
-        withLink(
-          LinkAnnotation.Url(
-            Constants.DOCUMENTATION_SDK_INITIALIZATION,
-            TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
-          )
-        ) {
-          append(stringResource(R.string.here))
-        }
-      })
+    FeatureDescriptionHeader()
+    FeatureDescriptionBody()
   }
+}
+
+@Composable
+private fun FeatureDescriptionBody() {
+  Text(
+    style = MaterialTheme.typography.bodyLarge,
+    text = buildAnnotatedString {
+      append(stringResource(R.string.read_more) + " ")
+      withLink(
+        LinkAnnotation.Url(
+          Constants.DOCUMENTATION_SDK_INITIALIZATION,
+          TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
+        )
+      ) {
+        append(stringResource(R.string.here))
+      }
+    })
+}
+
+@Composable
+private fun FeatureDescriptionHeader() {
+  Text(
+    style = MaterialTheme.typography.bodyLarge,
+    text = stringResource(R.string.browser_registration_description)
+  )
 }
 
 @Composable
@@ -99,28 +110,93 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
   ) {
-    ShowcaseStatusCard(
-      title = stringResource(R.string.status_sdk_initialized),
-      status = uiState.isSdkInitialized,
-      tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_registration)) }
-    )
-    uiState.userProfiles
-      ?.onSuccess { UserProfilesSection(it.separateItemsWithComa()) }
-      ?.onFailure { UserProfilesSection(stringResource(R.string.no_user_profiles)) }
-
-    if (uiState.identityProviders.isNotEmpty()) {
-      IdentityProviders(
-        shouldUseDefaultIdentityProvider = uiState.shouldUseDefaultIdentityProvider,
-        identityProviders = uiState.identityProviders,
-        onEvent = onEvent
-      )
-    }
-    Text(
-      text = stringResource(R.string.registration_scopes),
-      style = MaterialTheme.typography.titleMedium,
-    )
-    ShowcaseCheckboxList(onEvent)
+    SdkInitializationSection(uiState)
+    UserProfilesSection(uiState)
+    IdentityProvidersSection(uiState, onEvent)
+    ScopesSection(onEvent)
   }
+}
+
+@Composable
+private fun ScopesSection(onEvent: (UiEvent) -> Unit) {
+  ScopesHeader()
+  ScopesList(onEvent)
+}
+
+@Composable
+private fun ScopesHeader() {
+  Text(
+    text = stringResource(R.string.registration_scopes),
+    style = MaterialTheme.typography.titleMedium,
+  )
+}
+
+@Composable
+private fun IdentityProvidersSection(
+  uiState: State,
+  onEvent: (UiEvent) -> Unit
+) {
+  if (uiState.identityProviders.isNotEmpty()) {
+    var selectedIdentityProvider by remember { mutableStateOf(uiState.identityProviders[0]) }
+    Column {
+      IdentityProvidersHeader()
+      IdentityProvidersList(uiState, selectedIdentityProvider, onEvent)
+      DefaultIdentityProvider(uiState.shouldUseDefaultIdentityProvider, onEvent)
+    }
+  }
+}
+
+@Composable
+private fun IdentityProvidersList(
+  uiState: State,
+  selectedIdentityProvider: BrowserIdentityProvider,
+  onEvent: (UiEvent) -> Unit
+) {
+  var selectedIdentityProvider1 = selectedIdentityProvider
+  uiState.identityProviders.forEach { identityProvider ->
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier
+        .fillMaxWidth()
+        .clickable { selectedIdentityProvider1 = identityProvider }
+        .padding(bottom = Dimensions.sPadding)
+    ) {
+      RadioButton(
+        selected = (identityProvider == selectedIdentityProvider1),
+        onClick = {
+          selectedIdentityProvider1 = identityProvider
+          onEvent
+            .invoke(UiEvent.UpdateSelectedIdentityProvider(selectedIdentityProvider1))
+        }
+      )
+      Text("Name: ${identityProvider.name}\nID: ${identityProvider.id}")
+    }
+  }
+}
+
+@Composable
+private fun IdentityProvidersHeader() {
+  Text(
+    text = stringResource(identity_providers),
+    style = MaterialTheme.typography.titleMedium,
+    modifier = Modifier.padding(bottom = Dimensions.mPadding)
+  )
+}
+
+@Composable
+private fun UserProfilesSection(uiState: State) {
+  uiState.userProfiles
+    ?.onSuccess { UserProfilesSection(it.separateItemsWithComa()) }
+    ?.onFailure { UserProfilesSection(stringResource(R.string.no_user_profiles)) }
+}
+
+@Composable
+private fun SdkInitializationSection(uiState: State) {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.status_sdk_initialized),
+    status = uiState.isSdkInitialized,
+    tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_registration)) }
+  )
 }
 
 @Composable
@@ -163,42 +239,7 @@ private fun RegistrationButton(uiState: State, onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun IdentityProviders(
-  shouldUseDefaultIdentityProvider: Boolean,
-  identityProviders: List<BrowserIdentityProvider>,
-  onEvent: (UiEvent) -> Unit
-) {
-  var selectedIdentityProvider by remember { mutableStateOf(identityProviders[0]) }
-  Column {
-    Text(
-      text = stringResource(R.string.identity_providers),
-      style = MaterialTheme.typography.titleMedium,
-      modifier = Modifier.padding(bottom = Dimensions.mPadding)
-    )
-    identityProviders.forEach { identityProvider ->
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-          .fillMaxWidth()
-          .clickable { selectedIdentityProvider = identityProvider }
-          .padding(bottom = Dimensions.sPadding)
-      ) {
-        RadioButton(
-          selected = (identityProvider == selectedIdentityProvider),
-          onClick = {
-            selectedIdentityProvider = identityProvider
-            onEvent.invoke(UiEvent.UpdateSelectedIdentityProvider(selectedIdentityProvider))
-          }
-        )
-        Text("Name: ${identityProvider.name}\nID: ${identityProvider.id}")
-      }
-    }
-    DefaultIdentityProviderSection(shouldUseDefaultIdentityProvider, onEvent)
-  }
-}
-
-@Composable
-private fun DefaultIdentityProviderSection(
+private fun DefaultIdentityProvider(
   shouldUseDefaultIdentityProvider: Boolean,
   onEvent: (UiEvent) -> Unit
 ) {
@@ -214,7 +255,7 @@ private fun DefaultIdentityProviderSection(
 }
 
 @Composable
-fun ShowcaseCheckboxList(onEvent: (UiEvent) -> Unit) {
+private fun ScopesList(onEvent: (UiEvent) -> Unit) {
   val scopes = Constants.DEFAULT_SCOPES
   var selectedScopes by remember { mutableStateOf(Constants.DEFAULT_SCOPES) }
   Column {
