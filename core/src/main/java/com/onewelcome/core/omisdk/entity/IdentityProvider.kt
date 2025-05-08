@@ -9,12 +9,26 @@ class BrowserIdentityProvider(override val name: String, override val id: String
   override fun describeContents(): Int = 0
 
   override fun writeToParcel(dest: Parcel, flags: Int) {
-    dest.writeString(id);
-    dest.writeString(name);
+    dest.writeString(id)
+    dest.writeString(name)
   }
 
-  companion object {
-    val DEFAULT_IDENTITY_PROVIDER = BrowserIdentityProvider("Default identity provider", "Default-identity-provider-id")
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as BrowserIdentityProvider
+
+    if (name != other.name) return false
+    if (id != other.id) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + id.hashCode()
+    return result
   }
 }
 

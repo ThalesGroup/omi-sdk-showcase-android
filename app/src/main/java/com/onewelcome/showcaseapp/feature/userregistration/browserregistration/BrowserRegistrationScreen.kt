@@ -26,6 +26,8 @@ import androidx.navigation.NavController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.CustomInfo
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
@@ -67,7 +69,7 @@ private fun BrowserRegistrationScreenContent(
       )
     },
     settings = { SettingsSection(uiState, onEvent) },
-    result = uiState.result?.let { { RegistrationResult(uiState.userProfiles) } },
+    result = uiState.result?.let { { RegistrationResult(uiState.result) } },
     action = { RegistrationButton(uiState, onEvent) }
   )
 }
@@ -151,11 +153,9 @@ private fun IdentityProvidersHeader() {
 }
 
 @Composable
-private fun UserProfilesSection(userProfiles: Result<List<String>, Throwable>?) {
+private fun UserProfilesSection(userProfiles: List<String>) {
   val text = getUserProfilesText(userProfiles)
-  userProfiles
-    ?.onSuccess { UserProfilesCard(text) }
-    ?.onFailure { UserProfilesCard(text) }
+  UserProfilesCard(text)
 }
 
 @Composable
@@ -176,10 +176,16 @@ private fun UserProfilesCard(userProfiles: String) {
 }
 
 @Composable
-private fun RegistrationResult(userProfilesResult: Result<List<String>, Throwable>?) {
+private fun RegistrationResult(userProfilesResult: Result<Pair<UserProfile, CustomInfo?>, Throwable>?) {
   Column {
     userProfilesResult
-      ?.onSuccess { Text(stringResource(R.string.registration_successful)) }
+      ?.onSuccess {
+        Column {
+          Text(stringResource(R.string.registration_successful))
+          Text("User profile: ${it.first.profileId}")
+          Text("Custom info: ${it.second}")
+        }
+      }
       ?.onFailure { Text("$it") }
   }
 }
@@ -234,9 +240,9 @@ private fun ScopesList(onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun getUserProfilesText(userProfiles: Result<List<String>, Throwable>?): String {
-  return if (userProfiles?.isOk == true && userProfiles.value.isNotEmpty()) {
-    userProfiles.value.separateItemsWithComa()
+private fun getUserProfilesText(userProfiles: List<String>): String {
+  return if (userProfiles.isNotEmpty()) {
+    userProfiles.separateItemsWithComa()
   } else {
     stringResource(R.string.no_user_profiles)
   }

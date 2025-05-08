@@ -1,6 +1,5 @@
 package com.onewelcome.core.usecase
 
-import android.util.Log
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
@@ -26,7 +25,7 @@ class BrowserRegistrationUseCase @Inject constructor(
     return suspendCancellableCoroutine { continuation ->
       runCatching {
         omiSdkFacade.oneginiClient.getUserClient().identityProviders
-          .filter { it.toString().startsWith(BROWSER_IDENTITY_PROVIDER) }
+          .filter { it.toString().contains(BROWSER_IDENTITY_PROVIDER) }
           .map { BrowserIdentityProvider(it.name, it.id) }
       }
         .onSuccess { continuation.resume(Ok(it)) }
