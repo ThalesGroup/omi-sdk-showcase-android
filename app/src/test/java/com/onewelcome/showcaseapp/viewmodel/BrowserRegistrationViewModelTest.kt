@@ -56,10 +56,18 @@ class BrowserRegistrationViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
   }
 
   @Test
-  fun `should update UI state on init`() {
+  fun `Given sdk is not initialized, When viewmodel is initialized, Then default state should be returned`() {
+    val expectedState = viewModel.uiState
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and there are new user profiles and identity providers, When viewmodel is initialized, Then updated state should be returned`() {
     mockSdkInitialized()
     mockUserClient()
     mockBrowserIdentityProviders()
@@ -68,11 +76,48 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
 
     val expectedState = viewModel.uiState.copy(
-      identityProviders = identityProviderResult,
-      userProfiles = userProfilesResult
+      identityProviders = browserIdentityProviders,
+      userProfiles = userProfilesIds
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and there are new user profiles, When viewmodel is initialized, Then updated state should be returned`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockUserProfiles()
+
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
+
+    val expectedState = viewModel.uiState.copy(
+      userProfiles = userProfilesIds
+    )
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and there are new identity providers, When viewmodel is initialized, Then updated state should be returned`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockBrowserIdentityProviders()
+
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
+
+    val expectedState = viewModel.uiState.copy(
+      identityProviders = browserIdentityProviders,
+    )
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given should update state on UpdateSelectedIdentityProvider event`() {
+    val expectedState = viewModel.uiState.copy(selectedIdentityProvider = selectedIdentityProvider)
+
+
   }
 
   private fun mockSdkInitialized() {
@@ -82,11 +127,10 @@ class BrowserRegistrationViewModelTest {
 
   private fun mockUserClient() {
     whenever(omiSdkEngineFake.oneginiClient.getUserClient()).thenReturn(userClientMock)
-
   }
 
   private fun mockBrowserIdentityProviders() {
-    whenever(userClientMock.identityProviders).thenReturn(identityProviders)
+    whenever(userClientMock.identityProviders).thenReturn(oneginiBrowserIdentityProviders)
   }
 
   private fun mockUserProfiles() {
@@ -94,7 +138,7 @@ class BrowserRegistrationViewModelTest {
   }
 
   companion object {
-    private val BrowserIdentityProvider1 = object : OneginiIdentityProvider {
+    private val OneginiBrowserIdentityProvider1 = object : OneginiIdentityProvider {
       override val id: String
         get() = "Browser-identity-provider-id-1"
       override val name: String
@@ -110,7 +154,7 @@ class BrowserRegistrationViewModelTest {
       }
     }
 
-    private val BrowserIdentityProvider2 = object : OneginiIdentityProvider {
+    private val OneginiBrowserIdentityProvider2 = object : OneginiIdentityProvider {
       override val id: String
         get() = "Browser-identity-provider-id-2"
       override val name: String
@@ -126,27 +170,13 @@ class BrowserRegistrationViewModelTest {
       }
     }
 
-    private val ApiIdentityProvider1 = object : OneginiIdentityProvider {
-      override val id: String
-        get() = "API-identity-provider-id-1"
-      override val name: String
-        get() = "API identity provider name 1"
-
-      override fun describeContents(): Int {
-        return 0
-      }
-
-      override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(id)
-        dest.writeString(name)
-      }
-    }
     private val USER_PROFILE_1 = UserProfile("123456")
     private val USER_PROFILE_2 = UserProfile("654321")
-
-    private val identityProviders = setOf(BrowserIdentityProvider1, BrowserIdentityProvider2)
     private val userProfiles = setOf(USER_PROFILE_1, USER_PROFILE_2)
-    private val identityProviderResult = identityProviders.map { BrowserIdentityProvider(it.name, it.id) }.toList()
-    private val userProfilesResult = userProfiles.map { it.profileId }.toList()
+    private val userProfilesIds = userProfiles.map { it.profileId }.toList()
+
+    private val oneginiBrowserIdentityProviders = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
+    private val browserIdentityProviders = oneginiBrowserIdentityProviders.map { BrowserIdentityProvider(it.name, it.id) }.toList()
+    private val selectedIdentityProvider = browserIdentityProviders.first()
   }
 }
