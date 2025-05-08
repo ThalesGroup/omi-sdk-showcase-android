@@ -55,7 +55,9 @@ class BrowserRegistrationUseCase @Inject constructor(
             }
           }
         )
-      }.onFailure { continuation.resume(Err(it)) }
+      }.onFailure {
+        continuation.resume(Err(it))
+      }
     }
   }
 
