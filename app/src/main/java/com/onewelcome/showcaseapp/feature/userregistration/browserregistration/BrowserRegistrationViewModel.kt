@@ -35,7 +35,18 @@ class BrowserRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
       updateIdentityProviders()
+      updateSelectedIdentityProvider()
       updateUserProfiles()
+    }
+  }
+
+  fun onEvent(event: UiEvent) {
+    when (event) {
+      is UiEvent.StartBrowserRegistration -> register()
+      is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
+      is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
+      is UiEvent.CancelRegistration -> cancelRegistration()
+      is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
     }
   }
 
@@ -51,13 +62,10 @@ class BrowserRegistrationViewModel @Inject constructor(
       .onFailure { uiState = uiState.copy(userProfiles = emptyList()) }
   }
 
-  fun onEvent(event: UiEvent) {
-    when (event) {
-      is UiEvent.StartBrowserRegistration -> register()
-      is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
-      is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
-      is UiEvent.CancelRegistration -> cancelRegistration()
-      is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
+  private fun updateSelectedIdentityProvider() {
+    val identityProviders = uiState.identityProviders
+    if (identityProviders.isNotEmpty()) {
+      uiState = uiState.copy(selectedIdentityProvider = identityProviders[0])
     }
   }
 

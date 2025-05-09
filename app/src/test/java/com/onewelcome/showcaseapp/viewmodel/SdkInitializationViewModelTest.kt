@@ -160,7 +160,6 @@ class SdkInitializationViewModelTest {
   private fun whenSdkInitializedSuccessfully(removedUserProfiles: Set<UserProfile> = emptySet()) {
     whenever(oneginiClientMock.start(any()))
       .thenAnswer { invocation ->
-        invocation.getArgument<OneginiInitializationHandler>(0).onSuccess(removedUserProfiles)
       }
   }
 

@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import org.mockito.Answers
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import javax.inject.Singleton
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class MockModule {
 
-  private val oneginiClientMock = mock<OneginiClient>()
+  private val oneginiClientMock = mock<OneginiClient>(Answers.RETURNS_DEEP_STUBS)
 
   private val userClientMock = mock<UserClient>()
 
