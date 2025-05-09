@@ -12,6 +12,7 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -22,12 +23,12 @@ import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.B
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedIdentityProvider
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedScopes
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UseDefaultIdentityProvider
+import com.onewelcome.showcaseapp.utils.ResultAssert
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -67,9 +68,13 @@ class BrowserRegistrationViewModelTest {
   @Inject
   lateinit var userClientMock: UserClient
 
+  @Inject
+  lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
+
   private val mockOneginiRegistrationError: OneginiRegistrationError = mock()
 
   private lateinit var viewModel: BrowserRegistrationViewModel
+
 
   @Before
   fun setup() {
@@ -154,15 +159,13 @@ class BrowserRegistrationViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
-  @Ignore("Fix me")
   @Test
   fun `Given sdk is not initialized, When register event is sent, Then error should be returned`() {
-    val expectedError = IllegalStateException("Onegini SDK instance not yet initialized")
-    val expectedState = viewModel.uiState.copy(result = Err(expectedError))
-
     viewModel.onEvent(StartBrowserRegistration)
 
-//    assertThat(viewModel.uiState.result?.value).isEqualTo(expectedState.result?.value)
+    ResultAssert
+      .assertThat(viewModel.uiState.result!!)
+      .hasErrorInstance(IllegalStateException::class.java, "Onegini SDK instance not yet initialized")
   }
 
   @Test
@@ -258,6 +261,13 @@ class BrowserRegistrationViewModelTest {
     assertThat(viewModel.uiState.isLoading).isEqualTo(false)
   }
 
+  @Test
+  fun `When cancel registration event is sent, Then sdk handler should call cancel registration`() {
+    viewModel.onEvent(BrowserRegistrationViewModel.UiEvent.CancelRegistration)
+
+    verify(browserRegistrationRequestHandler).cancelRegistration()
+  }
+
   private fun whenRegisteredUserSuccessfully() {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
       .thenAnswer { invocation ->
@@ -334,3 +344,11 @@ class BrowserRegistrationViewModelTest {
     private val selectedScopes = Constants.DEFAULT_SCOPES
   }
 }
+
+//inline fun <V, E> Result<V, E>.assertErr(assertion: (err: E) -> Unit) {
+//  try {
+//    assertion.invoke(this.expectError { "Expected the result to be an Err, found an Ok instead" })
+//  } catch (e: UnwrapException) {
+//    fail(e.message)
+//  }
+//}
