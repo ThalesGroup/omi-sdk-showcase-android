@@ -61,8 +61,8 @@ class BrowserRegistrationUseCase @Inject constructor(
     }
   }
 
-  fun cancelRegistration() {
-    browserRegistrationRequestHandler.cancelRegistration()
+  fun cancelRegistration(): Boolean {
+    return browserRegistrationRequestHandler.cancelRegistration()
   }
 
   companion object {

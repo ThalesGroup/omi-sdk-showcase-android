@@ -27,11 +27,16 @@ class BrowserRegistrationRequestHandler @Inject constructor(
       .let { context.startActivity(it) }
   }
 
-  fun cancelRegistration() {
-    browserRegistrationCallback?.denyRegistration()
+  fun cancelRegistration(): Boolean {
+    return browserRegistrationCallback?.also {
+      it.denyRegistration()
+      browserRegistrationCallback = null
+    } != null
   }
+
 
   fun handleRegistrationCallback(uri: Uri) {
     browserRegistrationCallback?.handleRegistrationCallback(uri)
+    browserRegistrationCallback = null
   }
 }

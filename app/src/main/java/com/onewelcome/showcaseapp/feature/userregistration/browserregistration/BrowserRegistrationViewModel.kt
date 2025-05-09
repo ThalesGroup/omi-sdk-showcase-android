@@ -71,21 +71,22 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   private fun cancelRegistration() {
     viewModelScope.launch {
-      browserRegistrationUseCase.cancelRegistration()
-      uiState = uiState.copy(isLoading = false)
+      val wasCancellationSuccessful = browserRegistrationUseCase.cancelRegistration()
+      if (wasCancellationSuccessful.not()) {
+        uiState = uiState.copy(result = Err(Throwable("Cannot cancel while registration is not in progress")))
+      }
     }
   }
 
   private fun register() {
     viewModelScope.launch {
-      uiState = uiState.copy(isLoading = true)
       browserRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess {
-          uiState = uiState.copy(result = Ok(it), isLoading = false)
+          uiState = uiState.copy(result = Ok(it))
           updateUserProfiles()
         }
-        .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
+        .onFailure { uiState = uiState.copy(result = Err(it)) }
     }
   }
 
@@ -93,7 +94,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     if (uiState.shouldUseDefaultIdentityProvider) null else uiState.selectedIdentityProvider
 
   data class State(
-    val isLoading: Boolean = false,
+    val wasCancellationSuccessful: Boolean = true,
     //TODO: Przegadaj Throwable z Alkiem. Gubimy numer errora.
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
     val identityProviders: List<BrowserIdentityProvider> = emptyList(),
