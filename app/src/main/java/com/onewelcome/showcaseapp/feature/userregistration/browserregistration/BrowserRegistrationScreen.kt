@@ -70,7 +70,10 @@ private fun BrowserRegistrationScreenContent(
     },
     settings = { SettingsSection(uiState, onEvent) },
     result = uiState.result?.let { { RegistrationResult(uiState.result) } },
-    action = { RegistrationButton(uiState, onEvent) }
+    action = {
+      RegistrationButton(onEvent)
+      CancellationButton(onEvent)
+    }
   )
 }
 
@@ -191,24 +194,26 @@ private fun RegistrationResult(userProfilesResult: Result<Pair<UserProfile, Cust
 }
 
 @Composable
-private fun RegistrationButton(uiState: State, onEvent: (UiEvent) -> Unit) {
+private fun RegistrationButton(onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = {
-      if (uiState.isLoading) {
-        onEvent(UiEvent.CancelRegistration)
-      } else {
-        onEvent(UiEvent.StartBrowserRegistration)
-      }
-    }
+    onClick = { onEvent(UiEvent.StartBrowserRegistration) }
   ) {
-    if (uiState.isLoading) {
-      Text(stringResource(R.string.cancel_registration))
-    } else {
-      Text(stringResource(R.string.register))
-    }
+    Text(stringResource(R.string.register))
+  }
+}
+
+@Composable
+private fun CancellationButton(onEvent: (UiEvent) -> Unit) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(Dimensions.actionButtonHeight),
+    onClick = { onEvent(UiEvent.CancelRegistration) }
+  ) {
+    Text(stringResource(R.string.cancel_registration))
   }
 }
 
