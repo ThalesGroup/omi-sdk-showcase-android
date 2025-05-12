@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
@@ -57,32 +58,9 @@ private fun UserRegistrationScreenContent(
         .padding(innerPadding)
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
     ) {
-      FeatureDescription()
+      ShowcaseFeatureDescription("With our sdk you can register user in many ways. Click on each of them to learn more.", Constants.DOCUMENTATION_USER_REGISTRATION)
       Sections(onNavigateDeeper)
     }
-  }
-}
-
-@Composable
-private fun FeatureDescription() {
-  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
-    Text(
-      style = MaterialTheme.typography.bodyLarge,
-      text = stringResource(R.string.user_registration_description)
-    )
-    Text(
-      style = MaterialTheme.typography.bodyLarge,
-      text = buildAnnotatedString {
-        append(stringResource(R.string.read_more) + " ")
-        withLink(
-          LinkAnnotation.Url(
-            Constants.DOCUMENTATION_USER_REGISTRATION,
-            TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
-          )
-        ) {
-          append(stringResource(R.string.here))
-        }
-      })
   }
 }
 

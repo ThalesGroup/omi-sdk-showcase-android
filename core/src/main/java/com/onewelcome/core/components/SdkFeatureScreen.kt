@@ -41,11 +41,7 @@ fun SdkFeatureScreen(
           .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
       ) {
-        Card(modifier = Modifier.fillMaxWidth()) {
-          Box(modifier = Modifier.padding(Dimensions.mPadding)) {
-            description()
-          }
-        }
+        description()
         Box { settings() }
       }
       Column(verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)) {

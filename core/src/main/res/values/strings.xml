@@ -74,12 +74,12 @@
   <string name="all_test_passed">All tests passed successfully ✅</string>
 
   <!-- Registration -->
-  <string name="user_registration_description">Add some nice description</string>
+  <string name="user_registration_description">With our sdk you can register user in many ways. Click on each of them to learn more.</string>
   <string name="user_registration">User registration</string>
 
   <!-- Browser registration -->
   <string name="browser_registration">Browser registration</string>
-  <string name="browser_registration_description">Browser registration description, add some nice info about the feature</string>
+  <string name="browser_registration_description">Browser based registration allows users to complete the registration process through a web browser flow. </string>
   <string name="identity_providers">Identity providers</string>
   <string name="registration_scopes">Registration scopes</string>
   <string name="cancel_registration">Cancel registration</string>
