@@ -83,7 +83,7 @@ class BrowserRegistrationViewModelTest {
 
   @Test
   fun `Given sdk is not initialized, When viewmodel is initialized, Then default state should be returned`() {
-    val expectedState = viewModel.uiState
+    val expectedState = viewModel.uiState.copy(null, emptySet(), false, null, Constants.DEFAULT_SCOPES, false, emptyList(), false)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -95,12 +95,12 @@ class BrowserRegistrationViewModelTest {
     mockBrowserIdentityProviders()
     mockUserProfiles()
 
-    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
-
     val expectedState = viewModel.uiState.copy(
       identityProviders = identityProviders,
-      userProfiles = userProfilesIds
+      userProfileIds = userProfilesIds
     )
+
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -113,7 +113,7 @@ class BrowserRegistrationViewModelTest {
 
     viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
 
-    val expectedState = viewModel.uiState.copy(userProfiles = userProfilesIds)
+    val expectedState = viewModel.uiState.copy(userProfileIds = userProfilesIds)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -188,7 +188,7 @@ class BrowserRegistrationViewModelTest {
 
     val expectedState = viewModel.uiState.copy(
       result = Ok(Pair(USER_PROFILE_1, CUSTOM_INFO)),
-      userProfiles = userProfilesIds
+      userProfileIds = userProfilesIds
     )
 
     viewModel.onEvent(StartBrowserRegistration)

@@ -18,24 +18,32 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InfoViewModel @Inject constructor(
-  private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
+  isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
     private set
 
-  fun updateStatus() {
-    uiState = uiState.copy(isSdkInitialized = isSdkInitializedUseCase.execute())
+  init {
+    updateIsSdkInitialized(isSdkInitializedUseCase)
     viewModelScope.launch {
-      getUserProfilesUseCase.execute()
-        .onSuccess { uiState = uiState.copy(userProfiles = Ok(it.map { it.profileId }.toList())) }
-        .onFailure { uiState = uiState.copy(userProfiles = Err(it)) }
+      updateUserProfiles()
     }
+  }
+
+  private suspend fun updateUserProfiles() {
+    getUserProfilesUseCase.execute()
+      .onSuccess { uiState = uiState.copy(userProfileIds = Ok(it.map { it.profileId }.toList())) }
+      .onFailure { uiState = uiState.copy(userProfileIds = Err(Unit)) }
+  }
+
+  private fun updateIsSdkInitialized(isSdkInitializedUseCase: IsSdkInitializedUseCase) {
+    uiState = uiState.copy(isSdkInitialized = isSdkInitializedUseCase.execute())
   }
 
   data class State(
     val isSdkInitialized: Boolean = false,
-    val userProfiles: Result<List<String>, Throwable>? = null
+    val userProfileIds: Result<List<String>, Unit>? = null
   )
 }

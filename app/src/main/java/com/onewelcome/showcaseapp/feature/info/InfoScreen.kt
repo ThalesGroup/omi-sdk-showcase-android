@@ -26,7 +26,6 @@ fun InfoScreen(
   viewModel: InfoViewModel = hiltViewModel()
 ) {
   InfoScreenContent(viewModel.uiState)
-  viewModel.updateStatus()
 }
 
 @Composable
@@ -65,13 +64,13 @@ private fun StatusList(uiState: State) {
     )
     ShowcaseStatusCard(
       title = stringResource(R.string.user_profiles),
-      description = getUserProfiles(uiState.userProfiles)
+      description = getUserProfiles(uiState.userProfileIds)
     )
   }
 }
 
 @Composable
-private fun getUserProfiles(userProfiles: Result<List<String>, Throwable>?): String {
+private fun getUserProfiles(userProfiles: Result<List<String>, Unit>?): String {
   return if (userProfiles?.isOk == true && userProfiles.value.isNotEmpty()) {
     userProfiles.value.separateItemsWithComa()
   } else {

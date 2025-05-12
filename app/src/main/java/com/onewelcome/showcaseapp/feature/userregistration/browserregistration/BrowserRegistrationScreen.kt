@@ -84,7 +84,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
-    UserProfilesSection(uiState.userProfiles)
+    UserProfilesSection(uiState.userProfileIds)
     IdentityProvidersSection(uiState, onEvent)
     ScopesSection(uiState.isSdkInitialized, onEvent)
   }

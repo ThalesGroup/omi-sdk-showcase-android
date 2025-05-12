@@ -1,10 +1,14 @@
 package com.onewelcome.showcaseapp.viewmodel
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.client.UserClient
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
-import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -39,6 +43,9 @@ class InfoViewModelTest {
   @Inject
   lateinit var omiSdkEngineFake: OmiSdkEngineFake
 
+  @Inject
+  lateinit var userClientMock: UserClient
+
   private lateinit var viewModel: InfoViewModel
 
   @Before
@@ -48,20 +55,30 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `should indicate SDK not initialized`() {
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = false)
-
-    viewModel.updateStatus()
+  fun `Given sdk is not initialized, When viewmodel is initialized, Then state should be updated`() {
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = Err(Unit))
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
-  fun `should indicate SDK is not initialized`() {
+  fun `Given sdk is initialized and there are no user profiles, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true)
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit))
 
-    viewModel.updateStatus()
+    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and there are user profiles, When viewmodel is initialized, Then state should be updated`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockUserProfileIds()
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(userProfilesIds))
+
+    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -69,5 +86,20 @@ class InfoViewModelTest {
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null))
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
+  }
+
+  private fun mockUserClient() {
+    whenever(oneginiClientMock.getUserClient()).thenReturn(userClientMock)
+  }
+
+  private fun mockUserProfileIds() {
+    whenever(userClientMock.userProfiles).thenReturn(userProfiles)
+  }
+
+  companion object {
+    private val USER_PROFILE_1 = UserProfile("123456")
+    private val USER_PROFILE_2 = UserProfile("654321")
+    private val userProfiles = setOf(USER_PROFILE_1, USER_PROFILE_2)
+    private val userProfilesIds = userProfiles.map { it.profileId }.toList()
   }
 }

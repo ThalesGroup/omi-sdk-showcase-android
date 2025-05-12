@@ -59,8 +59,8 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   private suspend fun updateUserProfiles() {
     getUserProfilesUseCase.execute()
-      .onSuccess { uiState = uiState.copy(userProfiles = it.map { it.profileId }.toList()) }
-      .onFailure { uiState = uiState.copy(userProfiles = emptyList()) }
+      .onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
+      .onFailure { uiState = uiState.copy(userProfileIds = emptyList()) }
   }
 
   private fun updateSelectedIdentityProvider() {
@@ -104,7 +104,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     val selectedIdentityProvider: OneginiIdentityProvider? = null,
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
     val shouldUseDefaultIdentityProvider: Boolean = false,
-    val userProfiles: List<String> = emptyList(),
+    val userProfileIds: List<String> = emptyList(),
     val isRegistrationCancellationEnabled: Boolean = false,
   )
 
