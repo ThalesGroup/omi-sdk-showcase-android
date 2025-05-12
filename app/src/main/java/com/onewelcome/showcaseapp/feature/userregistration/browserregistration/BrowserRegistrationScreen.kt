@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.userregistration.browserregistration
 
+import android.os.Parcel
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,13 +27,13 @@ import androidx.navigation.NavController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
-import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
@@ -113,7 +114,7 @@ private fun IdentityProvidersSection(
   if (uiState.identityProviders.isNotEmpty()) {
     Column {
       IdentityProvidersHeader()
-      IdentityProvidersList(uiState, onEvent)
+      IdentityProvidersList(uiState.selectedIdentityProvider, uiState.identityProviders, onEvent)
       ShowcaseSwitch(
         shouldBeChecked = uiState.shouldUseDefaultIdentityProvider,
         onCheck = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) },
@@ -125,11 +126,12 @@ private fun IdentityProvidersSection(
 
 @Composable
 private fun IdentityProvidersList(
-  uiState: State,
+  selectedIdentityProvider: OneginiIdentityProvider?,
+  identityProviders: Set<OneginiIdentityProvider>,
   onEvent: (UiEvent) -> Unit
 ) {
-  var selectedIdentityProvider = uiState.selectedIdentityProvider ?: uiState.identityProviders[0]
-  uiState.identityProviders.forEach { identityProvider ->
+  var selectedIdentityProvider = selectedIdentityProvider ?: identityProviders.first()
+  identityProviders.forEach { identityProvider ->
     Row(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier
@@ -261,9 +263,37 @@ fun Preview() {
     onNavigateBack = {},
     onEvent = {}
   )
-  val browserIdentityProviders = listOf(
-    BrowserIdentityProvider("Browser identity provider name", "browser_identity_provider_id"),
-    BrowserIdentityProvider("Another browser identity provider name with two lines", "another_browser_identity_provider_id"),
+  val browserIdentityProviders = setOf(
+    object : OneginiIdentityProvider {
+      override val id: String
+        get() = "browser_identity_provider_id_1"
+      override val name: String
+        get() = "Browser identity provider name 1"
+
+      override fun describeContents(): Int {
+        return 0
+      }
+
+      override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
+        dest.writeString(name)
+      }
+    },
+    object : OneginiIdentityProvider {
+      override val id: String
+        get() = "browser_identity_provider_id_2"
+      override val name: String
+        get() = "Browser identity provider name 2"
+
+      override fun describeContents(): Int {
+        return 0
+      }
+
+      override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
+        dest.writeString(name)
+      }
+    },
   )
   BrowserRegistrationScreenContent(
     uiState = State(identityProviders = browserIdentityProviders),

@@ -8,9 +8,9 @@ import com.github.michaelbull.result.onSuccess
 import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
+import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -21,12 +21,12 @@ class BrowserRegistrationUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade,
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 ) {
-  suspend fun getBrowserIdentityProviders(): Result<List<BrowserIdentityProvider>, Throwable> {
+  suspend fun getBrowserIdentityProviders(): Result<Set<OneginiIdentityProvider>, Throwable> {
     return suspendCancellableCoroutine { continuation ->
       runCatching {
         omiSdkFacade.oneginiClient.getUserClient().identityProviders
           .filter { it.toString().contains(BROWSER_IDENTITY_PROVIDER) }
-          .map { BrowserIdentityProvider(it.name, it.id) }
+          .toSet()
       }
         .onSuccess { continuation.resume(Ok(it)) }
         .onFailure { continuation.resume(Err(it)) }
@@ -34,7 +34,7 @@ class BrowserRegistrationUseCase @Inject constructor(
   }
 
   suspend fun register(
-    identityProvider: BrowserIdentityProvider?,
+    identityProvider: OneginiIdentityProvider?,
     scopes: List<String>
   ): Result<Pair<UserProfile, CustomInfo?>, Throwable> {
     return suspendCancellableCoroutine { continuation ->

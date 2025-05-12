@@ -10,9 +10,9 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.entity.BrowserIdentityProvider
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -53,7 +53,7 @@ class BrowserRegistrationViewModel @Inject constructor(
   private suspend fun updateIdentityProviders() {
     browserRegistrationUseCase.getBrowserIdentityProviders()
       .onSuccess { uiState = uiState.copy(identityProviders = it) }
-      .onFailure { uiState = uiState.copy(identityProviders = emptyList()) }
+      .onFailure { uiState = uiState.copy(identityProviders = emptySet()) }
   }
 
   private suspend fun updateUserProfiles() {
@@ -65,7 +65,7 @@ class BrowserRegistrationViewModel @Inject constructor(
   private fun updateSelectedIdentityProvider() {
     val identityProviders = uiState.identityProviders
     if (identityProviders.isNotEmpty()) {
-      uiState = uiState.copy(selectedIdentityProvider = identityProviders[0])
+      uiState = uiState.copy(selectedIdentityProvider = identityProviders.first())
     }
   }
 
@@ -90,16 +90,16 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
   }
 
-  private fun getIdentityProvider(): BrowserIdentityProvider? =
+  private fun getIdentityProvider(): OneginiIdentityProvider? =
     if (uiState.shouldUseDefaultIdentityProvider) null else uiState.selectedIdentityProvider
 
   data class State(
     val wasCancellationSuccessful: Boolean = true,
     //TODO: Przegadaj Throwable z Alkiem. Gubimy numer errora.
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
-    val identityProviders: List<BrowserIdentityProvider> = emptyList(),
+    val identityProviders: Set<OneginiIdentityProvider> = emptySet(),
     val isSdkInitialized: Boolean = false,
-    val selectedIdentityProvider: BrowserIdentityProvider? = null,
+    val selectedIdentityProvider: OneginiIdentityProvider? = null,
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
     val shouldUseDefaultIdentityProvider: Boolean = false,
     val userProfiles: List<String> = emptyList(),
@@ -108,7 +108,7 @@ class BrowserRegistrationViewModel @Inject constructor(
   sealed interface UiEvent {
     data object StartBrowserRegistration : UiEvent
     data object CancelRegistration : UiEvent
-    data class UpdateSelectedIdentityProvider(val identityProvider: BrowserIdentityProvider) : UiEvent
+    data class UpdateSelectedIdentityProvider(val identityProvider: OneginiIdentityProvider) : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
   }
