@@ -77,7 +77,6 @@ class BrowserRegistrationViewModel @Inject constructor(
   private fun cancelRegistration() {
     viewModelScope.launch {
       browserRegistrationUseCase.cancelRegistration()
-      uiState = uiState.copy(result = Err(Throwable("Registration cancelled")), isRegistrationCancellationEnabled = false)
     }
   }
 

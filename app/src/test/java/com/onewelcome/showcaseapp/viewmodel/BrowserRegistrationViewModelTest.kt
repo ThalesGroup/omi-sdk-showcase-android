@@ -132,6 +132,18 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
+  fun `Given sdk is initialized and registration is in progress, When viewmodel is initialized, Then updated state should be returned`() {
+    mockSdkInitialized()
+    mockRegistrationIsInProgress()
+
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
+
+    val expectedState = viewModel.uiState.copy(isRegistrationCancellationEnabled = true)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
   fun `When update selected identity providers event is sent, Then updated state should be returned`() {
     val expectedState = viewModel.uiState.copy(selectedIdentityProvider = selectedIdentityProvider)
 
@@ -248,6 +260,26 @@ class BrowserRegistrationViewModelTest {
     verify(browserRegistrationRequestHandler).cancelRegistration()
   }
 
+  @Test
+  fun `Given sdk is initialized, When register event is sent, Then isRegistrationCancellationEnabled value should behave properly`() {
+    mockSdkInitialized()
+    mockUserClient()
+    whenRegisteredUserSuccessfully()
+    mockUserProfiles()
+    whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
+      .thenAnswer { invocation ->
+        assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(true)
+        invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(USER_PROFILE_1, CUSTOM_INFO)
+      }
+
+    assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
+
+    viewModel.onEvent(StartBrowserRegistration)
+
+    assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
+  }
+
+
   private fun whenRegisteredUserSuccessfully() {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
       .thenAnswer { invocation ->
@@ -277,6 +309,10 @@ class BrowserRegistrationViewModelTest {
 
   private fun mockUserProfiles() {
     whenever(userClientMock.userProfiles).thenReturn(userProfiles)
+  }
+
+  private fun mockRegistrationIsInProgress() {
+    whenever(browserRegistrationUseCase.isRegistrationInProgress()).thenReturn(true)
   }
 
   companion object {
