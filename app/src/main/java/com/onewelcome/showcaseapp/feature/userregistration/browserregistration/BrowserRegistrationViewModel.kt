@@ -30,7 +30,6 @@ class BrowserRegistrationViewModel @Inject constructor(
   var uiState by mutableStateOf(State())
     private set
 
-  //We could also use init {} in InfoViewModel instead of fun updateStatus()
   init {
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
@@ -97,7 +96,6 @@ class BrowserRegistrationViewModel @Inject constructor(
     if (uiState.shouldUseDefaultIdentityProvider) null else uiState.selectedIdentityProvider
 
   data class State(
-    //TODO: Przegadaj Throwable z Alkiem. Gubimy numer errora.
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
     val identityProviders: Set<OneginiIdentityProvider> = emptySet(),
     val isSdkInitialized: Boolean = false,

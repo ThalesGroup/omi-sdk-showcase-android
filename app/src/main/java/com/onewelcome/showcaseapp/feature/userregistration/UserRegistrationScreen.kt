@@ -23,13 +23,14 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.home.SectionItem
-import com.onewelcome.showcaseapp.navigation.ScreenNavigation
+import com.onewelcome.showcaseapp.navigation.Screens
 
 @Composable
 fun UserRegistrationScreen(
@@ -123,16 +124,15 @@ private fun Section(section: SectionItem, onNavigateToSection: (String) -> Unit)
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
   return listOf(
-    SectionItem(stringResource(R.string.section_title_browser_registration), ScreenNavigation.BrowserRegistration)
+    SectionItem(stringResource(R.string.section_title_browser_registration), Screens.BrowserRegistration)
   )
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//private fun Preview() {
-//  UserRegistrationScreenContent(
-//    onNavigateBack = {},
-//    onNavigateDeeper = {},
-//    navController = navController,
-//  )
-//}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+  UserRegistrationScreenContent(
+    onNavigateBack = {},
+    onNavigateDeeper = {},
+  )
+}

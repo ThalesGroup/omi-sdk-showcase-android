@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InfoViewModel @Inject constructor(
-  isSdkInitializedUseCase: IsSdkInitializedUseCase,
+  private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase
 ) : ViewModel() {
 
@@ -26,7 +26,7 @@ class InfoViewModel @Inject constructor(
     private set
 
   init {
-    updateIsSdkInitialized(isSdkInitializedUseCase)
+    updateIsSdkInitialized()
     viewModelScope.launch {
       updateUserProfiles()
     }
@@ -38,7 +38,7 @@ class InfoViewModel @Inject constructor(
       .onFailure { uiState = uiState.copy(userProfileIds = Err(Unit)) }
   }
 
-  private fun updateIsSdkInitialized(isSdkInitializedUseCase: IsSdkInitializedUseCase) {
+  private fun updateIsSdkInitialized() {
     uiState = uiState.copy(isSdkInitialized = isSdkInitializedUseCase.execute())
   }
 

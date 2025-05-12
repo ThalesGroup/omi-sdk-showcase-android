@@ -6,7 +6,6 @@ import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
-import com.onewelcome.core.omisdk.handlers.BrowserCustomAuthenticationRequestHandler
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
@@ -18,7 +17,6 @@ class OmiSdkEngine @Inject constructor(
   private val createPinRequestHandler: CreatePinRequestHandler,
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
-  private val customAuthenticationRequestHandler: BrowserCustomAuthenticationRequestHandler
 ) : OmiSdkFacade {
 
   override val oneginiClient
@@ -28,9 +26,7 @@ class OmiSdkEngine @Inject constructor(
     return OneginiClientBuilder(context, createPinRequestHandler, pinAuthenticationRequestHandler)
       .setConfigModel(OneginiConfigModel())
       .shouldStoreCookies(settings.shouldStoreCookies)
-      // browser registration & authentication
       .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
-      .setCustomAuthenticationRequestHandler(customAuthenticationRequestHandler)
       .apply {
         settings.httpConnectTimeout?.let { setHttpConnectTimeout(it) }
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }

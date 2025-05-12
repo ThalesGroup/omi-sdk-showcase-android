@@ -1,10 +1,8 @@
 package com.onewelcome.showcaseapp.fakes
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
-import org.robolectric.shadows.ShadowSystemProperties.override
 
 class OmiSdkEngineFake(private val oneginiClientMock: OneginiClient) : OmiSdkFacade {
 

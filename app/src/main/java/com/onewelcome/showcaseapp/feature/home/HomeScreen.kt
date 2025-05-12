@@ -23,8 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.navigation.ScreenNavigation
-import com.onewelcome.showcaseapp.feature.home.SectionItem
+import com.onewelcome.showcaseapp.navigation.Screens
 
 @Composable
 fun HomeScreen(homeNavController: NavController) {
@@ -33,9 +32,11 @@ fun HomeScreen(homeNavController: NavController) {
 
 @Composable
 fun HomeScreenContent(onNavigateToSection: (route: String) -> Unit) {
-  Column(modifier = Modifier
-    .fillMaxSize()
-    .padding(start = Dimensions.mPadding, end = Dimensions.mPadding)) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(start = Dimensions.mPadding, end = Dimensions.mPadding)
+  ) {
     Image(
       modifier = Modifier.fillMaxWidth(),
       painter = painterResource(id = R.drawable.thales_logo),
@@ -56,8 +57,8 @@ private fun Sections(onNavigateToSection: (route: String) -> Unit) {
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
   return listOf(
-    SectionItem(stringResource(R.string.section_title_sdk_initialization), ScreenNavigation.SdkInitialization),
-    SectionItem(stringResource(R.string.section_title_user_registration), ScreenNavigation.UserRegistration)
+    SectionItem(stringResource(R.string.section_title_sdk_initialization), Screens.SdkInitialization),
+    SectionItem(stringResource(R.string.section_title_user_registration), Screens.UserRegistration)
   )
 }
 
