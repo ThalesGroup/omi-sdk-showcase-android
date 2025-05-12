@@ -37,6 +37,7 @@ class BrowserRegistrationViewModel @Inject constructor(
       updateIdentityProviders()
       updateSelectedIdentityProvider()
       updateUserProfiles()
+      updateCancellationButton()
     }
   }
 
@@ -69,24 +70,27 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
   }
 
+  private fun updateCancellationButton() {
+    uiState = uiState.copy(isRegistrationCancellationEnabled = browserRegistrationUseCase.isRegistrationInProgress())
+  }
+
   private fun cancelRegistration() {
     viewModelScope.launch {
-      val wasCancellationSuccessful = browserRegistrationUseCase.cancelRegistration()
-      if (wasCancellationSuccessful.not()) {
-        uiState = uiState.copy(result = Err(Throwable("Cannot cancel while registration is not in progress")))
-      }
+      browserRegistrationUseCase.cancelRegistration()
+      uiState = uiState.copy(result = Err(Throwable("Registration cancelled")), isRegistrationCancellationEnabled = false)
     }
   }
 
   private fun register() {
     viewModelScope.launch {
+      uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       browserRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess {
-          uiState = uiState.copy(result = Ok(it))
+          uiState = uiState.copy(result = Ok(it), isRegistrationCancellationEnabled = false)
           updateUserProfiles()
         }
-        .onFailure { uiState = uiState.copy(result = Err(it)) }
+        .onFailure { uiState = uiState.copy(result = Err(it), isRegistrationCancellationEnabled = false) }
     }
   }
 
@@ -94,7 +98,6 @@ class BrowserRegistrationViewModel @Inject constructor(
     if (uiState.shouldUseDefaultIdentityProvider) null else uiState.selectedIdentityProvider
 
   data class State(
-    val wasCancellationSuccessful: Boolean = true,
     //TODO: Przegadaj Throwable z Alkiem. Gubimy numer errora.
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
     val identityProviders: Set<OneginiIdentityProvider> = emptySet(),
@@ -103,6 +106,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
     val shouldUseDefaultIdentityProvider: Boolean = false,
     val userProfiles: List<String> = emptyList(),
+    val isRegistrationCancellationEnabled: Boolean = false,
   )
 
   sealed interface UiEvent {

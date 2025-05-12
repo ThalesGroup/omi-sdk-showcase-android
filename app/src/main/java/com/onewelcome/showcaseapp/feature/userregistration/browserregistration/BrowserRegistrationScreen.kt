@@ -73,7 +73,7 @@ private fun BrowserRegistrationScreenContent(
     result = uiState.result?.let { { RegistrationResult(uiState.result) } },
     action = {
       RegistrationButton(onEvent)
-      CancellationButton(onEvent)
+      CancellationButton(uiState.isRegistrationCancellationEnabled, onEvent)
     }
   )
 }
@@ -208,12 +208,13 @@ private fun RegistrationButton(onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun CancellationButton(onEvent: (UiEvent) -> Unit) {
+private fun CancellationButton(isRegistrationCancellationEnabled: Boolean, onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.CancelRegistration) }
+    onClick = { onEvent(UiEvent.CancelRegistration) },
+    enabled = isRegistrationCancellationEnabled
   ) {
     Text(stringResource(R.string.cancel_registration))
   }

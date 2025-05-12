@@ -61,9 +61,9 @@ class BrowserRegistrationUseCase @Inject constructor(
     }
   }
 
-  fun cancelRegistration(): Boolean {
-    return browserRegistrationRequestHandler.cancelRegistration()
-  }
+  fun cancelRegistration() = browserRegistrationRequestHandler.cancelRegistration()
+
+  fun isRegistrationInProgress() = browserRegistrationRequestHandler.isRegistrationInProgress()
 
   companion object {
     private const val BROWSER_IDENTITY_PROVIDER = "BrowserIdentityProvider"
