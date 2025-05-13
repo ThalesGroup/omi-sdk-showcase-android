@@ -22,19 +22,7 @@ import javax.inject.Inject
 class OsCompatibilityViewModel @Inject constructor(
   private val browserRegistrationTestCases: BrowserRegistrationTestCases
 ) : ViewModel() {
-  private val testCategories = listOf(
-    TestCategory(
-      name = "Browser registration",
-      testCases = listOf(
-        TestCase(name = "getBrowserIdentityProviders",
-          testFunction = browserRegistrationTestCases::getBrowserIdentityProviders
-        ),
-        TestCase(name = "sdkNotInitializedGetBrowserIdentityProviders",
-          testFunction = browserRegistrationTestCases::sdkNotInitializedGetBrowserIdentityProviders
-        )
-      )
-    )
-  )
+  private val testCategories = listOf(browserRegistrationTestCases.tests)
 
   var uiState by mutableStateOf(State(testCategories = testCategories))
     private set
