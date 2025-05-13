@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OsCompatibilityViewModel @Inject constructor(
-  private val browserRegistrationTestCases: BrowserRegistrationTestCases
+  browserRegistrationTestCases: BrowserRegistrationTestCases
 ) : ViewModel() {
   private val testCategories = listOf(browserRegistrationTestCases.tests)
 
