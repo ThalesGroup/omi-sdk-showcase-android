@@ -1,6 +1,5 @@
 package com.onewelcome.showcaseapp.viewmodel
 
-import android.os.Parcel
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
@@ -8,14 +7,19 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
-import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.Constants
+import com.onewelcome.core.util.Constants.TEST_CUSTOM_INFO
+import com.onewelcome.core.util.Constants.TEST_IDENTITY_PROVIDERS
+import com.onewelcome.core.util.Constants.TEST_SELECTED_IDENTITY_PROVIDER
+import com.onewelcome.core.util.Constants.TEST_SELECTED_SCOPES
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILES
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILES_IDS
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.StartBrowserRegistration
@@ -96,8 +100,10 @@ class BrowserRegistrationViewModelTest {
     mockUserProfiles()
 
     val expectedState = viewModel.uiState.copy(
-      identityProviders = identityProviders,
-      userProfileIds = userProfilesIds
+      isSdkInitialized = true,
+      identityProviders = TEST_IDENTITY_PROVIDERS,
+      userProfileIds = TEST_USER_PROFILES_IDS,
+      selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
     )
 
     viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
@@ -111,9 +117,12 @@ class BrowserRegistrationViewModelTest {
     mockUserClient()
     mockUserProfiles()
 
-    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = TEST_USER_PROFILES_IDS
+    )
 
-    val expectedState = viewModel.uiState.copy(userProfileIds = userProfilesIds)
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -124,9 +133,13 @@ class BrowserRegistrationViewModelTest {
     mockUserClient()
     mockBrowserIdentityProviders()
 
-    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      identityProviders = TEST_IDENTITY_PROVIDERS,
+      selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
+    )
 
-    val expectedState = viewModel.uiState.copy(identityProviders = identityProviders)
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -136,27 +149,30 @@ class BrowserRegistrationViewModelTest {
     mockSdkInitialized()
     mockRegistrationIsInProgress()
 
-    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      isRegistrationCancellationEnabled = true
+    )
 
-    val expectedState = viewModel.uiState.copy(isRegistrationCancellationEnabled = true)
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
   fun `When update selected identity providers event is sent, Then updated state should be returned`() {
-    val expectedState = viewModel.uiState.copy(selectedIdentityProvider = selectedIdentityProvider)
+    val expectedState = viewModel.uiState.copy(selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER)
 
-    viewModel.onEvent(UpdateSelectedIdentityProvider(selectedIdentityProvider))
+    viewModel.onEvent(UpdateSelectedIdentityProvider(TEST_SELECTED_IDENTITY_PROVIDER))
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
   fun `When update selected scopes event is sent, Then updated state should be returned`() {
-    val expectedState = viewModel.uiState.copy(selectedScopes = selectedScopes)
+    val expectedState = viewModel.uiState.copy(selectedScopes = TEST_SELECTED_SCOPES)
 
-    viewModel.onEvent(UpdateSelectedScopes(selectedScopes))
+    viewModel.onEvent(UpdateSelectedScopes(TEST_SELECTED_SCOPES))
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -187,10 +203,12 @@ class BrowserRegistrationViewModelTest {
     mockUserProfiles()
 
     val expectedState = viewModel.uiState.copy(
-      result = Ok(Pair(USER_PROFILE_1, CUSTOM_INFO)),
-      userProfileIds = userProfilesIds
+      isSdkInitialized = true,
+      result = Ok(Pair(TEST_USER_PROFILE_1, TEST_CUSTOM_INFO)),
+      userProfileIds = TEST_USER_PROFILES_IDS
     )
 
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
     viewModel.onEvent(StartBrowserRegistration)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -201,10 +219,13 @@ class BrowserRegistrationViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     whenRegisteredUserUnsuccessfully()
-    mockUserProfiles()
 
-    val expectedState = viewModel.uiState.copy(result = Err(mockOneginiRegistrationError))
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      result = Err(mockOneginiRegistrationError)
+    )
 
+    viewModel = BrowserRegistrationViewModel(isSdkInitializedUseCase, browserRegistrationUseCase, getUserProfilesUseCase)
     viewModel.onEvent(StartBrowserRegistration)
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -230,12 +251,12 @@ class BrowserRegistrationViewModelTest {
     mockUserClient()
     mockBrowserIdentityProviders()
 
-    viewModel.onEvent(UpdateSelectedIdentityProvider(selectedIdentityProvider))
+    viewModel.onEvent(UpdateSelectedIdentityProvider(TEST_SELECTED_IDENTITY_PROVIDER))
     viewModel.onEvent(StartBrowserRegistration)
 
     argumentCaptor<OneginiIdentityProvider> {
       verify(userClientMock).registerUser(capture(), anyOrNull(), any())
-      assertThat(firstValue).isEqualTo(selectedIdentityProvider)
+      assertThat(firstValue).isEqualTo(TEST_SELECTED_IDENTITY_PROVIDER)
     }
   }
 
@@ -249,7 +270,7 @@ class BrowserRegistrationViewModelTest {
 
     argumentCaptor<Array<String?>> {
       verify(userClientMock).registerUser(anyOrNull(), capture(), any())
-      assertThat(firstValue).isEqualTo(selectedScopes.toTypedArray())
+      assertThat(firstValue).isEqualTo(TEST_SELECTED_SCOPES.toTypedArray())
     }
   }
 
@@ -269,7 +290,7 @@ class BrowserRegistrationViewModelTest {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
       .thenAnswer { invocation ->
         assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(true)
-        invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(USER_PROFILE_1, CUSTOM_INFO)
+        invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(TEST_USER_PROFILE_1, TEST_CUSTOM_INFO)
       }
 
     assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
@@ -283,7 +304,7 @@ class BrowserRegistrationViewModelTest {
   private fun whenRegisteredUserSuccessfully() {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
       .thenAnswer { invocation ->
-        invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(USER_PROFILE_1, CUSTOM_INFO)
+        invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(TEST_USER_PROFILE_1, TEST_CUSTOM_INFO)
       }
   }
 
@@ -304,58 +325,14 @@ class BrowserRegistrationViewModelTest {
   }
 
   private fun mockBrowserIdentityProviders() {
-    whenever(userClientMock.identityProviders).thenReturn(identityProviders)
+    whenever(userClientMock.identityProviders).thenReturn(TEST_IDENTITY_PROVIDERS)
   }
 
   private fun mockUserProfiles() {
-    whenever(userClientMock.userProfiles).thenReturn(userProfiles)
+    whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
   }
 
   private fun mockRegistrationIsInProgress() {
     whenever(browserRegistrationUseCase.isRegistrationInProgress()).thenReturn(true)
-  }
-
-  companion object {
-    private val OneginiBrowserIdentityProvider1 = object : OneginiIdentityProvider {
-      override val id: String
-        get() = "Browser-identity-provider-id-1"
-      override val name: String
-        get() = "Browser identity provider name 1"
-
-      override fun describeContents(): Int {
-        return 0
-      }
-
-      override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(id)
-        dest.writeString(name)
-      }
-    }
-
-    private val OneginiBrowserIdentityProvider2 = object : OneginiIdentityProvider {
-      override val id: String
-        get() = "Browser-identity-provider-id-2"
-      override val name: String
-        get() = "Browser identity provider name 2"
-
-      override fun describeContents(): Int {
-        return 0
-      }
-
-      override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(id)
-        dest.writeString(name)
-      }
-    }
-
-    private val USER_PROFILE_1 = UserProfile("123456")
-    private val USER_PROFILE_2 = UserProfile("654321")
-    private val CUSTOM_INFO = CustomInfo(666, "data")
-    private val userProfiles = setOf(USER_PROFILE_1, USER_PROFILE_2)
-    private val userProfilesIds = userProfiles.map { it.profileId }.toList()
-
-    private val identityProviders = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
-    private val selectedIdentityProvider = identityProviders.first()
-    private val selectedScopes = Constants.DEFAULT_SCOPES
   }
 }

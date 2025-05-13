@@ -4,10 +4,11 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILES
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILES_IDS
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -76,7 +77,7 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockUserProfileIds()
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(userProfilesIds))
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS))
 
     viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase)
 
@@ -93,13 +94,6 @@ class InfoViewModelTest {
   }
 
   private fun mockUserProfileIds() {
-    whenever(userClientMock.userProfiles).thenReturn(userProfiles)
-  }
-
-  companion object {
-    private val USER_PROFILE_1 = UserProfile("123456")
-    private val USER_PROFILE_2 = UserProfile("654321")
-    private val userProfiles = setOf(USER_PROFILE_1, USER_PROFILE_2)
-    private val userProfilesIds = userProfiles.map { it.profileId }.toList()
+    whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
   }
 }
