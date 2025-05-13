@@ -11,31 +11,32 @@ import com.github.michaelbull.result.Result
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
+import com.onewelcome.internal.testcases.browserregistation.BrowserRegistrationTestCases
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.bouncycastle.util.test.SimpleTest
-import org.bouncycastle.util.test.SimpleTest.runTest
-import kotlin.collections.get
-import kotlin.text.set
+import javax.inject.Inject
 
-class OsCompatibilityViewModel : ViewModel() {
-  private val dummyTests = List(10) { categoryIndex ->
+@HiltViewModel
+class OsCompatibilityViewModel @Inject constructor(
+  private val browserRegistrationTestCases: BrowserRegistrationTestCases
+) : ViewModel() {
+  private val testCategories = listOf(
     TestCategory(
-      name = "Category ${categoryIndex + 1}",
-      testCases = List(10) { testCaseIndex ->
-        TestCase(
-          name = "Category ${categoryIndex + 1} TestCase ${testCaseIndex + 1}"
+      name = "Browser registration",
+      testCases = listOf(
+        TestCase(name = "getBrowserIdentityProviders",
+          testFunction = browserRegistrationTestCases::getBrowserIdentityProviders
+        ),
+        TestCase(name = "sdkNotInitializedGetBrowserIdentityProviders",
+          testFunction = browserRegistrationTestCases::sdkNotInitializedGetBrowserIdentityProviders
         )
-      }
+      )
     )
-  }
+  )
 
-  var uiState by mutableStateOf(State(testCategories = dummyTests))
+  var uiState by mutableStateOf(State(testCategories = testCategories))
     private set
 
   fun onEvent(event: UiEvent) {
@@ -98,9 +99,8 @@ class OsCompatibilityViewModel : ViewModel() {
     Err(failed.addNewLineSeparator())
   }
 
-  private fun runTest(testCase: TestCase): TestStatus {
-    Thread.sleep(100)
-    return if (Math.random() > 0.02) TestStatus.Passed else TestStatus.Failed
+  private suspend fun runTest(testCase: TestCase): TestStatus {
+    return testCase.testFunction.invoke()
   }
 
   private fun List<String>.addNewLineSeparator(): String = joinToString(separator = "\n")
