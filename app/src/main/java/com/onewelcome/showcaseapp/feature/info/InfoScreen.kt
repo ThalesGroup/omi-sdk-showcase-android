@@ -25,6 +25,7 @@ import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 fun InfoScreen(
   viewModel: InfoViewModel = hiltViewModel()
 ) {
+  viewModel.updateData()
   InfoScreenContent(viewModel.uiState)
 }
 

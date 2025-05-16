@@ -25,7 +25,7 @@ class InfoViewModel @Inject constructor(
   var uiState by mutableStateOf(State())
     private set
 
-  init {
+  fun updateData() {
     updateIsSdkInitialized()
     viewModelScope.launch {
       updateUserProfiles()
