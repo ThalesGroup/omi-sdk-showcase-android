@@ -41,6 +41,7 @@ import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.identity_providers
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent
+import com.onewelcome.showcaseapp.navigation.Screens
 
 @Composable
 fun BrowserRegistrationScreen(
@@ -50,7 +51,8 @@ fun BrowserRegistrationScreen(
   BrowserRegistrationScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
-    onEvent = { viewModel.onEvent(it) }
+    onEvent = { viewModel.onEvent(it) },
+    onNavigateToPinScreen = { navController.navigate(Screens.Pin.route) },
   )
 }
 
@@ -58,7 +60,8 @@ fun BrowserRegistrationScreen(
 private fun BrowserRegistrationScreenContent(
   uiState: State,
   onNavigateBack: () -> Unit,
-  onEvent: (UiEvent) -> Unit
+  onEvent: (UiEvent) -> Unit,
+  onNavigateToPinScreen: () -> Unit,
 ) {
   SdkFeatureScreen(
     title = stringResource(R.string.browser_registration),
@@ -76,6 +79,9 @@ private fun BrowserRegistrationScreenContent(
       CancellationButton(uiState.isRegistrationCancellationEnabled, onEvent)
     }
   )
+  if (uiState.shouldNavigateToPinScreen) {
+    onNavigateToPinScreen.invoke()
+  }
 }
 
 @Composable
@@ -262,7 +268,8 @@ fun Preview() {
   BrowserRegistrationScreenContent(
     uiState = State(),
     onNavigateBack = {},
-    onEvent = {}
+    onEvent = {},
+    onNavigateToPinScreen = {},
   )
   val browserIdentityProviders = setOf(
     object : OneginiIdentityProvider {
@@ -299,6 +306,7 @@ fun Preview() {
   BrowserRegistrationScreenContent(
     uiState = State(identityProviders = browserIdentityProviders),
     onNavigateBack = {},
-    onEvent = {}
+    onEvent = {},
+    onNavigateToPinScreen = {},
   )
 }
