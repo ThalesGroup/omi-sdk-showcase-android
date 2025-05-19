@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.onewelcome.core.usecase.PinUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,21 +19,38 @@ class PinViewModel @Inject constructor(
 
   init {
     uiState = uiState.copy(maxPinLength = pinUseCase.maxPinLength)
+    listenForPinFinishedEvent()
+    listenForPinValidationErrorEvent()
   }
 
   fun onEvent(event: UiEvent) {
     when (event) {
       is UiEvent.OnPinProvided -> pinUseCase.onPinProvided(event.pin)
-      UiEvent.CancelPinFlow -> pinUseCase.cancelPinFlow()
+      is UiEvent.CancelPinFlow -> pinUseCase.cancelPinFlow()
     }
   }
 
+  private fun listenForPinValidationErrorEvent() {
+    viewModelScope.launch {
+      pinUseCase.pinValidationErrorEvent.collect {
+        uiState = uiState.copy(pinValidationError = it.message)
+      }
+    }
+  }
+
+  private fun listenForPinFinishedEvent() {
+    viewModelScope.launch {
+      pinUseCase.pinFinishedEventFlow.collect {
+        uiState = uiState.copy(finished = true)
+      }
+    }
+  }
 }
 
 data class State(
   val maxPinLength: Int = 0,
-  val error: String = "",
-  val successfulPinCreation: Boolean = false,
+  val finished: Boolean = false,
+  val pinValidationError: String = "",
 )
 
 sealed interface UiEvent {

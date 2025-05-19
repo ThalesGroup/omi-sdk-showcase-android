@@ -24,11 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.R.string.clear
+import com.onewelcome.showcaseapp.R.string.del
 
 @Composable
 fun PinScreen(
@@ -48,8 +49,9 @@ fun PinScreenContent(
   onEvent: (UiEvent) -> Unit,
   uiState: State,
 ) {
-  var pin: String by remember { mutableStateOf("") }
-  val maxPinLength = uiState.maxPinLength
+  if (uiState.finished == true) {
+    onNavigateBack.invoke()
+  }
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -57,70 +59,92 @@ fun PinScreenContent(
     verticalArrangement = Arrangement.SpaceBetween,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    Text(text = "Enter PIN", style = MaterialTheme.typography.titleMedium)
-    Row {
-      repeat(maxPinLength) { index ->
-        Box(
-          modifier = Modifier
-            .padding(Dimensions.sPadding)
-            .size(Dimensions.mPadding)
-            .background(
-              if (index < pin.length) Color.Black else Color.Gray,
-              shape = CircleShape
-            )
-        )
-      }
-    }
+    Header()
+    PinValidationError(uiState.pinValidationError)
+    PinInputSection(onEvent, uiState.maxPinLength)
+    CancelButton(onEvent)
+  }
+}
 
-    Column {
-      val buttons = listOf(
-        listOf("1", "2", "3"),
-        listOf("4", "5", "6"),
-        listOf("7", "8", "9"),
-        listOf("Clear", "0", "Del")
+@Composable
+private fun CancelButton(onEvent: (UiEvent) -> Unit) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(Dimensions.actionButtonHeight),
+    onClick = { onEvent(UiEvent.CancelPinFlow) },
+  ) {
+    Text(stringResource(R.string.cancel))
+  }
+}
+
+@Composable
+private fun PinInputSection(onEvent: (UiEvent) -> Unit, maxPinLength: Int) {
+  var pin: String by remember { mutableStateOf("") }
+  Row {
+    repeat(maxPinLength) { index ->
+      Box(
+        modifier = Modifier
+          .padding(Dimensions.sPadding)
+          .size(Dimensions.mPadding)
+          .background(
+            if (index < pin.length) Color.Black else Color.Gray,
+            shape = CircleShape
+          )
       )
+    }
+  }
+  Column {
+    val deleteStringRes = stringResource(del)
+    val clearStringRes = stringResource(clear)
+    val buttons = listOf(
+      listOf("1", "2", "3"),
+      listOf("4", "5", "6"),
+      listOf("7", "8", "9"),
+      listOf(clearStringRes, "0", deleteStringRes)
+    )
 
-      buttons.forEach { row ->
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-          row.forEach { label ->
-            Button(
-              onClick = {
-                when (label) {
-                  "Del" -> if (pin.isNotEmpty()) pin = pin.dropLast(1)
-                  "Clear" -> pin = ""
-                  else -> if (pin.length < maxPinLength) pin += label
-                }
+    buttons.forEach { row ->
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+      ) {
+        row.forEach { label ->
+          Button(
+            onClick = {
+              when (label) {
+                deleteStringRes -> if (pin.isNotEmpty()) pin = pin.dropLast(1)
+                clearStringRes -> pin = ""
+                else -> if (pin.length < maxPinLength) pin += label
+              }
 
-                if (pin.length == maxPinLength) {
-                  onEvent(UiEvent.OnPinProvided(pin.toCharArray()))
-                }
-              },
-              modifier = Modifier
-                .padding(8.dp)
-                .size(96.dp)
-            ) {
-              Text(label)
-            }
+              if (pin.length == maxPinLength) {
+                onEvent.invoke(UiEvent.OnPinProvided(pin.toCharArray()))
+                pin = ""
+              }
+            },
+            modifier = Modifier
+              .padding(Dimensions.sPadding)
+              .size(Dimensions.pinButtonSize)
+          ) {
+            Text(label)
           }
         }
       }
-
-      Button(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(top = Dimensions.mPadding)
-          .height(Dimensions.actionButtonHeight),
-        onClick = {
-          onEvent(UiEvent.CancelPinFlow)
-        },
-      ) {
-        Text(stringResource(R.string.cancel))
-      }
     }
   }
+}
+
+@Composable
+private fun PinValidationError(error: String) {
+  if (error.isNotEmpty()) {
+    Text(text = error, color = Color.Red)
+  }
+}
+
+@Composable
+private fun Header() {
+  Text(text = stringResource(R.string.enter_pin), style = MaterialTheme.typography.headlineLarge)
 }
 
 @Preview(showBackground = true)

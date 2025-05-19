@@ -19,6 +19,8 @@ import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +33,9 @@ class BrowserRegistrationViewModel @Inject constructor(
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
+
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
+  val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
     viewModelScope.launch {
@@ -94,7 +99,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
     viewModelScope.launch {
       pinUseCase.pinCreationEventFlow.collect {
-        uiState = uiState.copy(shouldNavigateToPinScreen = true)
+        _navigationEvents.send(NavigationEvent.ToPinScreen)
       }
     }
   }
@@ -120,5 +125,9 @@ class BrowserRegistrationViewModel @Inject constructor(
     data class UpdateSelectedIdentityProvider(val identityProvider: OneginiIdentityProvider) : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
+  }
+
+  sealed class NavigationEvent {
+    object ToPinScreen : NavigationEvent()
   }
 }

@@ -1,21 +1,27 @@
 package com.onewelcome.core.omisdk.handlers
 
-import android.util.Log
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.handlers.request.OneginiCreatePinRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
-  var pinCallback: OneginiPinCallback? = null
-  private val _pinCreationEvents = MutableSharedFlow<Unit>(replay = 1)
-  val pinCreationEvents: SharedFlow<Unit> = _pinCreationEvents
+  private val _pinCreationFlow = Channel<Unit>(Channel.BUFFERED)
+  val pinCreationFlow = _pinCreationFlow.receiveAsFlow()
+
+  private val _finishPinCreationEvent = Channel<Unit>(Channel.BUFFERED)
+  val finishPinCreationEvent = _finishPinCreationEvent.receiveAsFlow()
+
+  private val _pinValidationErrorEvent = Channel<OneginiPinValidationError>()
+  val pinValidationErrorEvent = _pinValidationErrorEvent.receiveAsFlow()
+
   var maxPinLength: Int = 0
+  var pinCallback: OneginiPinCallback? = null
 
   override fun startPinCreation(
     userProfile: UserProfile,
@@ -24,16 +30,18 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
   ) {
     pinCallback = callback
     maxPinLength = pinLength
-    _pinCreationEvents.tryEmit(Unit)
+    _pinCreationFlow.trySend(Unit)
   }
 
   //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
   override fun onNextPinCreationAttempt(error: OneginiPinValidationError) {
-    Log.d("PinRequestHandler onNextPinCreationAttempt", error.toString())
+    _pinValidationErrorEvent.trySend(error)
   }
 
   //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
   override fun finishPinCreation() {
-    Log.d("PinRequestHandler finishPinCreation", "")
+    pinCallback = null
+    maxPinLength = 0
+    _finishPinCreationEvent.trySend(Unit)
   }
 }
