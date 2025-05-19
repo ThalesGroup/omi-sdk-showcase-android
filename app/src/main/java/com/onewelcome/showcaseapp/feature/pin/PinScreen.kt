@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,20 +22,34 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.showcaseapp.R
 
 @Composable
 fun PinScreen(
   navController: NavController,
-  viewModel: PinViewModel = hiltViewModel(),
+  viewModel: PinViewModel = hiltViewModel()
+) {
+  PinScreenContent(
+    onNavigateBack = { navController.popBackStack() },
+    onEvent = { viewModel.onEvent(it) },
+    uiState = viewModel.uiState
+  )
+}
+
+@Composable
+fun PinScreenContent(
+  onNavigateBack: () -> Unit,
+  onEvent: (UiEvent) -> Unit,
+  uiState: State,
 ) {
   var pin: String by remember { mutableStateOf("") }
-  val maxPinLength = viewModel.uiState.maxPinLength
+  val maxPinLength = uiState.maxPinLength
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -76,22 +91,44 @@ fun PinScreen(
                 when (label) {
                   "Del" -> if (pin.isNotEmpty()) pin = pin.dropLast(1)
                   "Clear" -> pin = ""
-                  else -> if (pin.length < 6) pin += label
+                  else -> if (pin.length < maxPinLength) pin += label
                 }
 
                 if (pin.length == maxPinLength) {
-                  viewModel.onEvent()
+                  onEvent(UiEvent.OnPinProvided(pin.toCharArray()))
                 }
               },
               modifier = Modifier
                 .padding(8.dp)
-                .size(80.dp)
+                .size(96.dp)
             ) {
               Text(label)
             }
           }
         }
       }
+
+      Button(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(top = Dimensions.mPadding)
+          .height(Dimensions.actionButtonHeight),
+        onClick = {
+          onEvent(UiEvent.CancelPinFlow)
+        },
+      ) {
+        Text(stringResource(R.string.cancel))
+      }
     }
   }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+  PinScreenContent(
+    onNavigateBack = {},
+    onEvent = {},
+    uiState = State()
+  )
 }

@@ -12,6 +12,7 @@
   <string name="zero">Zero</string>
   <string name="details">Details</string>
   <string name="register">Register</string>
+  <string name="cancel">Cancel</string>
 
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>

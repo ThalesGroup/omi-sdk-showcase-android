@@ -13,10 +13,10 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ class BrowserRegistrationViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val browserRegistrationUseCase: BrowserRegistrationUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
-  private val createPinRequestHandler: CreatePinRequestHandler
+  private val pinUseCase: PinUseCase
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -93,7 +93,7 @@ class BrowserRegistrationViewModel @Inject constructor(
         .onFailure { uiState = uiState.copy(result = Err(it), isRegistrationCancellationEnabled = false) }
     }
     viewModelScope.launch {
-      createPinRequestHandler.pinCreationEvents.collect {
+      pinUseCase.pinCreationEventFlow.collect {
         uiState = uiState.copy(shouldNavigateToPinScreen = true)
       }
     }
