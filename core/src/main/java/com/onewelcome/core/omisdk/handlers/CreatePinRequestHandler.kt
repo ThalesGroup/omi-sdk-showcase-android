@@ -15,6 +15,7 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
   var pinCallback: OneginiPinCallback? = null
   private val _pinCreationEvents = MutableSharedFlow<Unit>(replay = 1)
   val pinCreationEvents: SharedFlow<Unit> = _pinCreationEvents
+  var maxPinLength: Int = 0
 
   override fun startPinCreation(
     userProfile: UserProfile,
@@ -22,6 +23,7 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
     pinLength: Int
   ) {
     pinCallback = callback
+    maxPinLength = pinLength
     _pinCreationEvents.tryEmit(Unit)
   }
 

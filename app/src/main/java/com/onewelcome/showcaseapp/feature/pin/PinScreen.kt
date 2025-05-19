@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.onewelcome.core.theme.Dimensions
 
 @Composable
 fun PinScreen(
@@ -32,21 +34,21 @@ fun PinScreen(
   viewModel: PinViewModel = hiltViewModel(),
 ) {
   var pin: String by remember { mutableStateOf("") }
-  val maxPinLength = 7
+  val maxPinLength = viewModel.uiState.maxPinLength
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .padding(32.dp),
+      .padding(Dimensions.mPadding),
     verticalArrangement = Arrangement.SpaceBetween,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    Text("Enter PIN", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+    Text(text = "Enter PIN", style = MaterialTheme.typography.titleMedium)
     Row {
       repeat(maxPinLength) { index ->
         Box(
           modifier = Modifier
-            .padding(8.dp)
-            .size(20.dp)
+            .padding(Dimensions.sPadding)
+            .size(Dimensions.mPadding)
             .background(
               if (index < pin.length) Color.Black else Color.Gray,
               shape = CircleShape
@@ -74,11 +76,11 @@ fun PinScreen(
                 when (label) {
                   "Del" -> if (pin.isNotEmpty()) pin = pin.dropLast(1)
                   "Clear" -> pin = ""
-                  else -> if (pin.length < maxPinLength) pin += label
+                  else -> if (pin.length < 6) pin += label
                 }
 
                 if (pin.length == maxPinLength) {
-                  //viewModel.onPinEntered(pin)
+                  viewModel.onEvent()
                 }
               },
               modifier = Modifier
