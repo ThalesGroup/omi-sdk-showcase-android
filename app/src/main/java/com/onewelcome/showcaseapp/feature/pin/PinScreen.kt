@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +26,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavigatorState
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.clear
 import com.onewelcome.showcaseapp.R.string.del
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun PinScreen(
@@ -39,7 +44,8 @@ fun PinScreen(
   PinScreenContent(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
-    uiState = viewModel.uiState
+    uiState = viewModel.uiState,
+    navigationEvents = viewModel.navigationEvents
   )
 }
 
@@ -48,10 +54,9 @@ fun PinScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit,
   uiState: State,
+  navigationEvents: Flow<NavigationEvent>,
 ) {
-  if (uiState.finished == true) {
-    onNavigateBack.invoke()
-  }
+  ListenForNavigationEvents(onNavigateBack, navigationEvents)
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -63,6 +68,17 @@ fun PinScreenContent(
     PinValidationError(uiState.pinValidationError)
     PinInputSection(onEvent, uiState.maxPinLength)
     CancelButton(onEvent)
+  }
+}
+
+@Composable
+private fun ListenForNavigationEvents(onNavigateBack: () -> Unit, navigationEvents: Flow<NavigationEvent>) {
+  LaunchedEffect(Unit) {
+    navigationEvents.collect { event ->
+      when (event) {
+        is NavigationEvent.PopBackStack -> onNavigateBack.invoke()
+      }
+    }
   }
 }
 
@@ -153,6 +169,7 @@ fun Preview() {
   PinScreenContent(
     onNavigateBack = {},
     onEvent = {},
-    uiState = State()
+    uiState = State(),
+    navigationEvents = emptyFlow()
   )
 }

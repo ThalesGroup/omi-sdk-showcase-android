@@ -1,6 +1,7 @@
 package com.onewelcome.showcaseapp.fakes
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 

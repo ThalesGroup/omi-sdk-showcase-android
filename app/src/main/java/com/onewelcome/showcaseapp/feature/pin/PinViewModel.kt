@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.onewelcome.core.usecase.PinUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +18,9 @@ class PinViewModel @Inject constructor(
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
+
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
+  val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
     uiState = uiState.copy(maxPinLength = pinUseCase.maxPinLength)
@@ -41,7 +46,7 @@ class PinViewModel @Inject constructor(
   private fun listenForPinFinishedEvent() {
     viewModelScope.launch {
       pinUseCase.pinFinishedEventFlow.collect {
-        uiState = uiState.copy(finished = true)
+        _navigationEvents.send(NavigationEvent.PopBackStack)
       }
     }
   }
@@ -49,7 +54,6 @@ class PinViewModel @Inject constructor(
 
 data class State(
   val maxPinLength: Int = 0,
-  val finished: Boolean = false,
   val pinValidationError: String = "",
 )
 
@@ -67,4 +71,8 @@ sealed interface UiEvent {
       return pin.contentHashCode()
     }
   }
+}
+
+sealed class NavigationEvent {
+  object PopBackStack : NavigationEvent()
 }

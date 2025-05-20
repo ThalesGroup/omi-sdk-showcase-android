@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
+open class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
   private val _pinCreationFlow = Channel<Unit>(Channel.BUFFERED)
   val pinCreationFlow = _pinCreationFlow.receiveAsFlow()
 
@@ -33,12 +33,10 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
     _pinCreationFlow.trySend(Unit)
   }
 
-  //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
   override fun onNextPinCreationAttempt(error: OneginiPinValidationError) {
     _pinValidationErrorEvent.trySend(error)
   }
 
-  //TODO: https://onewelcome.atlassian.net/browse/EXAMPLEAND-163
   override fun finishPinCreation() {
     pinCallback = null
     maxPinLength = 0

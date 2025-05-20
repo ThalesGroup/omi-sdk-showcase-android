@@ -49,7 +49,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      is UiEvent.StartBrowserRegistration -> register()
+      is UiEvent.StartBrowserRegistration -> startRegistration()
       is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
       is UiEvent.CancelRegistration -> cancelRegistration()
@@ -86,7 +86,20 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
   }
 
-  private fun register() {
+  private fun startRegistration() {
+    registerUser()
+    listenForPinScreenNavigationEvent()
+  }
+
+  private fun listenForPinScreenNavigationEvent() {
+    viewModelScope.launch {
+      pinUseCase.pinCreationEventFlow.collect {
+        _navigationEvents.send(NavigationEvent.ToPinScreen)
+      }
+    }
+  }
+
+  private fun registerUser() {
     viewModelScope.launch {
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       browserRegistrationUseCase
@@ -96,11 +109,6 @@ class BrowserRegistrationViewModel @Inject constructor(
           updateUserProfiles()
         }
         .onFailure { uiState = uiState.copy(result = Err(it), isRegistrationCancellationEnabled = false) }
-    }
-    viewModelScope.launch {
-      pinUseCase.pinCreationEventFlow.collect {
-        _navigationEvents.send(NavigationEvent.ToPinScreen)
-      }
     }
   }
 
