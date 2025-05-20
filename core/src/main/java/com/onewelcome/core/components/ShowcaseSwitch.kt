@@ -29,7 +29,7 @@ fun ShowcaseSwitch(
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+private fun Preview() {
   ShowcaseSwitch(
     true,
     {},
