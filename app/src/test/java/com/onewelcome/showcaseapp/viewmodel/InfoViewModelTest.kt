@@ -59,6 +59,8 @@ class InfoViewModelTest {
   fun `Given sdk is not initialized, When viewmodel is initialized, Then state should be updated`() {
     val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = Err(Unit))
 
+    viewModel.updateData()
+
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
@@ -67,7 +69,7 @@ class InfoViewModelTest {
     mockSdkInitialized()
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit))
 
-    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase)
+    viewModel.updateData()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -79,7 +81,7 @@ class InfoViewModelTest {
     mockUserProfileIds()
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS))
 
-    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase)
+    viewModel.updateData()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
