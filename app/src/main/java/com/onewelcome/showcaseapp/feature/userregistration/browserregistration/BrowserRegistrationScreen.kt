@@ -118,7 +118,8 @@ private fun IdentityProvidersSection(
       ShowcaseSwitch(
         shouldBeChecked = uiState.shouldUseDefaultIdentityProvider,
         onCheck = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) },
-        text = stringResource(R.string.use_default_identity_provider)
+        text = stringResource(R.string.use_default_identity_provider),
+        tooltipContent = { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
       )
     }
   }
