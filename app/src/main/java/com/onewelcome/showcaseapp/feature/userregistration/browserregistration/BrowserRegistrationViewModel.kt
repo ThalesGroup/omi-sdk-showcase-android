@@ -93,7 +93,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   private fun listenForPinScreenNavigationEvent() {
     viewModelScope.launch {
-      pinUseCase.pinCreationEventFlow.collect {
+      pinUseCase.startPinCreationFlow.collect {
         _navigationEvents.send(NavigationEvent.ToPinScreen)
       }
     }
@@ -124,7 +124,6 @@ class BrowserRegistrationViewModel @Inject constructor(
     val shouldUseDefaultIdentityProvider: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val isRegistrationCancellationEnabled: Boolean = false,
-    val shouldNavigateToPinScreen: Boolean = false,
   )
 
   sealed interface UiEvent {

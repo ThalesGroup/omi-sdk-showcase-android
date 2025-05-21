@@ -10,15 +10,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
-  private val _pinCreationFlow = Channel<Unit>(Channel.BUFFERED)
-  val pinCreationFlow = _pinCreationFlow.receiveAsFlow()
+class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHandler {
+  private val _startPinCreationFlow = Channel<Unit>(Channel.BUFFERED)
+  val startPinCreationFlow = _startPinCreationFlow.receiveAsFlow()
 
-  private val _finishPinCreationEvent = Channel<Unit>(Channel.BUFFERED)
-  val finishPinCreationEvent = _finishPinCreationEvent.receiveAsFlow()
+  private val _finishPinCreationFlow = Channel<Unit>(Channel.BUFFERED)
+  val finishPinCreationFlow = _finishPinCreationFlow.receiveAsFlow()
 
-  private val _pinValidationErrorEvent = Channel<OneginiPinValidationError>()
-  val pinValidationErrorEvent = _pinValidationErrorEvent.receiveAsFlow()
+  private val _pinValidationErrorFlow = Channel<OneginiPinValidationError>()
+  val pinValidationErrorFlow = _pinValidationErrorFlow.receiveAsFlow()
 
   var maxPinLength: Int = 0
   var pinCallback: OneginiPinCallback? = null
@@ -30,16 +30,16 @@ open class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinReque
   ) {
     pinCallback = callback
     maxPinLength = pinLength
-    _pinCreationFlow.trySend(Unit)
+    _startPinCreationFlow.trySend(Unit)
   }
 
   override fun onNextPinCreationAttempt(error: OneginiPinValidationError) {
-    _pinValidationErrorEvent.trySend(error)
+    _pinValidationErrorFlow.trySend(error)
   }
 
   override fun finishPinCreation() {
     pinCallback = null
     maxPinLength = 0
-    _finishPinCreationEvent.trySend(Unit)
+    _finishPinCreationFlow.trySend(Unit)
   }
 }

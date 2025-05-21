@@ -31,13 +31,13 @@ class PinViewModel @Inject constructor(
   fun onEvent(event: UiEvent) {
     when (event) {
       is UiEvent.OnPinProvided -> pinUseCase.onPinProvided(event.pin)
-      is UiEvent.CancelPinFlow -> pinUseCase.cancelPinFlow()
+      is UiEvent.Cancel -> pinUseCase.cancel()
     }
   }
 
   private fun listenForPinValidationErrorEvent() {
     viewModelScope.launch {
-      pinUseCase.pinValidationErrorEvent.collect {
+      pinUseCase.pinValidationErrorFlow.collect {
         uiState = uiState.copy(pinValidationError = it.message)
       }
     }
@@ -45,7 +45,7 @@ class PinViewModel @Inject constructor(
 
   private fun listenForPinFinishedEvent() {
     viewModelScope.launch {
-      pinUseCase.pinFinishedEventFlow.collect {
+      pinUseCase.finishPinCreationFlow.collect {
         _navigationEvents.send(NavigationEvent.PopBackStack)
       }
     }
@@ -58,7 +58,7 @@ data class State(
 )
 
 sealed interface UiEvent {
-  data object CancelPinFlow : UiEvent
+  data object Cancel : UiEvent
   data class OnPinProvided(val pin: CharArray) : UiEvent {
     override fun equals(other: Any?): Boolean {
       if (this === other) return true

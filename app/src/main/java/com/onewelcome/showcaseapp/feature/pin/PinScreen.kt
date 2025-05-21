@@ -26,9 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavigatorState
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.clear
@@ -88,7 +86,7 @@ private fun CancelButton(onEvent: (UiEvent) -> Unit) {
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.CancelPinFlow) },
+    onClick = { onEvent(UiEvent.Cancel) },
   ) {
     Text(stringResource(R.string.cancel))
   }

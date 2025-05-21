@@ -8,9 +8,9 @@ import javax.inject.Inject
 class PinUseCase @Inject constructor(
   private val createPinRequestHandler: CreatePinRequestHandler
 ) {
-  val pinCreationEventFlow: Flow<Unit> = createPinRequestHandler.pinCreationFlow
-  val pinFinishedEventFlow: Flow<Unit> = createPinRequestHandler.finishPinCreationEvent
-  val pinValidationErrorEvent: Flow<OneginiPinValidationError> = createPinRequestHandler.pinValidationErrorEvent
+  val startPinCreationFlow: Flow<Unit> = createPinRequestHandler.startPinCreationFlow
+  val finishPinCreationFlow: Flow<Unit> = createPinRequestHandler.finishPinCreationFlow
+  val pinValidationErrorFlow: Flow<OneginiPinValidationError> = createPinRequestHandler.pinValidationErrorFlow
   val maxPinLength: Int
     get() = createPinRequestHandler.maxPinLength
 
@@ -18,7 +18,7 @@ class PinUseCase @Inject constructor(
     createPinRequestHandler.pinCallback?.acceptAuthenticationRequest(pin)
   }
 
-  fun cancelPinFlow() {
+  fun cancel() {
     createPinRequestHandler.pinCallback?.denyAuthenticationRequest()
   }
 }

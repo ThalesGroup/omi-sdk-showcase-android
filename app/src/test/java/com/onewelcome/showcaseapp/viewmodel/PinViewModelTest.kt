@@ -2,11 +2,11 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
-import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.PinUseCase
-import com.onewelcome.core.util.Constants.TEST_PIN
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILE_1
+import com.onewelcome.core.util.TestConstants.FakePinCallback
+import com.onewelcome.core.util.TestConstants.TEST_PIN
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.pin.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel
@@ -83,7 +83,7 @@ class PinViewModelTest {
   }
 
   @Test
-  fun `When Pin flow is finished, Then navigation event should be sent`() {
+  fun `When Pin creation is finished, Then navigation event should be sent`() {
     val expected = NavigationEvent.PopBackStack
 
     createPinRequestHandler.finishPinCreation()
@@ -104,22 +104,12 @@ class PinViewModelTest {
   }
 
   @Test
-  fun `When CancelPinFlow event is sent, Then useCase should trigger`() {
+  fun `When Cancel event is sent, Then useCase should trigger`() {
     val spyPinUseCase = spy(pinUseCase)
     viewModel = PinViewModel(spyPinUseCase)
 
-    viewModel.onEvent(UiEvent.CancelPinFlow)
+    viewModel.onEvent(UiEvent.Cancel)
 
-    verify(spyPinUseCase).cancelPinFlow()
-  }
-}
-
-class FakePinCallback : OneginiPinCallback {
-  override fun acceptAuthenticationRequest(pin: CharArray) {
-    //no-op
-  }
-
-  override fun denyAuthenticationRequest() {
-    //no-op
+    verify(spyPinUseCase).cancel()
   }
 }

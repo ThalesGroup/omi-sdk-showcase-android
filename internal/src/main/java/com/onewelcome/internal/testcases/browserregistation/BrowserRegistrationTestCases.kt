@@ -2,7 +2,7 @@ package com.onewelcome.internal.testcases.browserregistation
 
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
-import com.onewelcome.core.util.Constants
+import com.onewelcome.core.util.TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
@@ -31,7 +31,7 @@ class BrowserRegistrationTestCases @Inject constructor(
   )
 
   private suspend fun getBrowserIdentityProviders(): TestStatus {
-    sdkInitializationUseCase.initialize(Constants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
+    sdkInitializationUseCase.initialize(TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     val result = browserRegistrationUseCase.getBrowserIdentityProviders()
     return if (result.isOk) {
       TestStatus.Passed
