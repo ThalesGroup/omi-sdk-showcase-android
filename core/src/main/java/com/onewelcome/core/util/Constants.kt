@@ -61,4 +61,5 @@ object Constants {
 
   val TEST_IDENTITY_PROVIDERS = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
   val TEST_SELECTED_IDENTITY_PROVIDER = TEST_IDENTITY_PROVIDERS.first()
+  val TEST_PIN = charArrayOf('1', '2', '3', '4', '5')
 }

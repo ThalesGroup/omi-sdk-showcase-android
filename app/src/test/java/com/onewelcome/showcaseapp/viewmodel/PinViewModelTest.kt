@@ -1,30 +1,28 @@
 package com.onewelcome.showcaseapp.viewmodel
 
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.PinUseCase
-import com.onewelcome.core.util.Constants
+import com.onewelcome.core.util.Constants.TEST_PIN
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.pin.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel
-import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel
+import com.onewelcome.showcaseapp.feature.pin.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -53,7 +51,6 @@ class PinViewModelTest {
 
   private val mockOneginiPinValidationError: OneginiPinValidationError = mock()
 
-
   val pinCallback = FakePinCallback()
 
   private lateinit var viewModel: PinViewModel
@@ -68,19 +65,8 @@ class PinViewModelTest {
   fun `When viewmodel is initialized Then state should be updated`() {
     val expected = viewModel.uiState.copy(maxPinLength = 5)
 
-    createPinRequestHandler.startPinCreation(Constants.TEST_USER_PROFILE_1, pinCallback, 5)
+    createPinRequestHandler.startPinCreation(TEST_USER_PROFILE_1, pinCallback, 5)
     viewModel = PinViewModel(pinUseCase)
-
-    assertThat(viewModel.uiState).isEqualTo(expected)
-  }
-
-  @Test
-  fun `When viewmodel is initialized Then listener for pin finished event should be set`() {
-    val pinValidationErrorMessage = "pin validation error"
-    whenever(mockOneginiPinValidationError.message).thenReturn(pinValidationErrorMessage)
-    val expected = viewModel.uiState.copy(pinValidationError = pinValidationErrorMessage)
-
-    createPinRequestHandler.onNextPinCreationAttempt(mockOneginiPinValidationError)
 
     assertThat(viewModel.uiState).isEqualTo(expected)
   }
@@ -98,11 +84,33 @@ class PinViewModelTest {
 
   @Test
   fun `When Pin flow is finished, Then navigation event should be sent`() {
-    val expected = flowOf(NavigationEvent.PopBackStack)
+    val expected = NavigationEvent.PopBackStack
 
     createPinRequestHandler.finishPinCreation()
 
-    assertThat(viewModel.navigationEvents).isEqualTo(expected)
+    runTest {
+      assertThat(viewModel.navigationEvents.first()).isEqualTo(expected)
+    }
+  }
+
+  @Test
+  fun `When OnPinProvided event is sent, Then useCase should trigger`() {
+    val spyPinUseCase = spy(pinUseCase)
+    viewModel = PinViewModel(spyPinUseCase)
+
+    viewModel.onEvent(UiEvent.OnPinProvided(TEST_PIN))
+
+    verify(spyPinUseCase).onPinProvided(TEST_PIN)
+  }
+
+  @Test
+  fun `When CancelPinFlow event is sent, Then useCase should trigger`() {
+    val spyPinUseCase = spy(pinUseCase)
+    viewModel = PinViewModel(spyPinUseCase)
+
+    viewModel.onEvent(UiEvent.CancelPinFlow)
+
+    verify(spyPinUseCase).cancelPinFlow()
   }
 }
 

@@ -91,6 +91,7 @@ dependencies {
 
   // Coroutines
   implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.kotlinx.coroutines.test)
 
   // Compose
   implementation(platform(libs.androidx.compose.bom))
