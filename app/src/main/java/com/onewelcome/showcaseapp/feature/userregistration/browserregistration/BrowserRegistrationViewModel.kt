@@ -11,6 +11,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
@@ -100,11 +101,23 @@ class BrowserRegistrationViewModel @Inject constructor(
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       browserRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
-        .onSuccess {
-          uiState = uiState.copy(result = Ok(it), isRegistrationCancellationEnabled = false)
-          updateUserProfiles()
-        }
-        .onFailure { uiState = uiState.copy(result = Err(it), isRegistrationCancellationEnabled = false) }
+        .onSuccess { handleSuccess(it) }
+        .onFailure { handleFailure(it) }
+    }
+  }
+
+  private suspend fun handleSuccess(pair: Pair<UserProfile, CustomInfo?>) {
+    uiState = uiState.copy(result = Ok(pair), isRegistrationCancellationEnabled = false)
+    updateUserProfiles()
+  }
+
+  private fun handleFailure(throwable: Throwable) {
+    val isActionAlreadyInProgressError =
+      throwable is OneginiRegistrationError && throwable.errorType == OneginiRegistrationError.Type.ACTION_ALREADY_IN_PROGRESS
+    uiState = if (isActionAlreadyInProgressError) {
+      uiState.copy(result = Err(throwable))
+    } else {
+      uiState.copy(result = Err(throwable), isRegistrationCancellationEnabled = false)
     }
   }
 
