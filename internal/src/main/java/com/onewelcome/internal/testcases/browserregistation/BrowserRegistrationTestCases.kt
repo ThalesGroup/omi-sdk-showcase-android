@@ -1,6 +1,7 @@
 package com.onewelcome.internal.testcases.browserregistation
 
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
+import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.core.util.Constants
 import com.onewelcome.internal.entity.TestCase
@@ -10,6 +11,7 @@ import javax.inject.Inject
 
 class BrowserRegistrationTestCases @Inject constructor(
   private val browserRegistrationUseCase: BrowserRegistrationUseCase,
+  private val getBrowserIdentityProvidersUseCase: GetBrowserIdentityProvidersUseCase,
   private val sdkInitializationUseCase: OmiSdkInitializationUseCase
 ) {
   val tests = TestCategory(
@@ -32,7 +34,7 @@ class BrowserRegistrationTestCases @Inject constructor(
 
   private suspend fun getBrowserIdentityProviders(): TestStatus {
     sdkInitializationUseCase.initialize(Constants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
-    val result = browserRegistrationUseCase.getBrowserIdentityProviders()
+    val result = getBrowserIdentityProvidersUseCase.execute()
     return if (result.isOk) {
       TestStatus.Passed
     } else {
@@ -41,7 +43,7 @@ class BrowserRegistrationTestCases @Inject constructor(
   }
 
   private suspend fun sdkNotInitializedGetBrowserIdentityProviders(): TestStatus {
-    val result = browserRegistrationUseCase.getBrowserIdentityProviders()
+    val result = getBrowserIdentityProvidersUseCase.execute()
     return if (result.isErr) {
       TestStatus.Passed
     } else {

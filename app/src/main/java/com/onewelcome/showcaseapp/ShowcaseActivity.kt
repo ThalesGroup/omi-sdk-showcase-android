@@ -39,19 +39,4 @@ class ShowcaseActivity : ComponentActivity() {
       }
     }
   }
-
-  override fun onNewIntent(intent: Intent) {
-    super.onNewIntent(intent)
-    handleBrowserRegistrationRedirect(intent)
-  }
-
-  private fun handleBrowserRegistrationRedirect(intent: Intent) {
-    val uri = intent.data
-    val scheme = uri?.scheme
-    val isBrowserRegistrationRedirect =
-      uri != null && scheme != null && omiSdkEngine.oneginiClient.configModel.redirectUri.startsWith(scheme)
-    if (isBrowserRegistrationRedirect) {
-      browserRegistrationRequestHandler.handleRegistrationCallback(uri)
-    }
-  }
 }

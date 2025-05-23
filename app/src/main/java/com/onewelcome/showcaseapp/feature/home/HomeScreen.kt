@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.navigation.Screens
@@ -49,7 +50,7 @@ fun HomeScreenContent(onNavigateToSection: (route: String) -> Unit) {
 @Composable
 private fun Sections(onNavigateToSection: (route: String) -> Unit) {
   getSections().forEach { section ->
-    Section(section, onNavigateToSection)
+    ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
   }
 }
 
@@ -67,8 +68,7 @@ private fun getSections(): List<SectionItem> {
 private fun Section(section: SectionItem, onNavigateToSection: (route: String) -> Unit) {
   Card(
     modifier = Modifier
-      .fillMaxWidth()
-      .padding(top = Dimensions.mPadding),
+      .fillMaxWidth(),
     onClick = {
       onNavigateToSection.invoke(section.navigation.route)
     }

@@ -1,6 +1,8 @@
 package com.onewelcome.showcaseapp.feature.userregistration.browserregistration
 
+import android.content.Intent
 import android.os.Parcel
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,14 +16,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.util.Consumer
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.github.michaelbull.result.Result
@@ -52,6 +57,19 @@ fun BrowserRegistrationScreen(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) }
   )
+  RegistrationIntentListener { viewModel.onEvent(it) }
+}
+
+@Composable
+fun RegistrationIntentListener(onEvent: (UiEvent) -> Unit) {
+  val activity = LocalContext.current as ComponentActivity
+  DisposableEffect(Unit) {
+    val listener = Consumer<Intent> { intent ->
+      intent.data?.let { onEvent.invoke(UiEvent.HandleRegistrationCallback(it)) }
+    }
+    activity.addOnNewIntentListener(listener)
+    onDispose { activity.removeOnNewIntentListener(listener) }
+  }
 }
 
 @Composable
@@ -127,11 +145,11 @@ private fun IdentityProvidersSection(
 
 @Composable
 private fun IdentityProvidersList(
-  selectedIdentityProvider: OneginiIdentityProvider?,
+  chosenIdentityProvider: OneginiIdentityProvider?,
   identityProviders: Set<OneginiIdentityProvider>,
   onEvent: (UiEvent) -> Unit
 ) {
-  var selectedIdentityProvider = selectedIdentityProvider ?: identityProviders.first()
+  val selectedIdentityProvider = chosenIdentityProvider ?: identityProviders.first()
   identityProviders.forEach { identityProvider ->
     Row(
       verticalAlignment = Alignment.CenterVertically,
@@ -260,11 +278,6 @@ private fun getUserProfilesText(userProfiles: List<String>): String {
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-  BrowserRegistrationScreenContent(
-    uiState = State(),
-    onNavigateBack = {},
-    onEvent = {}
-  )
   val browserIdentityProviders = setOf(
     object : OneginiIdentityProvider {
       override val id: String

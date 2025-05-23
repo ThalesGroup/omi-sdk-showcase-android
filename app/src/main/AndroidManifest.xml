@@ -23,7 +23,8 @@
 
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-
+        <!-- scheme should match redirect URI scheme configured on the backend -->
+        <!-- scheme is also displayed as part of result using sdk configurator -->
         <data android:scheme="oneginiexample" />
       </intent-filter>
     </activity>
