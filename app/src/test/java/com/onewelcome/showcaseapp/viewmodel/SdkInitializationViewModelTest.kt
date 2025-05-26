@@ -6,10 +6,13 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
+import com.onewelcome.core.util.Constants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
+import com.onewelcome.core.util.Constants.TEST_USER_PROFILES
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -62,7 +65,7 @@ class SdkInitializationViewModelTest {
 
     argumentCaptor<OmiSdkInitializationSettings> {
       verify(omiSdkEngineFake).initialize(capture())
-      assertThat(firstValue).isEqualTo(DEFAULT_SETTINGS)
+      assertThat(firstValue).isEqualTo(TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     }
   }
 
@@ -78,11 +81,11 @@ class SdkInitializationViewModelTest {
 
   @Test
   fun `should successfully initialize SDK with removed user profiles`() {
-    whenSdkInitializedSuccessfully(REMOVED_USER_PROFILES)
+    whenSdkInitializedSuccessfully(TEST_USER_PROFILES)
 
     viewModel.onEvent(UiEvent.InitializeOneginiSdk)
 
-    val expectedState = INITIAL_STATE.copy(result = Ok(REMOVED_USER_PROFILES))
+    val expectedState = INITIAL_STATE.copy(result = Ok(TEST_USER_PROFILES))
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
@@ -179,12 +182,5 @@ class SdkInitializationViewModelTest {
       isLoading = false,
       result = null
     )
-    private val DEFAULT_SETTINGS = OmiSdkInitializationSettings(
-      shouldStoreCookies = true,
-      httpConnectTimeout = null,
-      httpReadTimeout = null,
-      deviceConfigCacheDuration = null
-    )
-    val REMOVED_USER_PROFILES = setOf(UserProfile("123456"), UserProfile("QWERTY"))
   }
 }

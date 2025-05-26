@@ -1,6 +1,5 @@
 package com.onewelcome.showcaseapp.navigation
 
-import OsCompatibilityScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -17,9 +16,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.onewelcome.showcaseapp.ui.screens.HomeScreen
-import com.onewelcome.showcaseapp.ui.screens.InfoScreen
-import com.onewelcome.showcaseapp.ui.screens.sections.SdkInitializationScreen
+import com.onewelcome.internal.OsCompatibilityScreen
+import com.onewelcome.showcaseapp.feature.home.HomeScreen
+import com.onewelcome.showcaseapp.feature.info.InfoScreen
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
 
 @Composable
 fun BottomNavigationBar() {
@@ -51,7 +53,7 @@ fun BottomNavigationBar() {
                 }
                 restoreState = true
               }
-              if (navigationItem.route == currentRootDestination?.route && currentRootDestination.route == ScreenNavigation.Home.route) {
+              if (navigationItem.route == currentRootDestination?.route && currentRootDestination.route == Screens.Home.route) {
                 homeNavController.popBackStack(homeNavController.graph.startDestinationId, false)
               }
             }
@@ -62,20 +64,22 @@ fun BottomNavigationBar() {
   ) { paddingValues ->
     NavHost(
       navController = rootNavController,
-      startDestination = ScreenNavigation.Home.route,
+      startDestination = Screens.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      composable(ScreenNavigation.Home.route) { HomeScreenNavHost(homeNavController) }
-      composable(ScreenNavigation.Info.route) { InfoScreen() }
-      composable(ScreenNavigation.OsCompatiblity.route) { OsCompatibilityScreen() }
+      composable(Screens.Home.route) { HomeScreenNavHost(homeNavController) }
+      composable(Screens.Info.route) { InfoScreen() }
+      composable(Screens.OsCompatiblity.route) { OsCompatibilityScreen() }
     }
   }
 }
 
 @Composable
 private fun HomeScreenNavHost(homeNavController: NavHostController) {
-  NavHost(navController = homeNavController, startDestination = ScreenNavigation.Home.route) {
-    composable(ScreenNavigation.Home.route) { HomeScreen(homeNavController) }
-    composable(ScreenNavigation.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
+  NavHost(navController = homeNavController, startDestination = Screens.Home.route) {
+    composable(Screens.Home.route) { HomeScreen(homeNavController) }
+    composable(Screens.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
+    composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
+    composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController) }
   }
 }

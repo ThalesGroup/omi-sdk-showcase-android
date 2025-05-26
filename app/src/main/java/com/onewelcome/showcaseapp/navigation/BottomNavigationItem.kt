@@ -20,14 +20,14 @@ data class BottomNavigationItem(
         BottomNavigationItem(
           label = context.getString(R.string.home_screen_name),
           icon = Icons.Filled.Home,
-          route = ScreenNavigation.Home.route
+          route = Screens.Home.route
         )
       )
       add(
         BottomNavigationItem(
           label = context.getString(R.string.info_screen_name),
           icon = Icons.Filled.Info,
-          route = ScreenNavigation.Info.route
+          route = Screens.Info.route
         )
       )
       if (BuildConfig.IS_INTERNAL_VARIANT) {
@@ -35,7 +35,7 @@ data class BottomNavigationItem(
           BottomNavigationItem(
             label = context.getString(R.string.os_compatibility_screen_name),
             icon = Icons.Filled.Face,
-            route = ScreenNavigation.OsCompatiblity.route
+            route = Screens.OsCompatiblity.route
           )
         )
       }

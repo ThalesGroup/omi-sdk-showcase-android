@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.components
+package com.onewelcome.core.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,12 @@ import com.onewelcome.core.theme.success
 import com.onewelcome.showcaseapp.R
 
 @Composable
-fun ShowcaseStatusCard(title: String, description: String? = null, status: Boolean? = null) {
+fun ShowcaseStatusCard(
+  title: String,
+  description: String? = null,
+  status: Boolean? = null,
+  tooltipContent: @Composable (() -> Unit)? = null
+) {
   Card(
     modifier = Modifier
       .fillMaxWidth()
@@ -46,6 +51,7 @@ fun ShowcaseStatusCard(title: String, description: String? = null, status: Boole
         }
       }
       status?.let { StatusIndicator(it) }
+      tooltipContent?.let { ShowcaseTooltip(tooltipContent) }
     }
   }
 }
@@ -71,5 +77,11 @@ private fun Preview() {
     ShowcaseStatusCard("Status card title", null)
     ShowcaseStatusCard("Status card title", null, true)
     ShowcaseStatusCard("Status card title", "Optional description", false)
+    ShowcaseStatusCard("Status card title", null, true, { Text("Test tooltip content") })
+    ShowcaseStatusCard(
+      "Status card title",
+      "Two lines long optional description Two lines long optional description",
+      false,
+      { Text("Test tooltip content") })
   }
 }

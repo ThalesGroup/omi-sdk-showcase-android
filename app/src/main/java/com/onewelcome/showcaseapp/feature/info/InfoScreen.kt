@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.screens
+package com.onewelcome.showcaseapp.feature.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,17 +14,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.michaelbull.result.Result
+import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.ui.components.ShowcaseStatusCard
-import com.onewelcome.showcaseapp.viewmodel.InfoViewModel
-import com.onewelcome.showcaseapp.viewmodel.InfoViewModel.State
+import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 
 @Composable
 fun InfoScreen(
   viewModel: InfoViewModel = hiltViewModel()
 ) {
-  viewModel.updateStatus()
+  viewModel.updateData()
   InfoScreenContent(viewModel.uiState)
 }
 
@@ -55,12 +56,26 @@ private fun TopBar() {
 @Composable
 private fun StatusList(uiState: State) {
   Column(
-    modifier = Modifier.padding(top = Dimensions.mPadding)
+    modifier = Modifier.padding(top = Dimensions.mPadding),
+    verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
   ) {
     ShowcaseStatusCard(
       title = stringResource(R.string.status_sdk_initialized),
       status = uiState.isSdkInitialized
     )
+    ShowcaseStatusCard(
+      title = stringResource(R.string.user_profiles),
+      description = getUserProfiles(uiState.userProfileIds)
+    )
+  }
+}
+
+@Composable
+private fun getUserProfiles(userProfiles: Result<List<String>, Unit>?): String {
+  return if (userProfiles?.isOk == true && userProfiles.value.isNotEmpty()) {
+    userProfiles.value.separateItemsWithComa()
+  } else {
+    stringResource(R.string.no_user_profiles)
   }
 }
 
