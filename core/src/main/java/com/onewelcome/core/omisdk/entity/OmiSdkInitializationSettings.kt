@@ -1,4 +1,4 @@
-package com.onewelcome.core.entity
+package com.onewelcome.core.omisdk.entity
 
 data class OmiSdkInitializationSettings(
   val shouldStoreCookies: Boolean,

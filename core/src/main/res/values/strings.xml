@@ -11,6 +11,7 @@
   <string name="result">Result</string>
   <string name="zero">Zero</string>
   <string name="details">Details</string>
+  <string name="register">Register</string>
 
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>
@@ -18,6 +19,8 @@
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
+  <string name="section_title_user_registration">User Registration</string>
+  <string name="section_title_browser_registration">Browser Registration</string>
 
   <!-- SDK Initialization -->
   <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
@@ -69,4 +72,22 @@
   <string name="failed">Failed</string>
   <string name="passed">Passed</string>
   <string name="all_test_passed">All tests passed successfully ✅</string>
+
+  <!-- Registration -->
+  <string name="user_registration_description">With our sdk you can register user in many ways. Click on each of them to learn more.</string>
+  <string name="user_registration">User registration</string>
+
+  <!-- Browser registration -->
+  <string name="browser_registration">Browser registration</string>
+  <string name="browser_registration_description">Browser based registration allows users to complete the registration process through a web browser flow. </string>
+  <string name="identity_providers">Identity providers</string>
+  <string name="registration_scopes">Registration scopes</string>
+  <string name="cancel_registration">Cancel registration</string>
+  <string name="default_identity_provider_tooltip_text">Default identity provider is set in configuration on the server side.</string>
+  <string name="user_profiles">User profiles</string>
+  <string name="use_default_identity_provider">Use default identity provider</string>
+  <string name="no_user_profiles">No user profiles</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_registration">SDK needs to be initialized to perform registration</string>
+  <string name="registration_successful">Registration successful</string>
+
 </resources>

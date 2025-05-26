@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.ui.screens.sections
+package com.onewelcome.showcaseapp.feature.sdkinitialization
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,14 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,13 +27,13 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseCheckbox
 import com.onewelcome.core.components.ShowcaseExpandableCard
+import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseNumberTextField
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.State
-import com.onewelcome.showcaseapp.viewmodel.SdkInitializationViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.State
+import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 
 @Composable
 fun SdkInitializationScreen(
@@ -59,34 +55,16 @@ private fun SdkInitializationScreenContent(
   SdkFeatureScreen(
     title = stringResource(R.string.section_title_sdk_initialization),
     onNavigateBack = onNavigateBack,
-    description = { FeatureDescription() },
+    description = {
+      ShowcaseFeatureDescription(
+        stringResource(R.string.sdk_initialization_description),
+        Constants.DOCUMENTATION_SDK_INITIALIZATION
+      )
+    },
     settings = { SettingsSection(uiState, onEvent) },
     result = uiState.result?.let { { InitializationResult(uiState) } },
     action = { InitializeSdkButton(uiState, onEvent) }
   )
-}
-
-@Composable
-private fun FeatureDescription() {
-  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
-    Text(
-      style = MaterialTheme.typography.bodyLarge,
-      text = stringResource(R.string.sdk_initialization_description)
-    )
-    Text(
-      style = MaterialTheme.typography.bodyLarge,
-      text = buildAnnotatedString {
-        append(stringResource(R.string.read_more) + " ")
-        withLink(
-          LinkAnnotation.Url(
-            Constants.DOCUMENTATION_SDK_INITIALIZATION,
-            TextLinkStyles(style = SpanStyle(textDecoration = TextDecoration.Underline, color = MaterialTheme.colorScheme.primary))
-          )
-        ) {
-          append(stringResource(R.string.here))
-        }
-      })
-  }
 }
 
 @Composable

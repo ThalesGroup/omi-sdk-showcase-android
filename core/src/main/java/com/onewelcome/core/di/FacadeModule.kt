@@ -1,7 +1,7 @@
 package com.onewelcome.core.di
 
-import com.onewelcome.core.facade.OmiSdkEngine
-import com.onewelcome.core.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.OmiSdkEngine
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,4 +14,3 @@ interface FacadeModule {
   @Binds
   fun bindOmiSdkFacade(omiSdkEngine: OmiSdkEngine): OmiSdkFacade
 }
-

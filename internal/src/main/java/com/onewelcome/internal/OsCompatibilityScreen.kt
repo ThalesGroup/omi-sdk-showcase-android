@@ -1,3 +1,5 @@
+package com.onewelcome.internal
+
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.michaelbull.result.Result
@@ -34,7 +37,6 @@ import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
-import com.onewelcome.internal.OsCompatibilityViewModel
 import com.onewelcome.internal.OsCompatibilityViewModel.UiEvent
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestStatus
@@ -52,7 +54,6 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
     modifier = Modifier
       .fillMaxSize()
       .padding(Dimensions.mPadding),
-    verticalArrangement = Arrangement.SpaceBetween,
   ) {
     item {
       AndroidVersionInfoSection()
@@ -73,7 +74,9 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
         isExpanded = isExpanded,
         onExpandToggle = { expandedCategories[index] = !isExpanded }
       ) {
-        TestCasesSection(testCategory.testCases)
+        Column {
+          testCategory.testCases.forEach { TestItem(it) }
+        }
       }
     }
   }
@@ -96,15 +99,6 @@ private fun RunTestsButton(viewModel: OsCompatibilityViewModel) {
     } else {
       Text(stringResource(R.string.run_tests))
     }
-  }
-}
-
-@Composable
-private fun TestCasesSection(testCases: List<TestCase>) {
-  Column(
-    modifier = Modifier.padding(top = Dimensions.sPadding)
-  ) {
-    testCases.forEach { TestItem(it) }
   }
 }
 
@@ -206,22 +200,20 @@ private fun TestResultHeader() {
 
 @Composable
 private fun TestItem(testCase: TestCase) {
-  Column {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(Dimensions.mPadding),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-      Text(testCase.name)
-      TestStatusIcon(testCase.status)
-    }
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(Dimensions.mPadding),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+  ) {
+    Text(text = testCase.name, modifier = Modifier.weight(1f))
+    TestStatus(testCase.status)
   }
 }
 
 @Composable
-private fun TestStatusIcon(status: TestStatus) {
+private fun TestStatus(status: TestStatus) {
   when (status) {
     TestStatus.Pending -> Text(stringResource(R.string.pending))
     TestStatus.Running -> CircularProgressIndicator(

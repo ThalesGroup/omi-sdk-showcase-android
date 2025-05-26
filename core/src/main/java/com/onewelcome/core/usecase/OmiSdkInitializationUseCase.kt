@@ -6,8 +6,8 @@ import com.github.michaelbull.result.Result
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume

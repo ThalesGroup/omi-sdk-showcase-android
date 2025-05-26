@@ -12,10 +12,20 @@
         android:name=".ShowcaseActivity"
         android:exported="true"
         android:label="@string/showcase_activity_name"
-        android:theme="@style/Theme.ShowcaseApp">
+        android:theme="@style/Theme.ShowcaseApp"
+        android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <!-- scheme should match redirect URI scheme configured on the backend -->
+        <!-- scheme is also displayed as part of result using sdk configurator -->
+        <data android:scheme="oneginiexample" />
       </intent-filter>
     </activity>
     <provider
