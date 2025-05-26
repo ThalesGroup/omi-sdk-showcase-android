@@ -19,8 +19,7 @@ import com.onewelcome.core.theme.Dimensions
 fun ShowcaseCard(title: String, route: String, onNavigationEvent: (String) -> Unit) {
   Card(
     modifier = Modifier
-      .fillMaxWidth()
-      .padding(top = Dimensions.mPadding),
+      .fillMaxWidth(),
     onClick = { onNavigationEvent.invoke(route) }
   ) {
     Row(

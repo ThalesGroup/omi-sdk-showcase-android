@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.userregistration
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -42,6 +43,7 @@ private fun UserRegistrationScreenContent(
       modifier = Modifier
         .padding(innerPadding)
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
+      verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
     ) {
       ShowcaseFeatureDescription(stringResource(R.string.user_registration_description), Constants.DOCUMENTATION_USER_REGISTRATION)
       Sections(onNavigateDeeper)

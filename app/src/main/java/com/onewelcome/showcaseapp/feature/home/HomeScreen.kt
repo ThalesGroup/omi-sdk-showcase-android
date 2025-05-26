@@ -49,8 +49,12 @@ fun HomeScreenContent(onNavigateToSection: (route: String) -> Unit) {
 
 @Composable
 private fun Sections(onNavigateToSection: (route: String) -> Unit) {
-  getSections().forEach { section ->
-    ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
+  Column(
+    verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+  ) {
+    getSections().forEach { section ->
+      ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
+    }
   }
 }
 
@@ -61,35 +65,6 @@ private fun getSections(): List<SectionItem> {
     SectionItem(stringResource(R.string.section_title_sdk_initialization), Screens.SdkInitialization),
     SectionItem(stringResource(R.string.section_title_user_registration), Screens.UserRegistration)
   )
-}
-
-
-@Composable
-private fun Section(section: SectionItem, onNavigateToSection: (route: String) -> Unit) {
-  Card(
-    modifier = Modifier
-      .fillMaxWidth(),
-    onClick = {
-      onNavigateToSection.invoke(section.navigation.route)
-    }
-  ) {
-    Row(
-      modifier = Modifier.padding(Dimensions.mPadding),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
-    ) {
-      Text(
-        modifier = Modifier
-          .weight(1f),
-        text = section.title,
-        style = MaterialTheme.typography.titleMedium
-      )
-      Icon(
-        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-        contentDescription = Icons.AutoMirrored.Filled.KeyboardArrowRight.name,
-      )
-    }
-  }
 }
 
 @Preview(showBackground = true)
