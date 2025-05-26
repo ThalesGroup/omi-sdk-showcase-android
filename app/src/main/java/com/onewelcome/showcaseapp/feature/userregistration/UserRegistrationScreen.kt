@@ -2,23 +2,15 @@ package com.onewelcome.showcaseapp.feature.userregistration
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
@@ -51,8 +43,9 @@ private fun UserRegistrationScreenContent(
       modifier = Modifier
         .padding(innerPadding)
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
+      verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
     ) {
-      ShowcaseFeatureDescription("With our sdk you can register user in many ways. Click on each of them to learn more.", Constants.DOCUMENTATION_USER_REGISTRATION)
+      ShowcaseFeatureDescription(stringResource(R.string.user_registration_description), Constants.DOCUMENTATION_USER_REGISTRATION)
       Sections(onNavigateDeeper)
     }
   }
@@ -61,34 +54,7 @@ private fun UserRegistrationScreenContent(
 @Composable
 fun Sections(onNavigateToSection: (String) -> Unit) {
   getSections().forEach { section ->
-    Section(section, onNavigateToSection)
-  }
-}
-
-@Composable
-private fun Section(section: SectionItem, onNavigateToSection: (String) -> Unit) {
-  Card(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(top = Dimensions.mPadding),
-    onClick = { onNavigateToSection.invoke(section.navigation.route) }
-  ) {
-    Row(
-      modifier = Modifier.padding(Dimensions.mPadding),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
-    ) {
-      Text(
-        modifier = Modifier
-          .weight(1f),
-        text = section.title,
-        style = MaterialTheme.typography.titleMedium
-      )
-      Icon(
-        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-        contentDescription = Icons.AutoMirrored.Filled.KeyboardArrowRight.name,
-      )
-    }
+    ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
   }
 }
 

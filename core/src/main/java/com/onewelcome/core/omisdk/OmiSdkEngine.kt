@@ -17,6 +17,7 @@ class OmiSdkEngine @Inject constructor(
   private val createPinRequestHandler: CreatePinRequestHandler,
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+  private val oneginiConfigModel: OneginiConfigModel
 ) : OmiSdkFacade {
 
   override val oneginiClient
@@ -24,7 +25,7 @@ class OmiSdkEngine @Inject constructor(
 
   override fun initialize(settings: OmiSdkInitializationSettings): OneginiClient {
     return OneginiClientBuilder(context, createPinRequestHandler, pinAuthenticationRequestHandler)
-      .setConfigModel(OneginiConfigModel())
+      .setConfigModel(oneginiConfigModel)
       .shouldStoreCookies(settings.shouldStoreCookies)
       .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
       .apply {

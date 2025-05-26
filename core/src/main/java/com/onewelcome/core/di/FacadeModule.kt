@@ -14,4 +14,3 @@ interface FacadeModule {
   @Binds
   fun bindOmiSdkFacade(omiSdkEngine: OmiSdkEngine): OmiSdkFacade
 }
-
