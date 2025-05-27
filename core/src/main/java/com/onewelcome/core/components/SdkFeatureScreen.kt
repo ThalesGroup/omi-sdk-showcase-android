@@ -44,7 +44,7 @@ fun SdkFeatureScreen(
         description()
         Box { settings() }
       }
-      Column(verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)) {
+      Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
         HorizontalDivider()
         ResultCard(result)
         action()

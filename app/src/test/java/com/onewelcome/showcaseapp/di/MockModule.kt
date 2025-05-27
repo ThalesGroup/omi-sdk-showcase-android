@@ -18,9 +18,7 @@ import javax.inject.Singleton
 class MockModule {
 
   private val oneginiClientMock = mock<OneginiClient>()
-
-  private val userClientMock = mock<UserClient>()
-
+  
   private val browserRegistrationRequestHandler = mock<BrowserRegistrationRequestHandler>()
 
   private val createPinRequestHandler = CreatePinRequestHandler()
@@ -28,11 +26,6 @@ class MockModule {
   @Provides
   fun provideOneginiClientMock(): OneginiClient {
     return oneginiClientMock
-  }
-
-  @Provides
-  fun provideUserClient(): UserClient {
-    return userClientMock
   }
 
   @Provides
