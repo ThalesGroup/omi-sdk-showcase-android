@@ -125,7 +125,7 @@ private fun ListenForPinNavigationEvent(
 @Composable
 private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
-    verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
     UserProfilesSection(uiState.userProfileIds)

@@ -105,12 +105,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
       browserRegistrationRequestHandler,
-
+      createPinRequestHandler
     )
   }
 
@@ -138,11 +137,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -162,11 +161,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -187,11 +186,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -210,11 +209,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -272,11 +271,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
     viewModel.onEvent(StartBrowserRegistration)
 
@@ -297,11 +296,11 @@ class BrowserRegistrationViewModelTest {
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
       browserRegistrationUseCase,
-      pinUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
     viewModel.onEvent(StartBrowserRegistration)
 
