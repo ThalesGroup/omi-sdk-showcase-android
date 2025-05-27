@@ -17,11 +17,11 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -33,11 +33,11 @@ import javax.inject.Inject
 class BrowserRegistrationViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val browserRegistrationUseCase: BrowserRegistrationUseCase,
-  private val pinUseCase: PinUseCase,
   private val getBrowserIdentityProvidersUseCase: GetBrowserIdentityProvidersUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val oneginiConfigModel: OneginiConfigModel,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+  private val createPinRequestHandler: CreatePinRequestHandler,
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -110,7 +110,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   private fun listenForPinScreenNavigationEvent() {
     viewModelScope.launch {
-      pinUseCase.startPinCreationFlow.collect {
+      createPinRequestHandler.startPinCreationFlow.collect {
         _navigationEvents.send(NavigationEvent.ToPinScreen)
       }
     }
@@ -165,6 +165,6 @@ class BrowserRegistrationViewModel @Inject constructor(
   }
 
   sealed class NavigationEvent {
-    object ToPinScreen : NavigationEvent()
+    data object ToPinScreen : NavigationEvent()
   }
 }

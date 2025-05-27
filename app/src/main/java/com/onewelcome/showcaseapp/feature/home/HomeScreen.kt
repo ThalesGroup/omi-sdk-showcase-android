@@ -42,7 +42,7 @@ fun HomeScreenContent(onNavigateToSection: (route: String) -> Unit) {
 @Composable
 private fun Sections(onNavigateToSection: (route: String) -> Unit) {
   Column(
-    verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     getSections().forEach { section ->
       ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
