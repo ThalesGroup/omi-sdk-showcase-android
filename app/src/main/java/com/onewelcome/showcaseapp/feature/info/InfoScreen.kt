@@ -57,7 +57,7 @@ private fun TopBar() {
 private fun StatusList(uiState: State) {
   Column(
     modifier = Modifier.padding(top = Dimensions.mPadding),
-    verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     ShowcaseStatusCard(
       title = stringResource(R.string.status_sdk_initialized),

@@ -19,6 +19,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -44,8 +45,7 @@ class InfoViewModelTest {
   @Inject
   lateinit var omiSdkEngineFake: OmiSdkEngineFake
 
-  @Inject
-  lateinit var userClientMock: UserClient
+  private val userClientMock: UserClient = mock()
 
   private lateinit var viewModel: InfoViewModel
 

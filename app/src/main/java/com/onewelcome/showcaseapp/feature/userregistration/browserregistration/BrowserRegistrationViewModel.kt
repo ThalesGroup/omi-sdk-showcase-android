@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.userregistration.browserregistration
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,13 +11,17 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.OneginiConfigModel
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
+import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -28,8 +33,11 @@ import javax.inject.Inject
 class BrowserRegistrationViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val browserRegistrationUseCase: BrowserRegistrationUseCase,
+  private val getBrowserIdentityProvidersUseCase: GetBrowserIdentityProvidersUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
-  private val pinUseCase: PinUseCase
+  private val oneginiConfigModel: OneginiConfigModel,
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+  private val createPinRequestHandler: CreatePinRequestHandler,
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -54,11 +62,20 @@ class BrowserRegistrationViewModel @Inject constructor(
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
       is UiEvent.CancelRegistration -> cancelRegistration()
       is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
+      is UiEvent.HandleRegistrationCallback -> handleRegistrationCallback(event.uri)
+    }
+  }
+
+  private fun handleRegistrationCallback(uri: Uri) {
+    val scheme = uri.scheme
+    val isBrowserRegistrationRedirect = scheme != null && oneginiConfigModel.redirectUri.startsWith(scheme)
+    if (isBrowserRegistrationRedirect) {
+      browserRegistrationRequestHandler.handleRegistrationCallback(uri)
     }
   }
 
   private suspend fun updateIdentityProviders() {
-    browserRegistrationUseCase.getBrowserIdentityProviders()
+    getBrowserIdentityProvidersUseCase.execute()
       .onSuccess { uiState = uiState.copy(identityProviders = it) }
       .onFailure { uiState = uiState.copy(identityProviders = emptySet()) }
   }
@@ -93,7 +110,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   private fun listenForPinScreenNavigationEvent() {
     viewModelScope.launch {
-      pinUseCase.startPinCreationFlow.collect {
+      createPinRequestHandler.startPinCreationFlow.collect {
         _navigationEvents.send(NavigationEvent.ToPinScreen)
       }
     }
@@ -104,11 +121,23 @@ class BrowserRegistrationViewModel @Inject constructor(
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       browserRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
-        .onSuccess {
-          uiState = uiState.copy(result = Ok(it), isRegistrationCancellationEnabled = false)
-          updateUserProfiles()
-        }
-        .onFailure { uiState = uiState.copy(result = Err(it), isRegistrationCancellationEnabled = false) }
+        .onSuccess { handleSuccess(it) }
+        .onFailure { handleFailure(it) }
+    }
+  }
+
+  private suspend fun handleSuccess(pair: Pair<UserProfile, CustomInfo?>) {
+    uiState = uiState.copy(result = Ok(pair), isRegistrationCancellationEnabled = false)
+    updateUserProfiles()
+  }
+
+  private fun handleFailure(throwable: Throwable) {
+    val isActionAlreadyInProgressError =
+      throwable is OneginiRegistrationError && throwable.errorType == OneginiRegistrationError.Type.ACTION_ALREADY_IN_PROGRESS
+    uiState = if (isActionAlreadyInProgressError) {
+      uiState.copy(result = Err(throwable))
+    } else {
+      uiState.copy(result = Err(throwable), isRegistrationCancellationEnabled = false)
     }
   }
 
@@ -132,9 +161,10 @@ class BrowserRegistrationViewModel @Inject constructor(
     data class UpdateSelectedIdentityProvider(val identityProvider: OneginiIdentityProvider) : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
+    data class HandleRegistrationCallback(val uri: Uri) : UiEvent
   }
 
   sealed class NavigationEvent {
-    object ToPinScreen : NavigationEvent()
+    data object ToPinScreen : NavigationEvent()
   }
 }

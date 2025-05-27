@@ -8,9 +8,9 @@ import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.feature.pin.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel
-import com.onewelcome.showcaseapp.feature.pin.UiEvent
+import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
+import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -58,7 +58,7 @@ class PinViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = PinViewModel(pinUseCase)
+    viewModel = PinViewModel(createPinRequestHandler)
   }
 
   @Test
@@ -66,7 +66,7 @@ class PinViewModelTest {
     val expected = viewModel.uiState.copy(maxPinLength = 5)
 
     createPinRequestHandler.startPinCreation(TEST_USER_PROFILE_1, pinCallback, 5)
-    viewModel = PinViewModel(pinUseCase)
+    viewModel = PinViewModel(createPinRequestHandler)
 
     assertThat(viewModel.uiState).isEqualTo(expected)
   }
@@ -95,21 +95,21 @@ class PinViewModelTest {
 
   @Test
   fun `When OnPinProvided event is sent, Then useCase should trigger`() {
-    val spyPinUseCase = spy(pinUseCase)
-    viewModel = PinViewModel(spyPinUseCase)
+    val spyCreatePinRequestHandler = spy(createPinRequestHandler)
+    viewModel = PinViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.OnPinProvided(TEST_PIN))
 
-    verify(spyPinUseCase).onPinProvided(TEST_PIN)
+    verify(spyCreatePinRequestHandler).pinCallback?.acceptAuthenticationRequest(TEST_PIN)
   }
 
   @Test
   fun `When Cancel event is sent, Then useCase should trigger`() {
-    val spyPinUseCase = spy(pinUseCase)
-    viewModel = PinViewModel(spyPinUseCase)
+    val spyCreatePinRequestHandler = spy(createPinRequestHandler)
+    viewModel = PinViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.Cancel)
 
-    verify(spyPinUseCase).cancel()
+    verify(spyCreatePinRequestHandler).pinCallback?.denyAuthenticationRequest()
   }
 }
