@@ -8,8 +8,8 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
-import com.onewelcome.core.util.Constants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILES
+import com.onewelcome.core.util.TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent

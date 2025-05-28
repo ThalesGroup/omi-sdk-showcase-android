@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
+import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
@@ -81,5 +82,6 @@ private fun HomeScreenNavHost(homeNavController: NavHostController) {
     composable(Screens.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController) }
+    composable(Screens.Pin.route) { PinScreen(homeNavController) }
   }
 }

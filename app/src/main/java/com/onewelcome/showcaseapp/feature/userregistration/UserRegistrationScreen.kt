@@ -43,7 +43,7 @@ private fun UserRegistrationScreenContent(
       modifier = Modifier
         .padding(innerPadding)
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
-      verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
       ShowcaseFeatureDescription(stringResource(R.string.user_registration_description), Constants.DOCUMENTATION_USER_REGISTRATION)
       Sections(onNavigateDeeper)
