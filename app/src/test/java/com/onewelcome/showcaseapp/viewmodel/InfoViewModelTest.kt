@@ -7,8 +7,8 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILES
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILES_IDS
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel
 import dagger.hilt.android.testing.HiltAndroidRule

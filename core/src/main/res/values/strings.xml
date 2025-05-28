@@ -12,6 +12,7 @@
   <string name="zero">Zero</string>
   <string name="details">Details</string>
   <string name="register">Register</string>
+  <string name="cancel">Cancel</string>
 
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>
@@ -89,5 +90,8 @@
   <string name="no_user_profiles">No user profiles</string>
   <string name="sdk_needs_to_be_initialized_to_perform_registration">SDK needs to be initialized to perform registration</string>
   <string name="registration_successful">Registration successful</string>
+  <string name="enter_pin">Enter PIN</string>
+  <string name="del">Delete</string>
+  <string name="clear">Clear</string>
 
 </resources>

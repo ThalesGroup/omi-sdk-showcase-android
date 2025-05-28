@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,8 +45,12 @@ import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.identity_providers
+import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent
+import com.onewelcome.showcaseapp.navigation.Screens
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun BrowserRegistrationScreen(
@@ -55,7 +60,9 @@ fun BrowserRegistrationScreen(
   BrowserRegistrationScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
-    onEvent = { viewModel.onEvent(it) }
+    onEvent = { viewModel.onEvent(it) },
+    onNavigateToPinScreen = { navController.navigate(Screens.Pin.route) },
+    navigationEvents = viewModel.navigationEvents
   )
   RegistrationIntentListener { viewModel.onEvent(it) }
 }
@@ -76,8 +83,11 @@ fun RegistrationIntentListener(onEvent: (UiEvent) -> Unit) {
 private fun BrowserRegistrationScreenContent(
   uiState: State,
   onNavigateBack: () -> Unit,
-  onEvent: (UiEvent) -> Unit
+  onEvent: (UiEvent) -> Unit,
+  onNavigateToPinScreen: () -> Unit,
+  navigationEvents: Flow<NavigationEvent>,
 ) {
+  ListenForPinNavigationEvent(navigationEvents, onNavigateToPinScreen)
   SdkFeatureScreen(
     title = stringResource(R.string.browser_registration),
     onNavigateBack = onNavigateBack,
@@ -97,9 +107,25 @@ private fun BrowserRegistrationScreenContent(
 }
 
 @Composable
+private fun ListenForPinNavigationEvent(
+  navigationEvents: Flow<NavigationEvent>,
+  onNavigateToPinScreen: () -> Unit
+) {
+  LaunchedEffect(Unit) {
+    navigationEvents.collect { event ->
+      when (event) {
+        is NavigationEvent.ToPinScreen -> {
+          onNavigateToPinScreen.invoke()
+        }
+      }
+    }
+  }
+}
+
+@Composable
 private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
-    verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
     UserProfilesSection(uiState.userProfileIds)
@@ -278,6 +304,13 @@ private fun getUserProfilesText(userProfiles: List<String>): String {
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
+  BrowserRegistrationScreenContent(
+    uiState = State(),
+    onNavigateBack = {},
+    onEvent = {},
+    onNavigateToPinScreen = {},
+    navigationEvents = emptyFlow(),
+  )
   val browserIdentityProviders = setOf(
     object : OneginiIdentityProvider {
       override val id: String
@@ -313,6 +346,8 @@ fun Preview() {
   BrowserRegistrationScreenContent(
     uiState = State(identityProviders = browserIdentityProviders),
     onNavigateBack = {},
-    onEvent = {}
+    onEvent = {},
+    onNavigateToPinScreen = {},
+    navigationEvents = emptyFlow(),
   )
 }

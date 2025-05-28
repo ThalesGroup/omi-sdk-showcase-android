@@ -10,20 +10,24 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
-import com.onewelcome.core.util.Constants.TEST_CUSTOM_INFO
-import com.onewelcome.core.util.Constants.TEST_IDENTITY_PROVIDERS
-import com.onewelcome.core.util.Constants.TEST_SELECTED_IDENTITY_PROVIDER
-import com.onewelcome.core.util.Constants.TEST_SELECTED_SCOPES
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILES
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILES_IDS
-import com.onewelcome.core.util.Constants.TEST_USER_PROFILE_1
+import com.onewelcome.core.util.TestConstants.FakePinCallback
+import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
+import com.onewelcome.core.util.TestConstants.TEST_IDENTITY_PROVIDERS
+import com.onewelcome.core.util.TestConstants.TEST_SELECTED_IDENTITY_PROVIDER
+import com.onewelcome.core.util.TestConstants.TEST_SELECTED_SCOPES
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel
+import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.StartBrowserRegistration
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedIdentityProvider
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedScopes
@@ -32,6 +36,8 @@ import com.onewelcome.showcaseapp.utils.ResultAssert
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -79,12 +85,19 @@ class BrowserRegistrationViewModelTest {
   @Inject
   lateinit var oneginiConfigModel: OneginiConfigModel
 
+  @Inject
+  lateinit var createPinRequestHandler: CreatePinRequestHandler
+
+  @Inject
+  lateinit var pinUseCase: PinUseCase
+
   private val mockOneginiRegistrationError: OneginiRegistrationError = mock()
+
+  val pinCallback = FakePinCallback()
 
   private val userClientMock: UserClient = mock()
 
   private lateinit var viewModel: BrowserRegistrationViewModel
-
 
   @Before
   fun setup() {
@@ -95,7 +108,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler
     )
   }
 
@@ -126,7 +140,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -149,7 +164,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -173,7 +189,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -195,7 +212,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
@@ -256,7 +274,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
     viewModel.onEvent(StartBrowserRegistration)
 
@@ -280,7 +299,8 @@ class BrowserRegistrationViewModelTest {
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
-      browserRegistrationRequestHandler
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
     )
     viewModel.onEvent(StartBrowserRegistration)
 
@@ -356,6 +376,17 @@ class BrowserRegistrationViewModelTest {
     assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
   }
 
+  @Test
+  fun `Given sdk is initialized, When registration finished successfully, Then pin navigation event should be sent`() {
+    val expected = NavigationEvent.ToPinScreen
+    createPinRequestHandler.startPinCreation(TEST_USER_PROFILE_1, pinCallback, 5)
+
+    viewModel.onEvent(StartBrowserRegistration)
+
+    runTest {
+      assertThat(viewModel.navigationEvents.first()).isEqualTo(expected)
+    }
+  }
 
   private fun whenRegisteredUserSuccessfully() {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))

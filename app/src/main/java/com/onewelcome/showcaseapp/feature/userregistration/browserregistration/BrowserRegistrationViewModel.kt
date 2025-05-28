@@ -17,12 +17,15 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,10 +36,14 @@ class BrowserRegistrationViewModel @Inject constructor(
   private val getBrowserIdentityProvidersUseCase: GetBrowserIdentityProvidersUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val oneginiConfigModel: OneginiConfigModel,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+  private val createPinRequestHandler: CreatePinRequestHandler,
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
+
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
+  val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
     viewModelScope.launch {
@@ -50,7 +57,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      is UiEvent.StartBrowserRegistration -> register()
+      is UiEvent.StartBrowserRegistration -> startRegistration()
       is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
       is UiEvent.CancelRegistration -> cancelRegistration()
@@ -96,7 +103,20 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
   }
 
-  private fun register() {
+  private fun startRegistration() {
+    registerUser()
+    listenForPinScreenNavigationEvent()
+  }
+
+  private fun listenForPinScreenNavigationEvent() {
+    viewModelScope.launch {
+      createPinRequestHandler.startPinCreationFlow.collect {
+        _navigationEvents.send(NavigationEvent.ToPinScreen)
+      }
+    }
+  }
+
+  private fun registerUser() {
     viewModelScope.launch {
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       browserRegistrationUseCase
@@ -142,5 +162,9 @@ class BrowserRegistrationViewModel @Inject constructor(
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
     data class HandleRegistrationCallback(val uri: Uri) : UiEvent
+  }
+
+  sealed class NavigationEvent {
+    data object ToPinScreen : NavigationEvent()
   }
 }
