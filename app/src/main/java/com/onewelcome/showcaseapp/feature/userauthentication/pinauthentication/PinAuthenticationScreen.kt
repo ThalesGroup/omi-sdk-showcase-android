@@ -1,0 +1,41 @@
+package com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import com.onewelcome.core.components.ShowcaseFeatureDescription
+import com.onewelcome.core.components.ShowcaseTopBar
+import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.showcaseapp.R
+
+@Composable
+fun PinAuthenticationScreen(navController: NavController) {
+  PinAuthenticationScreenContent(
+    onNavigateBack = { navController.popBackStack() }
+  )
+}
+
+@Composable
+fun PinAuthenticationScreenContent(onNavigateBack: () -> Unit) {
+  Scaffold(
+    topBar = {
+      ShowcaseTopBar(stringResource(R.string.user_registration)) { onNavigateBack.invoke() }
+    }
+  ) { innerPadding ->
+    Column(
+      modifier = Modifier
+        .padding(innerPadding)
+        .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
+      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+    ) {
+      ShowcaseFeatureDescription("Add some nice description", "")
+      Text("Pin authenticate me")
+    }
+  }
+}
