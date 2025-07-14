@@ -13,6 +13,7 @@
   <string name="details">Details</string>
   <string name="register">Register</string>
   <string name="cancel">Cancel</string>
+  <string name="authenticate">Authenticate</string>
 
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>
@@ -99,6 +100,8 @@
   <!-- Authentication -->
   <string name="user_authentication">User authentication</string>
   <string name="pin_authentication">Pin authentication</string>
-
+  <string name="sdk_needs_to_be_initialized_to_perform_authentication">SDK needs to be initialized to perform authentication</string>
+  <string name="user_needs_to_be_registered_to_perform_authentication">User needs to be registered to perform authentication</string>
+  <string name="cancel_authentication">Cancel authentication</string>
 
 </resources>
