@@ -17,9 +17,15 @@ class PinAuthenticationViewModel @Inject() constructor() : ViewModel() {
 
   }
 
-  data class State(val result: Result<Void, Throwable>? = null)
+  data class State(
+    val result: Result<Void, Throwable>? = null,
+    val isSdkInitialized: Boolean = false,
+    val userProfileIds: List<String> = emptyList(),
+    val isAuthenticationCancellationEnabled: Boolean = false,
+  )
 
   sealed interface UiEvent {
     data object StartPinAuthentication : UiEvent
+    data object CancelAuthentication : UiEvent
   }
 }
