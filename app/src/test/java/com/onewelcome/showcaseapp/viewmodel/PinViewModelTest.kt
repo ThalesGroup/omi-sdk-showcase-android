@@ -3,7 +3,6 @@ package com.onewelcome.showcaseapp.viewmodel
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
-import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
@@ -36,9 +35,6 @@ class PinViewModelTest {
 
   @get:Rule
   val hiltRule = HiltAndroidRule(this)
-
-  @Inject
-  lateinit var pinUseCase: PinUseCase
 
   @Inject
   lateinit var omiSdkEngineFake: OmiSdkEngineFake

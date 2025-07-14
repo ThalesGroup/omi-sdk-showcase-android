@@ -15,7 +15,6 @@ import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
 import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
@@ -87,9 +86,6 @@ class BrowserRegistrationViewModelTest {
 
   @Inject
   lateinit var createPinRequestHandler: CreatePinRequestHandler
-
-  @Inject
-  lateinit var pinUseCase: PinUseCase
 
   private val mockOneginiRegistrationError: OneginiRegistrationError = mock()
 
