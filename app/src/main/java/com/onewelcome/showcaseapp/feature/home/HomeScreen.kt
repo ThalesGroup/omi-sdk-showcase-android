@@ -55,7 +55,8 @@ private fun Sections(onNavigateToSection: (route: String) -> Unit) {
 private fun getSections(): List<SectionItem> {
   return listOf(
     SectionItem(stringResource(R.string.section_title_sdk_initialization), Screens.SdkInitialization),
-    SectionItem(stringResource(R.string.section_title_user_registration), Screens.UserRegistration)
+    SectionItem(stringResource(R.string.section_title_user_registration), Screens.UserRegistration),
+    SectionItem(stringResource(R.string.section_title_user_deregistration), Screens.UserDeregistration)
   )
 }
 
