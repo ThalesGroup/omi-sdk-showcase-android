@@ -36,8 +36,11 @@ class UserDeregistrationViewModel @Inject constructor(
   }
 
   private fun loadInitialData() {
-    isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
-    loadUserProfiles()
+    val isSdkInitialized = isSdkInitializedUseCase.execute()
+    uiState = uiState.copy(isSdkInitialized = isSdkInitialized)
+    if (isSdkInitialized) {
+      loadUserProfiles()
+    }
   }
 
   private fun loadUserProfiles() {
