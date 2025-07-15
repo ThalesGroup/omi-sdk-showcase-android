@@ -1,15 +1,19 @@
 package com.onewelcome.showcaseapp.feature.userderegistration
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,11 +25,11 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
-import com.onewelcome.core.components.ShowcaseDropdownMenu
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
-import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel.State
@@ -71,12 +75,11 @@ private fun UserDeregistrationScreenContent(
 private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     SdkInitializationSection(uiState.isSdkInitialized)
-    RegisteredUserProfilesSection(uiState.registeredUserProfiles)
-    Text(
-      text = stringResource(R.string.required),
-      style = MaterialTheme.typography.titleSmall
-    )
-    UserProfileSelectionSection(uiState.registeredUserProfiles, uiState.selectedUserProfile, onEvent)
+    if (uiState.registeredUserProfiles.isNotEmpty()) {
+      UserProfileSelectionSection(uiState.selectedUserProfile, uiState.registeredUserProfiles, onEvent)
+    } else {
+      NoUserProfilesRegisteredSection()
+    }
   }
 }
 
@@ -90,34 +93,49 @@ private fun SdkInitializationSection(isSdkInitialized: Boolean) {
 }
 
 @Composable
-private fun RegisteredUserProfilesSection(registeredUserProfiles: Set<UserProfile>) {
-  val description = registeredUserProfiles.map { it.profileId }
-    .separateItemsWithComa()
-    .ifEmpty { stringResource(R.string.no_user_profiles) }
+private fun NoUserProfilesRegisteredSection() {
   ShowcaseStatusCard(
     title = stringResource(R.string.user_profiles),
-    description = description,
-    status = registeredUserProfiles.isNotEmpty(),
+    description = stringResource(R.string.no_user_profiles),
+    status = false,
     tooltipContent = { Text(stringResource(R.string.user_profiles_requirement_tooltip)) }
   )
 }
 
 @Composable
 private fun UserProfileSelectionSection(
-  registeredUserProfiles: Set<UserProfile>,
   selectedUserProfile: UserProfile?,
+  userProfiles: Set<UserProfile>,
   onEvent: (UiEvent) -> Unit
 ) {
-  ShowcaseDropdownMenu(
-    label = {
-      Text(stringResource(R.string.label_user_profile))
-    },
-    itemList = registeredUserProfiles.toList(),
-    selectedItem = selectedUserProfile,
-    valueFormatter = { it.profileId },
-    tooltipContent = { Text(stringResource(R.string.documentation_choose_user_profile)) },
-    onItemSelected = { item, _ -> onEvent.invoke(UiEvent.OnUserProfileSelected(item)) }
-  )
+  ShowcaseCard {
+    Column {
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+          modifier = Modifier.weight(1f),
+          text = stringResource(R.string.label_user_profile),
+          style = MaterialTheme.typography.titleMedium
+        )
+        ShowcaseTooltip {
+          Text(stringResource(R.string.documentation_choose_user_profile))
+        }
+      }
+      userProfiles.forEach { userProfile ->
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onEvent.invoke(UiEvent.UpdateSelectedUserProfile(userProfile)) }
+        ) {
+          RadioButton(
+            selected = (userProfile == selectedUserProfile),
+            onClick = { onEvent.invoke(UiEvent.UpdateSelectedUserProfile(userProfile)) }
+          )
+          Text(stringResource(R.string.user_profile_id, userProfile.profileId))
+        }
+      }
+    }
+  }
 }
 
 @Composable
@@ -157,6 +175,23 @@ private fun DeregisterUserButton(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
+  UserDeregistrationScreenContent(
+    State(
+      selectedUserProfile = UserProfile("123456"),
+      registeredUserProfiles = setOf(
+        UserProfile("123456"),
+        UserProfile("987654"),
+        UserProfile("QWERTY"),
+        UserProfile("ASDFGH")
+      )
+    ),
+    {},
+    {})
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewNoUserProfiles() {
   UserDeregistrationScreenContent(
     State(),
     {},

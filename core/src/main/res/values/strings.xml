@@ -94,6 +94,7 @@
   <string name="enter_pin">Enter PIN</string>
   <string name="del">Delete</string>
   <string name="clear">Clear</string>
+  <string name="idp_item_label">Name: %s\nID: %s</string>
 
   <!-- User Deregistration -->
   <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
@@ -103,4 +104,5 @@
   <string name="button_deregister_user">Deregister user</string>
   <string name="label_user_deregistration_success">User deregistration success</string>
   <string name="user_profiles_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
+  <string name="user_profile_id">Profile ID: %s</string>
 </resources>

@@ -70,7 +70,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should correct have initial state`() {
+  fun `should have correct initial state`() {
     assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE)
   }
 
@@ -111,7 +111,7 @@ class UserDeregistrationViewModelTest {
     viewModel.onEvent(UiEvent.LoadInitialData)
     assertThat(viewModel.uiState).isEqualTo(USER_PROFILES_LOADED_STATE)
 
-    viewModel.onEvent(UiEvent.OnUserProfileSelected(UserProfile("QWERTY")))
+    viewModel.onEvent(UiEvent.UpdateSelectedUserProfile(UserProfile("QWERTY")))
 
     assertThat(viewModel.uiState).isEqualTo(USER_PROFILES_LOADED_STATE.copy(selectedUserProfile = UserProfile("QWERTY")))
   }
@@ -141,14 +141,14 @@ class UserDeregistrationViewModelTest {
   fun `should show loading when deregistering user`() {
     whenUserProfilesAreRegistered()
     viewModel.onEvent(UiEvent.LoadInitialData)
-
-    viewModel.onEvent(UiEvent.DeregisterUser)
-
     whenever(userClientMock.deregisterUser(eq(UserProfile("123456")), any()))
       .thenAnswer { invocation ->
         assertThat(viewModel.uiState.isLoading).isTrue()
         invocation.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
       }
+
+    viewModel.onEvent(UiEvent.DeregisterUser)
+
     assertThat(viewModel.uiState.isLoading).isFalse()
   }
 

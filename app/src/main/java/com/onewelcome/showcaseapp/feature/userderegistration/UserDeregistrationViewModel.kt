@@ -30,7 +30,7 @@ class UserDeregistrationViewModel @Inject constructor(
   fun onEvent(event: UiEvent) {
     when (event) {
       is UiEvent.LoadInitialData -> loadInitialData()
-      is UiEvent.OnUserProfileSelected -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
+      is UiEvent.UpdateSelectedUserProfile -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
       is UiEvent.DeregisterUser -> deregisterUser()
     }
   }
@@ -39,11 +39,11 @@ class UserDeregistrationViewModel @Inject constructor(
     val isSdkInitialized = isSdkInitializedUseCase.execute()
     uiState = uiState.copy(isSdkInitialized = isSdkInitialized)
     if (isSdkInitialized) {
-      loadUserProfiles()
+      updateUserProfiles()
     }
   }
 
-  private fun loadUserProfiles() {
+  private fun updateUserProfiles() {
     viewModelScope.launch {
       getUserProfilesUseCase.execute()
         .onSuccess { uiState = uiState.copy(registeredUserProfiles = it, selectedUserProfile = it.firstOrNull()) }
@@ -53,12 +53,12 @@ class UserDeregistrationViewModel @Inject constructor(
 
   private fun deregisterUser() {
     viewModelScope.launch {
+      uiState = uiState.copy(isLoading = true)
       val result = uiState.selectedUserProfile?.let {
         deregisterUserUseCase.execute(it)
       } ?: Err(IllegalArgumentException("User profile not selected"))
-      uiState = uiState.copy(isLoading = true)
       uiState = uiState.copy(result = result, isLoading = false)
-      loadUserProfiles()
+      updateUserProfiles()
     }
   }
 
@@ -72,7 +72,7 @@ class UserDeregistrationViewModel @Inject constructor(
 
   sealed interface UiEvent {
     data object LoadInitialData : UiEvent
-    data class OnUserProfileSelected(val userProfile: UserProfile) : UiEvent
+    data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
     data object DeregisterUser : UiEvent
   }
 }

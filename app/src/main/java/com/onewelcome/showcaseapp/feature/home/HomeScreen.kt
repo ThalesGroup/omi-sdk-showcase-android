@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.onewelcome.core.components.ShowcaseCard
+import com.onewelcome.core.components.ShowcaseCardButton
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.navigation.Screens
@@ -45,7 +45,7 @@ private fun Sections(onNavigateToSection: (route: String) -> Unit) {
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     getSections().forEach { section ->
-      ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
+      ShowcaseCardButton(section.title, section.navigation.route, onNavigateToSection)
     }
   }
 }
