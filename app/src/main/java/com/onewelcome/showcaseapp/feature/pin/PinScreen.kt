@@ -170,7 +170,7 @@ fun Preview() {
   PinScreenContent(
     onNavigateBack = {},
     onEvent = {},
-    uiState = State(),
+    uiState = State(pinValidationError = "Wrong PIN, 1 attempt left"),
     navigationEvents = emptyFlow()
   )
 }

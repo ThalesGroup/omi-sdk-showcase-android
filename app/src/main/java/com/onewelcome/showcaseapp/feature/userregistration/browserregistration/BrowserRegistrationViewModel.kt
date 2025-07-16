@@ -164,7 +164,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     data class HandleRegistrationCallback(val uri: Uri) : UiEvent
   }
 
-  sealed class NavigationEvent {
-    data object ToPinScreen : NavigationEvent()
+  sealed interface NavigationEvent {
+    data object ToPinScreen : NavigationEvent
   }
 }

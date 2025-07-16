@@ -18,7 +18,6 @@ import kotlin.coroutines.resume
 class PinAuthenticationUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade,
 ) {
-
   suspend fun execute(
     userProfile: UserProfile,
     pinAuthenticator: OneginiAuthenticator

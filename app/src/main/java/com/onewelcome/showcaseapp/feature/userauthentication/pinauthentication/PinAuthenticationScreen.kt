@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,6 +16,8 @@ import androidx.navigation.NavController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.CustomInfo
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
@@ -23,6 +26,10 @@ import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.State
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.NavigationEvent
+import com.onewelcome.showcaseapp.navigation.Screens
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun PinAuthenticationScreen(
@@ -33,6 +40,8 @@ fun PinAuthenticationScreen(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
+    navigationEvents = viewModel.navigationEvents,
+    onNavigateToPinScreen = { navController.navigate(Screens.Pin.route) },
   )
 }
 
@@ -41,7 +50,10 @@ private fun PinAuthenticationScreenContent(
   onNavigateBack: () -> Unit,
   uiState: State,
   onEvent: (UiEvent) -> Unit,
+  navigationEvents: Flow<NavigationEvent>,
+  onNavigateToPinScreen: () -> Unit,
 ) {
+  ListenForPinNavigationEvent(navigationEvents, onNavigateToPinScreen)
   SdkFeatureScreen(
     title = stringResource(R.string.pin_authentication),
     onNavigateBack = onNavigateBack,
@@ -58,6 +70,20 @@ private fun PinAuthenticationScreenContent(
       CancellationButton(uiState.isAuthenticationCancellationEnabled, onEvent)
     }
   )
+}
+
+@Composable
+private fun ListenForPinNavigationEvent(
+  navigationEvents: Flow<NavigationEvent>,
+  onNavigateToPinScreen: () -> Unit
+) {
+  LaunchedEffect(Unit) {
+    navigationEvents.collect { event ->
+      when (event) {
+        is NavigationEvent.ToPinScreen -> onNavigateToPinScreen.invoke()
+      }
+    }
+  }
 }
 
 @Composable
@@ -129,15 +155,15 @@ private fun CancellationButton(isRegistrationCancellationEnabled: Boolean, onEve
 }
 
 @Composable
-private fun PinAuthenticationResult(result: Result<Void, Throwable>?) {
+private fun PinAuthenticationResult(result: Result<Pair<UserProfile, CustomInfo?>, Throwable>) {
   Column {
     result
-      ?.onSuccess {
+      .onSuccess {
         Column {
           Text("magnificent success")
         }
       }
-      ?.onFailure { Text("$it") }
+      .onFailure { Text("$it") }
   }
 }
 
@@ -148,5 +174,7 @@ fun Preview() {
     uiState = State(),
     onNavigateBack = {},
     onEvent = {},
+    navigationEvents = emptyFlow(),
+    onNavigateToPinScreen = {}
   )
 }
