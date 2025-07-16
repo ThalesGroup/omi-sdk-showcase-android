@@ -25,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.clear
@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun PinScreen(
   navController: NavController,
-  viewModel: PinViewModel = hiltViewModel()
+  viewModel: PinViewModel
 ) {
   PinScreenContent(
     onNavigateBack = { navController.popBackStack() },
@@ -66,9 +66,23 @@ fun PinScreenContent(
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Header()
+    PinAttemptCounter(uiState.authenticationAttemptCounter)
     PinValidationError(uiState.pinValidationError)
     PinInputSection(onEvent, uiState.maxPinLength)
     CancelButton(onEvent)
+  }
+}
+
+@Composable
+fun PinAttemptCounter(authenticationAttemptCounter: AuthenticationAttemptCounter?) {
+  authenticationAttemptCounter?.let {
+    Row(
+      horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+      Text("Max attempts: ${it.maxAttempts}")
+      Text("Failed attempts: ${it.failedAttempts}")
+      Text("Remaining attempts: ${it.remainingAttempts}")
+    }
   }
 }
 

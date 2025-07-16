@@ -4,60 +4,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
-import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class PinViewModel @Inject constructor(
-  private val createPinRequestHandler: CreatePinRequestHandler,
-  private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
-) : ViewModel() {
+abstract class PinViewModel : ViewModel() {
   var uiState by mutableStateOf(State())
-    private set
+    protected set
 
-  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
+  protected val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
-  init {
-
-    uiState = uiState.copy(maxPinLength = createPinRequestHandler.maxPinLength)
-    listenForPinFinishedEvent()
-    listenForPinValidationErrorEvent()
-  }
-
-  fun onEvent(event: UiEvent) {
-    when (event) {
-      is UiEvent.OnPinProvided -> createPinRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
-      is UiEvent.Cancel -> createPinRequestHandler.pinCallback?.denyAuthenticationRequest()
-    }
-  }
-
-  private fun listenForPinValidationErrorEvent() {
-    viewModelScope.launch {
-      createPinRequestHandler.pinValidationErrorFlow.collect {
-        uiState = uiState.copy(pinValidationError = it.message)
-      }
-    }
-  }
-
-  private fun listenForPinFinishedEvent() {
-    viewModelScope.launch {
-      createPinRequestHandler.finishPinCreationFlow.collect {
-        _navigationEvents.send(NavigationEvent.PopBackStack)
-      }
-    }
-  }
-
-  data class State(
-    val maxPinLength: Int = 0,
-    val pinValidationError: String = "",
-  )
+  abstract fun onEvent(event: UiEvent)
 
   sealed interface UiEvent {
     data object Cancel : UiEvent
@@ -75,8 +33,13 @@ class PinViewModel @Inject constructor(
     }
   }
 
+  data class State(
+    val maxPinLength: Int = 0,
+    val pinValidationError: String = "",
+    val authenticationAttemptCounter: AuthenticationAttemptCounter? = null,
+  )
+
   sealed class NavigationEvent {
     data object PopBackStack : NavigationEvent()
   }
 }
-

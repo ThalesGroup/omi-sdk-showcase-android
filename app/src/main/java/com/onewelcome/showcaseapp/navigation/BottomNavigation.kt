@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,7 +21,9 @@ import androidx.navigation.compose.rememberNavController
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
+import com.onewelcome.showcaseapp.feature.pin.AuthenticateWithPinViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
+import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
@@ -84,8 +88,19 @@ private fun HomeScreenNavHost(homeNavController: NavHostController) {
     composable(Screens.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController) }
-    composable(Screens.Pin.route) { PinScreen(homeNavController) }
+    composable(Screens.CreatePin.route) { CreatePinScreen(homeNavController) }
+    composable(Screens.AuthenticateWithPin.route) { AuthenticateWithPinScreen(homeNavController) }
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController) }
   }
+}
+
+@Composable
+fun CreatePinScreen(navController: NavController, viewModel: CreatePinViewModel = hiltViewModel()) {
+  PinScreen(navController, viewModel)
+}
+
+@Composable
+fun AuthenticateWithPinScreen(navController: NavController, viewModel: AuthenticateWithPinViewModel = hiltViewModel()) {
+  PinScreen(navController, viewModel)
 }

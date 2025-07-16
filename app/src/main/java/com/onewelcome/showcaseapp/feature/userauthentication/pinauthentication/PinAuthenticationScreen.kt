@@ -41,7 +41,7 @@ fun PinAuthenticationScreen(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     navigationEvents = viewModel.navigationEvents,
-    onNavigateToPinScreen = { navController.navigate(Screens.Pin.route) },
+    onNavigateToPinScreen = { navController.navigate(Screens.AuthenticateWithPin.route) },
   )
 }
 
