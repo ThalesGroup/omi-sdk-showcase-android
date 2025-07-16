@@ -7,9 +7,9 @@ import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.feature.pin.PinViewModel
-import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
-import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
+import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel.NavigationEvent
+import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -49,12 +49,12 @@ class PinViewModelTest {
 
   val pinCallback = FakePinCallback()
 
-  private lateinit var viewModel: PinViewModel
+  private lateinit var viewModel: CreatePinViewModel
 
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = PinViewModel(createPinRequestHandler)
+    viewModel = CreatePinViewModel(createPinRequestHandler)
   }
 
   @Test
@@ -62,7 +62,7 @@ class PinViewModelTest {
     val expected = viewModel.uiState.copy(maxPinLength = 5)
 
     createPinRequestHandler.startPinCreation(TEST_USER_PROFILE_1, pinCallback, 5)
-    viewModel = PinViewModel(createPinRequestHandler)
+    viewModel = CreatePinViewModel(createPinRequestHandler)
 
     assertThat(viewModel.uiState).isEqualTo(expected)
   }
@@ -92,7 +92,7 @@ class PinViewModelTest {
   @Test
   fun `When OnPinProvided event is sent, Then useCase should trigger`() {
     val spyCreatePinRequestHandler = spy(createPinRequestHandler)
-    viewModel = PinViewModel(spyCreatePinRequestHandler)
+    viewModel = CreatePinViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.OnPinProvided(TEST_PIN))
 
@@ -102,7 +102,7 @@ class PinViewModelTest {
   @Test
   fun `When Cancel event is sent, Then useCase should trigger`() {
     val spyCreatePinRequestHandler = spy(createPinRequestHandler)
-    viewModel = PinViewModel(spyCreatePinRequestHandler)
+    viewModel = CreatePinViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.Cancel)
 

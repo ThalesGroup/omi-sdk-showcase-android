@@ -1,7 +1,5 @@
 package com.onewelcome.core.omisdk.handlers
 
-import android.util.Log
-import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
@@ -19,7 +17,7 @@ class PinAuthenticationRequestHandler @Inject constructor() : OneginiPinAuthenti
   private val _finishPinAuthenticationFlow = Channel<Unit>(Channel.BUFFERED)
   val finishPinAuthenticationFlow = _finishPinAuthenticationFlow.receiveAsFlow()
 
-  private val _authenticationAttemptCounterFlow = Channel<AuthenticationAttemptCounter>()
+  private val _authenticationAttemptCounterFlow = Channel<AuthenticationAttemptCounter>(Channel.BUFFERED)
   val authenticationAttemptCounterFlow = _authenticationAttemptCounterFlow.receiveAsFlow()
   
   var pinCallback: OneginiPinCallback? = null

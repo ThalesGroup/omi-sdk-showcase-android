@@ -7,7 +7,8 @@ sealed class Screens(val route: String) {
   data object OsCompatiblity : Screens("os_compatibility")
   data object UserRegistration : Screens("user_registration")
   data object BrowserRegistration : Screens("browser_registration")
-  data object Pin : Screens("pin_route")
+  data object CreatePin : Screens("create_pin_route")
+  data object AuthenticateWithPin : Screens("authenticate_with_pin_route")
   data object UserAuthentication : Screens("user_authentication")
   data object PinAuthentication : Screens("pin_authentication")
 }
