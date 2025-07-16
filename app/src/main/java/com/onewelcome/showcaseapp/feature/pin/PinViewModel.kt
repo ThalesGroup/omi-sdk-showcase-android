@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PinViewModel @Inject constructor(
   private val createPinRequestHandler: CreatePinRequestHandler,
+  private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -23,6 +25,7 @@ class PinViewModel @Inject constructor(
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
+
     uiState = uiState.copy(maxPinLength = createPinRequestHandler.maxPinLength)
     listenForPinFinishedEvent()
     listenForPinValidationErrorEvent()
