@@ -42,4 +42,6 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
     maxPinLength = 0
     _finishPinCreationFlow.trySend(Unit)
   }
+
+  fun isPinCreationInProgress(): Boolean = pinCallback != null
 }
