@@ -60,11 +60,12 @@ private fun ResultCard(result: @Composable (() -> Unit)?) {
       modifier = Modifier
         .fillMaxWidth()
     ) {
-      result()
+      Box(modifier = Modifier.padding(Dimensions.mPadding)) {
+        result()
+      }
     }
   }
 }
-
 
 @Preview
 @Composable

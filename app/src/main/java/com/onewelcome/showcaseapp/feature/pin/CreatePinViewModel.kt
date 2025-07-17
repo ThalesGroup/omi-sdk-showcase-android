@@ -15,7 +15,7 @@ class CreatePinViewModel @Inject constructor(
 ) : PinViewModel() {
 
   init {
-//    uiState = uiState.copy(maxPinLength = createPinRequestHandler.maxPinLength)
+    uiState = uiState.copy(maxPinLength = createPinRequestHandler.maxPinLength)
     listenForPinFinishedEvent()
     listenForPinValidationErrorEvent()
   }
