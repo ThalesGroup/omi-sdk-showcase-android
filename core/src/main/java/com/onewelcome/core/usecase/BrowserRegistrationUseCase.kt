@@ -12,13 +12,15 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
 class BrowserRegistrationUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+  private val createPinRequestHandler: CreatePinRequestHandler,
 ) {
   suspend fun register(
     identityProvider: OneginiIdentityProvider?,
@@ -48,7 +50,11 @@ class BrowserRegistrationUseCase @Inject constructor(
     }
   }
 
-  fun cancelRegistration() = browserRegistrationRequestHandler.cancelRegistration()
+  fun cancelRegistration() {
+    browserRegistrationRequestHandler.cancelRegistration()
+    createPinRequestHandler.finishPinCreation()
+  }
 
-  fun isRegistrationInProgress() = browserRegistrationRequestHandler.isRegistrationInProgress()
+  fun isRegistrationInProgress() =
+    browserRegistrationRequestHandler.isRegistrationInProgress() || createPinRequestHandler.isPinCreationInProgress()
 }
