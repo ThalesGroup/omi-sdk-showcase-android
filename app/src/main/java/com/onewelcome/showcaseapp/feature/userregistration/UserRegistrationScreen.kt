@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.onewelcome.core.components.ShowcaseCard
+import com.onewelcome.core.components.ShowcaseCardButton
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
@@ -54,7 +54,7 @@ private fun UserRegistrationScreenContent(
 @Composable
 private fun Sections(onNavigateToSection: (String) -> Unit) {
   getSections().forEach { section ->
-    ShowcaseCard(section.title, section.navigation.route, onNavigateToSection)
+    ShowcaseCardButton(section.title, section.navigation.route, onNavigateToSection)
   }
 }
 
