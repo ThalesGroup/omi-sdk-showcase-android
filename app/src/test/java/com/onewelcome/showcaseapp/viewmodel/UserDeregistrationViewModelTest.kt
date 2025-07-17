@@ -66,17 +66,11 @@ class UserDeregistrationViewModelTest {
   fun setup() {
     hiltRule.inject()
     whenever(oneginiClientMock.getUserClient()).thenReturn(userClientMock)
-    viewModel = UserDeregistrationViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, deregisterUserUseCase)
-  }
-
-  @Test
-  fun `should have correct initial state`() {
-    assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE)
   }
 
   @Test
   fun `should load initial data when SDK is not initialized`() {
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE)
   }
@@ -85,7 +79,7 @@ class UserDeregistrationViewModelTest {
   fun `should load initial data when SDK is initialized and no profiles registered`() {
     whenNoUserProfilesRegistered()
 
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE.copy(isSdkInitialized = true))
   }
@@ -94,7 +88,7 @@ class UserDeregistrationViewModelTest {
   fun `should load initial data when SDK is initialized and profiles are registered`() {
     whenUserProfilesAreRegistered()
 
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(
       INITIAL_STATE.copy(
@@ -108,7 +102,7 @@ class UserDeregistrationViewModelTest {
   @Test
   fun `should update selected user profile`() {
     whenUserProfilesAreRegistered()
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
     assertThat(viewModel.uiState).isEqualTo(USER_PROFILES_LOADED_STATE)
 
     viewModel.onEvent(UiEvent.UpdateSelectedUserProfile(UserProfile("QWERTY")))
@@ -123,7 +117,7 @@ class UserDeregistrationViewModelTest {
       .thenAnswer { invocation ->
         invocation.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
       }
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     viewModel.onEvent(UiEvent.DeregisterUser)
 
@@ -140,7 +134,7 @@ class UserDeregistrationViewModelTest {
   @Test
   fun `should show loading when deregistering user`() {
     whenUserProfilesAreRegistered()
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
     whenever(userClientMock.deregisterUser(eq(UserProfile("123456")), any()))
       .thenAnswer { invocation ->
         assertThat(viewModel.uiState.isLoading).isTrue()
@@ -159,7 +153,7 @@ class UserDeregistrationViewModelTest {
       .thenAnswer { invocation ->
         invocation.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
       }
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     viewModel.onEvent(UiEvent.DeregisterUser)
 
@@ -169,7 +163,7 @@ class UserDeregistrationViewModelTest {
   @Test
   fun `should return error when user profile is not selected`() {
     whenNoUserProfilesRegistered()
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     viewModel.onEvent(UiEvent.DeregisterUser)
 
@@ -184,12 +178,15 @@ class UserDeregistrationViewModelTest {
       .thenAnswer { invocation ->
         invocation.getArgument<OneginiDeregisterUserProfileHandler>(1).onError(oneginiDeregistrationErrorMock)
       }
-
-    viewModel.onEvent(UiEvent.LoadInitialData)
+    initViewModel()
 
     viewModel.onEvent(UiEvent.DeregisterUser)
 
     assertThat(viewModel.uiState.result).isEqualTo(Err(oneginiDeregistrationErrorMock))
+  }
+
+  private fun initViewModel(){
+    viewModel = UserDeregistrationViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, deregisterUserUseCase)
   }
 
   private fun whenNoUserProfilesRegistered() {
