@@ -12,6 +12,7 @@ import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.testcases.browserregistation.BrowserRegistrationTestCases
+import com.onewelcome.internal.testcases.deregistration.UserDeregistrationTestCases
 import com.onewelcome.internal.testcases.initialization.SdkInitializationTestCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +23,13 @@ import javax.inject.Inject
 @HiltViewModel
 class OsCompatibilityViewModel @Inject constructor(
   browserRegistrationTestCases: BrowserRegistrationTestCases,
-  sdkInitializationTestCases: SdkInitializationTestCases
+  sdkInitializationTestCases: SdkInitializationTestCases,
+  userDeregistrationTestCases: UserDeregistrationTestCases
 ) : ViewModel() {
-  private val testCategories = listOf(sdkInitializationTestCases.tests, browserRegistrationTestCases.tests)
+  private val testCategories = listOf(
+    sdkInitializationTestCases.tests,
+    browserRegistrationTestCases.tests,
+    userDeregistrationTestCases.tests)
 
   var uiState by mutableStateOf(State(testCategories = testCategories))
     private set

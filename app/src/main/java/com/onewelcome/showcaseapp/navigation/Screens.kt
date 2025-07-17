@@ -11,4 +11,5 @@ sealed class Screens(val route: String) {
   data object AuthenticateWithPin : Screens("authenticate_with_pin_route")
   data object UserAuthentication : Screens("user_authentication")
   data object PinAuthentication : Screens("pin_authentication")
+  data object UserDeregistration: Screens("user_deregistration")
 }
