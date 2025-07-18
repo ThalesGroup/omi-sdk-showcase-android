@@ -138,8 +138,12 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Composable
 private fun ScopesSection(isSdkInitialized: Boolean, onEvent: (UiEvent) -> Unit) {
   if (isSdkInitialized) {
-    ScopesHeader()
-    ScopesList(onEvent)
+    ShowcaseCard {
+      Column {
+        ScopesHeader()
+        ScopesList(onEvent)
+      }
+    }
   }
 }
 
@@ -347,7 +351,7 @@ fun Preview() {
     },
   )
   BrowserRegistrationScreenContent(
-    uiState = State(identityProviders = browserIdentityProviders),
+    uiState = State(identityProviders = browserIdentityProviders, isSdkInitialized = true),
     onNavigateBack = {},
     onEvent = {},
     onNavigateToPinScreen = {},
