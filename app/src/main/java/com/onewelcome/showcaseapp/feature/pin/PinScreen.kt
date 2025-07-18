@@ -76,8 +76,8 @@ fun PinScreenContent(
 @Composable
 fun PinAttemptCounter(authenticationAttemptCounter: AuthenticationAttemptCounter?) {
   authenticationAttemptCounter?.let {
-    Row(
-      horizontalArrangement = Arrangement.SpaceEvenly
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Text("Max attempts: ${it.maxAttempts}")
       Text("Failed attempts: ${it.failedAttempts}")
@@ -184,7 +184,10 @@ fun Preview() {
   PinScreenContent(
     onNavigateBack = {},
     onEvent = {},
-    uiState = State(pinValidationError = "Wrong PIN, 1 attempt left"),
-    navigationEvents = emptyFlow()
+    uiState = State(
+      pinValidationError = "Wrong PIN, 1 attempt left",
+      authenticationAttemptCounter = AuthenticationAttemptCounter(0, 0)
+    ),
+    navigationEvents = emptyFlow(),
   )
 }
