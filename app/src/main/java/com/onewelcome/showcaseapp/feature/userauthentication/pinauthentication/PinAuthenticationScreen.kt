@@ -1,13 +1,18 @@
 package com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,8 +24,10 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.showcaseapp.R
@@ -63,10 +70,10 @@ private fun PinAuthenticationScreenContent(
         link = "add a link"
       )
     },
-    settings = { SettingSection(uiState) },
+    settings = { SettingSection(uiState, onEvent) },
     result = uiState.result?.let { { PinAuthenticationResult(it) } },
     action = {
-      AuthenticationButton(onEvent)
+      AuthenticationButton(uiState.isAuthenticateButtonEnabled, onEvent)
       CancellationButton(uiState.isAuthenticationCancellationEnabled, onEvent)
     }
   )
@@ -87,12 +94,12 @@ private fun ListenForPinNavigationEvent(
 }
 
 @Composable
-private fun SettingSection(uiState: State) {
+private fun SettingSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
-    UserProfilesSection(uiState.userProfileIds)
+    UserProfilesSection(uiState.userProfileIds, uiState.selectedUserProfile, onEvent)
   }
 }
 
@@ -106,9 +113,58 @@ private fun SdkInitializationSection(isSdkInitialized: Boolean) {
 }
 
 @Composable
-private fun UserProfilesSection(userProfiles: List<String>) {
-  val text = getUserProfilesText(userProfiles)
-  UserProfilesCard(text)
+private fun UserProfilesSection(userProfiles: Set<UserProfile>, selectedUserProfile: UserProfile?, onEvent: (UiEvent) -> Unit) {
+  if (userProfiles.isEmpty()) {
+    NoUserProfilesRegisteredSection()
+  } else {
+    UserProfileSelectionSection(selectedUserProfile, userProfiles, onEvent)
+  }
+}
+
+@Composable
+private fun NoUserProfilesRegisteredSection() {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.user_profiles),
+    description = stringResource(R.string.no_user_profiles),
+    status = false,
+    tooltipContent = { Text(stringResource(R.string.user_profiles_requirement_tooltip)) }
+  )
+}
+
+@Composable
+private fun UserProfileSelectionSection(
+  selectedUserProfile: UserProfile?,
+  userProfiles: Set<UserProfile>,
+  onEvent: (UiEvent) -> Unit
+) {
+  ShowcaseCard {
+    Column {
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+          modifier = Modifier.weight(1f),
+          text = stringResource(R.string.label_user_profile),
+          style = MaterialTheme.typography.titleMedium
+        )
+        ShowcaseTooltip {
+          Text(stringResource(R.string.documentation_choose_user_profile))
+        }
+      }
+      userProfiles.forEach { userProfile ->
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onEvent.invoke(UiEvent.UpdateSelectedUserProfile(userProfile)) }
+        ) {
+          RadioButton(
+            selected = (userProfile == selectedUserProfile),
+            onClick = { onEvent.invoke(UiEvent.UpdateSelectedUserProfile(userProfile)) }
+          )
+          Text(stringResource(R.string.user_profile_id, userProfile.profileId))
+        }
+      }
+    }
+  }
 }
 
 @Composable
@@ -130,12 +186,13 @@ private fun UserProfilesCard(userProfiles: String) {
 }
 
 @Composable
-private fun AuthenticationButton(onEvent: (UiEvent) -> Unit) {
+private fun AuthenticationButton(isEnabled: Boolean, onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.StartPinAuthentication) }
+    onClick = { onEvent(UiEvent.StartPinAuthentication) },
+    enabled = isEnabled,
   ) {
     Text(stringResource(R.string.authenticate))
   }

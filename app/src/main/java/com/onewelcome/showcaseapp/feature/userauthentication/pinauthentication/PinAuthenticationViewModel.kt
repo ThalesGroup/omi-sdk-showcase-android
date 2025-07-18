@@ -42,6 +42,7 @@ class PinAuthenticationViewModel @Inject() constructor(
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
       updateUserProfiles()
+      updateAuthenticateButton()
       updateCancellationButton()
     }
   }
@@ -50,6 +51,7 @@ class PinAuthenticationViewModel @Inject() constructor(
     when (event) {
       is UiEvent.StartPinAuthentication -> startPinAuthentication()
       is UiEvent.CancelAuthentication -> cancelAuthentication()
+      is UiEvent.UpdateSelectedUserProfile -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
     }
   }
 
@@ -57,13 +59,19 @@ class PinAuthenticationViewModel @Inject() constructor(
 //    uiState = uiState.copy(isAuthenticationCancellationEnabled = pinAuthenticationUseCase.isAuthenticationInProgress())
   }
 
-  private suspend fun updateUserProfiles() {
-    getUserProfilesUseCase.execute()
-      .onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
-      .onFailure { uiState = uiState.copy(userProfileIds = emptyList()) }
+  private fun updateAuthenticateButton() {
+    uiState = uiState.copy(isAuthenticateButtonEnabled = uiState.isSdkInitialized && uiState.selectedUserProfile != null)
   }
 
-  private fun cancelAuthentication() {}
+  private suspend fun updateUserProfiles() {
+    getUserProfilesUseCase.execute()
+      .onSuccess { uiState = uiState.copy(userProfileIds = it, selectedUserProfile = it.firstOrNull()) }
+      .onFailure { uiState = uiState.copy(userProfileIds = emptySet()) }
+  }
+
+  private fun cancelAuthentication() {
+
+  }
 
   private fun startPinAuthentication() {
     authenticateUser()
@@ -98,14 +106,16 @@ class PinAuthenticationViewModel @Inject() constructor(
   data class State(
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
     val isSdkInitialized: Boolean = false,
-    val userProfileIds: List<String> = emptyList(),
+    val userProfileIds: Set<UserProfile> = emptySet(),
     val selectedUserProfile: UserProfile? = null,
+    val isAuthenticateButtonEnabled: Boolean = false,
     val isAuthenticationCancellationEnabled: Boolean = false,
   )
 
   sealed interface UiEvent {
     data object StartPinAuthentication : UiEvent
     data object CancelAuthentication : UiEvent
+    data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
   }
 
   sealed interface NavigationEvent {
