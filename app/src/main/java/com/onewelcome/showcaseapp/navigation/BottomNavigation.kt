@@ -21,6 +21,7 @@ import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
 
@@ -83,5 +84,6 @@ private fun HomeScreenNavHost(homeNavController: NavHostController) {
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController) }
     composable(Screens.Pin.route) { PinScreen(homeNavController) }
+    composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
   }
 }

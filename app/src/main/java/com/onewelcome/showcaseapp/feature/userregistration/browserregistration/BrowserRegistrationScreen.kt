@@ -16,8 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +37,7 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
@@ -137,8 +138,12 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Composable
 private fun ScopesSection(isSdkInitialized: Boolean, onEvent: (UiEvent) -> Unit) {
   if (isSdkInitialized) {
-    ScopesHeader()
-    ScopesList(onEvent)
+    ShowcaseCard {
+      Column {
+        ScopesHeader()
+        ScopesList(onEvent)
+      }
+    }
   }
 }
 
@@ -156,15 +161,17 @@ private fun IdentityProvidersSection(
   onEvent: (UiEvent) -> Unit
 ) {
   if (uiState.identityProviders.isNotEmpty()) {
-    Column {
-      IdentityProvidersHeader()
-      IdentityProvidersList(uiState.selectedIdentityProvider, uiState.identityProviders, onEvent)
-      ShowcaseSwitch(
-        shouldBeChecked = uiState.shouldUseDefaultIdentityProvider,
-        onCheck = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) },
-        text = stringResource(R.string.use_default_identity_provider),
-        tooltipContent = { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
-      )
+    ShowcaseCard {
+      Column {
+        IdentityProvidersHeader()
+        IdentityProvidersList(uiState.selectedIdentityProvider, uiState.identityProviders, onEvent)
+        ShowcaseSwitch(
+          shouldBeChecked = uiState.shouldUseDefaultIdentityProvider,
+          onCheck = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) },
+          text = stringResource(R.string.use_default_identity_provider),
+          tooltipContent = { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
+        )
+      }
     }
   }
 }
@@ -188,7 +195,7 @@ private fun IdentityProvidersList(
         selected = (identityProvider == selectedIdentityProvider),
         onClick = { onEvent.invoke(UiEvent.UpdateSelectedIdentityProvider(identityProvider)) }
       )
-      Text("Name: ${identityProvider.name}\nID: ${identityProvider.id}")
+      Text(stringResource(R.string.idp_item_label, identityProvider.name, identityProvider.id))
     }
   }
 }
@@ -344,7 +351,7 @@ fun Preview() {
     },
   )
   BrowserRegistrationScreenContent(
-    uiState = State(identityProviders = browserIdentityProviders),
+    uiState = State(identityProviders = browserIdentityProviders, isSdkInitialized = true),
     onNavigateBack = {},
     onEvent = {},
     onNavigateToPinScreen = {},
