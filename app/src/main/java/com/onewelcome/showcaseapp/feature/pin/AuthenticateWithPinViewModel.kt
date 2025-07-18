@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent.PopBackStack
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Cancel
-import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.OnPinProvided
+import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Submit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class AuthenticateWithPinViewModel @Inject constructor(
   override fun onEvent(event: UiEvent) {
     when (event) {
       is Cancel -> pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
-      is OnPinProvided -> pinAuthenticationRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
+      is Submit -> pinAuthenticationRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
     }
   }
 

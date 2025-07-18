@@ -19,11 +19,12 @@ abstract class PinViewModel : ViewModel() {
 
   sealed interface UiEvent {
     data object Cancel : UiEvent
-    data class OnPinProvided(val pin: CharArray) : UiEvent {
+
+    data class Submit(val pin: CharArray) : UiEvent {
       override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        other as OnPinProvided
+        other as Submit
         return pin.contentEquals(other.pin)
       }
 

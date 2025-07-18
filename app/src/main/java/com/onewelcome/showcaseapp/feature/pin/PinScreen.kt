@@ -57,6 +57,7 @@ fun PinScreenContent(
   uiState: State,
   navigationEvents: Flow<NavigationEvent>,
 ) {
+  var pin: CharArray by remember { mutableStateOf(charArrayOf()) }
   ListenForNavigationEvents(onNavigateBack, navigationEvents)
   Column(
     modifier = Modifier
@@ -67,9 +68,34 @@ fun PinScreenContent(
   ) {
     Header()
     PinAttemptCounter(uiState.authenticationAttemptCounter)
+    MaxPinLength(uiState.maxPinLength)
     PinValidationError(uiState.pinValidationError)
-    PinInputSection(onEvent, uiState.maxPinLength)
+    PinInputSection(onPinChange = { pin = it }, pin = pin)
     CancelButton(onEvent)
+    SubmitButton(onEvent, pin)
+  }
+}
+
+@Composable
+fun MaxPinLength(maxPinLength: Int) {
+  if (maxPinLength > 0) {
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      Text("Max PIN length: $maxPinLength")
+    }
+  }
+}
+
+@Composable
+fun SubmitButton(onEvent: (UiEvent) -> Unit, pin: CharArray) {
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(Dimensions.actionButtonHeight),
+    onClick = { onEvent(UiEvent.Submit(pin)) },
+  ) {
+    Text(stringResource(R.string.submit))
   }
 }
 
@@ -110,17 +136,15 @@ private fun CancelButton(onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun PinInputSection(onEvent: (UiEvent) -> Unit, maxPinLength: Int) {
-  var pin: String by remember { mutableStateOf("") }
+private fun PinInputSection(onPinChange: (CharArray) -> Unit, pin: CharArray) {
   Row {
-    repeat(maxPinLength) { index ->
+    pin.forEach { _ ->
       Box(
         modifier = Modifier
           .padding(Dimensions.sPadding)
           .size(Dimensions.mPadding)
           .background(
-            if (index < pin.length) Color.Black else Color.Gray,
-            shape = CircleShape
+            Color.Black, shape = CircleShape
           )
       )
     }
@@ -144,14 +168,9 @@ private fun PinInputSection(onEvent: (UiEvent) -> Unit, maxPinLength: Int) {
           Button(
             onClick = {
               when (label) {
-                deleteStringRes -> if (pin.isNotEmpty()) pin = pin.dropLast(1)
-                clearStringRes -> pin = ""
-                else -> if (pin.length < maxPinLength) pin += label
-              }
-
-              if (pin.length == maxPinLength) {
-                onEvent.invoke(UiEvent.OnPinProvided(pin.toCharArray()))
-                pin = ""
+                deleteStringRes -> if (pin.isNotEmpty()) onPinChange(pin.dropLast(1).toCharArray())
+                clearStringRes -> onPinChange(charArrayOf())
+                else -> onPinChange(pin.plus(label[0]))
               }
             },
             modifier = Modifier
