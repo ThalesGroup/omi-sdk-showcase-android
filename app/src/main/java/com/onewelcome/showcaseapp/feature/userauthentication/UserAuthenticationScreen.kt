@@ -10,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseCardButton
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.home.SectionItem
 import com.onewelcome.showcaseapp.navigation.Screens
@@ -44,7 +44,7 @@ private fun UserAuthenticationScreenContent(
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
-      ShowcaseFeatureDescription("Add some nice description", "")
+      ShowcaseFeatureDescription(stringResource(R.string.user_authentication_description), Constants.DOCUMENTATION_USER_AUTHENTICATION)
       Sections(onNavigateDeeper)
     }
   }

@@ -30,6 +30,7 @@ import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
+import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.State
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent
@@ -66,8 +67,8 @@ private fun PinAuthenticationScreenContent(
     onNavigateBack = onNavigateBack,
     description = {
       ShowcaseFeatureDescription(
-        description = "Add some nice description",
-        link = "add a link"
+        description = stringResource(R.string.pin_authentication_description),
+        link = Constants.DOCUMENTATION_PIN_AUTHENTICATION
       )
     },
     settings = { SettingSection(uiState, onEvent) },
@@ -146,7 +147,7 @@ private fun UserProfileSelectionSection(
           style = MaterialTheme.typography.titleMedium
         )
         ShowcaseTooltip {
-          Text(stringResource(R.string.documentation_choose_user_profile))
+          Text(stringResource(R.string.deregistration_choose_user_profile))
         }
       }
       userProfiles.forEach { userProfile ->

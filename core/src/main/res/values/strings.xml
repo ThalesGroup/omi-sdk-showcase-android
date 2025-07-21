@@ -106,12 +106,15 @@
   <string name="sdk_needs_to_be_initialized_to_perform_authentication">SDK needs to be initialized to perform authentication</string>
   <string name="user_needs_to_be_registered_to_perform_authentication">User needs to be registered to perform authentication</string>
   <string name="cancel_authentication">Cancel authentication</string>
+  <string name="authentication_choose_user_profile">Select User Profile that will be authenticated.</string>
+  <string name="pin_authentication_description">When at least one user is registered, SDK offers a possibility to log in using PIN authentication. PIN is set during user registration.</string>
+  <string name="user_authentication_description">When at least one user is registered, SDK offers a possibility to log in using number of authenticators.</string>
 
   <!-- User Deregistration -->
   <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
   <string name="sdk_needs_to_be_initialized_to_perform_deregistration">SDK needs to be initialized to perform deregistration</string>
   <string name="label_user_profile">User profile</string>
-  <string name="documentation_choose_user_profile">Select User Profile that will be deregistered.</string>
+  <string name="deregistration_choose_user_profile">Select User Profile that will be deregistered.</string>
   <string name="button_deregister_user">Deregister user</string>
   <string name="label_user_deregistration_success">User deregistration success</string>
   <string name="user_profiles_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
