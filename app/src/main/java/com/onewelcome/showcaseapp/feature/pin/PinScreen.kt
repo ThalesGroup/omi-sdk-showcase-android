@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,11 +30,14 @@ import androidx.navigation.NavController
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.R.string.cancel
 import com.onewelcome.showcaseapp.R.string.clear
 import com.onewelcome.showcaseapp.R.string.del
+import com.onewelcome.showcaseapp.R.string.submit
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.State
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
@@ -71,8 +75,27 @@ fun PinScreenContent(
     MaxPinLength(uiState.maxPinLength)
     PinValidationError(uiState.pinValidationError)
     PinInputSection(onPinChange = { pin = it }, pin = pin)
-    CancelButton(onEvent)
-    SubmitButton(onEvent, pin)
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing)
+    ) {
+      Button(
+        modifier = Modifier
+          .weight(1f)
+          .height(Dimensions.actionButtonHeight),
+        onClick = { onEvent(UiEvent.Submit(pin)) },
+      ) {
+        Text(stringResource(submit))
+      }
+      OutlinedButton(
+        modifier = Modifier
+          .weight(1f)
+          .height(Dimensions.actionButtonHeight),
+        onClick = { onEvent(Cancel) },
+      ) {
+        Text(stringResource(cancel))
+      }
+    }
   }
 }
 
@@ -88,25 +111,13 @@ fun MaxPinLength(maxPinLength: Int) {
 }
 
 @Composable
-fun SubmitButton(onEvent: (UiEvent) -> Unit, pin: CharArray) {
-  Button(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.Submit(pin)) },
-  ) {
-    Text(stringResource(R.string.submit))
-  }
-}
-
-@Composable
 fun PinAttemptCounter(authenticationAttemptCounter: AuthenticationAttemptCounter?) {
   authenticationAttemptCounter?.let {
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Text("Max attempts: ${it.maxAttempts}")
-      Text("Failed attempts: ${it.failedAttempts}")
+      Text("Failed attempts: ${it.failedAttempts}", color = Color.Red)
       Text("Remaining attempts: ${it.remainingAttempts}")
     }
   }
@@ -124,18 +135,6 @@ private fun ListenForNavigationEvents(onNavigateBack: () -> Unit, navigationEven
 }
 
 @Composable
-private fun CancelButton(onEvent: (UiEvent) -> Unit) {
-  Button(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.Cancel) },
-  ) {
-    Text(stringResource(R.string.cancel))
-  }
-}
-
-@Composable
 private fun PinInputSection(onPinChange: (CharArray) -> Unit, pin: CharArray) {
   Row {
     pin.forEach { _ ->
@@ -143,9 +142,7 @@ private fun PinInputSection(onPinChange: (CharArray) -> Unit, pin: CharArray) {
         modifier = Modifier
           .padding(Dimensions.sPadding)
           .size(Dimensions.mPadding)
-          .background(
-            Color.Black, shape = CircleShape
-          )
+          .background(Color.Black, shape = CircleShape)
       )
     }
   }
@@ -197,7 +194,7 @@ private fun Header() {
   Text(text = stringResource(R.string.enter_pin), style = MaterialTheme.typography.headlineLarge)
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun Preview() {
   PinScreenContent(

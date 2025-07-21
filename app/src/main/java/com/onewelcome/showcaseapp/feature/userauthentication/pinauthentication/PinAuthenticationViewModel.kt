@@ -56,7 +56,7 @@ class PinAuthenticationViewModel @Inject() constructor(
   }
 
   private fun updateCancellationButton() {
-//    uiState = uiState.copy(isAuthenticationCancellationEnabled = pinAuthenticationUseCase.isAuthenticationInProgress())
+    uiState = uiState.copy(isAuthenticationCancellationEnabled = pinAuthenticationRequestHandler.isAuthenticationInProgress())
   }
 
   private fun updateAuthenticateButton() {
@@ -70,11 +70,13 @@ class PinAuthenticationViewModel @Inject() constructor(
   }
 
   private fun cancelAuthentication() {
-
+    pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
+    uiState = uiState.copy(isAuthenticationCancellationEnabled = false)
   }
 
   private fun startPinAuthentication() {
     authenticateUser()
+    uiState = uiState.copy(isAuthenticateButtonEnabled = true)
     listenForPinScreenNavigationEvent()
   }
 

@@ -35,7 +35,7 @@ data class BottomNavigationItem(
           BottomNavigationItem(
             label = context.getString(R.string.os_compatibility_screen_name),
             icon = Icons.Filled.Face,
-            route = Screens.OsCompatiblity.route
+            route = Screens.OsCompatibility.route
           )
         )
       }
