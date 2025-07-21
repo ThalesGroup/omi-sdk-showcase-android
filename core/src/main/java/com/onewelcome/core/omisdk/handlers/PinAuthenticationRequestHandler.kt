@@ -17,9 +17,9 @@ class PinAuthenticationRequestHandler @Inject constructor() : OneginiPinAuthenti
   private val _finishPinAuthenticationFlow = Channel<Unit>(Channel.BUFFERED)
   val finishPinAuthenticationFlow = _finishPinAuthenticationFlow.receiveAsFlow()
 
-  private val _authenticationAttemptCounterFlow = Channel<AuthenticationAttemptCounter>(Channel.BUFFERED)
+  private var _authenticationAttemptCounterFlow = Channel<AuthenticationAttemptCounter>(Channel.BUFFERED)
   val authenticationAttemptCounterFlow = _authenticationAttemptCounterFlow.receiveAsFlow()
-  
+
   var pinCallback: OneginiPinCallback? = null
 
   override fun startAuthentication(
@@ -42,5 +42,4 @@ class PinAuthenticationRequestHandler @Inject constructor() : OneginiPinAuthenti
   }
 
   fun isAuthenticationInProgress(): Boolean = pinCallback != null
-
 }

@@ -56,13 +56,14 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun BrowserRegistrationScreen(
   navController: NavController,
+  pinNavController: NavController,
   viewModel: BrowserRegistrationViewModel = hiltViewModel()
 ) {
   BrowserRegistrationScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
-    onNavigateToPinScreen = { navController.navigate(Screens.CreatePin.route) },
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.CreatePin.route) },
     navigationEvents = viewModel.navigationEvents
   )
   RegistrationIntentListener { viewModel.onEvent(it) }

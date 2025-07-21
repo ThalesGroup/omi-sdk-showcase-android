@@ -32,9 +32,9 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.State
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent
-import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.navigation.Screens
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun PinAuthenticationScreen(
   navController: NavController,
+  pinNavController: NavController,
   viewModel: PinAuthenticationViewModel = hiltViewModel()
 ) {
   PinAuthenticationScreenContent(
@@ -49,7 +50,7 @@ fun PinAuthenticationScreen(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     navigationEvents = viewModel.navigationEvents,
-    onNavigateToPinScreen = { navController.navigate(Screens.AuthenticateWithPin.route) },
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.AuthenticateWithPin.route) },
   )
 }
 
