@@ -117,7 +117,7 @@ private fun UserProfileSelectionSection(
           style = MaterialTheme.typography.titleMedium
         )
         ShowcaseTooltip {
-          Text(stringResource(R.string.documentation_choose_user_profile))
+          Text(stringResource(R.string.deregistration_choose_user_profile))
         }
       }
       userProfiles.forEach { userProfile ->
