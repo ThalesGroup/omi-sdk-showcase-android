@@ -49,12 +49,4 @@ class BrowserRegistrationUseCase @Inject constructor(
       }
     }
   }
-
-  fun cancelRegistration() {
-    browserRegistrationRequestHandler.cancelRegistration()
-    createPinRequestHandler.finishPinCreation()
-  }
-
-  fun isRegistrationInProgress() =
-    browserRegistrationRequestHandler.isRegistrationInProgress() || createPinRequestHandler.isPinCreationInProgress()
 }

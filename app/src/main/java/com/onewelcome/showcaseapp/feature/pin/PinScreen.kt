@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.pin
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,18 +63,20 @@ fun PinScreenContent(
   navigationEvents: Flow<NavigationEvent>,
 ) {
   var pin: CharArray by remember { mutableStateOf(charArrayOf()) }
-  ListenForNavigationEvents(onNavigateBack, navigationEvents)
+  ListenForNavigationEvents(onNavigateBack, navigationEvents, onEvent)
   Column(
     modifier = Modifier
       .fillMaxSize()
       .padding(Dimensions.mPadding),
-    verticalArrangement = Arrangement.SpaceBetween,
+    verticalArrangement = Arrangement.SpaceEvenly,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Header()
-    PinAttemptCounter(uiState.authenticationAttemptCounter)
-    MaxPinLength(uiState.maxPinLength)
-    PinValidationError(uiState.pinValidationError)
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+      PinAttemptCounter(uiState.authenticationAttemptCounter)
+      MaxPinLength(uiState.maxPinLength)
+      PinValidationError(uiState.pinValidationError)
+    }
     PinInputSection(onPinChange = { pin = it }, pin = pin)
     Row(
       modifier = Modifier.fillMaxWidth(),
@@ -83,7 +86,10 @@ fun PinScreenContent(
         modifier = Modifier
           .weight(1f)
           .height(Dimensions.actionButtonHeight),
-        onClick = { onEvent(UiEvent.Submit(pin)) },
+        onClick = {
+          onEvent(UiEvent.Submit(pin))
+          pin = charArrayOf()
+        },
       ) {
         Text(stringResource(submit))
       }
@@ -113,18 +119,17 @@ fun MaxPinLength(maxPinLength: Int) {
 @Composable
 fun PinAttemptCounter(authenticationAttemptCounter: AuthenticationAttemptCounter?) {
   authenticationAttemptCounter?.let {
-    Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      Text("Max attempts: ${it.maxAttempts}")
-      Text("Failed attempts: ${it.failedAttempts}", color = Color.Red)
-      Text("Remaining attempts: ${it.remainingAttempts}")
-    }
+    Text("Max attempts: ${it.maxAttempts}")
+    Text("Failed attempts: ${it.failedAttempts}", color = Color.Red)
+    Text("Remaining attempts: ${it.remainingAttempts}")
   }
 }
 
 @Composable
-private fun ListenForNavigationEvents(onNavigateBack: () -> Unit, navigationEvents: Flow<NavigationEvent>) {
+private fun ListenForNavigationEvents(onNavigateBack: () -> Unit, navigationEvents: Flow<NavigationEvent>, onEvent: (UiEvent) -> Unit) {
+  BackHandler {
+    onEvent.invoke(Cancel)
+  }
   LaunchedEffect(Unit) {
     navigationEvents.collect { event ->
       when (event) {
@@ -136,14 +141,16 @@ private fun ListenForNavigationEvents(onNavigateBack: () -> Unit, navigationEven
 
 @Composable
 private fun PinInputSection(onPinChange: (CharArray) -> Unit, pin: CharArray) {
-  Row {
-    pin.forEach { _ ->
-      Box(
-        modifier = Modifier
-          .padding(Dimensions.sPadding)
-          .size(Dimensions.mPadding)
-          .background(Color.Black, shape = CircleShape)
-      )
+  Box(Modifier.height(Dimensions.pinInputHeight)) {
+    Row {
+      pin.forEach { _ ->
+        Box(
+          modifier = Modifier
+            .padding(Dimensions.sPadding)
+            .size(Dimensions.mPadding)
+            .background(Color.Black, shape = CircleShape)
+        )
+      }
     }
   }
   Column {
@@ -201,7 +208,8 @@ fun Preview() {
     onNavigateBack = {},
     onEvent = {},
     uiState = State(
-      pinValidationError = "Wrong PIN, 1 attempt left",
+      maxPinLength = 3,
+      pinValidationError = "Wrong PIN, try again",
       authenticationAttemptCounter = AuthenticationAttemptCounter(0, 0)
     ),
     navigationEvents = emptyFlow(),

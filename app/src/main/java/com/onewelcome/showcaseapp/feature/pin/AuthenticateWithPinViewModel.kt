@@ -28,7 +28,12 @@ class AuthenticateWithPinViewModel @Inject constructor(
   private fun listenForPinAuthenticationAttemptCounterUpdateEvent() {
     viewModelScope.launch {
       pinAuthenticationRequestHandler.authenticationAttemptCounterFlow.collect {
-        uiState = uiState.copy(authenticationAttemptCounter = it)
+        val shouldShowErrorMessage = it.failedAttempts > 0
+        uiState = if (shouldShowErrorMessage) {
+          uiState.copy(authenticationAttemptCounter = it, pinValidationError = "Wrong PIN, try again")
+        } else {
+          uiState.copy(authenticationAttemptCounter = it)
+        }
       }
     }
   }
