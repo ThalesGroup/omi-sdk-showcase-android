@@ -10,6 +10,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfilesUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
-  private val getUserProfilesUseCase: GetUserProfilesUseCase
+  private val getUserProfilesUseCase: GetUserProfilesUseCase,
+  private val getAuthenticatedUserProfilesUseCase: GetAuthenticatedUserProfilesUseCase,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -29,6 +31,7 @@ class InfoViewModel @Inject constructor(
     updateIsSdkInitialized()
     viewModelScope.launch {
       updateUserProfiles()
+      updateAuthenticatedUserProfiles()
     }
   }
 
@@ -38,12 +41,19 @@ class InfoViewModel @Inject constructor(
       .onFailure { uiState = uiState.copy(userProfileIds = Err(Unit)) }
   }
 
+  private suspend fun updateAuthenticatedUserProfiles() {
+    getAuthenticatedUserProfilesUseCase.execute()
+      .onSuccess { uiState = uiState.copy(authenticatedUserProfileId = Ok(it?.profileId)) }
+      .onFailure { uiState = uiState.copy(authenticatedUserProfileId = Err(Unit)) }
+  }
+
   private fun updateIsSdkInitialized() {
     uiState = uiState.copy(isSdkInitialized = isSdkInitializedUseCase.execute())
   }
 
   data class State(
     val isSdkInitialized: Boolean = false,
-    val userProfileIds: Result<List<String>, Unit>? = null
+    val userProfileIds: Result<List<String>, Unit>? = null,
+    val authenticatedUserProfileId: Result<String?, Unit>? = null,
   )
 }
