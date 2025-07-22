@@ -236,8 +236,8 @@ private fun RegistrationResult(userProfilesResult: Result<Pair<UserProfile, Cust
       ?.onSuccess {
         Column {
           Text(stringResource(R.string.registration_successful))
-          Text("User profile: ${it.first.profileId}")
-          Text("Custom info: ${it.second}")
+          Text(stringResource(R.string.user_profile, it.first.profileId))
+          Text(stringResource(R.string.custom_info, it.second.toString()))
         }
       }
       ?.onFailure { Text("$it") }

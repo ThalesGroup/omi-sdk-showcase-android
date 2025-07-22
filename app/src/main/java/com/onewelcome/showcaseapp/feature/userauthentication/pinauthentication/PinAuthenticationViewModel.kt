@@ -43,7 +43,6 @@ class PinAuthenticationViewModel @Inject() constructor(
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
       updateUserProfiles()
       updateAuthenticateButton()
-      updateCancellationButton()
     }
   }
 
@@ -53,10 +52,6 @@ class PinAuthenticationViewModel @Inject() constructor(
       is UiEvent.CancelAuthentication -> cancelAuthentication()
       is UiEvent.UpdateSelectedUserProfile -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
     }
-  }
-
-  private fun updateCancellationButton() {
-    uiState = uiState.copy(isAuthenticationCancellationEnabled = pinAuthenticationRequestHandler.isAuthenticationInProgress())
   }
 
   private fun updateAuthenticateButton() {
@@ -71,7 +66,6 @@ class PinAuthenticationViewModel @Inject() constructor(
 
   private fun cancelAuthentication() {
     pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
-    uiState = uiState.copy(isAuthenticationCancellationEnabled = false)
   }
 
   private fun startPinAuthentication() {
@@ -111,7 +105,6 @@ class PinAuthenticationViewModel @Inject() constructor(
     val userProfileIds: Set<UserProfile> = emptySet(),
     val selectedUserProfile: UserProfile? = null,
     val isAuthenticateButtonEnabled: Boolean = false,
-    val isAuthenticationCancellationEnabled: Boolean = false,
   )
 
   sealed interface UiEvent {

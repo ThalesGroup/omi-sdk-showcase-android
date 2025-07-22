@@ -40,6 +40,4 @@ class PinAuthenticationRequestHandler @Inject constructor() : OneginiPinAuthenti
     pinCallback = null
     _finishPinAuthenticationFlow.trySend(Unit)
   }
-
-  fun isAuthenticationInProgress(): Boolean = pinCallback != null
 }

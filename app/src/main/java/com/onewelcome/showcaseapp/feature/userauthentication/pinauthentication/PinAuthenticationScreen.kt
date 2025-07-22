@@ -29,7 +29,6 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
-import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.NavigationEvent
@@ -74,10 +73,7 @@ private fun PinAuthenticationScreenContent(
     },
     settings = { SettingSection(uiState, onEvent) },
     result = uiState.result?.let { { PinAuthenticationResult(it) } },
-    action = {
-      AuthenticationButton(uiState.isAuthenticateButtonEnabled, onEvent)
-      CancellationButton(uiState.isAuthenticationCancellationEnabled, onEvent)
-    }
+    action = { AuthenticationButton(uiState.isAuthenticateButtonEnabled, onEvent) }
   )
 }
 
@@ -170,24 +166,6 @@ private fun UserProfileSelectionSection(
 }
 
 @Composable
-private fun getUserProfilesText(userProfiles: List<String>): String {
-  return if (userProfiles.isNotEmpty()) {
-    userProfiles.separateItemsWithComa()
-  } else {
-    stringResource(R.string.no_user_profiles)
-  }
-}
-
-@Composable
-private fun UserProfilesCard(userProfiles: String) {
-  ShowcaseStatusCard(
-    title = stringResource(R.string.user_profiles),
-    description = userProfiles,
-    tooltipContent = { Text(stringResource(R.string.user_needs_to_be_registered_to_perform_authentication)) }
-  )
-}
-
-@Composable
 private fun AuthenticationButton(isEnabled: Boolean, onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
@@ -201,25 +179,14 @@ private fun AuthenticationButton(isEnabled: Boolean, onEvent: (UiEvent) -> Unit)
 }
 
 @Composable
-private fun CancellationButton(isRegistrationCancellationEnabled: Boolean, onEvent: (UiEvent) -> Unit) {
-  Button(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.CancelAuthentication) },
-    enabled = isRegistrationCancellationEnabled
-  ) {
-    Text(stringResource(R.string.cancel_registration))
-  }
-}
-
-@Composable
 private fun PinAuthenticationResult(result: Result<Pair<UserProfile, CustomInfo?>, Throwable>) {
   Column {
     result
       .onSuccess {
         Column {
-          Text("magnificent success")
+          Text(stringResource(R.string.authentication_successful))
+          Text(stringResource(R.string.user_profile, it.first.profileId))
+          Text(stringResource(R.string.custom_info, it.second.toString()))
         }
       }
       .onFailure { Text("$it") }

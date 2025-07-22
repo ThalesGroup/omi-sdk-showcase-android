@@ -43,5 +43,9 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
     _finishPinCreationFlow.trySend(Unit)
   }
 
+  fun cancelPinCreation() {
+    pinCallback?.denyAuthenticationRequest()
+  }
+
   fun isPinCreationInProgress(): Boolean = pinCallback != null
 }
