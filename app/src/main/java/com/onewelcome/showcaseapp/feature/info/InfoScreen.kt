@@ -67,6 +67,10 @@ private fun StatusList(uiState: State) {
       title = stringResource(R.string.user_profiles),
       description = getUserProfiles(uiState.userProfileIds)
     )
+    ShowcaseStatusCard(
+      title = stringResource(R.string.authenticated_profiles),
+      description = getAuthenticatedProfiles(uiState.authenticatedUserProfileId)
+    )
   }
 }
 
@@ -77,6 +81,14 @@ private fun getUserProfiles(userProfiles: Result<List<String>, Unit>?): String {
   } else {
     stringResource(R.string.no_user_profiles)
   }
+}
+
+@Composable
+private fun getAuthenticatedProfiles(userProfile: Result<String?, Unit>?): String {
+  return userProfile
+    ?.takeIf { it.isOk && it.value.isNullOrEmpty().not() }
+    ?.value
+    ?: stringResource(R.string.no_authenticated_user_profiles)
 }
 
 @Preview(showBackground = true)

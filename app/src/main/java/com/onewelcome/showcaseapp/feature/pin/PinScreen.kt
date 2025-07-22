@@ -24,12 +24,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.invisibleIf
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.cancel
 import com.onewelcome.showcaseapp.R.string.clear
@@ -191,9 +193,13 @@ private fun PinInputSection(onPinChange: (CharArray) -> Unit, pin: CharArray) {
 
 @Composable
 private fun PinValidationError(error: String) {
-  if (error.isNotEmpty()) {
-    Text(text = error, color = Color.Red)
-  }
+  Text(
+    modifier = Modifier
+      .padding(Dimensions.sPadding)
+      .invisibleIf(error.isEmpty()),
+    text = error,
+    color = Color.Red
+  )
 }
 
 @Composable
