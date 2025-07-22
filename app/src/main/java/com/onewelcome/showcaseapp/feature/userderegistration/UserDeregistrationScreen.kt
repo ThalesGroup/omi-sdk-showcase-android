@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -53,9 +52,6 @@ private fun UserDeregistrationScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit
 ) {
-  LaunchedEffect(Unit) {
-    onEvent.invoke(UiEvent.LoadInitialData)
-  }
   SdkFeatureScreen(
     title = stringResource(R.string.section_title_user_deregistration),
     onNavigateBack = onNavigateBack,

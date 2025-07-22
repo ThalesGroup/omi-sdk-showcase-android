@@ -27,9 +27,12 @@ class UserDeregistrationViewModel @Inject constructor(
   var uiState by mutableStateOf(State())
     private set
 
+  init {
+    loadInitialData()
+  }
+
   fun onEvent(event: UiEvent) {
     when (event) {
-      is UiEvent.LoadInitialData -> loadInitialData()
       is UiEvent.UpdateSelectedUserProfile -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
       is UiEvent.DeregisterUser -> deregisterUser()
     }
@@ -71,7 +74,6 @@ class UserDeregistrationViewModel @Inject constructor(
   )
 
   sealed interface UiEvent {
-    data object LoadInitialData : UiEvent
     data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
     data object DeregisterUser : UiEvent
   }
