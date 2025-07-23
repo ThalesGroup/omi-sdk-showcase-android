@@ -22,7 +22,7 @@
   <string name="title_sdk_status">OMI SDK Status</string>
   <string name="status_sdk_initialized">SDK Initialized</string>
   <string name="user_profiles">User profiles</string>
-  <string name="authenticated_profile">Authenticated profile</string>
+  <string name="authenticated_profile">Authenticated user profile</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
