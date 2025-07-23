@@ -18,11 +18,19 @@
   <string name="title_sdk_status">OMI SDK Status</string>
   <string name="status_sdk_initialized">SDK Initialized</string>
   <string name="user_profiles">User profiles</string>
+  <string name="authenticated_user_profile">Authenticated user profile</string>
+  <string name="no_user_profile_authenticated">No user profile authenticated</string>
+  <string name="user_profile_id">Profile ID: %s</string>
+  <string name="label_otp">OTP</string>
+  <string name="label_push">Push</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
   <string name="section_title_user_registration">User Registration</string>
   <string name="section_title_browser_registration">Browser Registration</string>
+  <string name="section_title_mobile_authentication">Mobile Authentication</string>
+  <string name="section_title_mobile_authentication_enrollment">Enroll for mobile authentication</string>
+  <string name="section_title_mobile_authentication_push_enrollment">Enroll for mobile authentication with push</string>
   <string name="section_title_user_deregistration">User Deregistration</string>
 
   <!-- SDK Initialization -->
@@ -104,5 +112,14 @@
   <string name="button_deregister_user">Deregister user</string>
   <string name="label_user_deregistration_success">User deregistration success</string>
   <string name="user_profiles_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
-  <string name="user_profile_id">Profile ID: %s</string>
+
+  <!-- Mobile Authentication-->
+  <string name="mobile_authentication">Mobile authentication</string>
+  <string name="mobile_authentication_description">SDK provides secure and user-friendly two-factor authentication. It supports OTP and push based authentication. You need to first enroll for mobile authentication before handling any transactions.</string>
+
+  <!-- Mobile Authentication Enrollment-->
+  <string name="label_mobile_authentication_enrollment_success">Mobile authentication enrollment success</string>
+  <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP and to be able to enroll for mobile authentication with push.</string>
+  <string name="button_mobile_authentication_enrollment">Enroll</string>
+  <string name="mobile_auth_enrollemnt_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
 </resources>
