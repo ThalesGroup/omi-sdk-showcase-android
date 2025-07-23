@@ -74,8 +74,8 @@ class PinAuthenticationViewModel @Inject() constructor(
 
   private suspend fun updateUserProfiles() {
     getUserProfilesUseCase.execute()
-      .onSuccess { uiState = uiState.copy(userProfileIds = it, selectedUserProfile = it.firstOrNull()) }
-      .onFailure { uiState = uiState.copy(userProfileIds = emptySet()) }
+      .onSuccess { uiState = uiState.copy(userProfiles = it, selectedUserProfile = it.firstOrNull()) }
+      .onFailure { uiState = uiState.copy(userProfiles = emptySet()) }
   }
 
   private fun cancelAuthentication() {
@@ -116,7 +116,7 @@ class PinAuthenticationViewModel @Inject() constructor(
   data class State(
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
     val isSdkInitialized: Boolean = false,
-    val userProfileIds: Set<UserProfile> = emptySet(),
+    val userProfiles: Set<UserProfile> = emptySet(),
     val selectedUserProfile: UserProfile? = null,
     val isAuthenticateButtonEnabled: Boolean = false,
     val authenticatedUserProfile: UserProfile? = null,
