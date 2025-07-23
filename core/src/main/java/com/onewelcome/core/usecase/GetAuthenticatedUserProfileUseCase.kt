@@ -12,7 +12,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class GetAuthenticatedUserProfilesUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
+class GetAuthenticatedUserProfileUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
   suspend fun execute(): Result<UserProfile?, Throwable> {
     return suspendCancellableCoroutine { continuation ->
       runCatching { omiSdkFacade.oneginiClient.getUserClient().authenticatedUserProfile }

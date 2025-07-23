@@ -62,6 +62,7 @@ private fun PinAuthenticationScreenContent(
   onNavigateToPinScreen: () -> Unit,
 ) {
   ListenForPinNavigationEvent(navigationEvents, onNavigateToPinScreen)
+  LoadData(onEvent)
   SdkFeatureScreen(
     title = stringResource(R.string.pin_authentication),
     onNavigateBack = onNavigateBack,
@@ -75,6 +76,13 @@ private fun PinAuthenticationScreenContent(
     result = uiState.result?.let { { PinAuthenticationResult(it) } },
     action = { AuthenticationButton(uiState.isAuthenticateButtonEnabled, onEvent) }
   )
+}
+
+@Composable
+fun LoadData(onEvent: (UiEvent) -> Unit) {
+  LaunchedEffect(Unit) {
+    onEvent.invoke(UiEvent.LoadData)
+  }
 }
 
 @Composable
@@ -98,7 +106,16 @@ private fun SettingSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
     UserProfilesSection(uiState.userProfileIds, uiState.selectedUserProfile, onEvent)
+    AuthenticatedProfileSection(uiState.authenticatedUserProfile)
   }
+}
+
+@Composable
+fun AuthenticatedProfileSection(userProfile: UserProfile?) {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.authenticated_profile),
+    description = userProfile?.profileId ?: stringResource(R.string.no_authenticated_user_profile)
+  )
 }
 
 @Composable
