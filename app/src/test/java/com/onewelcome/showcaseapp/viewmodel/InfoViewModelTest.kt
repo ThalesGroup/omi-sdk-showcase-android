@@ -5,10 +5,12 @@ import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -40,6 +42,9 @@ class InfoViewModelTest {
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
 
   @Inject
+  lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
+
+  @Inject
   lateinit var oneginiClientMock: OneginiClient
 
   @Inject
@@ -52,12 +57,12 @@ class InfoViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase)
+    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, getAuthenticatedUserProfileUseCase)
   }
 
   @Test
   fun `Given sdk is not initialized, When viewmodel is initialized, Then state should be updated`() {
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = Err(Unit))
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = Err(Unit), authenticatedUserProfileId = Err(Unit))
 
     viewModel.updateData()
 
@@ -67,7 +72,7 @@ class InfoViewModelTest {
   @Test
   fun `Given sdk is initialized and there are no user profiles, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit))
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit), authenticatedUserProfileId = Err(Unit))
 
     viewModel.updateData()
 
@@ -79,7 +84,36 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockUserProfileIds()
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS))
+    val expectedState =
+      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS), authenticatedUserProfileId = Err(Unit))
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and the are no authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
+    mockSdkInitialized()
+
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit), authenticatedUserProfileId = Err(Unit))
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and the are authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockAuthenticatedUserProfileId()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = Ok(emptyList()),
+      authenticatedUserProfileId = Ok(TEST_USER_PROFILE_1.profileId)
+    )
 
     viewModel.updateData()
 
@@ -97,5 +131,9 @@ class InfoViewModelTest {
 
   private fun mockUserProfileIds() {
     whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
+  }
+
+  private fun mockAuthenticatedUserProfileId() {
+    whenever(userClientMock.authenticatedUserProfile).thenReturn(TEST_USER_PROFILE_1)
   }
 }
