@@ -105,7 +105,7 @@ private fun SettingSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
-    UserProfilesSection(uiState.userProfileIds, uiState.selectedUserProfile, onEvent)
+    UserProfilesSection(uiState.userProfiles, uiState.selectedUserProfile, onEvent)
     AuthenticatedProfileSection(uiState.authenticatedUserProfile)
   }
 }
