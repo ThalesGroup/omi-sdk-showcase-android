@@ -8,8 +8,8 @@ import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
-import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel.NavigationEvent
-import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
+import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -94,7 +94,7 @@ class PinViewModelTest {
     val spyCreatePinRequestHandler = spy(createPinRequestHandler)
     viewModel = CreatePinViewModel(spyCreatePinRequestHandler)
 
-    viewModel.onEvent(UiEvent.OnPinProvided(TEST_PIN))
+    viewModel.onEvent(UiEvent.Submit(TEST_PIN))
 
     verify(spyCreatePinRequestHandler).pinCallback?.acceptAuthenticationRequest(TEST_PIN)
   }

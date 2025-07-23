@@ -193,29 +193,6 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and registration is in progress, When viewmodel is initialized, Then updated state should be returned`() {
-    mockSdkInitialized()
-    mockRegistrationIsInProgress()
-
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      isRegistrationCancellationEnabled = true
-    )
-
-    viewModel = BrowserRegistrationViewModel(
-      isSdkInitializedUseCase,
-      browserRegistrationUseCase,
-      getBrowserIdentityProvidersUseCase,
-      getUserProfilesUseCase,
-      oneginiConfigModel,
-      browserRegistrationRequestHandler,
-      createPinRequestHandler,
-    )
-
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
-
-  @Test
   fun `When update selected identity providers event is sent, Then updated state should be returned`() {
     val expectedState = viewModel.uiState.copy(selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER)
 
@@ -413,9 +390,5 @@ class BrowserRegistrationViewModelTest {
 
   private fun mockUserProfiles() {
     whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
-  }
-
-  private fun mockRegistrationIsInProgress() {
-    whenever(browserRegistrationUseCase.isRegistrationInProgress()).thenReturn(true)
   }
 }

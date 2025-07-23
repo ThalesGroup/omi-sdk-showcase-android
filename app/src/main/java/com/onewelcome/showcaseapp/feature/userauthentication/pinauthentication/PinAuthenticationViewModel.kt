@@ -14,6 +14,7 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetRegisteredAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -26,11 +27,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PinAuthenticationViewModel @Inject() constructor(
-  isSdkInitializedUseCase: IsSdkInitializedUseCase,
+  private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase,
   private val pinAuthenticationUseCase: PinAuthenticationUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
-  private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+  private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
+  private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -38,20 +40,32 @@ class PinAuthenticationViewModel @Inject() constructor(
   private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
-  init {
-    viewModelScope.launch {
-      isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
-      updateUserProfiles()
-      updateAuthenticateButton()
-    }
-  }
-
   fun onEvent(event: UiEvent) {
     when (event) {
       is UiEvent.StartPinAuthentication -> startPinAuthentication()
       is UiEvent.CancelAuthentication -> cancelAuthentication()
       is UiEvent.UpdateSelectedUserProfile -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
+      is UiEvent.LoadData -> loadData()
     }
+  }
+
+  private fun loadData() {
+    viewModelScope.launch {
+      updateIsSdkInitialized()
+      updateUserProfiles()
+      updateAuthenticatedProfile()
+      updateAuthenticateButton()
+    }
+  }
+
+  private suspend fun updateAuthenticatedProfile() {
+    getAuthenticatedUserProfileUseCase.execute()
+      .onSuccess { uiState = uiState.copy(authenticatedUserProfile = it) }
+      .onFailure { uiState = uiState.copy(authenticatedUserProfile = null) }
+  }
+
+  private fun updateIsSdkInitialized() {
+    isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
   }
 
   private fun updateAuthenticateButton() {
@@ -105,12 +119,14 @@ class PinAuthenticationViewModel @Inject() constructor(
     val userProfileIds: Set<UserProfile> = emptySet(),
     val selectedUserProfile: UserProfile? = null,
     val isAuthenticateButtonEnabled: Boolean = false,
+    val authenticatedUserProfile: UserProfile? = null,
   )
 
   sealed interface UiEvent {
     data object StartPinAuthentication : UiEvent
     data object CancelAuthentication : UiEvent
     data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
+    data object LoadData : UiEvent
   }
 
   sealed interface NavigationEvent {
