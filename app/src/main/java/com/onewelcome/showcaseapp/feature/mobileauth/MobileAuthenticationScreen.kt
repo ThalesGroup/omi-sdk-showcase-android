@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.feature.userregistration
+package com.onewelcome.showcaseapp.feature.mobileauth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.onewelcome.core.components.ShowcaseCardButton
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseTopBar
@@ -19,24 +19,22 @@ import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.home.SectionItem
 import com.onewelcome.showcaseapp.navigation.Screens
 
+
 @Composable
-fun UserRegistrationScreen(
-  navController: NavController,
-) {
-  UserRegistrationScreenContent(
+fun MobileAuthenticationScreen(navController: NavHostController) {
+  MobileAuthenticationScreenContent(
     onNavigateBack = { navController.popBackStack() },
-    onNavigateDeeper = { navController.navigate(it) },
-  )
+    onNavigateDeeper = { navController.navigate(it) })
 }
 
 @Composable
-private fun UserRegistrationScreenContent(
+private fun MobileAuthenticationScreenContent(
   onNavigateBack: () -> Unit,
   onNavigateDeeper: (String) -> Unit,
 ) {
   Scaffold(
     topBar = {
-      ShowcaseTopBar(stringResource(R.string.user_registration)) { onNavigateBack.invoke() }
+      ShowcaseTopBar(stringResource(R.string.mobile_authentication)) { onNavigateBack.invoke() }
     }
   ) { innerPadding ->
     Column(
@@ -45,7 +43,7 @@ private fun UserRegistrationScreenContent(
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
-      ShowcaseFeatureDescription(stringResource(R.string.user_registration_description), Constants.DOCUMENTATION_USER_REGISTRATION)
+      ShowcaseFeatureDescription(stringResource(R.string.mobile_authentication_description), Constants.DOCUMENTATION_USER_REGISTRATION)
       Sections(onNavigateDeeper)
     }
   }
@@ -62,15 +60,13 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
   return listOf(
-    SectionItem(stringResource(R.string.section_title_browser_registration), Screens.BrowserRegistration)
+    SectionItem(stringResource(R.string.section_title_mobile_authentication_enrollment), Screens.MobileAuthenticationEnrollment),
+    SectionItem(stringResource(R.string.section_title_mobile_authentication_push_enrollment), Screens.MobileAuthenticationPushEnrollment)
   )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-  UserRegistrationScreenContent(
-    onNavigateBack = {},
-    onNavigateDeeper = {},
-  )
+MobileAuthenticationScreenContent({}, {})
 }

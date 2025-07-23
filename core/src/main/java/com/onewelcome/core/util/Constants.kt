@@ -6,6 +6,8 @@ object Constants {
   const val DOCUMENTATION_SDK_INITIALIZATION = "$DOCUMENTATION_BASE_URL/android-sdk-getting-started/android-sdk-initialize/index.html"
   const val DOCUMENTATION_USER_REGISTRATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-register-user/index.html"
   const val DOCUMENTATION_USER_DEREGISTRATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-delete-user/index.html"
+  const val DOCUMENTATION_MOBILE_AUTHENTICATION =
+    "$DOCUMENTATION_BASE_URL/android-sdk/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html"
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
 }

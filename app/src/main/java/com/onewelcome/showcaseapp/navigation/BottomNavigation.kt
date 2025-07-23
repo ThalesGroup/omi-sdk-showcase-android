@@ -19,6 +19,8 @@ import androidx.navigation.compose.rememberNavController
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
+import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
+import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
@@ -85,5 +87,8 @@ private fun HomeScreenNavHost(homeNavController: NavHostController) {
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController) }
     composable(Screens.Pin.route) { PinScreen(homeNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
+    composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
+    composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }
+    composable(Screens.MobileAuthenticationPushEnrollment.route) { /*TODO AOSA-12*/ }
   }
 }

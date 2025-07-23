@@ -9,4 +9,7 @@ sealed class Screens(val route: String) {
   data object BrowserRegistration : Screens("browser_registration")
   data object Pin : Screens("pin_route")
   data object UserDeregistration: Screens("user_deregistration")
+  data object MobileAuthentication: Screens("mobile_authentication")
+  data object MobileAuthenticationEnrollment: Screens("mobile_authentication_enrollment")
+  data object MobileAuthenticationPushEnrollment: Screens("mobile_authentication_push_enrollment")
 }
