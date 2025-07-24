@@ -38,7 +38,6 @@ class PinAuthenticationUseCase @Inject constructor(
             override fun onError(error: OneginiAuthenticationError) {
               continuation.resume(Err(error))
             }
-
           }
         )
       }.onFailure { continuation.resume(Err(it)) }

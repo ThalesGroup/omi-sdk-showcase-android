@@ -1,7 +1,11 @@
 package com.onewelcome.showcaseapp.viewmodel
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
@@ -9,14 +13,16 @@ import com.onewelcome.core.usecase.GetRegisteredAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.PinAuthenticationUseCase
-import com.onewelcome.core.util.TestConstants.TEST_SELECTED_IDENTITY_PROVIDER
+import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel
+import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.CancelAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.LoadData
+import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.StartPinAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.UpdateSelectedUserProfile
-import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedIdentityProvider
+import com.onewelcome.showcaseapp.utils.ResultAssert
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -25,7 +31,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -64,6 +73,10 @@ class PinAuthenticationViewModelTest {
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 
   private val userClientMock: UserClient = mock()
+
+  private val pinAuthenticator = TestConstants.FakePinAuthenticator()
+
+  private val mockOneginiAuthenticationError: OneginiAuthenticationError = mock()
 
   lateinit var viewModel: PinAuthenticationViewModel
 
@@ -137,7 +150,7 @@ class PinAuthenticationViewModelTest {
   }
 
   @Test
-  fun `When update selected identity providers event is sent, Then updated state should be returned`() {
+  fun `When update selected user profile event is sent, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(selectedUserProfile = TEST_USER_PROFILE_1)
 
     viewModel.onEvent(UpdateSelectedUserProfile(TEST_USER_PROFILE_1))
@@ -145,11 +158,116 @@ class PinAuthenticationViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
+  @Test
+  fun `Given no user profile is selected, When start pin authentication event is sent, Then error should be returned`() {
+    viewModel.onEvent(StartPinAuthentication)
+
+    ResultAssert
+      .assertThat(viewModel.uiState.result!!)
+      .hasErrorInstance(IllegalArgumentException::class.java, "User profile not selected")
+
+  }
+
+  @Test
+  fun `Given user profile is selected, When start pin authentication event is sent and finished successfully, Then data should be updated`() {
+    val expectedState = viewModel.uiState.copy(
+      result = Ok(Pair(TEST_USER_PROFILE_1, null)),
+      isSdkInitialized = true,
+      userProfiles = TEST_USER_PROFILES,
+      selectedUserProfile = TEST_USER_PROFILES.first(),
+      isAuthenticateButtonEnabled = true,
+    )
+    mockSdkInitialized()
+    mockUserClient()
+    mockUserProfiles()
+    mockRegisteredAuthenticators()
+    mockSuccessfulPinAuthentication()
+
+    viewModel.onEvent(LoadData)
+    viewModel.onEvent(StartPinAuthentication)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given user profile is selected, When start pin authentication event is sent and finishes with error, Then error should be returned`() {
+    val expectedState = viewModel.uiState.copy(
+      result = Err(mockOneginiAuthenticationError),
+      isSdkInitialized = true,
+      userProfiles = TEST_USER_PROFILES,
+      selectedUserProfile = TEST_USER_PROFILES.first(),
+      isAuthenticateButtonEnabled = true,
+    )
+    mockSdkInitialized()
+    mockUserClient()
+    mockUserProfiles()
+    mockRegisteredAuthenticators()
+    mockUnsuccessfulPinAuthentication()
+
+    viewModel.onEvent(LoadData)
+    viewModel.onEvent(StartPinAuthentication)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given user profile is selected and there's no authenticators, When start pin authentication event is sent, Then error should be returned`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockUserProfiles()
+    mockNoRegisteredAuthenticators()
+
+    viewModel.onEvent(LoadData)
+    viewModel.onEvent(StartPinAuthentication)
+
+    ResultAssert
+      .assertThat(viewModel.uiState.result!!)
+      .hasErrorInstance(NoSuchElementException::class.java, "Collection contains no element matching the predicate.")
+  }
+
+  @Test
+  fun `When cancel pin authentication event is sent, Then deny authentication request should be triggered`() {
+    val spyPinAuthenticationRequestHandler = spy(pinAuthenticationRequestHandler)
+    viewModel = PinAuthenticationViewModel(
+      isSdkInitializedUseCase,
+      getRegisteredAuthenticatorsUseCase,
+      pinAuthenticationUseCase,
+      getUserProfilesUseCase,
+      spyPinAuthenticationRequestHandler,
+      getAuthenticatedUserProfileUseCase
+    )
+
+    viewModel.onEvent(CancelAuthentication)
+
+    verify(spyPinAuthenticationRequestHandler).pinCallback?.denyAuthenticationRequest()
+  }
+
+  private fun mockSuccessfulPinAuthentication() {
+    whenever(userClientMock.authenticateUser(any(), any(), any()))
+      .thenAnswer { invocation ->
+        invocation.getArgument<OneginiAuthenticationHandler>(2).onSuccess(TEST_USER_PROFILE_1, null)
+      }
+  }
+
+  private fun mockUnsuccessfulPinAuthentication() {
+    whenever(userClientMock.authenticateUser(any(), any(), any()))
+      .thenAnswer { invocation ->
+        invocation.getArgument<OneginiAuthenticationHandler>(2).onError(mockOneginiAuthenticationError)
+      }
+  }
+
+  private fun mockRegisteredAuthenticators() {
+    whenever(userClientMock.getRegisteredAuthenticators(any())).thenReturn(setOf(pinAuthenticator))
+  }
+
+  private fun mockNoRegisteredAuthenticators() {
+    whenever(userClientMock.getRegisteredAuthenticators(any())).thenReturn(setOf())
+  }
+
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null))
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
-
 
   private fun mockUserClient() {
     whenever(oneginiClientMock.getUserClient()).thenReturn(userClientMock)
