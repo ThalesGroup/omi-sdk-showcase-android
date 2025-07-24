@@ -13,9 +13,9 @@ import com.onewelcome.core.usecase.GetRegisteredAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.PinAuthenticationUseCase
-import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.showcaseapp.fakes.FakePinAuthenticator
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.CancelAuthentication
@@ -74,7 +74,7 @@ class PinAuthenticationViewModelTest {
 
   private val userClientMock: UserClient = mock()
 
-  private val pinAuthenticator = TestConstants.FakePinAuthenticator()
+  private val pinAuthenticator = FakePinAuthenticator()
 
   private val mockOneginiAuthenticationError: OneginiAuthenticationError = mock()
 

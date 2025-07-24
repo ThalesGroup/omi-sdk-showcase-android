@@ -94,7 +94,7 @@ private fun NoUserProfilesRegisteredSection() {
     title = stringResource(R.string.user_profiles),
     description = stringResource(R.string.no_user_profiles),
     status = false,
-    tooltipContent = { Text(stringResource(R.string.user_profiles_requirement_tooltip)) }
+    tooltipContent = { Text(stringResource(R.string.deregistration_requirement_tooltip)) }
   )
 }
 

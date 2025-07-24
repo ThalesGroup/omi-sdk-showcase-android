@@ -2,9 +2,9 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
-import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.showcaseapp.fakes.FakePinCallback
 import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent

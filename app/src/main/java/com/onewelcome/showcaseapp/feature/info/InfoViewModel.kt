@@ -29,9 +29,9 @@ class InfoViewModel @Inject constructor(
 
   fun updateData() {
     updateIsSdkInitialized()
+    updateAuthenticatedUserProfile()
     viewModelScope.launch {
       updateUserProfiles()
-      updateAuthenticatedUserProfiles()
     }
   }
 
@@ -41,7 +41,7 @@ class InfoViewModel @Inject constructor(
       .onFailure { uiState = uiState.copy(userProfileIds = Err(Unit)) }
   }
 
-  private suspend fun updateAuthenticatedUserProfiles() {
+  private fun updateAuthenticatedUserProfile() {
     getAuthenticatedUserProfileUseCase.execute()
       .onSuccess { uiState = uiState.copy(authenticatedUserProfileId = Ok(it?.profileId)) }
       .onFailure { uiState = uiState.copy(authenticatedUserProfileId = Err(Unit)) }

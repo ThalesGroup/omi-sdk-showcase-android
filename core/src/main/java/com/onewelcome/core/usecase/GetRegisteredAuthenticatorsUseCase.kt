@@ -15,14 +15,9 @@ import kotlin.coroutines.resume
 class GetRegisteredAuthenticatorsUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade,
 ) {
-  suspend fun execute(userProfile: UserProfile): Result<Set<OneginiAuthenticator>, Throwable> {
-    return suspendCancellableCoroutine { continuation ->
-      runCatching {
-        val authenticators = omiSdkFacade.oneginiClient.getUserClient().getRegisteredAuthenticators(userProfile)
-        continuation.resume(Ok(authenticators))
-      }.onFailure {
-        continuation.resume(Err(it))
-      }
+  fun execute(userProfile: UserProfile): Result<Set<OneginiAuthenticator>, Throwable> {
+    return runCatching {
+      omiSdkFacade.oneginiClient.getUserClient().getRegisteredAuthenticators(userProfile)
     }
   }
 }
