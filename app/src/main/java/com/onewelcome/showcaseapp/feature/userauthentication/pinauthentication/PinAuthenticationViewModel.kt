@@ -10,6 +10,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
@@ -44,9 +45,13 @@ class PinAuthenticationViewModel @Inject() constructor(
     when (event) {
       is UiEvent.StartPinAuthentication -> startPinAuthentication()
       is UiEvent.CancelAuthentication -> cancelAuthentication()
-      is UiEvent.UpdateSelectedUserProfile -> uiState = uiState.copy(selectedUserProfile = event.userProfile)
+      is UiEvent.UpdateSelectedUserProfile -> updateSelectedUserProfile(event)
       is UiEvent.LoadData -> loadData()
     }
+  }
+
+  private fun updateSelectedUserProfile(event: UiEvent.UpdateSelectedUserProfile) {
+    uiState = uiState.copy(selectedUserProfile = event.userProfile)
   }
 
   private fun loadData() {
@@ -84,7 +89,6 @@ class PinAuthenticationViewModel @Inject() constructor(
 
   private fun startPinAuthentication() {
     authenticateUser()
-    uiState = uiState.copy(isAuthenticateButtonEnabled = true)
     listenForPinScreenNavigationEvent()
   }
 
@@ -93,14 +97,16 @@ class PinAuthenticationViewModel @Inject() constructor(
       viewModelScope.launch {
         getRegisteredAuthenticatorsUseCase.execute(selectedUserProfile)
           .onSuccess {
-            val pinAuthenticator = it.first { it.type == OneginiAuthenticator.Type.PIN }
-            pinAuthenticationUseCase.execute(selectedUserProfile, pinAuthenticator)
-              .onSuccess { uiState = uiState.copy(result = Ok(it)) }
-              .onFailure { uiState = uiState.copy(result = Err(it)) }
+            runCatching {
+              val pinAuthenticator = it.first { it.type == OneginiAuthenticator.Type.PIN }
+              pinAuthenticationUseCase.execute(selectedUserProfile, pinAuthenticator)
+                .onSuccess { uiState = uiState.copy(result = Ok(it)) }
+                .onFailure { uiState = uiState.copy(result = Err(it)) }
+            }.onFailure { uiState = uiState.copy(result = Err(it)) }
           }
           .onFailure { uiState = uiState.copy(result = Err(it)) }
       }
-    } ?: {
+    } ?: run {
       uiState = uiState.copy(result = Err(IllegalArgumentException("User profile not selected")))
     }
   }

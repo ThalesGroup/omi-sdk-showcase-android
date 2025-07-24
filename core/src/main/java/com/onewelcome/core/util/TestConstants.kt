@@ -3,6 +3,7 @@ package com.onewelcome.core.util
 import android.os.Parcel
 import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -70,21 +71,19 @@ object TestConstants {
     }
   }
 
-  class FakePinAuthenticationRequestHandler() : OneginiPinAuthenticationRequestHandler {
-    override fun startAuthentication(
-      userProfile: UserProfile,
-      callback: OneginiPinCallback,
-      attemptCounter: AuthenticationAttemptCounter
-    ) {
-      //no-op
-    }
+  class FakePinAuthenticator : OneginiAuthenticator {
+    override val id: String
+      get() = "fakePinAuthenticatorId"
+    override val type: OneginiAuthenticator.Type
+      get() = OneginiAuthenticator.Type.PIN
+    override val name: String
+      get() = "fakePinAuthenticatorName"
+    override val isRegistered: Boolean
+      get() = true
+    override val isPreferred: Boolean
+      get() = false
+    override val userProfile: UserProfile
+      get() = TEST_USER_PROFILE_1
 
-    override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
-      //no-op
-    }
-
-    override fun finishAuthentication() {
-      //no-op
-    }
   }
 }
