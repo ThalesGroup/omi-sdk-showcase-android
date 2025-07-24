@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.michaelbull.result.Result
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
@@ -75,21 +74,12 @@ private fun StatusList(uiState: State) {
 }
 
 @Composable
-private fun getUserProfiles(userProfiles: Result<List<String>, Unit>?): String {
-  return if (userProfiles?.isOk == true && userProfiles.value.isNotEmpty()) {
-    userProfiles.value.separateItemsWithComa()
-  } else {
-    stringResource(R.string.no_user_profiles)
-  }
-}
+private fun getUserProfiles(userProfiles: List<String>): String =
+  userProfiles.takeIf { it.isNotEmpty() }?.separateItemsWithComa() ?: stringResource(R.string.no_user_profiles)
 
 @Composable
-private fun getAuthenticatedProfile(userProfile: Result<String?, Unit>?): String {
-  return userProfile
-    ?.takeIf { it.isOk && it.value.isNullOrEmpty().not() }
-    ?.value
-    ?: stringResource(R.string.no_authenticated_user_profile)
-}
+private fun getAuthenticatedProfile(userProfile: String): String =
+  userProfile.takeIf { it.isNotEmpty() } ?: stringResource(R.string.no_authenticated_user_profile)
 
 @Preview(showBackground = true)
 @Composable
