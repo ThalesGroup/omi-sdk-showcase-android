@@ -142,7 +142,7 @@ private fun NoUserProfilesRegisteredSection() {
     title = stringResource(R.string.user_profiles),
     description = stringResource(R.string.no_user_profiles),
     status = false,
-    tooltipContent = { Text(stringResource(R.string.user_profiles_requirement_tooltip)) }
+    tooltipContent = { Text(stringResource(R.string.authentication_requirement_tooltip)) }
   )
 }
 
@@ -161,7 +161,7 @@ private fun UserProfileSelectionSection(
           style = MaterialTheme.typography.titleMedium
         )
         ShowcaseTooltip {
-          Text(stringResource(R.string.deregistration_choose_user_profile))
+          Text(stringResource(R.string.authentication_choose_user_profile))
         }
       }
       userProfiles.forEach { userProfile ->

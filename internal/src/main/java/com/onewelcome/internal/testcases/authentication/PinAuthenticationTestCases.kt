@@ -38,7 +38,7 @@ class PinAuthenticationTestCases @Inject constructor(
     }
   }
 
-  private suspend fun getAuthenticatedUserProfile(): TestStatus {
+  private fun getAuthenticatedUserProfile(): TestStatus {
     val result = getAuthenticatedUserProfileUseCase.execute()
     return if (result.isOk) {
       TestStatus.Passed

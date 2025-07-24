@@ -16,7 +16,6 @@ import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.Constants
-import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
 import com.onewelcome.core.util.TestConstants.TEST_IDENTITY_PROVIDERS
 import com.onewelcome.core.util.TestConstants.TEST_SELECTED_IDENTITY_PROVIDER
@@ -24,6 +23,7 @@ import com.onewelcome.core.util.TestConstants.TEST_SELECTED_SCOPES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.showcaseapp.fakes.FakePinCallback
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.NavigationEvent

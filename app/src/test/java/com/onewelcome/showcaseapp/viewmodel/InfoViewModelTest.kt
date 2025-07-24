@@ -85,7 +85,7 @@ class InfoViewModelTest {
     mockUserClient()
     mockUserProfileIds()
     val expectedState =
-      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS), authenticatedUserProfileId = Err(Unit))
+      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS), authenticatedUserProfileId = Ok(null))
 
     viewModel.updateData()
 

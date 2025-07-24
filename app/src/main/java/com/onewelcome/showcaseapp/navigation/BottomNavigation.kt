@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,19 +53,28 @@ fun BottomNavigationBar() {
       startDestination = Screens.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      val bottomNavScreens = listOf(
-        composable(Screens.Home.route) { HomeScreenNavHost(homeNavController, rootNavController) },
-        composable(Screens.Info.route) { InfoScreen() },
-        composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() },
-      )
-      val pinFullScreenPages = listOf(
-        composable(Screens.AuthenticateWithPin.route) { AuthenticateWithPinScreen(rootNavController) },
-        composable(Screens.CreatePin.route) { CreatePinScreen(rootNavController) },
-      )
-      bottomNavScreens
-      pinFullScreenPages
+      bottomNavigationScreens(homeNavController, rootNavController)
+      pinFullScreenPages(rootNavController)
     }
   }
+}
+
+private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
+  listOf(
+    composable(Screens.AuthenticateWithPin.route) { AuthenticateWithPinScreen(rootNavController) },
+    composable(Screens.CreatePin.route) { CreatePinScreen(rootNavController) },
+  )
+}
+
+private fun NavGraphBuilder.bottomNavigationScreens(
+  homeNavController: NavHostController,
+  rootNavController: NavHostController
+) {
+  listOf(
+    composable(Screens.Home.route) { HomeScreenNavHost(homeNavController, rootNavController) },
+    composable(Screens.Info.route) { InfoScreen() },
+    composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() },
+  )
 }
 
 @Composable

@@ -1,11 +1,11 @@
 package com.onewelcome.showcaseapp.viewmodel
 
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
-import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER
 import com.onewelcome.core.util.TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT
 import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.showcaseapp.fakes.FakePinCallback
 import com.onewelcome.showcaseapp.feature.pin.AuthenticateWithPinViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent

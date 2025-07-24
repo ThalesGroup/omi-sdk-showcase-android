@@ -8,6 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.flatMap
+import com.github.michaelbull.result.map
+import com.github.michaelbull.result.mapCatching
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.github.michaelbull.result.runCatching
@@ -55,15 +58,15 @@ class PinAuthenticationViewModel @Inject() constructor(
   }
 
   private fun loadData() {
+    updateAuthenticatedProfile()
+    updateIsSdkInitialized()
     viewModelScope.launch {
-      updateIsSdkInitialized()
       updateUserProfiles()
-      updateAuthenticatedProfile()
       updateAuthenticateButton()
     }
   }
 
-  private suspend fun updateAuthenticatedProfile() {
+  private fun updateAuthenticatedProfile() {
     getAuthenticatedUserProfileUseCase.execute()
       .onSuccess { uiState = uiState.copy(authenticatedUserProfile = it) }
       .onFailure { uiState = uiState.copy(authenticatedUserProfile = null) }
@@ -96,14 +99,9 @@ class PinAuthenticationViewModel @Inject() constructor(
     uiState.selectedUserProfile?.let { selectedUserProfile ->
       viewModelScope.launch {
         getRegisteredAuthenticatorsUseCase.execute(selectedUserProfile)
-          .onSuccess {
-            runCatching {
-              val pinAuthenticator = it.first { it.type == OneginiAuthenticator.Type.PIN }
-              pinAuthenticationUseCase.execute(selectedUserProfile, pinAuthenticator)
-                .onSuccess { uiState = uiState.copy(result = Ok(it)) }
-                .onFailure { uiState = uiState.copy(result = Err(it)) }
-            }.onFailure { uiState = uiState.copy(result = Err(it)) }
-          }
+          .mapCatching { it.first { it.type == OneginiAuthenticator.Type.PIN } }
+          .flatMap { pinAuthenticationUseCase.execute(selectedUserProfile, it) }
+          .onSuccess { uiState = uiState.copy(result = Ok(it)) }
           .onFailure { uiState = uiState.copy(result = Err(it)) }
       }
     } ?: run {
