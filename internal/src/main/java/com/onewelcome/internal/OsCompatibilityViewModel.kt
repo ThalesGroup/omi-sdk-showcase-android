@@ -11,6 +11,7 @@ import com.github.michaelbull.result.Result
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
+import com.onewelcome.internal.testcases.authentication.PinAuthenticationTestCases
 import com.onewelcome.internal.testcases.browserregistation.BrowserRegistrationTestCases
 import com.onewelcome.internal.testcases.deregistration.UserDeregistrationTestCases
 import com.onewelcome.internal.testcases.initialization.SdkInitializationTestCases
@@ -24,12 +25,16 @@ import javax.inject.Inject
 class OsCompatibilityViewModel @Inject constructor(
   browserRegistrationTestCases: BrowserRegistrationTestCases,
   sdkInitializationTestCases: SdkInitializationTestCases,
-  userDeregistrationTestCases: UserDeregistrationTestCases
+  userDeregistrationTestCases: UserDeregistrationTestCases,
+  pinAuthenticationTestCases: PinAuthenticationTestCases
 ) : ViewModel() {
   private val testCategories = listOf(
     sdkInitializationTestCases.tests,
     browserRegistrationTestCases.tests,
-    userDeregistrationTestCases.tests)
+    TODO("Add commented tests as part of custom registration AOSA-26. User profile registered is needed.")
+//    userDeregistrationTestCases.tests,
+//    pinAuthenticationTestCases.tests
+    )
 
   var uiState by mutableStateOf(State(testCategories = testCategories))
     private set
