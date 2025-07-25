@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.michaelbull.result.Result
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTableStatusCard
 import com.onewelcome.core.entity.MobileAuthEnrollmentStatus
@@ -80,10 +79,8 @@ private fun StatusList(uiState: State) {
       description = getUserProfiles(uiState.userProfileIds)
     )
     ShowcaseStatusCard(
-      title = stringResource(R.string.authenticated_user_profile),
-      description = uiState.authenticatedUserProfile?.let { stringResource(R.string.user_profile_id, it.profileId) }
-        ?: stringResource(R.string.no_user_profile_authenticated),
-      status = uiState.authenticatedUserProfile != null
+      title = stringResource(R.string.authenticated_profile),
+      description = getAuthenticatedProfile(uiState.authenticatedUserProfileId)
     )
     UserProfilesEnrolledForMobileAuth(uiState.mobileAuthenticationEnrollmentStatus)
   }
@@ -151,13 +148,12 @@ private fun UserProfilesEnrolledForMobileAuth(mobileAuthenticationEnrollmentStat
 }
 
 @Composable
-private fun getUserProfiles(userProfiles: Result<List<String>, Unit>?): String {
-  return if (userProfiles?.isOk == true && userProfiles.value.isNotEmpty()) {
-    userProfiles.value.separateItemsWithComa()
-  } else {
-    stringResource(R.string.no_user_profiles)
-  }
-}
+private fun getUserProfiles(userProfiles: List<String>): String =
+  userProfiles.takeIf { it.isNotEmpty() }?.separateItemsWithComa() ?: stringResource(R.string.no_user_profiles)
+
+@Composable
+private fun getAuthenticatedProfile(userProfile: String): String =
+  userProfile.takeIf { it.isNotEmpty() } ?: stringResource(R.string.no_authenticated_user_profile)
 
 @Preview(showBackground = true)
 @Composable

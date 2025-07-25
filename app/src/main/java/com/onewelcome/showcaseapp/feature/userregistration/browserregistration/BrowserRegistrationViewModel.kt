@@ -94,12 +94,15 @@ class BrowserRegistrationViewModel @Inject constructor(
   }
 
   private fun updateCancellationButton() {
-    uiState = uiState.copy(isRegistrationCancellationEnabled = browserRegistrationUseCase.isRegistrationInProgress())
+    val isRegistrationInProgress =
+      browserRegistrationRequestHandler.isRegistrationInProgress() || createPinRequestHandler.isPinCreationInProgress()
+    uiState = uiState.copy(isRegistrationCancellationEnabled = isRegistrationInProgress)
   }
 
   private fun cancelRegistration() {
     viewModelScope.launch {
-      browserRegistrationUseCase.cancelRegistration()
+      browserRegistrationRequestHandler.cancelRegistration()
+      createPinRequestHandler.cancelPinCreation()
     }
   }
 
@@ -164,7 +167,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     data class HandleRegistrationCallback(val uri: Uri) : UiEvent
   }
 
-  sealed class NavigationEvent {
-    data object ToPinScreen : NavigationEvent()
+  sealed interface NavigationEvent {
+    data object ToPinScreen : NavigationEvent
   }
 }
