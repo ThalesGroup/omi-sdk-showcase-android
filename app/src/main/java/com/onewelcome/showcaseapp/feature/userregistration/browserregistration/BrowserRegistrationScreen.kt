@@ -56,13 +56,14 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun BrowserRegistrationScreen(
   navController: NavController,
+  pinNavController: NavController,
   viewModel: BrowserRegistrationViewModel = hiltViewModel()
 ) {
   BrowserRegistrationScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
-    onNavigateToPinScreen = { navController.navigate(Screens.Pin.route) },
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.CreatePin.route) },
     navigationEvents = viewModel.navigationEvents
   )
   RegistrationIntentListener { viewModel.onEvent(it) }
@@ -239,8 +240,8 @@ private fun RegistrationResult(userProfilesResult: Result<Pair<UserProfile, Cust
       ?.onSuccess {
         Column {
           Text(stringResource(R.string.registration_successful))
-          Text("User profile: ${it.first.profileId}")
-          Text("Custom info: ${it.second}")
+          Text(stringResource(R.string.user_profile, it.first.profileId))
+          Text(stringResource(R.string.custom_info, it.second.toString()))
         }
       }
       ?.onFailure { Text("$it") }

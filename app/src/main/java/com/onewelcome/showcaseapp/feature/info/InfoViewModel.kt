@@ -11,6 +11,7 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.entity.MobileAuthEnrollmentStatus
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
@@ -26,6 +27,8 @@ class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
+  private val getUserProfilesUseCase: GetUserProfilesUseCase,
+  private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val getMobileAuthenticationEnrollmentStatusUseCase: GetMobileAuthenticationEnrollmentStatusUseCase
 ) : ViewModel() {
 
@@ -34,27 +37,27 @@ class InfoViewModel @Inject constructor(
 
   fun updateData() {
     updateIsSdkInitialized()
+    updateAuthenticatedUserProfile()
     viewModelScope.launch {
       updateUserProfiles()
-      updateAuthenticatedUserProfile()
       updateMobileAuthEnrollmentStatus()
     }
   }
 
   private suspend fun updateUserProfiles() {
     getUserProfilesUseCase.execute()
-      .onSuccess { uiState = uiState.copy(userProfileIds = Ok(it.map { it.profileId }.toList())) }
-      .onFailure { uiState = uiState.copy(userProfileIds = Err(Unit)) }
+      .onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
+      .onFailure { uiState = uiState.copy(userProfileIds = emptyList()) }
+  }
+
+  private fun updateAuthenticatedUserProfile() {
+    getAuthenticatedUserProfileUseCase.execute()
+      .onSuccess { uiState = uiState.copy(authenticatedUserProfileId = it?.profileId ?: "") }
+      .onFailure { uiState = uiState.copy(authenticatedUserProfileId = "") }
   }
 
   private fun updateIsSdkInitialized() {
     uiState = uiState.copy(isSdkInitialized = isSdkInitializedUseCase.execute())
-  }
-
-  private fun updateAuthenticatedUserProfile() {
-    uiState = uiState.copy(
-      authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
-    )
   }
 
   private suspend fun updateMobileAuthEnrollmentStatus() {
@@ -65,8 +68,8 @@ class InfoViewModel @Inject constructor(
 
   data class State(
     val isSdkInitialized: Boolean = false,
-    val userProfileIds: Result<List<String>, Unit>? = null,
-    val authenticatedUserProfile: UserProfile? = null,
+    val userProfileIds: List<String> = emptyList(),
+    val authenticatedUserProfileId: String = "",
     val mobileAuthenticationEnrollmentStatus: List<MobileAuthEnrollmentStatus> = emptyList()
   )
 }

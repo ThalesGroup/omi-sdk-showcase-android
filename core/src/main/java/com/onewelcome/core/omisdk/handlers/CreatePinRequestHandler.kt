@@ -42,4 +42,10 @@ class CreatePinRequestHandler @Inject constructor() : OneginiCreatePinRequestHan
     maxPinLength = 0
     _finishPinCreationFlow.trySend(Unit)
   }
+
+  fun cancelPinCreation() {
+    pinCallback?.denyAuthenticationRequest()
+  }
+
+  fun isPinCreationInProgress(): Boolean = pinCallback != null
 }

@@ -1,6 +1,5 @@
 package com.onewelcome.internal.testcases.browserregistation
 
-import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
@@ -8,7 +7,6 @@ import com.onewelcome.internal.entity.TestStatus
 import javax.inject.Inject
 
 class BrowserRegistrationTestCases @Inject constructor(
-  private val browserRegistrationUseCase: BrowserRegistrationUseCase,
   private val getBrowserIdentityProvidersUseCase: GetBrowserIdentityProvidersUseCase,
 ) {
   val tests = TestCategory(
@@ -17,10 +15,6 @@ class BrowserRegistrationTestCases @Inject constructor(
       TestCase(
         name = "getBrowserIdentityProviders",
         testFunction = ::getBrowserIdentityProviders
-      ),
-      TestCase(
-        name = "isRegistrationInProgress",
-        testFunction = ::isRegistrationInProgress
       ),
     )
   )
@@ -31,15 +25,6 @@ class BrowserRegistrationTestCases @Inject constructor(
       TestStatus.Passed
     } else {
       TestStatus.Failed
-    }
-  }
-
-  private fun isRegistrationInProgress(): TestStatus {
-    val result = browserRegistrationUseCase.isRegistrationInProgress()
-    return if (result) {
-      TestStatus.Failed
-    } else {
-      TestStatus.Passed
     }
   }
 }
