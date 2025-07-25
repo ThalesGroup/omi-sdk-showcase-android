@@ -5,14 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.entity.MobileAuthEnrollmentStatus
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetMobileAuthenticationEnrollmentStatusUseCase
@@ -25,8 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
-  private val getUserProfilesUseCase: GetUserProfilesUseCase,
-  private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val getMobileAuthenticationEnrollmentStatusUseCase: GetMobileAuthenticationEnrollmentStatusUseCase
