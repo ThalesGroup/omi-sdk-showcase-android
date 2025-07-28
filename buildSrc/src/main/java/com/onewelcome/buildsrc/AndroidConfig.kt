@@ -3,7 +3,7 @@ package com.onewelcome.buildsrc
 import org.gradle.api.JavaVersion
 
 object AndroidConfig {
-  const val MIN_SDK = 23
+  const val MIN_SDK = 24
   const val COMPILE_SDK = 35
   const val TARGET_SDK = 35
   const val VERSION_CODE = 1

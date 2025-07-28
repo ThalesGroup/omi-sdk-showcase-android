@@ -5,11 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
-  private val getUserProfilesUseCase: GetUserProfilesUseCase
+  private val getUserProfilesUseCase: GetUserProfilesUseCase,
+  private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -27,6 +26,7 @@ class InfoViewModel @Inject constructor(
 
   fun updateData() {
     updateIsSdkInitialized()
+    updateAuthenticatedUserProfile()
     viewModelScope.launch {
       updateUserProfiles()
     }
@@ -34,8 +34,14 @@ class InfoViewModel @Inject constructor(
 
   private suspend fun updateUserProfiles() {
     getUserProfilesUseCase.execute()
-      .onSuccess { uiState = uiState.copy(userProfileIds = Ok(it.map { it.profileId }.toList())) }
-      .onFailure { uiState = uiState.copy(userProfileIds = Err(Unit)) }
+      .onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
+      .onFailure { uiState = uiState.copy(userProfileIds = emptyList()) }
+  }
+
+  private fun updateAuthenticatedUserProfile() {
+    getAuthenticatedUserProfileUseCase.execute()
+      .onSuccess { uiState = uiState.copy(authenticatedUserProfileId = it?.profileId ?: "") }
+      .onFailure { uiState = uiState.copy(authenticatedUserProfileId = "") }
   }
 
   private fun updateIsSdkInitialized() {
@@ -44,6 +50,7 @@ class InfoViewModel @Inject constructor(
 
   data class State(
     val isSdkInitialized: Boolean = false,
-    val userProfileIds: Result<List<String>, Unit>? = null
+    val userProfileIds: List<String> = emptyList(),
+    val authenticatedUserProfileId: String = "",
   )
 }

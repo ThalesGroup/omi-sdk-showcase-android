@@ -9,5 +9,6 @@ object Dimensions {
   val verticalSpacing = 12.dp
 
   val actionButtonHeight = 64.dp
+  val pinInputHeight = 32.dp
   val pinButtonSize = 96.dp
 }

@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.feature.userregistration
+package com.onewelcome.showcaseapp.feature.userauthentication
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,32 +20,31 @@ import com.onewelcome.showcaseapp.feature.home.SectionItem
 import com.onewelcome.showcaseapp.navigation.Screens
 
 @Composable
-fun UserRegistrationScreen(
-  navController: NavController,
+fun UserAuthenticationScreen(
+  navController: NavController
 ) {
-  UserRegistrationScreenContent(
+  UserAuthenticationScreenContent(
     onNavigateBack = { navController.popBackStack() },
     onNavigateDeeper = { navController.navigate(it) },
   )
 }
 
 @Composable
-private fun UserRegistrationScreenContent(
+private fun UserAuthenticationScreenContent(
   onNavigateBack: () -> Unit,
   onNavigateDeeper: (String) -> Unit,
 ) {
   Scaffold(
     topBar = {
-      ShowcaseTopBar(stringResource(R.string.user_registration)) { onNavigateBack.invoke() }
-    }
-  ) { innerPadding ->
+      ShowcaseTopBar(stringResource(R.string.user_authentication)) { onNavigateBack.invoke() }
+    }) { innerPadding ->
     Column(
       modifier = Modifier
         .padding(innerPadding)
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
-      ShowcaseFeatureDescription(stringResource(R.string.user_registration_description), Constants.DOCUMENTATION_USER_REGISTRATION)
+      ShowcaseFeatureDescription(stringResource(R.string.user_authentication_description), Constants.DOCUMENTATION_USER_AUTHENTICATION)
       Sections(onNavigateDeeper)
     }
   }
@@ -62,14 +61,14 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
   return listOf(
-    SectionItem(stringResource(R.string.section_title_browser_registration), Screens.BrowserRegistration)
+    SectionItem(stringResource(R.string.section_title_pin_authentication), Screens.PinAuthentication)
   )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-  UserRegistrationScreenContent(
+  UserAuthenticationScreenContent(
     onNavigateBack = {},
     onNavigateDeeper = {},
   )

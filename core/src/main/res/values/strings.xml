@@ -13,16 +13,23 @@
   <string name="details">Details</string>
   <string name="register">Register</string>
   <string name="cancel">Cancel</string>
+  <string name="submit">Submit</string>
+  <string name="authenticate">Authenticate</string>
+  <string name="user_profile">User profile: %s</string>
+  <string name="custom_info">Custom info: %s</string>
 
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>
   <string name="status_sdk_initialized">SDK Initialized</string>
   <string name="user_profiles">User profiles</string>
+  <string name="authenticated_profile">Authenticated user profile</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
   <string name="section_title_user_registration">User Registration</string>
   <string name="section_title_browser_registration">Browser Registration</string>
+  <string name="section_title_user_authentication">User Authentication</string>
+  <string name="section_title_pin_authentication">Pin Authentication</string>
   <string name="section_title_user_deregistration">User Deregistration</string>
 
   <!-- SDK Initialization -->
@@ -89,20 +96,39 @@
   <string name="default_identity_provider_tooltip_text">Default identity provider is set in configuration on the server side.</string>
   <string name="use_default_identity_provider">Use default identity provider</string>
   <string name="no_user_profiles">No user profiles</string>
+  <string name="no_authenticated_user_profile">No authenticated user profile</string>
   <string name="sdk_needs_to_be_initialized_to_perform_registration">SDK needs to be initialized to perform registration</string>
   <string name="registration_successful">Registration successful</string>
-  <string name="enter_pin">Enter PIN</string>
   <string name="del">Delete</string>
   <string name="clear">Clear</string>
   <string name="idp_item_label">Name: %s\nID: %s</string>
+
+  <!-- Authentication -->
+  <string name="user_authentication">User authentication</string>
+  <string name="pin_authentication">Pin authentication</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_authentication">SDK needs to be initialized to perform authentication</string>
+  <string name="user_needs_to_be_registered_to_perform_authentication">User needs to be registered to perform authentication</string>
+  <string name="cancel_authentication">Cancel authentication</string>
+  <string name="authentication_choose_user_profile">Select User Profile that will be authenticated.</string>
+  <string name="pin_authentication_description">When at least one user is registered, SDK offers a possibility to log in using PIN authentication. PIN is set during user registration.</string>
+  <string name="user_authentication_description">When at least one user is registered, SDK offers a possibility to log in using number of authenticators.</string>
+  <string name="authentication_successful">Authentication successful</string>
+  <string name="authentication_requirement_tooltip">At least one user profile needs to be registered to perform authentication</string>
 
   <!-- User Deregistration -->
   <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
   <string name="sdk_needs_to_be_initialized_to_perform_deregistration">SDK needs to be initialized to perform deregistration</string>
   <string name="label_user_profile">User profile</string>
-  <string name="documentation_choose_user_profile">Select User Profile that will be deregistered.</string>
+  <string name="deregistration_choose_user_profile">Select User Profile that will be deregistered.</string>
   <string name="button_deregister_user">Deregister user</string>
   <string name="label_user_deregistration_success">User deregistration success</string>
-  <string name="user_profiles_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
+  <string name="deregistration_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
   <string name="user_profile_id">Profile ID: %s</string>
+
+  <!-- PIN -->
+  <string name="enter_pin">Enter PIN</string>
+  <string name="max_attempts">Max attempts: %s</string>
+  <string name="failed_attempts">Failed attempts: %s</string>
+  <string name="remaining_attempts">Remaining attempts: %s</string>
+
 </resources>

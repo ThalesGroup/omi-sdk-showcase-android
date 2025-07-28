@@ -5,33 +5,29 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.runCatching
-import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
-import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
+import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
-import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
-import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class BrowserRegistrationUseCase @Inject constructor(
+class PinAuthenticationUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
-  private val createPinRequestHandler: CreatePinRequestHandler,
 ) {
-  suspend fun register(
-    identityProvider: OneginiIdentityProvider?,
-    scopes: List<String>
+  suspend fun execute(
+    userProfile: UserProfile,
+    pinAuthenticator: OneginiAuthenticator
   ): Result<Pair<UserProfile, CustomInfo?>, Throwable> {
     return suspendCancellableCoroutine { continuation ->
       runCatching {
-        omiSdkFacade.oneginiClient.getUserClient().registerUser(
-          identityProvider = identityProvider,
-          scopes = scopes.toTypedArray(),
-          registrationHandler = object : OneginiRegistrationHandler {
+        omiSdkFacade.oneginiClient.getUserClient().authenticateUser(
+          userProfile = userProfile,
+          oneginiAuthenticator = pinAuthenticator,
+          authenticationHandler = object : OneginiAuthenticationHandler {
             override fun onSuccess(
               userProfile: UserProfile,
               customInfo: CustomInfo?
@@ -39,14 +35,12 @@ class BrowserRegistrationUseCase @Inject constructor(
               continuation.resume(Ok(Pair(userProfile, customInfo)))
             }
 
-            override fun onError(error: OneginiRegistrationError) {
+            override fun onError(error: OneginiAuthenticationError) {
               continuation.resume(Err(error))
             }
           }
         )
-      }.onFailure {
-        continuation.resume(Err(it))
-      }
+      }.onFailure { continuation.resume(Err(it)) }
     }
   }
 }
