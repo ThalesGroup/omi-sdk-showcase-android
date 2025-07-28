@@ -43,9 +43,11 @@ class MobileAuthenticationEnrollmentViewModel @Inject constructor(
   }
 
   private fun enrollForMobileAuthentication() {
+    uiState = uiState.copy(isLoading = true)
     viewModelScope.launch {
       uiState = uiState.copy(
-        enrollmentResult = enrollForMobileAuthenticationUseCase.execute()
+        enrollmentResult = enrollForMobileAuthenticationUseCase.execute(),
+        isLoading = false
       )
     }
   }

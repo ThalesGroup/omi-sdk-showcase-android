@@ -4,8 +4,10 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
+import com.onewelcome.core.usecase.GetMobileAuthenticationEnrollmentStatusUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.util.TestConstants.TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
@@ -19,6 +21,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -43,6 +46,9 @@ class InfoViewModelTest {
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 
   @Inject
+  lateinit var getMobileAuthenticationEnrollmentStatusUseCase: GetMobileAuthenticationEnrollmentStatusUseCase
+
+  @Inject
   lateinit var oneginiClientMock: OneginiClient
 
   @Inject
@@ -55,7 +61,12 @@ class InfoViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, getAuthenticatedUserProfileUseCase)
+    viewModel = InfoViewModel(
+      isSdkInitializedUseCase,
+      getUserProfilesUseCase,
+      getAuthenticatedUserProfileUseCase,
+      getMobileAuthenticationEnrollmentStatusUseCase
+    )
   }
 
   @Test
@@ -82,8 +93,13 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockUserProfileIds()
+    mockMobileAuthEnrollmentStatus()
     val expectedState =
-      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = TEST_USER_PROFILES_IDS, authenticatedUserProfileId = "")
+      viewModel.uiState.copy(
+        isSdkInitialized = true,
+        userProfileIds = TEST_USER_PROFILES_IDS,
+        authenticatedUserProfileId = "",
+        mobileAuthenticationEnrollmentStatus = TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS)
 
     viewModel.updateData()
 
@@ -91,7 +107,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and the are no authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given sdk is initialized and the is no authenticated user profile, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
 
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
@@ -102,7 +118,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and the are authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given sdk is initialized and the is authenticated user profile, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
     mockUserClient()
     mockAuthenticatedUserProfileId()
@@ -133,5 +149,9 @@ class InfoViewModelTest {
 
   private fun mockAuthenticatedUserProfileId() {
     whenever(userClientMock.authenticatedUserProfile).thenReturn(TEST_USER_PROFILE_1)
+  }
+
+  private fun mockMobileAuthEnrollmentStatus(){
+    whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenReturn(true)
   }
 }
