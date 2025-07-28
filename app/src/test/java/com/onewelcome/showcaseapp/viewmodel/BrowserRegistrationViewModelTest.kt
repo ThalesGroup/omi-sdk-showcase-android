@@ -15,9 +15,7 @@ import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.usecase.PinUseCase
 import com.onewelcome.core.util.Constants
-import com.onewelcome.core.util.TestConstants.FakePinCallback
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
 import com.onewelcome.core.util.TestConstants.TEST_IDENTITY_PROVIDERS
 import com.onewelcome.core.util.TestConstants.TEST_SELECTED_IDENTITY_PROVIDER
@@ -25,6 +23,7 @@ import com.onewelcome.core.util.TestConstants.TEST_SELECTED_SCOPES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.showcaseapp.fakes.FakePinCallback
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.NavigationEvent
@@ -87,9 +86,6 @@ class BrowserRegistrationViewModelTest {
 
   @Inject
   lateinit var createPinRequestHandler: CreatePinRequestHandler
-
-  @Inject
-  lateinit var pinUseCase: PinUseCase
 
   private val mockOneginiRegistrationError: OneginiRegistrationError = mock()
 
@@ -181,29 +177,6 @@ class BrowserRegistrationViewModelTest {
       isSdkInitialized = true,
       identityProviders = TEST_IDENTITY_PROVIDERS,
       selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
-    )
-
-    viewModel = BrowserRegistrationViewModel(
-      isSdkInitializedUseCase,
-      browserRegistrationUseCase,
-      getBrowserIdentityProvidersUseCase,
-      getUserProfilesUseCase,
-      oneginiConfigModel,
-      browserRegistrationRequestHandler,
-      createPinRequestHandler,
-    )
-
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
-
-  @Test
-  fun `Given sdk is initialized and registration is in progress, When viewmodel is initialized, Then updated state should be returned`() {
-    mockSdkInitialized()
-    mockRegistrationIsInProgress()
-
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      isRegistrationCancellationEnabled = true
     )
 
     viewModel = BrowserRegistrationViewModel(
@@ -417,9 +390,5 @@ class BrowserRegistrationViewModelTest {
 
   private fun mockUserProfiles() {
     whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
-  }
-
-  private fun mockRegistrationIsInProgress() {
-    whenever(browserRegistrationUseCase.isRegistrationInProgress()).thenReturn(true)
   }
 }

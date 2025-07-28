@@ -1,8 +1,11 @@
 package com.onewelcome.core.util
 
 import android.os.Parcel
+import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
+import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
@@ -20,6 +23,8 @@ object TestConstants {
   val TEST_USER_PROFILES = setOf(TEST_USER_PROFILE_1, TEST_USER_PROFILE_2)
   val TEST_USER_PROFILES_IDS = TEST_USER_PROFILES.map { it.profileId }.toList()
   val TEST_SELECTED_SCOPES = Constants.DEFAULT_SCOPES
+  val TEST_AUTHENTICATION_ATTEMPT_COUNTER = AuthenticationAttemptCounter(maxAttempts = 3, failedAttempts = 0)
+  val TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT = AuthenticationAttemptCounter(maxAttempts = 3, failedAttempts = 1)
   val OneginiBrowserIdentityProvider1 = object : OneginiIdentityProvider {
     override val id: String
       get() = "Browser-identity-provider-id-1"
@@ -55,14 +60,4 @@ object TestConstants {
   val TEST_IDENTITY_PROVIDERS = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
   val TEST_SELECTED_IDENTITY_PROVIDER = TEST_IDENTITY_PROVIDERS.first()
   val TEST_PIN = charArrayOf('1', '2', '3', '4', '5')
-
-  class FakePinCallback : OneginiPinCallback {
-    override fun acceptAuthenticationRequest(pin: CharArray) {
-      //no-op
-    }
-
-    override fun denyAuthenticationRequest() {
-      //no-op
-    }
-  }
 }
