@@ -58,8 +58,8 @@ class PinAuthenticationViewModel @Inject() constructor(
   }
 
   private fun loadData() {
-    updateAuthenticatedProfile()
     updateIsSdkInitialized()
+    updateAuthenticatedProfile()
     viewModelScope.launch {
       updateUserProfiles()
       updateAuthenticateButton()

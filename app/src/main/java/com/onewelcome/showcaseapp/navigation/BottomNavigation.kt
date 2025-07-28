@@ -62,21 +62,17 @@ fun BottomNavigationBar() {
 }
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
-  listOf(
-    composable(Screens.AuthenticateWithPin.route) { AuthenticateWithPinScreen(rootNavController) },
-    composable(Screens.CreatePin.route) { CreatePinScreen(rootNavController) },
-  )
+  composable(Screens.AuthenticateWithPin.route) { AuthenticateWithPinScreen(rootNavController) }
+  composable(Screens.CreatePin.route) { CreatePinScreen(rootNavController) }
 }
 
 private fun NavGraphBuilder.bottomNavigationScreens(
   homeNavController: NavHostController,
   rootNavController: NavHostController
 ) {
-  listOf(
-    composable(Screens.Home.route) { HomeScreenNavHost(homeNavController, rootNavController) },
-    composable(Screens.Info.route) { InfoScreen() },
-    composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() },
-  )
+  composable(Screens.Home.route) { HomeScreenNavHost(homeNavController, rootNavController) }
+  composable(Screens.Info.route) { InfoScreen() }
+  composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
 }
 
 @Composable
