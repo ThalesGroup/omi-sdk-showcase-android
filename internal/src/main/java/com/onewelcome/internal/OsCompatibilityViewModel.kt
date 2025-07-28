@@ -31,7 +31,7 @@ class OsCompatibilityViewModel @Inject constructor(
   private val testCategories = listOf(
     sdkInitializationTestCases.tests,
     browserRegistrationTestCases.tests,
-    TODO("Add commented tests as part of custom registration AOSA-26. User profile registered is needed.")
+//    TODO("Add commented tests as part of custom registration AOSA-26. User profile registered is needed.")
 //    userDeregistrationTestCases.tests,
 //    pinAuthenticationTestCases.tests
     )
