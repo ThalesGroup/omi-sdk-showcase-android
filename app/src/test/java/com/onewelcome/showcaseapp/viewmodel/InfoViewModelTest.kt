@@ -1,7 +1,5 @@
 package com.onewelcome.showcaseapp.viewmodel
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
@@ -62,7 +60,7 @@ class InfoViewModelTest {
 
   @Test
   fun `Given sdk is not initialized, When viewmodel is initialized, Then state should be updated`() {
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = Err(Unit), authenticatedUserProfileId = Err(Unit))
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = emptyList(), authenticatedUserProfileId = "")
 
     viewModel.updateData()
 
@@ -72,7 +70,7 @@ class InfoViewModelTest {
   @Test
   fun `Given sdk is initialized and there are no user profiles, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit), authenticatedUserProfileId = Err(Unit))
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
 
     viewModel.updateData()
 
@@ -85,7 +83,7 @@ class InfoViewModelTest {
     mockUserClient()
     mockUserProfileIds()
     val expectedState =
-      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Ok(TEST_USER_PROFILES_IDS), authenticatedUserProfileId = Ok(null))
+      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = TEST_USER_PROFILES_IDS, authenticatedUserProfileId = "")
 
     viewModel.updateData()
 
@@ -96,7 +94,7 @@ class InfoViewModelTest {
   fun `Given sdk is initialized and the are no authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
 
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = Err(Unit), authenticatedUserProfileId = Err(Unit))
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
 
     viewModel.updateData()
 
@@ -111,8 +109,8 @@ class InfoViewModelTest {
 
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
-      userProfileIds = Ok(emptyList()),
-      authenticatedUserProfileId = Ok(TEST_USER_PROFILE_1.profileId)
+      userProfileIds = emptyList(),
+      authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId
     )
 
     viewModel.updateData()
