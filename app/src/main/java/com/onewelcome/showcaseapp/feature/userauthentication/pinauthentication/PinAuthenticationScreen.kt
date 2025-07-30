@@ -29,6 +29,7 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.NavigationEvent
@@ -206,7 +207,7 @@ private fun PinAuthenticationResult(result: Result<Pair<UserProfile, CustomInfo?
           Text(stringResource(R.string.custom_info, it.second.toString()))
         }
       }
-      .onFailure { Text("$it") }
+      .onFailure { Text(it.toErrorResultString()) }
   }
 }
 

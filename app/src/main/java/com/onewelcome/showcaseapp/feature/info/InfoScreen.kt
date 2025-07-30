@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseTableCardScope
 import com.onewelcome.core.components.ShowcaseTableStatusCard
 import com.onewelcome.core.entity.MobileAuthEnrollmentStatus
 import com.onewelcome.core.theme.Dimensions
@@ -29,8 +30,6 @@ import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.theme.success
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
-
-private val MOBILE_AUTH_TABLE_COLUMN_WIDTHS = listOf(0.4f, 0.3f, 0.3f)
 
 @Composable
 fun InfoScreen(
@@ -87,64 +86,66 @@ private fun StatusList(uiState: State) {
 }
 
 @Composable
-private fun UserProfilesEnrolledForMobileAuth(mobileAuthenticationEnrollmentStatus: List<MobileAuthEnrollmentStatus>) {
-  if (mobileAuthenticationEnrollmentStatus.isEmpty()) {
+private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<MobileAuthEnrollmentStatus>) {
+  if (mobileAuthEnrollmentStatus.isEmpty()) {
     ShowcaseStatusCard(
-      title = stringResource(R.string.mobile_authentication),
+      title = stringResource(R.string.status_mobile_authentication_enrollment),
       description = stringResource(R.string.no_user_profiles)
     )
   } else {
     ShowcaseTableStatusCard(
-      title = stringResource(R.string.mobile_authentication),
-      cellWeights = MOBILE_AUTH_TABLE_COLUMN_WIDTHS
+      title = stringResource(R.string.status_mobile_authentication_enrollment),
+      cellWeights = listOf(0.4f, 0.3f, 0.3f)
     ) {
-      row(
-        {
-          Text(
-            style = MaterialTheme.typography.titleSmall,
-            text = stringResource(R.string.label_user_profile)
-          )
-        },
-        {
-          Text(
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleSmall,
-            text = stringResource(R.string.label_otp)
-          )
-        },
-        {
-          Text(
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleSmall,
-            text = stringResource(R.string.label_push)
-          )
-        }
-      )
-
-      mobileAuthenticationEnrollmentStatus.forEach { rowData ->
-        row(
-          { Text(text = rowData.userProfile.profileId, style = MaterialTheme.typography.bodyMedium) },
-          {
-            Icon(
-              modifier = Modifier.fillMaxWidth(),
-              imageVector = if (rowData.isEnrolledForMobileAuth) Icons.Default.Check else Icons.Default.Close,
-              contentDescription = stringResource(R.string.content_description_yes),
-              tint = if (rowData.isEnrolledForMobileAuth) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
-            )
-          },
-          {
-            Icon(
-              modifier = Modifier.fillMaxWidth(),
-              imageVector = if (rowData.isEnrolledForMobileAuthWithPush) Icons.Default.Check else Icons.Default.Close,
-              contentDescription = stringResource(R.string.content_description_yes),
-              tint = if (rowData.isEnrolledForMobileAuthWithPush) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
-            )
-          })
+      mobileAuthEnrollmentHeader()
+      mobileAuthEnrollmentStatus.forEach {
+        mobileAuthEnrollmentStatusForUser(it)
       }
     }
   }
+}
+
+private fun ShowcaseTableCardScope.mobileAuthEnrollmentHeader() {
+  row(
+    { Text(style = MaterialTheme.typography.titleSmall, text = stringResource(R.string.label_user_profile)) },
+    {
+      Text(
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.titleSmall,
+        text = stringResource(R.string.label_otp)
+      )
+    },
+    {
+      Text(
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.titleSmall,
+        text = stringResource(R.string.label_push)
+      )
+    }
+  )
+}
+
+private fun ShowcaseTableCardScope.mobileAuthEnrollmentStatusForUser(status: MobileAuthEnrollmentStatus) {
+  row(
+    { Text(text = status.userProfile.profileId, style = MaterialTheme.typography.bodyMedium) },
+    {
+      Icon(
+        modifier = Modifier.fillMaxWidth(),
+        imageVector = if (status.isEnrolledForMobileAuth) Icons.Default.Check else Icons.Default.Close,
+        contentDescription = stringResource(R.string.content_description_yes),
+        tint = if (status.isEnrolledForMobileAuth) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
+      )
+    },
+    {
+      Icon(
+        modifier = Modifier.fillMaxWidth(),
+        imageVector = if (status.isEnrolledForMobileAuthWithPush) Icons.Default.Check else Icons.Default.Close,
+        contentDescription = stringResource(R.string.content_description_yes),
+        tint = if (status.isEnrolledForMobileAuthWithPush) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
+      )
+    })
 }
 
 @Composable
