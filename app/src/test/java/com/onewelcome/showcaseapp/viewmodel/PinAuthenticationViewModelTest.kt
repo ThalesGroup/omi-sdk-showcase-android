@@ -22,7 +22,7 @@ import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.P
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.LoadData
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.StartPinAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.UpdateSelectedUserProfile
-import com.onewelcome.showcaseapp.utils.ResultAssert
+import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -160,12 +160,14 @@ class PinAuthenticationViewModelTest {
 
   @Test
   fun `Given no user profile is selected, When start pin authentication event is sent, Then error should be returned`() {
+    val expectedState = viewModel.uiState.copy(result = Err(IllegalArgumentException("User profile not selected")))
+
     viewModel.onEvent(StartPinAuthentication)
 
-    ResultAssert
-      .assertThat(viewModel.uiState.result!!)
-      .hasErrorInstance(IllegalArgumentException::class.java, "User profile not selected")
-
+    assertThat(viewModel.uiState)
+      .usingRecursiveComparison()
+      .withEqualsForThrowable()
+      .isEqualTo(expectedState)
   }
 
   @Test
@@ -212,6 +214,13 @@ class PinAuthenticationViewModelTest {
 
   @Test
   fun `Given user profile is selected and there's no authenticators, When start pin authentication event is sent, Then error should be returned`() {
+    val expectedState = viewModel.uiState.copy(
+      result = Err(NoSuchElementException("Collection contains no element matching the predicate.")),
+      isSdkInitialized = true,
+      userProfiles = TEST_USER_PROFILES,
+      selectedUserProfile = TEST_USER_PROFILES.first(),
+      isAuthenticateButtonEnabled = true,
+    )
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
@@ -220,9 +229,10 @@ class PinAuthenticationViewModelTest {
     viewModel.onEvent(LoadData)
     viewModel.onEvent(StartPinAuthentication)
 
-    ResultAssert
-      .assertThat(viewModel.uiState.result!!)
-      .hasErrorInstance(NoSuchElementException::class.java, "Collection contains no element matching the predicate.")
+    assertThat(viewModel.uiState)
+      .usingRecursiveComparison()
+      .withEqualsForThrowable()
+      .isEqualTo(expectedState)
   }
 
   @Test

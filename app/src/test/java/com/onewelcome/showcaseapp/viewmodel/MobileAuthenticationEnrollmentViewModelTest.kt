@@ -12,10 +12,12 @@ import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.usecase.EnrollForMobileAuthenticationUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.State
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.UiEvent
 import com.onewelcome.showcaseapp.utils.ThrowableEquals
+import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -44,6 +46,9 @@ class MobileAuthenticationEnrollmentViewModelTest {
 
   @Inject
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
+
+  @Inject
+  lateinit var isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase
 
   @Inject
   lateinit var enrollForMobileAuthenticationUseCase: EnrollForMobileAuthenticationUseCase
@@ -116,7 +121,7 @@ class MobileAuthenticationEnrollmentViewModelTest {
 
     assertThat(viewModel.uiState)
       .usingRecursiveComparison()
-      .withEqualsForType(ThrowableEquals(), Throwable::class.java)
+      .withEqualsForThrowable()
       .isEqualTo(
         DEFAULT_STATE.copy(
           isSdkInitialized = true,
@@ -212,6 +217,7 @@ class MobileAuthenticationEnrollmentViewModelTest {
     viewModel = MobileAuthenticationEnrollmentViewModel(
       isSdkInitializedUseCase,
       getAuthenticatedUserProfileUseCase,
+      isUserEnrolledForMobileAuthUseCase,
       enrollForMobileAuthenticationUseCase
     )
   }

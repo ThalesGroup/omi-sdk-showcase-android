@@ -15,7 +15,7 @@ import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel.UiEvent
-import com.onewelcome.showcaseapp.utils.ResultAssert
+import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -162,13 +162,19 @@ class UserDeregistrationViewModelTest {
 
   @Test
   fun `should return error when user profile is not selected`() {
+    val expectedState = INITIAL_STATE.copy(
+      isSdkInitialized = true,
+      result = Err(IllegalArgumentException("User profile not selected"))
+    )
     whenNoUserProfilesRegistered()
     initViewModel()
 
     viewModel.onEvent(UiEvent.DeregisterUser)
 
-    ResultAssert.assertThat(viewModel.uiState.result!!)
-      .hasErrorInstance(IllegalArgumentException::class.java, "User profile not selected")
+    assertThat(viewModel.uiState)
+      .usingRecursiveComparison()
+      .withEqualsForThrowable()
+      .isEqualTo(expectedState)
   }
 
   @Test
@@ -185,7 +191,7 @@ class UserDeregistrationViewModelTest {
     assertThat(viewModel.uiState.result).isEqualTo(Err(oneginiDeregistrationErrorMock))
   }
 
-  private fun initViewModel(){
+  private fun initViewModel() {
     viewModel = UserDeregistrationViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, deregisterUserUseCase)
   }
 
