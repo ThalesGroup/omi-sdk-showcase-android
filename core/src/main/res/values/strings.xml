@@ -136,12 +136,14 @@
   <string name="mobile_authentication">Mobile authentication</string>
   <string name="mobile_authentication_description">SDK provides secure and user-friendly two-factor authentication. It supports OTP and push based authentication. You need to first enroll for mobile authentication before handling any transactions.</string>
   <string name="sdk_needs_to_be_initialized_to_perform_enrollment">SDK needs to be initialized to perform enrollment</string>
+  <string name="status_user_enrolled_for_mobile_authentication">Enrolled for mobile authentication</string>
 
   <!-- Mobile Authentication Enrollment-->
   <string name="label_mobile_authentication_enrollment_success">Mobile authentication enrollment success</string>
   <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP and to be able to enroll for mobile authentication with push.</string>
   <string name="button_mobile_authentication_enrollment">Enroll</string>
   <string name="mobile_auth_enrollemnt_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
+  <string name="user_enrolled_for_mobile_authentication_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication</string>
 
   <!-- PIN -->
   <string name="enter_pin">Enter PIN</string>

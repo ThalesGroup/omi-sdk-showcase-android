@@ -65,6 +65,7 @@ private fun SettingsSection(uiState: State) {
   Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     SdkInitializationSection(uiState.isSdkInitialized)
     AuthenticatedUserSection(uiState.authenticatedUserProfile)
+    UserEnrolledForMobileAuthSection(uiState.isUserEnrolledForMobileAuth)
   }
 }
 
@@ -84,6 +85,15 @@ private fun AuthenticatedUserSection(authenticatedUserProfile: UserProfile?) {
     description = authenticatedUserProfile?.let { stringResource(R.string.user_profile_id, it.profileId) },
     status = authenticatedUserProfile != null,
     tooltipContent = { Text(stringResource(R.string.mobile_auth_enrollemnt_authenticated_user_requirement_tooltip)) }
+  )
+}
+
+@Composable
+private fun UserEnrolledForMobileAuthSection(isUserEnrolledForMobileAuth: Boolean) {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.status_user_enrolled_for_mobile_authentication),
+    status = isUserEnrolledForMobileAuth,
+    tooltipContent = { Text(stringResource(R.string.user_enrolled_for_mobile_authentication_tooltip)) }
   )
 }
 
