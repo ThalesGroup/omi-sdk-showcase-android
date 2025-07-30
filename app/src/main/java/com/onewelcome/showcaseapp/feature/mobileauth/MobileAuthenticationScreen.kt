@@ -43,7 +43,7 @@ private fun MobileAuthenticationScreenContent(
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
-      ShowcaseFeatureDescription(stringResource(R.string.mobile_authentication_description), Constants.DOCUMENTATION_USER_REGISTRATION)
+      ShowcaseFeatureDescription(stringResource(R.string.mobile_authentication_description), Constants.DOCUMENTATION_MOBILE_AUTHENTICATION)
       Sections(onNavigateDeeper)
     }
   }

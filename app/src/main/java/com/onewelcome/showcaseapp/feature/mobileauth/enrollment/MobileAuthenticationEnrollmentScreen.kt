@@ -17,12 +17,12 @@ import androidx.navigation.NavHostController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.State
@@ -64,7 +64,7 @@ private fun MobileAuthenticationEnrollmentScreenContent(
 private fun SettingsSection(uiState: State) {
   Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     SdkInitializationSection(uiState.isSdkInitialized)
-    UserAuthenticatedSection(uiState.authenticatedUserProfile)
+    AuthenticatedUserSection(uiState.authenticatedUserProfile)
   }
 }
 
@@ -73,12 +73,12 @@ private fun SdkInitializationSection(isSdkInitialized: Boolean) {
   ShowcaseStatusCard(
     title = stringResource(R.string.status_sdk_initialized),
     status = isSdkInitialized,
-    tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_deregistration)) }
+    tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_enrollment)) }
   )
 }
 
 @Composable
-private fun UserAuthenticatedSection(authenticatedUserProfile: UserProfile?) {
+private fun AuthenticatedUserSection(authenticatedUserProfile: UserProfile?) {
   ShowcaseStatusCard(
     title = stringResource(R.string.authenticated_profile),
     description = authenticatedUserProfile?.let { stringResource(R.string.user_profile_id, it.profileId) },
@@ -93,13 +93,6 @@ private fun EnrollmentResult(result: Result<Unit, Throwable>) {
     result
       .onSuccess { Text(stringResource(R.string.label_mobile_authentication_enrollment_success)) }
       .onFailure { Text(it.toErrorResultString()) }
-  }
-}
-
-private fun Throwable.toErrorResultString(): String {
-  return when (this) {
-    is OneginiError -> "${this.errorType.code}: ${this.message}"
-    else -> "$this"
   }
 }
 
