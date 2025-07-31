@@ -5,14 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.michaelbull.result.get
+import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onewelcome.core.entity.MobileAuthEnrollmentStatus
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
-import com.onewelcome.core.usecase.GetMobileAuthenticationEnrollmentStatusUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +23,8 @@ class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
-  private val getMobileAuthenticationEnrollmentStatusUseCase: GetMobileAuthenticationEnrollmentStatusUseCase
+  private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
+  private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -54,15 +56,19 @@ class InfoViewModel @Inject constructor(
   }
 
   private suspend fun updateMobileAuthEnrollmentStatus() {
-    uiState = uiState.copy(
-      mobileAuthenticationEnrollmentStatus = getMobileAuthenticationEnrollmentStatusUseCase.execute().get() ?: emptyList()
-    )
+    coroutineBinding {
+      getUserProfilesUseCase.execute().bind().map {
+        Triple(it, isUserEnrolledForMobileAuthUseCase.execute(it).bind(), isUserEnrolledForMobileAuthWithPushUseCase.execute(it).bind())
+      }
+    }.onSuccess { uiState = uiState.copy(mobileAuthenticationEnrollmentStatus = it) }
+      .onFailure { uiState = uiState.copy(mobileAuthenticationEnrollmentStatus = emptyList()) }
+
   }
 
   data class State(
     val isSdkInitialized: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val authenticatedUserProfileId: String = "",
-    val mobileAuthenticationEnrollmentStatus: List<MobileAuthEnrollmentStatus> = emptyList()
+    val mobileAuthenticationEnrollmentStatus: List<Triple<UserProfile, Boolean, Boolean>> = emptyList()
   )
 }

@@ -4,9 +4,10 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
-import com.onewelcome.core.usecase.GetMobileAuthenticationEnrollmentStatusUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
 import com.onewelcome.core.util.TestConstants.TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
@@ -46,7 +47,10 @@ class InfoViewModelTest {
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 
   @Inject
-  lateinit var getMobileAuthenticationEnrollmentStatusUseCase: GetMobileAuthenticationEnrollmentStatusUseCase
+  lateinit var isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase
+
+  @Inject
+  lateinit var isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient
@@ -65,7 +69,8 @@ class InfoViewModelTest {
       isSdkInitializedUseCase,
       getUserProfilesUseCase,
       getAuthenticatedUserProfileUseCase,
-      getMobileAuthenticationEnrollmentStatusUseCase
+      isUserEnrolledForMobileAuthUseCase,
+      isUserEnrolledForMobileAuthWithPushUseCase
     )
   }
 
@@ -94,12 +99,14 @@ class InfoViewModelTest {
     mockUserClient()
     mockUserProfileIds()
     mockMobileAuthEnrollmentStatus()
+    mockMobileAuthEnrollmentWithPushStatus()
     val expectedState =
       viewModel.uiState.copy(
         isSdkInitialized = true,
         userProfileIds = TEST_USER_PROFILES_IDS,
         authenticatedUserProfileId = "",
-        mobileAuthenticationEnrollmentStatus = TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS)
+        mobileAuthenticationEnrollmentStatus = TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS
+      )
 
     viewModel.updateData()
 
@@ -134,6 +141,57 @@ class InfoViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
+  @Test
+  fun `Given sdk is initialized, When getting user profiles failed, Then mobile auth enrollment list should be empty`() {
+    mockSdkInitialized()
+    mockUserProfilesError()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = emptyList(),
+      mobileAuthenticationEnrollmentStatus = emptyList()
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized, When mobile auth enrollment check failed, Then mobile auth enrollment list should be empty`() {
+    mockSdkInitialized()
+    mockUserProfileIds()
+    mockMobileAuthEnrollmentStatusError()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = emptyList(),
+      mobileAuthenticationEnrollmentStatus = emptyList()
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized, When mobile auth enrollment with push check failed, Then mobile auth enrollment list should be empty`() {
+    mockSdkInitialized()
+    mockUserProfileIds()
+    mockMobileAuthEnrollmentStatus()
+    mockMobileAuthEnrollmentWithPushStatusError()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = emptyList(),
+      mobileAuthenticationEnrollmentStatus = emptyList()
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null))
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
@@ -147,11 +205,27 @@ class InfoViewModelTest {
     whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
   }
 
+  private fun mockUserProfilesError(){
+    whenever(userClientMock.userProfiles).thenThrow(RuntimeException("Some exception"))
+  }
+
   private fun mockAuthenticatedUserProfileId() {
     whenever(userClientMock.authenticatedUserProfile).thenReturn(TEST_USER_PROFILE_1)
   }
 
-  private fun mockMobileAuthEnrollmentStatus(){
+  private fun mockMobileAuthEnrollmentStatus() {
     whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenReturn(true)
+  }
+
+  private fun mockMobileAuthEnrollmentStatusError(){
+    whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenThrow(RuntimeException("Some excpetion"))
+  }
+
+  private fun mockMobileAuthEnrollmentWithPushStatus() {
+    whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenReturn(true)
+  }
+
+  private fun mockMobileAuthEnrollmentWithPushStatusError(){
+    whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenThrow(RuntimeException("Some excpetion"))
   }
 }

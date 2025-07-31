@@ -21,10 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTableCardScope
 import com.onewelcome.core.components.ShowcaseTableStatusCard
-import com.onewelcome.core.entity.MobileAuthEnrollmentStatus
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.theme.success
@@ -86,7 +86,7 @@ private fun StatusList(uiState: State) {
 }
 
 @Composable
-private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<MobileAuthEnrollmentStatus>) {
+private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<Triple<UserProfile, Boolean, Boolean>>) {
   if (mobileAuthEnrollmentStatus.isEmpty()) {
     ShowcaseStatusCard(
       title = stringResource(R.string.status_mobile_authentication_enrollment),
@@ -127,23 +127,23 @@ private fun ShowcaseTableCardScope.mobileAuthEnrollmentHeader() {
   )
 }
 
-private fun ShowcaseTableCardScope.mobileAuthEnrollmentStatusForUser(status: MobileAuthEnrollmentStatus) {
+private fun ShowcaseTableCardScope.mobileAuthEnrollmentStatusForUser(status: Triple<UserProfile, Boolean, Boolean>) {
   row(
-    { Text(text = status.userProfile.profileId, style = MaterialTheme.typography.bodyMedium) },
+    { Text(text = status.first.profileId, style = MaterialTheme.typography.bodyMedium) },
     {
       Icon(
         modifier = Modifier.fillMaxWidth(),
-        imageVector = if (status.isEnrolledForMobileAuth) Icons.Default.Check else Icons.Default.Close,
+        imageVector = if (status.second) Icons.Default.Check else Icons.Default.Close,
         contentDescription = stringResource(R.string.content_description_yes),
-        tint = if (status.isEnrolledForMobileAuth) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
+        tint = if (status.second) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
       )
     },
     {
       Icon(
         modifier = Modifier.fillMaxWidth(),
-        imageVector = if (status.isEnrolledForMobileAuthWithPush) Icons.Default.Check else Icons.Default.Close,
+        imageVector = if (status.third) Icons.Default.Check else Icons.Default.Close,
         contentDescription = stringResource(R.string.content_description_yes),
-        tint = if (status.isEnrolledForMobileAuthWithPush) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
+        tint = if (status.third) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
       )
     })
 }

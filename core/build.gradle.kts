@@ -60,6 +60,7 @@ dependencies {
 
   // Kotlin Result
   implementation(libs.kotlin.result)
+  implementation(libs.kotlin.result.coroutines)
 
   // OMI SDK
   debugApi(libs.omiSdk.developer) {
