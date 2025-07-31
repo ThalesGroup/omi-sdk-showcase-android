@@ -6,22 +6,27 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.flatMap
 import com.github.michaelbull.result.get
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.usecase.EnrollForMobileAuthenticationUseCase
+import com.onewelcome.core.usecase.EnrollForMobileAuthenticationWithPushUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
+import com.onewelcome.core.usecase.GetFirebaseRegistrationTokenUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MobileAuthenticationEnrollmentViewModel @Inject constructor(
+class MobileAuthenticationWithPushEnrollmentViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
-  private val enrollForMobileAuthenticationUseCase: EnrollForMobileAuthenticationUseCase
+  private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase,
+  private val getFirebaseRegistrationTokenUseCase: GetFirebaseRegistrationTokenUseCase,
+  private val enrollForMobileAuthenticationWithPushUseCase: EnrollForMobileAuthenticationWithPushUseCase
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -33,28 +38,34 @@ class MobileAuthenticationEnrollmentViewModel @Inject constructor(
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      is UiEvent.EnrollForMobileAuthentication -> enrollForMobileAuthentication()
+      is UiEvent.EnrollForMobileAuthenticationWithPush -> enrollForMobileAuthWithPush()
     }
   }
 
   private fun loadInitialData() {
     val isSdkInitialized = isSdkInitializedUseCase.execute()
     val authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
-    val isUserEnrolledForMobileAuth = authenticatedUserProfile?.let {
-      isUserEnrolledForMobileAuthUseCase.execute(authenticatedUserProfile).get()
-    } ?: false
+    var isUserEnrolledForMobileAuth = false
+    var isUserEnrolledForMobileAuthWithPush = false
+    authenticatedUserProfile?.let {
+      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuthUseCase.execute(authenticatedUserProfile).get() ?: false
+      isUserEnrolledForMobileAuthWithPush = isUserEnrolledForMobileAuthWithPushUseCase.execute(authenticatedUserProfile).get() ?: false
+    }
     uiState = uiState.copy(
       isSdkInitialized = isSdkInitialized,
       authenticatedUserProfile = authenticatedUserProfile,
-      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth
+      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth,
+      isUserEnrolledForMobileAuthWithPush = isUserEnrolledForMobileAuthWithPush
     )
   }
 
-  private fun enrollForMobileAuthentication() {
+  private fun enrollForMobileAuthWithPush() {
     uiState = uiState.copy(isLoading = true)
     viewModelScope.launch {
+      val result = getFirebaseRegistrationTokenUseCase.execute()
+        .flatMap { enrollForMobileAuthenticationWithPushUseCase.execute(it) }
       uiState = uiState.copy(
-        enrollmentResult = enrollForMobileAuthenticationUseCase.execute(),
+        enrollmentResult = result,
         isLoading = false
       )
       loadInitialData()
@@ -65,11 +76,12 @@ class MobileAuthenticationEnrollmentViewModel @Inject constructor(
     val isSdkInitialized: Boolean = false,
     val authenticatedUserProfile: UserProfile? = null,
     val isUserEnrolledForMobileAuth: Boolean = false,
+    val isUserEnrolledForMobileAuthWithPush: Boolean = false,
     val enrollmentResult: Result<Unit, Throwable>? = null,
     val isLoading: Boolean = false
   )
 
   sealed interface UiEvent {
-    data object EnrollForMobileAuthentication : UiEvent
+    data object EnrollForMobileAuthenticationWithPush : UiEvent
   }
 }

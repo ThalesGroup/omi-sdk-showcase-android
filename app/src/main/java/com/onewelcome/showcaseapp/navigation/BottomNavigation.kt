@@ -24,10 +24,11 @@ import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
-import com.onewelcome.showcaseapp.feature.pin.AuthenticateWithPinViewModel
-import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
 import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
+import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
+import com.onewelcome.showcaseapp.feature.pin.AuthenticateWithPinViewModel
+import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
@@ -134,6 +135,6 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
     composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }
-    composable(Screens.MobileAuthenticationPushEnrollment.route) { /*TODO AOSA-12*/ }
+    composable(Screens.MobileAuthenticationPushEnrollment.route) { MobileAuthenticationWithPushEnrollmentScreen(homeNavController) }
   }
 }

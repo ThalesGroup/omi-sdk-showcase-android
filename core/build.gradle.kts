@@ -76,6 +76,10 @@ dependencies {
     }
   }
 
+  //Firebase
+  implementation(platform(libs.firebase.bom))
+  implementation(libs.firebase.messaging)
+
   // Test
   testImplementation(libs.androidx.junit)
   testImplementation(libs.robolectric)

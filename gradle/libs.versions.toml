@@ -23,6 +23,8 @@ kotlinResult = "2.0.1"
 robolectic = "4.14.1"
 mockito-kotlin = "5.4.0"
 assertj = "3.27.3"
+google-services = "4.4.3"
+firebaseBom = "34.0.0"
 
 [libraries]
 # Compose
@@ -47,7 +49,7 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines"}
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # Retrofit
 squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
@@ -80,6 +82,10 @@ mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", versio
 #AssertJ
 assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
 
+#Google
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+
 [plugins]
 # Android
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -95,3 +101,5 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 
 # Google
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+

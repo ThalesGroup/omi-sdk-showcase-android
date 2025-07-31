@@ -18,6 +18,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.hilt.plugin)
+  alias(libs.plugins.google.services)
 }
 
 android {
