@@ -17,41 +17,42 @@ import androidx.navigation.NavHostController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.theme.Dimensions
-import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.State
-import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.State
+import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.UiEvent
 
 @Composable
-fun MobileAuthenticationEnrollmentScreen(
+fun MobileAuthenticationWithPushEnrollmentScreen(
   navController: NavHostController,
-  viewModel: MobileAuthenticationEnrollmentViewModel = hiltViewModel()
+  viewModel: MobileAuthenticationWithPushEnrollmentViewModel = hiltViewModel()
 ) {
-  MobileAuthenticationEnrollmentScreenContent(
+  MobileAuthenticationWithPushEnrollmentScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
-    onEvent = { viewModel.onEvent(it) })
+    onEvent = { viewModel.onEvent(it) }
+  )
 }
 
 @Composable
-private fun MobileAuthenticationEnrollmentScreenContent(
+private fun MobileAuthenticationWithPushEnrollmentScreenContent(
   uiState: State,
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit
 ) {
   SdkFeatureScreen(
-    title = stringResource(R.string.section_title_mobile_authentication_enrollment),
+    title = stringResource(R.string.section_title_mobile_authentication_push_enrollment),
     onNavigateBack = onNavigateBack,
     description = {
       ShowcaseFeatureDescription(
-        stringResource(R.string.mobile_authentication_enrollment_description),
-        Constants.DOCUMENTATION_MOBILE_AUTHENTICATION
+        stringResource(R.string.mobile_authentication_push_enrollment_description),
+        Constants.DOCUMENTATION_MOBILE_AUTHENTICATION_WITH_PUSH
       )
     },
     settings = { SettingsSection(uiState) },
@@ -64,8 +65,9 @@ private fun MobileAuthenticationEnrollmentScreenContent(
 private fun SettingsSection(uiState: State) {
   Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     SdkInitializationSection(uiState.isSdkInitialized)
-    AuthenticatedUserSection(uiState.authenticatedUserProfile)
+    UserAuthenticatedSection(uiState.authenticatedUserProfile)
     UserEnrolledForMobileAuthSection(uiState.isUserEnrolledForMobileAuth)
+    UserEnrolledForMobileAuthWithPushSection(uiState.isUserEnrolledForMobileAuthWithPush)
   }
 }
 
@@ -79,12 +81,12 @@ private fun SdkInitializationSection(isSdkInitialized: Boolean) {
 }
 
 @Composable
-private fun AuthenticatedUserSection(authenticatedUserProfile: UserProfile?) {
+private fun UserAuthenticatedSection(authenticatedUserProfile: UserProfile?) {
   ShowcaseStatusCard(
     title = stringResource(R.string.authenticated_profile),
     description = authenticatedUserProfile?.let { stringResource(R.string.user_profile_id, it.profileId) },
     status = authenticatedUserProfile != null,
-    tooltipContent = { Text(stringResource(R.string.mobile_auth_enrollment_authenticated_user_requirement_tooltip)) }
+    tooltipContent = { Text(stringResource(R.string.mobile_auth_push_enrollment_authenticated_user_requirement_tooltip)) }
   )
 }
 
@@ -93,7 +95,16 @@ private fun UserEnrolledForMobileAuthSection(isUserEnrolledForMobileAuth: Boolea
   ShowcaseStatusCard(
     title = stringResource(R.string.status_user_enrolled_for_mobile_authentication),
     status = isUserEnrolledForMobileAuth,
-    tooltipContent = { Text(stringResource(R.string.user_enrolled_for_mobile_authentication_tooltip)) }
+    tooltipContent = { Text(stringResource(R.string.user_needs_to_be_enrolled_for_mobile_authentication)) }
+  )
+}
+
+@Composable
+private fun UserEnrolledForMobileAuthWithPushSection(isUserEnrolledForMobileAuthWithPush: Boolean) {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.status_user_enrolled_for_mobile_authentication_with_push),
+    status = isUserEnrolledForMobileAuthWithPush,
+    tooltipContent = { Text(stringResource(R.string.user_enrolled_for_mobile_authentication_with_push_tooltip)) }
   )
 }
 
@@ -101,8 +112,15 @@ private fun UserEnrolledForMobileAuthSection(isUserEnrolledForMobileAuth: Boolea
 private fun EnrollmentResult(result: Result<Unit, Throwable>) {
   Column {
     result
-      .onSuccess { Text(stringResource(R.string.label_mobile_authentication_enrollment_success)) }
+      .onSuccess { Text(stringResource(R.string.label_mobile_authentication_push_enrollment_success)) }
       .onFailure { Text(it.toErrorResultString()) }
+  }
+}
+
+private fun Throwable.toErrorResultString(): String {
+  return when (this) {
+    is OneginiError -> "${this.errorType.code}: ${this.message}"
+    else -> "$this"
   }
 }
 
@@ -112,7 +130,7 @@ private fun EnrollmentButton(uiState: State, onEvent: (UiEvent) -> Unit) {
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { if (uiState.isLoading.not()) onEvent(UiEvent.EnrollForMobileAuthentication) },
+    onClick = { if (uiState.isLoading.not()) onEvent(UiEvent.EnrollForMobileAuthenticationWithPush) },
   ) {
     if (uiState.isLoading) {
       CircularProgressIndicator(
@@ -120,7 +138,7 @@ private fun EnrollmentButton(uiState: State, onEvent: (UiEvent) -> Unit) {
         trackColor = MaterialTheme.colorScheme.surfaceVariant,
       )
     } else {
-      Text(stringResource(R.string.button_mobile_authentication_enrollment))
+      Text(stringResource(R.string.button_mobile_authentication_push_enrollment))
     }
   }
 }
@@ -128,5 +146,9 @@ private fun EnrollmentButton(uiState: State, onEvent: (UiEvent) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-  MobileAuthenticationEnrollmentScreenContent(State(), {}, {})
+  MobileAuthenticationWithPushEnrollmentScreenContent(
+    uiState = State(),
+    onNavigateBack = {},
+    onEvent = {}
+  )
 }
