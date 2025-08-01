@@ -77,8 +77,8 @@ dependencies {
   }
 
   //Firebase
-  implementation(platform(libs.firebase.bom))
-  implementation(libs.firebase.messaging)
+  api(platform(libs.firebase.bom))
+  api(libs.firebase.messaging)
 
   // Test
   testImplementation(libs.androidx.junit)

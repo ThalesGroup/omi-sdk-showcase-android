@@ -6,12 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.flatMap
 import com.github.michaelbull.result.get
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.usecase.EnrollForMobileAuthenticationWithPushUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
-import com.onewelcome.core.usecase.GetFirebaseRegistrationTokenUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
@@ -25,7 +23,6 @@ class MobileAuthenticationWithPushEnrollmentViewModel @Inject constructor(
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
   private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase,
-  private val getFirebaseRegistrationTokenUseCase: GetFirebaseRegistrationTokenUseCase,
   private val enrollForMobileAuthenticationWithPushUseCase: EnrollForMobileAuthenticationWithPushUseCase
 ) : ViewModel() {
 
@@ -45,27 +42,27 @@ class MobileAuthenticationWithPushEnrollmentViewModel @Inject constructor(
   private fun loadInitialData() {
     val isSdkInitialized = isSdkInitializedUseCase.execute()
     val authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
-    var isUserEnrolledForMobileAuth = false
-    var isUserEnrolledForMobileAuthWithPush = false
-    authenticatedUserProfile?.let {
-      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuthUseCase.execute(authenticatedUserProfile).get() ?: false
-      isUserEnrolledForMobileAuthWithPush = isUserEnrolledForMobileAuthWithPushUseCase.execute(authenticatedUserProfile).get() ?: false
-    }
     uiState = uiState.copy(
       isSdkInitialized = isSdkInitialized,
       authenticatedUserProfile = authenticatedUserProfile,
-      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth,
-      isUserEnrolledForMobileAuthWithPush = isUserEnrolledForMobileAuthWithPush
+      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth(authenticatedUserProfile),
+      isUserEnrolledForMobileAuthWithPush = isUserEnrolledForMobileAuthWithPush(authenticatedUserProfile)
     )
   }
+
+  private fun isUserEnrolledForMobileAuth(authenticatedUserProfile: UserProfile?): Boolean = authenticatedUserProfile?.let {
+    isUserEnrolledForMobileAuthUseCase.execute(authenticatedUserProfile).get()
+  } ?: false
+
+  private fun isUserEnrolledForMobileAuthWithPush(authenticatedUserProfile: UserProfile?): Boolean = authenticatedUserProfile?.let {
+    isUserEnrolledForMobileAuthWithPushUseCase.execute(authenticatedUserProfile).get()
+  } ?: false
 
   private fun enrollForMobileAuthWithPush() {
     uiState = uiState.copy(isLoading = true)
     viewModelScope.launch {
-      val result = getFirebaseRegistrationTokenUseCase.execute()
-        .flatMap { enrollForMobileAuthenticationWithPushUseCase.execute(it) }
       uiState = uiState.copy(
-        enrollmentResult = result,
+        enrollmentResult = enrollForMobileAuthenticationWithPushUseCase.execute(),
         isLoading = false
       )
       loadInitialData()
