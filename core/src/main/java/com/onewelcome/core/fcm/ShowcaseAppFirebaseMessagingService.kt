@@ -1,10 +1,10 @@
 package com.onewelcome.core.fcm
 
-import com.github.michaelbull.result.map
+import com.github.michaelbull.result.flatMap
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.usecase.EnrollForMobileAuthenticationWithPushUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
+import com.onewelcome.core.usecase.RefreshMobileAuthPushTokenUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,12 +18,12 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
   lateinit var omiSdkInitializationUseCase: OmiSdkInitializationUseCase
 
   @Inject
-  lateinit var enrollForMobileAuthenticationWithPushUseCase: EnrollForMobileAuthenticationWithPushUseCase
+  lateinit var refreshMobileAuthPushTokenUseCase: RefreshMobileAuthPushTokenUseCase
 
   override fun onNewToken(token: String) {
     CoroutineScope(Dispatchers.Default).launch {
       omiSdkInitializationUseCase.initialize(OmiSdkInitializationSettings.DEFAULT)
-        .map { enrollForMobileAuthenticationWithPushUseCase.execute(token) }
+        .flatMap { refreshMobileAuthPushTokenUseCase.execute(token) }
     }
   }
 }
