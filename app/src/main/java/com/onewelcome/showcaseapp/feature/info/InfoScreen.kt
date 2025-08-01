@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTableCardScope
 import com.onewelcome.core.components.ShowcaseTableStatusCard
@@ -29,6 +28,7 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.theme.success
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.feature.info.InfoViewModel.MobileAuthEnrollmentState
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 
 @Composable
@@ -81,12 +81,12 @@ private fun StatusList(uiState: State) {
       title = stringResource(R.string.authenticated_profile),
       description = getAuthenticatedProfile(uiState.authenticatedUserProfileId)
     )
-    UserProfilesEnrolledForMobileAuth(uiState.mobileAuthenticationEnrollmentStatus)
+    UserProfilesEnrolledForMobileAuth(uiState.mobileAuthenticationEnrollmentState)
   }
 }
 
 @Composable
-private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<Triple<UserProfile, Boolean, Boolean>>) {
+private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<MobileAuthEnrollmentState>) {
   if (mobileAuthEnrollmentStatus.isEmpty()) {
     ShowcaseStatusCard(
       title = stringResource(R.string.status_mobile_authentication_enrollment),
@@ -95,7 +95,7 @@ private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<T
   } else {
     ShowcaseTableStatusCard(
       title = stringResource(R.string.status_mobile_authentication_enrollment),
-      cellWeights = listOf(0.4f, 0.3f, 0.3f)
+      columnWeights = listOf(0.4f, 0.3f, 0.3f)
     ) {
       mobileAuthEnrollmentHeader()
       mobileAuthEnrollmentStatus.forEach {
@@ -127,23 +127,23 @@ private fun ShowcaseTableCardScope.mobileAuthEnrollmentHeader() {
   )
 }
 
-private fun ShowcaseTableCardScope.mobileAuthEnrollmentStatusForUser(status: Triple<UserProfile, Boolean, Boolean>) {
+private fun ShowcaseTableCardScope.mobileAuthEnrollmentStatusForUser(status: MobileAuthEnrollmentState) {
   row(
-    { Text(text = status.first.profileId, style = MaterialTheme.typography.bodyMedium) },
+    { Text(text = status.userProfileId, style = MaterialTheme.typography.bodyMedium) },
     {
       Icon(
         modifier = Modifier.fillMaxWidth(),
-        imageVector = if (status.second) Icons.Default.Check else Icons.Default.Close,
+        imageVector = if (status.isUserEnrolledForMobileAuth) Icons.Default.Check else Icons.Default.Close,
         contentDescription = stringResource(R.string.content_description_yes),
-        tint = if (status.second) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
+        tint = if (status.isUserEnrolledForMobileAuth) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
       )
     },
     {
       Icon(
         modifier = Modifier.fillMaxWidth(),
-        imageVector = if (status.third) Icons.Default.Check else Icons.Default.Close,
+        imageVector = if (status.isUserEnrolledForMobileAuthWithPush) Icons.Default.Check else Icons.Default.Close,
         contentDescription = stringResource(R.string.content_description_yes),
-        tint = if (status.third) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
+        tint = if (status.isUserEnrolledForMobileAuthWithPush) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
       )
     })
 }

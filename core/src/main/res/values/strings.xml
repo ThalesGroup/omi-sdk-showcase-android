@@ -140,7 +140,7 @@
 
   <!-- Mobile Authentication Enrollment-->
   <string name="label_mobile_authentication_enrollment_success">Mobile authentication enrollment success</string>
-  <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP and to be able to enroll for mobile authentication with push.</string>
+  <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP.</string>
   <string name="button_mobile_authentication_enrollment">Enroll</string>
   <string name="mobile_auth_enrollemnt_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
   <string name="user_enrolled_for_mobile_authentication_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication</string>

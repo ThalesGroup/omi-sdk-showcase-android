@@ -8,7 +8,6 @@ import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
-import com.onewelcome.core.util.TestConstants.TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
@@ -105,7 +104,7 @@ class InfoViewModelTest {
         isSdkInitialized = true,
         userProfileIds = TEST_USER_PROFILES_IDS,
         authenticatedUserProfileId = "",
-        mobileAuthenticationEnrollmentStatus = TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS
+        mobileAuthenticationEnrollmentState = TEST_USER_PROFILES_IDS.map { InfoViewModel.MobileAuthEnrollmentState(it, true, true) }
       )
 
     viewModel.updateData()
@@ -149,7 +148,7 @@ class InfoViewModelTest {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfileIds = emptyList(),
-      mobileAuthenticationEnrollmentStatus = emptyList()
+      mobileAuthenticationEnrollmentState = emptyList()
     )
 
     viewModel.updateData()
@@ -166,7 +165,7 @@ class InfoViewModelTest {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfileIds = emptyList(),
-      mobileAuthenticationEnrollmentStatus = emptyList()
+      mobileAuthenticationEnrollmentState = emptyList()
     )
 
     viewModel.updateData()
@@ -184,7 +183,7 @@ class InfoViewModelTest {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfileIds = emptyList(),
-      mobileAuthenticationEnrollmentStatus = emptyList()
+      mobileAuthenticationEnrollmentState = emptyList()
     )
 
     viewModel.updateData()
@@ -205,7 +204,7 @@ class InfoViewModelTest {
     whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
   }
 
-  private fun mockUserProfilesError(){
+  private fun mockUserProfilesError() {
     whenever(userClientMock.userProfiles).thenThrow(RuntimeException("Some exception"))
   }
 
@@ -217,7 +216,7 @@ class InfoViewModelTest {
     whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenReturn(true)
   }
 
-  private fun mockMobileAuthEnrollmentStatusError(){
+  private fun mockMobileAuthEnrollmentStatusError() {
     whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenThrow(RuntimeException("Some excpetion"))
   }
 
@@ -225,7 +224,7 @@ class InfoViewModelTest {
     whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenReturn(true)
   }
 
-  private fun mockMobileAuthEnrollmentWithPushStatusError(){
+  private fun mockMobileAuthEnrollmentWithPushStatusError() {
     whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenThrow(RuntimeException("Some excpetion"))
   }
 }

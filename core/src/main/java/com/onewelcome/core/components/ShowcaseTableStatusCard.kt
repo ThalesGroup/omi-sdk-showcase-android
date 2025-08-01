@@ -40,7 +40,7 @@ private class ShowcaseTableCardScopeImpl : ShowcaseTableCardScope {
 @Composable
 fun ShowcaseTableStatusCard(
   title: String,
-  cellWeights: List<Float>,
+  columnWeights: List<Float>,
   content: ShowcaseTableCardScope.() -> Unit
 ) {
   val showcaseTableContent = remember { ShowcaseTableCardScopeImpl() }
@@ -54,17 +54,17 @@ fun ShowcaseTableStatusCard(
         style = MaterialTheme.typography.titleMedium
       )
       showcaseTableContent.rows.forEach { row ->
-        TableRow(cellWeights, row)
+        TableRow(columnWeights, row)
       }
     }
   }
 }
 
 @Composable
-private fun TableRow(cellWeights: List<Float>, row: List<@Composable () -> Unit>) {
+private fun TableRow(columnWeights: List<Float>, row: List<@Composable () -> Unit>) {
   Row(horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing)) {
     row.forEachIndexed { index, cell ->
-      val weight = cellWeights.elementAtOrElse(index) { DEFAULT_COLUMN_WIDTH }
+      val weight = columnWeights.elementAtOrElse(index) { DEFAULT_COLUMN_WIDTH }
       TableCell(weight, cell)
     }
   }
