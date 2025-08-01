@@ -40,15 +40,16 @@ class MobileAuthenticationEnrollmentViewModel @Inject constructor(
   private fun loadInitialData() {
     val isSdkInitialized = isSdkInitializedUseCase.execute()
     val authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
-    val isUserEnrolledForMobileAuth = authenticatedUserProfile?.let {
-      isUserEnrolledForMobileAuthUseCase.execute(authenticatedUserProfile).get()
-    } ?: false
     uiState = uiState.copy(
       isSdkInitialized = isSdkInitialized,
       authenticatedUserProfile = authenticatedUserProfile,
-      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth
+      isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth(authenticatedUserProfile)
     )
   }
+
+  private fun isUserEnrolledForMobileAuth(authenticatedUserProfile: UserProfile?): Boolean = authenticatedUserProfile?.let {
+    isUserEnrolledForMobileAuthUseCase.execute(authenticatedUserProfile).get()
+  } ?: false
 
   private fun enrollForMobileAuthentication() {
     uiState = uiState.copy(isLoading = true)
