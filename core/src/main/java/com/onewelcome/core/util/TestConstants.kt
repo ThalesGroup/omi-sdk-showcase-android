@@ -19,7 +19,6 @@ object TestConstants {
   val TEST_CUSTOM_INFO = CustomInfo(666, "data")
   val TEST_USER_PROFILES = setOf(TEST_USER_PROFILE_1, TEST_USER_PROFILE_2)
   val TEST_USER_PROFILES_IDS = TEST_USER_PROFILES.map { it.profileId }.toList()
-  val TEST_MOBILE_AUTHENTICATION_ENROLLMENT_STATUS = TEST_USER_PROFILES.map { Triple(it, true, true) }
   val TEST_SELECTED_SCOPES = Constants.DEFAULT_SCOPES
   val TEST_AUTHENTICATION_ATTEMPT_COUNTER = AuthenticationAttemptCounter(maxAttempts = 3, failedAttempts = 0)
   val TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT = AuthenticationAttemptCounter(maxAttempts = 3, failedAttempts = 1)
