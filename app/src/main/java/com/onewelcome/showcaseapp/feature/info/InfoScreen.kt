@@ -3,30 +3,21 @@ package com.onewelcome.showcaseapp.feature.info
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.onewelcome.core.components.ShowcaseStatusCard
-import com.onewelcome.core.components.ShowcaseTableCardScope
-import com.onewelcome.core.components.ShowcaseTableStatusCard
+import com.onewelcome.core.components.ShowcaseUserProfileStatusTableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
-import com.onewelcome.core.theme.success
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.MobileAuthEnrollmentState
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
@@ -93,59 +84,15 @@ private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<M
       description = stringResource(R.string.no_user_profiles)
     )
   } else {
-    ShowcaseTableStatusCard(
-      title = stringResource(R.string.status_mobile_authentication_enrollment),
-      columnWeights = listOf(0.4f, 0.3f, 0.3f)
+    ShowcaseUserProfileStatusTableCard(
+      title = stringResource(R.string.status_mobile_authentication_enrollment)
     ) {
-      mobileAuthEnrollmentHeader()
+      headerRow(stringResource(R.string.label_user_profile), stringResource(R.string.label_otp), stringResource(R.string.label_push))
       mobileAuthEnrollmentStatus.forEach {
-        mobileAuthEnrollmentStatusForUser(it)
+        contentRow(it.userProfileId, it.isUserEnrolledForMobileAuth, it.isUserEnrolledForMobileAuthWithPush)
       }
     }
   }
-}
-
-private fun ShowcaseTableCardScope.mobileAuthEnrollmentHeader() {
-  row(
-    { Text(style = MaterialTheme.typography.titleSmall, text = stringResource(R.string.label_user_profile)) },
-    {
-      Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.titleSmall,
-        text = stringResource(R.string.label_otp)
-      )
-    },
-    {
-      Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.titleSmall,
-        text = stringResource(R.string.label_push)
-      )
-    }
-  )
-}
-
-private fun ShowcaseTableCardScope.mobileAuthEnrollmentStatusForUser(status: MobileAuthEnrollmentState) {
-  row(
-    { Text(text = status.userProfileId, style = MaterialTheme.typography.bodyMedium) },
-    {
-      Icon(
-        modifier = Modifier.fillMaxWidth(),
-        imageVector = if (status.isUserEnrolledForMobileAuth) Icons.Default.Check else Icons.Default.Close,
-        contentDescription = stringResource(R.string.content_description_yes),
-        tint = if (status.isUserEnrolledForMobileAuth) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
-      )
-    },
-    {
-      Icon(
-        modifier = Modifier.fillMaxWidth(),
-        imageVector = if (status.isUserEnrolledForMobileAuthWithPush) Icons.Default.Check else Icons.Default.Close,
-        contentDescription = stringResource(R.string.content_description_yes),
-        tint = if (status.isUserEnrolledForMobileAuthWithPush) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.error
-      )
-    })
 }
 
 @Composable
