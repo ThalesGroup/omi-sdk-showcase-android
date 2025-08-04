@@ -147,7 +147,7 @@
 
   <!-- Mobile Authentication With Push Enrollment-->
   <string name="label_mobile_authentication_push_enrollment_success">Mobile authentication with push enrollment success</string>
-  <string name="mobile_authentication_push_enrollment_description">Enables user to use mobile authentication with push messages.</string>
+  <string name="mobile_authentication_push_enrollment_description">Enables user to use mobile authentication with push messages. It is required to include correct Firebase\'s google-services.json file connected to your project to be able to receive push messages.</string>
   <string name="button_mobile_authentication_push_enrollment">Enroll</string>
   <string name="mobile_auth_push_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication with push</string>
   <string name="user_needs_to_be_enrolled_for_mobile_authentication">User profile has to be enrolled for mobile authentication (OTP) before it can be enrolled for mobile authentication with push</string>
