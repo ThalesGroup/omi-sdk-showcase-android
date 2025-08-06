@@ -84,6 +84,7 @@ dependencies {
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.ui)
+  implementation(libs.androidx.activity.compose)
 
   // Lifecycle
   implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -100,7 +101,6 @@ dependencies {
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.ui.tooling)
   implementation(libs.androidx.compose.ui.test.manifest)
-  implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.lifecycle.lifecycle.viewmodel.compose)
   implementation(libs.androidx.compose.runtime.livedata)
   implementation(libs.androidx.navigation)
