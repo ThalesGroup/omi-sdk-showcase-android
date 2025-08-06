@@ -112,7 +112,7 @@ private fun SettingSection(uiState: State, onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-fun AuthenticatedProfileSection(userProfile: UserProfile?) {
+private fun AuthenticatedProfileSection(userProfile: UserProfile?) {
   ShowcaseStatusCard(
     title = stringResource(R.string.authenticated_profile),
     description = userProfile?.profileId ?: stringResource(R.string.no_authenticated_user_profile)
