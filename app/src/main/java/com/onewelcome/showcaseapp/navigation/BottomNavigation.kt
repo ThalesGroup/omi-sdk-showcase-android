@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -22,14 +21,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
+import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
-import com.onewelcome.showcaseapp.feature.pin.AuthenticateWithPinViewModel
-import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
-import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
+import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
+import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
@@ -37,6 +36,7 @@ import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.P
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
+import com.onewelcome.showcaseapp.viewmodel.ChangePinInputViewModel
 
 @Composable
 fun BottomNavigationBar() {
@@ -64,8 +64,9 @@ fun BottomNavigationBar() {
 }
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
-  composable(Screens.AuthenticateWithPin.route) { AuthenticateWithPinScreen(rootNavController) }
-  composable(Screens.CreatePin.route) { CreatePinScreen(rootNavController) }
+  composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
+  composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
+  composable(Screens.ChangePinInput.route) { PinScreen(rootNavController, hiltViewModel<ChangePinInputViewModel>()) }
 }
 
 private fun NavGraphBuilder.bottomNavigationScreens(
@@ -76,17 +77,6 @@ private fun NavGraphBuilder.bottomNavigationScreens(
   composable(Screens.Info.route) { InfoScreen() }
   composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
 }
-
-@Composable
-private fun CreatePinScreen(navController: NavController, viewModel: CreatePinViewModel = hiltViewModel()) {
-  PinScreen(navController, viewModel)
-}
-
-@Composable
-private fun AuthenticateWithPinScreen(navController: NavController, viewModel: AuthenticateWithPinViewModel = hiltViewModel()) {
-  PinScreen(navController, viewModel)
-}
-
 
 @Composable
 private fun ScreenWithNavBar(
