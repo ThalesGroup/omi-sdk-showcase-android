@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreatePinViewModel @Inject constructor(
+class CreatePinInputViewModel @Inject constructor(
   private val createPinRequestHandler: CreatePinRequestHandler,
 ) : PinViewModel() {
 

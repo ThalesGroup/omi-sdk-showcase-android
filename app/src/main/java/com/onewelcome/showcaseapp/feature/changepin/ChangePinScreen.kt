@@ -22,6 +22,7 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toErrorResultString
+import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinViewModel.State
@@ -41,7 +42,7 @@ fun ChangePinScreen(
     onNavigateBack = { homeNavController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     navigationEvents = viewModel.navigationEvents,
-    onNavigateToPinScreen = { pinNavController.navigate(Screens.AuthenticateWithPin.route) },
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.ChangePinInput.route) },
   )
 }
 
@@ -59,8 +60,8 @@ fun ChangePinScreenContent(
     onNavigateBack = onNavigateBack,
     description = {
       ShowcaseFeatureDescription(
-        description = "add some nice description",
-        link = ""
+        description = stringResource(R.string.change_pin_description),
+        link = Constants.DOCUMENTATION_CHANGE_PIN
       )
     },
     settings = { SettingSection(isSdkInitialized = uiState.isSdkInitialized, authenticatedUserProfile = uiState.authenticatedUserProfile) },
@@ -109,7 +110,8 @@ private fun SettingSection(isSdkInitialized: Boolean, authenticatedUserProfile: 
 private fun AuthenticatedProfileSection(userProfile: UserProfile?) {
   ShowcaseStatusCard(
     title = stringResource(R.string.authenticated_profile),
-    description = userProfile?.profileId ?: stringResource(R.string.no_authenticated_user_profile)
+    description = userProfile?.profileId ?: stringResource(R.string.no_authenticated_user_profile),
+    tooltipContent = { Text(stringResource(R.string.user_needs_to_be_authenticated_to_perform_pin_change)) }
   )
 }
 
@@ -128,6 +130,7 @@ private fun PinChangeResult(result: Result<Unit, Throwable>) {
     result
       .onSuccess {
         Column {
+          Text("Amazing success")
         }
       }
       .onFailure { Text(it.toErrorResultString()) }

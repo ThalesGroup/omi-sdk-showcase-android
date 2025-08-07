@@ -64,7 +64,7 @@ fun BrowserRegistrationScreen(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
-    onNavigateToPinScreen = { pinNavController.navigate(Screens.CreatePin.route) },
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.CreatePinInput.route) },
     navigationEvents = viewModel.navigationEvents
   )
   RegistrationIntentListener { viewModel.onEvent(it) }

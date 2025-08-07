@@ -164,5 +164,7 @@
   <!-- Change PIN -->
   <string name="change_pin">Change PIN</string>
   <string name="sdk_needs_to_be_initialized_to_perform_pin_change">SDK needs to be initialized to perform PIN change</string>
+  <string name="user_needs_to_be_authenticated_to_perform_pin_change">User needs to be authenticated to perform PIN change</string>
+  <string name="change_pin_description">SDK offer a way to change the PIN for the currently logged in user profile.</string>
 
 </resources>
