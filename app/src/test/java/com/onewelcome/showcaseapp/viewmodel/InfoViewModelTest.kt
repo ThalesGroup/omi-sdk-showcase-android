@@ -12,6 +12,7 @@ import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
+import com.onewelcome.showcaseapp.fakes.PermissionsFacadeFake
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -57,6 +58,9 @@ class InfoViewModelTest {
   @Inject
   lateinit var omiSdkEngineFake: OmiSdkEngineFake
 
+  @Inject
+  lateinit var permissionsFacadeFake: PermissionsFacadeFake
+
   private val userClientMock: UserClient = mock()
 
   private lateinit var viewModel: InfoViewModel
@@ -69,7 +73,8 @@ class InfoViewModelTest {
       getUserProfilesUseCase,
       getAuthenticatedUserProfileUseCase,
       isUserEnrolledForMobileAuthUseCase,
-      isUserEnrolledForMobileAuthWithPushUseCase
+      isUserEnrolledForMobileAuthWithPushUseCase,
+      permissionsFacadeFake
     )
   }
 
@@ -184,6 +189,30 @@ class InfoViewModelTest {
       isSdkInitialized = true,
       userProfileIds = emptyList(),
       mobileAuthenticationEnrollmentState = emptyList()
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given post notification permission is granted, When viewmodel is initialized, Then state should be updated`() {
+    permissionsFacadeFake.postNotificationsPermissionGranted = true
+    val expectedState = viewModel.uiState.copy(
+      isPostNotificationPermissionGranted = true
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given post notification permission is declined, When viewmodel is initialized, Then state should be updated`() {
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    val expectedState = viewModel.uiState.copy(
+      isPostNotificationPermissionGranted = false
     )
 
     viewModel.updateData()

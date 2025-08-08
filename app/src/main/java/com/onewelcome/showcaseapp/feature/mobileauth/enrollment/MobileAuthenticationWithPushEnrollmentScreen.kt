@@ -1,18 +1,33 @@
 package com.onewelcome.showcaseapp.feature.mobileauth.enrollment
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavHostController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
@@ -20,8 +35,10 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseSwitch
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
@@ -38,6 +55,9 @@ fun MobileAuthenticationWithPushEnrollmentScreen(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) }
   )
+  LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+    viewModel.onEvent(UiEvent.UpdatePostNotificationsPermissionState)
+  }
 }
 
 @Composable
@@ -55,19 +75,26 @@ private fun MobileAuthenticationWithPushEnrollmentScreenContent(
         Constants.DOCUMENTATION_MOBILE_AUTHENTICATION_WITH_PUSH
       )
     },
-    settings = { SettingsSection(uiState) },
+    settings = { SettingsSection(uiState, onEvent) },
     result = uiState.enrollmentResult?.let { { EnrollmentResult(it) } },
     action = { EnrollmentButton(uiState, onEvent) }
   )
+  if (uiState.requestPostNotificationsPermission) {
+    RequestPostNotificationsPermission(onEvent)
+  }
+  if (uiState.showSettingsDialog) {
+    ShowPermissionSettingsAlertDialog(onEvent)
+  }
 }
 
 @Composable
-private fun SettingsSection(uiState: State) {
+private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
     SdkInitializationSection(uiState.isSdkInitialized)
     UserAuthenticatedSection(uiState.authenticatedUserProfile)
     UserEnrolledForMobileAuthSection(uiState.isUserEnrolledForMobileAuth)
     UserEnrolledForMobileAuthWithPushSection(uiState.isUserEnrolledForMobileAuthWithPush)
+    PostNotificationPermissionSection(uiState.isPostNotificationPermissionGranted, onEvent)
   }
 }
 
@@ -109,6 +136,22 @@ private fun UserEnrolledForMobileAuthWithPushSection(isUserEnrolledForMobileAuth
 }
 
 @Composable
+private fun PostNotificationPermissionSection(isPostNotificationPermissionGranted: Boolean, onEvent: (UiEvent) -> Unit) {
+  ShowcaseCard {
+    ShowcaseSwitch(
+      shouldBeChecked = isPostNotificationPermissionGranted,
+      onCheck = { onEvent(UiEvent.PostNotificationsPermissionClicked(it)) },
+      label = {
+        Text(
+          style = MaterialTheme.typography.titleMedium,
+          text = stringResource(R.string.status_post_notifications_permission)
+        )
+      },
+      tooltipContent = { Text(stringResource(R.string.post_notifications_permission_tooltip)) })
+  }
+}
+
+@Composable
 private fun EnrollmentResult(result: Result<Unit, Throwable>) {
   Column {
     result
@@ -143,6 +186,66 @@ private fun EnrollmentButton(uiState: State, onEvent: (UiEvent) -> Unit) {
   }
 }
 
+@Composable
+private fun ShowPermissionSettingsAlertDialog(onEvent: (UiEvent) -> Unit) {
+  val activity = LocalActivity.current
+  AlertDialog(
+    onDismissRequest = { onEvent(UiEvent.DismissSettingsDialog) },
+    title = { Text(stringResource(R.string.post_notifications_permission_dialog_title)) },
+    text = { Text(stringResource(R.string.post_notifications_permission_dialog_description)) },
+    confirmButton = {
+      TextButton(
+        onClick = {
+          onEvent(UiEvent.DismissSettingsDialog)
+          activity?.openAppSettings()
+        }) {
+        Text(stringResource(R.string.navigate_to_settings))
+      }
+    },
+    dismissButton = {
+      TextButton(onClick = { onEvent(UiEvent.DismissSettingsDialog) }) {
+        Text(stringResource(R.string.cancel))
+      }
+    }
+
+  )
+}
+
+private fun Activity.openAppSettings() {
+  Intent(
+    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+    Uri.fromParts("package", packageName, null)
+  ).also(::startActivity)
+}
+
+@Composable
+private fun RequestPostNotificationsPermission(onEvent: (UiEvent) -> Unit) {
+  val activity = LocalActivity.current
+  val permissionResultLauncher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.RequestPermission(),
+    onResult = { handlePostNotificationPermissionResult(it, activity, onEvent) }
+  )
+  SideEffect {
+    permissionResultLauncher.launchForPostNotificationPermission()
+  }
+}
+
+private fun ManagedActivityResultLauncher<String, Boolean>.launchForPostNotificationPermission() {
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    launch(Manifest.permission.POST_NOTIFICATIONS)
+  }
+}
+
+private fun handlePostNotificationPermissionResult(result: Boolean, activity: Activity?, onEvent: (UiEvent) -> Unit) {
+  when {
+    result -> onEvent(UiEvent.RequestPostNotificationsPermissionResult.GRANTED)
+    activity?.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) == false ->
+      onEvent(UiEvent.RequestPostNotificationsPermissionResult.PERMANENTLY_DECLINED)
+
+    else -> onEvent(UiEvent.RequestPostNotificationsPermissionResult.DECLINED)
+  }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
@@ -151,4 +254,10 @@ private fun Preview() {
     onNavigateBack = {},
     onEvent = {}
   )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewAlertDialog() {
+  ShowPermissionSettingsAlertDialog { }
 }

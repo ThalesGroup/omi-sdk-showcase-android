@@ -15,6 +15,7 @@ import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
 import com.onewelcome.showcaseapp.fakes.FirebaseMessagingFacadeFake
+import com.onewelcome.showcaseapp.fakes.PermissionsFacadeFake
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.State
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.UiEvent
@@ -64,6 +65,9 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
 
   @Inject
   lateinit var enrollForMobileAuthenticationWithPushUseCase: EnrollForMobileAuthenticationWithPushUseCase
+
+  @Inject
+  lateinit var permissionsFacadeFake: PermissionsFacadeFake
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient
@@ -202,6 +206,118 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
       )
   }
 
+  @Test
+  fun `Given post notifications permission granted, When PostNotificationsPermissionClicked event is sent, Then should show settings dialog`() {
+    permissionsFacadeFake.postNotificationsPermissionGranted = true
+    initializeViewModel()
+
+    viewModel.onEvent(UiEvent.PostNotificationsPermissionClicked(false))
+
+    assertThat(viewModel.uiState).isEqualTo(DEFAULT_STATE.copy(isPostNotificationPermissionGranted = true, showSettingsDialog = true))
+  }
+
+  @Test
+  fun `Given post notifications permission not granted, When PostNotificationsPermissionClicked event is sent, Then should request permission`() {
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    initializeViewModel()
+
+    viewModel.onEvent(UiEvent.PostNotificationsPermissionClicked(true))
+
+    assertThat(viewModel.uiState).isEqualTo(
+      DEFAULT_STATE.copy(
+        isPostNotificationPermissionGranted = false,
+        requestPostNotificationsPermission = true
+      )
+    )
+  }
+
+  @Test
+  fun `Given post notifications permission was requested, When RequestPostNotificationsPermissionResult GRANTED event is sent, Then should update the state`() {
+    val expectedStateAfterPermissionRequest = DEFAULT_STATE.copy(
+      isPostNotificationPermissionGranted = false,
+      requestPostNotificationsPermission = true
+    )
+    val expectedFinalState = expectedStateAfterPermissionRequest.copy(
+      isPostNotificationPermissionGranted = true,
+      requestPostNotificationsPermission = false
+    )
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    initializeViewModel()
+    viewModel.onEvent(UiEvent.PostNotificationsPermissionClicked(true))
+    assertThat(viewModel.uiState).isEqualTo(expectedStateAfterPermissionRequest)
+
+    viewModel.onEvent(UiEvent.RequestPostNotificationsPermissionResult.GRANTED)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedFinalState)
+  }
+
+  @Test
+  fun `Given post notifications permission was requested, When RequestPostNotificationsPermissionResult DECLINED event is sent, Then should update the state`() {
+    val expectedStateAfterPermissionRequest = DEFAULT_STATE.copy(
+      isPostNotificationPermissionGranted = false,
+      requestPostNotificationsPermission = true
+    )
+    val expectedFinalState = expectedStateAfterPermissionRequest.copy(
+      isPostNotificationPermissionGranted = false,
+      requestPostNotificationsPermission = false
+    )
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    initializeViewModel()
+    viewModel.onEvent(UiEvent.PostNotificationsPermissionClicked(true))
+    assertThat(viewModel.uiState).isEqualTo(expectedStateAfterPermissionRequest)
+
+    viewModel.onEvent(UiEvent.RequestPostNotificationsPermissionResult.DECLINED)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedFinalState)
+  }
+
+  @Test
+  fun `Given post notifications permission was requested, When RequestPostNotificationsPermissionResult PERMANENTLY_DECLINED event is sent, Then should update the state`() {
+    val expectedStateAfterPermissionRequest = DEFAULT_STATE.copy(
+      isPostNotificationPermissionGranted = false,
+      requestPostNotificationsPermission = true
+    )
+    val expectedFinalState = expectedStateAfterPermissionRequest.copy(
+      isPostNotificationPermissionGranted = false,
+      requestPostNotificationsPermission = false,
+      showSettingsDialog = true
+    )
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    initializeViewModel()
+    viewModel.onEvent(UiEvent.PostNotificationsPermissionClicked(true))
+    assertThat(viewModel.uiState).isEqualTo(expectedStateAfterPermissionRequest)
+
+    viewModel.onEvent(UiEvent.RequestPostNotificationsPermissionResult.PERMANENTLY_DECLINED)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedFinalState)
+  }
+
+  @Test
+  fun `Given settings dialog is shown, When DismissSettingsDialog event is sent, Then should not show settings dialog anymore`() {
+    val expectedInitialState = DEFAULT_STATE.copy(showSettingsDialog = true)
+    val expectedFinalState = expectedInitialState.copy(showSettingsDialog = false)
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    initializeViewModel()
+    viewModel.onEvent(UiEvent.PostNotificationsPermissionClicked(false))
+    assertThat(viewModel.uiState).isEqualTo(expectedInitialState)
+
+    viewModel.onEvent(UiEvent.DismissSettingsDialog)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedFinalState)
+  }
+
+  @Test
+  fun `Given view model is initialized, When UpdatePostNotificationsPermissionState event is sent, Then should check for post notifications permission`() {
+    permissionsFacadeFake.postNotificationsPermissionGranted = false
+    initializeViewModel()
+    assertThat(viewModel.uiState).isEqualTo(DEFAULT_STATE)
+
+    permissionsFacadeFake.postNotificationsPermissionGranted = true
+    viewModel.onEvent(UiEvent.UpdatePostNotificationsPermissionState)
+
+    assertThat(viewModel.uiState).isEqualTo(DEFAULT_STATE.copy(isPostNotificationPermissionGranted = true))
+  }
+
   private fun givenSdkInitializedAndNoUserAuthenticated() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile(false)
@@ -246,7 +362,8 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
       getAuthenticatedUserProfileUseCase,
       isUserEnrolledForMobileAuthUseCase,
       isUserEnrolledForMobileAuthWithPushUseCase,
-      enrollForMobileAuthenticationWithPushUseCase
+      enrollForMobileAuthenticationWithPushUseCase,
+      permissionsFacadeFake
     )
   }
 
@@ -281,8 +398,11 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
       authenticatedUserProfile = null,
       isUserEnrolledForMobileAuth = false,
       isUserEnrolledForMobileAuthWithPush = false,
+      isPostNotificationPermissionGranted = false,
       enrollmentResult = null,
-      isLoading = false
+      isLoading = false,
+      requestPostNotificationsPermission = false,
+      showSettingsDialog = false
     )
     private val AUTHENTICATED_USER_PROFILE = UserProfile("QWERTY")
   }
