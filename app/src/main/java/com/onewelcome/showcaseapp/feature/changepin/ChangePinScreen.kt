@@ -42,7 +42,8 @@ fun ChangePinScreen(
     onNavigateBack = { homeNavController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     navigationEvents = viewModel.navigationEvents,
-    onNavigateToPinScreen = { pinNavController.navigate(Screens.ChangePinInput.route) },
+    onNavigateToPinAuthenticationInputScreen = { pinNavController.navigate(Screens.PinAuthenticationInput.route) },
+    onNavigateToCreatePinInputScreen = { pinNavController.navigate(Screens.CreatePinInput.route) },
   )
 }
 
@@ -52,9 +53,14 @@ fun ChangePinScreenContent(
   uiState: State,
   onEvent: (UiEvent) -> Unit,
   navigationEvents: Flow<NavigationEvent>,
-  onNavigateToPinScreen: () -> Unit,
+  onNavigateToPinAuthenticationInputScreen: () -> Unit,
+  onNavigateToCreatePinInputScreen: () -> Unit,
 ) {
-  ListenForPinNavigationEvent(navigationEvents, onNavigateToPinScreen)
+  ListenForPinNavigationEvent(
+    navigationEvents = navigationEvents,
+    onNavigateToCreatePinInputScreen = onNavigateToCreatePinInputScreen,
+    onNavigateToPinAuthenticationInputScreen = onNavigateToPinAuthenticationInputScreen
+  )
   SdkFeatureScreen(
     title = stringResource(R.string.change_pin),
     onNavigateBack = onNavigateBack,
@@ -85,12 +91,14 @@ fun ChangePinButton(onEvent: (UiEvent) -> Unit) {
 @Composable
 private fun ListenForPinNavigationEvent(
   navigationEvents: Flow<NavigationEvent>,
-  onNavigateToPinScreen: () -> Unit
+  onNavigateToCreatePinInputScreen: () -> Unit,
+  onNavigateToPinAuthenticationInputScreen: () -> Unit
 ) {
   LaunchedEffect(Unit) {
     navigationEvents.collect { event ->
       when (event) {
-        is NavigationEvent.ToPinScreen -> onNavigateToPinScreen.invoke()
+        is NavigationEvent.ToPinAuthenticationScreen -> onNavigateToPinAuthenticationInputScreen.invoke()
+        is NavigationEvent.ToPinCreationScreen -> onNavigateToCreatePinInputScreen.invoke()
       }
     }
   }
@@ -145,6 +153,7 @@ fun Preview() {
     onEvent = {},
     onNavigateBack = {},
     navigationEvents = emptyFlow(),
-    onNavigateToPinScreen = {}
+    onNavigateToCreatePinInputScreen = {},
+    onNavigateToPinAuthenticationInputScreen = {},
   )
 }

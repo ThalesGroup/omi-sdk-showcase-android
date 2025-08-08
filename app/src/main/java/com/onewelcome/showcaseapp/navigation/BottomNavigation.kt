@@ -36,7 +36,6 @@ import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.P
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
-import com.onewelcome.showcaseapp.viewmodel.ChangePinInputViewModel
 
 @Composable
 fun BottomNavigationBar() {
@@ -66,7 +65,6 @@ fun BottomNavigationBar() {
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
-  composable(Screens.ChangePinInput.route) { PinScreen(rootNavController, hiltViewModel<ChangePinInputViewModel>()) }
 }
 
 private fun NavGraphBuilder.bottomNavigationScreens(

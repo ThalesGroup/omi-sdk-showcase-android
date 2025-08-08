@@ -9,6 +9,7 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.ChangePinUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
@@ -23,8 +24,9 @@ import javax.inject.Inject
 class ChangePinViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
-  private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
   private val changePinUseCase: ChangePinUseCase,
+  private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
+  private val createPinRequestHandler: CreatePinRequestHandler,
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -50,15 +52,20 @@ class ChangePinViewModel @Inject constructor(
     when (event) {
       is UiEvent.StartPinChange -> {
         changePin()
-        listenForPinScreenNavigationEvent()
+        listenForPinInputScreenNavigationEvents()
       }
     }
   }
 
-  private fun listenForPinScreenNavigationEvent() {
+  private fun listenForPinInputScreenNavigationEvents() {
     viewModelScope.launch {
       pinAuthenticationRequestHandler.startPinAuthenticationFlow.collect {
-        _navigationEvents.send(NavigationEvent.ToPinScreen)
+        _navigationEvents.send(NavigationEvent.ToPinAuthenticationScreen)
+      }
+    }
+    viewModelScope.launch {
+      createPinRequestHandler.startPinCreationFlow.collect {
+        _navigationEvents.send(NavigationEvent.ToPinCreationScreen)
       }
     }
   }
@@ -80,6 +87,7 @@ class ChangePinViewModel @Inject constructor(
   }
 
   sealed interface NavigationEvent {
-    data object ToPinScreen : NavigationEvent
+    data object ToPinAuthenticationScreen : NavigationEvent
+    data object ToPinCreationScreen : NavigationEvent
   }
 }
