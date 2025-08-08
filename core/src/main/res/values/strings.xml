@@ -28,6 +28,7 @@
   <string name="label_otp">OTP</string>
   <string name="label_push">Push</string>
   <string name="status_mobile_authentication_enrollment">Mobile authentication enrollment</string>
+  <string name="status_post_notifications_permission">Post notifications permission</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
@@ -154,6 +155,10 @@
   <string name="user_needs_to_be_enrolled_for_mobile_authentication">User profile has to be enrolled for mobile authentication (OTP) before it can be enrolled for mobile authentication with push</string>
   <string name="status_user_enrolled_for_mobile_authentication_with_push">Enrolled for mobile authentication with push</string>
   <string name="user_enrolled_for_mobile_authentication_with_push_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication with push</string>
+  <string name="post_notifications_permission_tooltip">Notification permission is not mandatory. Pushes will still be received, but the app won\'t be able to inform the user via system notification.</string>
+  <string name="post_notifications_permission_dialog_title">Post notifications permission</string>
+  <string name="post_notifications_permission_dialog_description">To change the post notifications permission you need to navigate to application settings.</string>
+  <string name="navigate_to_settings">Navigate to settings</string>
 
   <!-- PIN -->
   <string name="enter_pin">Enter PIN</string>
