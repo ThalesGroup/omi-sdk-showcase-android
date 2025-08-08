@@ -1,8 +1,14 @@
 package com.onewelcome.showcaseapp.viewmodel
 
+import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
+import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.usecase.ChangePinUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.TestConstants
@@ -10,6 +16,7 @@ import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinViewModel
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinViewModel.State
+import com.onewelcome.showcaseapp.utils.ThrowableEquals
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -19,6 +26,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -41,10 +49,21 @@ class ChangePinViewModelTest {
   @Inject
   lateinit var isSdkInitializedUseCase: IsSdkInitializedUseCase
 
-  private val userClientMock = mock<UserClient>()
-
   @Inject
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
+
+  @Inject
+  lateinit var changePinUseCase: ChangePinUseCase
+
+  @Inject
+  lateinit var authenticationRequestHandler: PinAuthenticationRequestHandler
+
+  @Inject
+  lateinit var createPinRequestHandler: CreatePinRequestHandler
+
+  private val userClientMock = mock<UserClient>()
+
+  private val mockOneginiChangePinError = mock<OneginiChangePinError>()
 
   private lateinit var viewModel: ChangePinViewModel
 
@@ -89,7 +108,9 @@ class ChangePinViewModelTest {
   fun `When StartPinChange event is sent and finishes successfully, Then state should be updated`() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile()
+    mockSuccessfulPinChange()
 
+    initializeViewModel()
     viewModel.onEvent(ChangePinViewModel.UiEvent.StartPinChange)
 
     assertThat(viewModel.uiState).isEqualTo(
@@ -101,8 +122,59 @@ class ChangePinViewModelTest {
     )
   }
 
+  @Test
+  fun `When StartPinChange event is sent and finishes with error, Then state should be updated`() {
+    mockSdkInitialized()
+    mockAuthenticatedUserProfile()
+    mockUnsuccessfulPinChange()
+
+    initializeViewModel()
+    viewModel.onEvent(ChangePinViewModel.UiEvent.StartPinChange)
+
+    assertThat(viewModel.uiState).isEqualTo(
+      INITIAL_STATE.copy(
+        result = Err(mockOneginiChangePinError),
+        isSdkInitialized = true,
+        authenticatedUserProfile = TEST_USER_PROFILE_1
+      )
+    )
+  }
+
+  @Test
+  fun `Given SDK is not initialized, When StartPinChange event is sent, Then state should be updated`() {
+    val expectedException = IllegalStateException("Onegini SDK instance not yet initialized")
+
+    initializeViewModel()
+    viewModel.onEvent(ChangePinViewModel.UiEvent.StartPinChange)
+
+    assertThat(viewModel.uiState)
+      .usingRecursiveComparison()
+      .withEqualsForType(ThrowableEquals(), Throwable::class.java)
+      .isEqualTo(INITIAL_STATE.copy(result = Err(expectedException)))
+  }
+
+  private fun mockSuccessfulPinChange() {
+    whenever(userClientMock.changePin(any()))
+      .thenAnswer { invocation ->
+        invocation.getArgument<OneginiChangePinHandler>(0).onSuccess()
+      }
+  }
+
+  private fun mockUnsuccessfulPinChange() {
+    whenever(userClientMock.changePin(any()))
+      .thenAnswer { invocation ->
+        invocation.getArgument<OneginiChangePinHandler>(0).onError(mockOneginiChangePinError)
+      }
+  }
+
   private fun initializeViewModel() {
-    viewModel = ChangePinViewModel(isSdkInitializedUseCase, getAuthenticatedUserProfileUseCase)
+    viewModel = ChangePinViewModel(
+      isSdkInitializedUseCase,
+      getAuthenticatedUserProfileUseCase,
+      changePinUseCase,
+      authenticationRequestHandler,
+      createPinRequestHandler
+    )
   }
 
   private fun mockAuthenticatedUserProfile() {
