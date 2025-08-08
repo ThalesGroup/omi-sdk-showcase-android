@@ -119,7 +119,7 @@ private fun AuthenticatedProfileSection(userProfile: UserProfile?) {
   ShowcaseStatusCard(
     title = stringResource(R.string.authenticated_profile),
     description = userProfile?.profileId ?: stringResource(R.string.no_authenticated_user_profile),
-    tooltipContent = { Text(stringResource(R.string.user_needs_to_be_authenticated_to_perform_pin_change)) }
+    tooltipContent = { Text(stringResource(R.string.user_needs_to_be_authenticated_to_perform_pin_change_tooltip)) }
   )
 }
 
@@ -128,7 +128,7 @@ private fun SdkInitializationSection(isSdkInitialized: Boolean) {
   ShowcaseStatusCard(
     title = stringResource(R.string.status_sdk_initialized),
     status = isSdkInitialized,
-    tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_pin_change)) }
+    tooltipContent = { Text(stringResource(R.string.sdk_needs_to_be_initialized_to_perform_pin_change_tooltip)) }
   )
 }
 
@@ -138,7 +138,7 @@ private fun PinChangeResult(result: Result<Unit, Throwable>) {
     result
       .onSuccess {
         Column {
-          Text("Amazing success")
+          Text(stringResource(R.string.pin_changed_successfully))
         }
       }
       .onFailure { Text(it.toErrorResultString()) }
