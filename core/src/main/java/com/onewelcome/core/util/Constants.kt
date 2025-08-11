@@ -15,6 +15,8 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#mobile-authentication-with-push"
   const val DOCUMENTATION_CHANGE_PIN =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-change-pin/index.html"
+  const val DOCUMENTATION_LOGOUT =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-logout-user/index.html"
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   const val FULLSCREEN_PAGE = "fullscreen"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")

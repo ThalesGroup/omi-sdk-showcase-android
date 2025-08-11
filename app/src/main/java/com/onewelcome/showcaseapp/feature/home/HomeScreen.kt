@@ -59,7 +59,8 @@ private fun getSections(): List<SectionItem> {
     SectionItem(stringResource(R.string.section_title_user_authentication), Screens.UserAuthentication),
     SectionItem(stringResource(R.string.section_title_mobile_authentication), Screens.MobileAuthentication),
     SectionItem(stringResource(R.string.section_title_user_deregistration), Screens.UserDeregistration),
-    SectionItem(stringResource(R.string.section_title_change_pin), Screens.ChangePin)
+    SectionItem(stringResource(R.string.section_title_change_pin), Screens.ChangePin),
+    SectionItem(stringResource(R.string.section_title_logout), Screens.Logout),
   )
 }
 
