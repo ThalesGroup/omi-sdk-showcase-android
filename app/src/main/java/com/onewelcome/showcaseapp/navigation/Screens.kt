@@ -16,6 +16,7 @@ sealed class Screens(val route: String) {
   data object MobileAuthenticationEnrollment : Screens("mobile_authentication_enrollment")
   data object MobileAuthenticationPushEnrollment : Screens("mobile_authentication_push_enrollment")
   data object ChangePin : Screens("change_pin")
+  data object Logout : Screens("logout")
   data object PinAuthenticationInput : Screens("pin_authentication_input_${Constants.FULLSCREEN_PAGE}")
   data object CreatePinInput : Screens("create_pin_input_${Constants.FULLSCREEN_PAGE}")
 }
