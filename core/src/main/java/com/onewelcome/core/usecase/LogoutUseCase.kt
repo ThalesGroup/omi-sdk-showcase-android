@@ -22,7 +22,6 @@ class LogoutUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) 
           override fun onError(error: OneginiLogoutError) {
             continuation.resume(Err(error))
           }
-
         })
       }.onFailure { continuation.resume(Err(it)) }
     }

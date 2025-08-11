@@ -108,7 +108,6 @@ private fun AuthenticatedProfileSection(userProfile: UserProfile?) {
   ShowcaseStatusCard(
     title = stringResource(R.string.authenticated_profile),
     description = userProfile?.profileId ?: stringResource(R.string.no_authenticated_user_profile),
-    tooltipContent = { Text(stringResource(R.string.user_needs_to_be_authenticated_to_perform_logout)) }
   )
 }
 

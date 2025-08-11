@@ -53,10 +53,17 @@ class LogoutViewModel @Inject constructor(
   }
 
   private fun logoutUser() {
+    uiState = uiState.copy(isLoading = true)
     viewModelScope.launch {
       logoutUseCase.execute()
-        .onSuccess { uiState = uiState.copy(result = Ok(it), authenticatedUserProfile = null) }
-        .onFailure { uiState.copy(result = Err(it)) }
+        .onSuccess {
+          uiState = uiState.copy(
+            result = Ok(it),
+            authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().value,
+            isLoading = false,
+          )
+        }
+        .onFailure { uiState = uiState.copy(result = Err(it), isLoading = false) }
     }
   }
 

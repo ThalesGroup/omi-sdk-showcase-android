@@ -176,10 +176,10 @@
 
   <!-- Logout -->
   <string name="logout_title">Logout</string>
-  <string name="user_needs_to_be_authenticated_to_perform_logout">User does not need to be authenticated to perform logout. In </string>
+  <string name="user_needs_to_be_authenticated_to_perform_logout">Logout action does not fail in case if there is no authenticated user profile.</string>
   <string name="sdk_needs_to_be_initialized_to_perform_logout_tooltip">SDK needs to be initialized to perform logout</string>
   <string name="logout_performed_successfully">Logout performed successfully</string>
   <string name="button_logout_user">Logout</string>
-  <string name="logout_description">SDK offers a way to logout currently logged in user profile.</string>
+  <string name="logout_description">SDK offers a way to logout currently logged in user profile. Logout does not fail if there is no authenticated user profile.</string>
 
 </resources>
