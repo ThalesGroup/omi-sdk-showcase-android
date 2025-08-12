@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.onewelcome.data.datastore.ShowcaseDataStore
+import com.onewelcome.data.datastore.ShowcaseDataStoreImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +25,11 @@ object DataStoreModule {
     return PreferenceDataStoreFactory.create(
       produceFile = { appContext.preferencesDataStoreFile(DATA_STORE_PREFERENCES) }
     )
+  }
+
+  @Provides
+  @Singleton
+  fun bindShowcaseDataStore(showcaseDataStoreImpl: ShowcaseDataStoreImpl): ShowcaseDataStore {
+    return showcaseDataStoreImpl
   }
 }
