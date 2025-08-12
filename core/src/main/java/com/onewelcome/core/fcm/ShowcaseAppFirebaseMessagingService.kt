@@ -3,7 +3,7 @@ package com.onewelcome.core.fcm
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RefreshMobileAuthPushTokenUseCase
-import com.onewelcome.data.datastore.DataStore
+import com.onewelcome.data.datastore.ShowcaseDataStore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
   lateinit var refreshMobileAuthPushTokenUseCase: RefreshMobileAuthPushTokenUseCase
 
   @Inject
-  lateinit var dataStore: DataStore
+  lateinit var dataStore: ShowcaseDataStore
 
   override fun onNewToken(token: String) {
     CoroutineScope(Dispatchers.Default).launch {

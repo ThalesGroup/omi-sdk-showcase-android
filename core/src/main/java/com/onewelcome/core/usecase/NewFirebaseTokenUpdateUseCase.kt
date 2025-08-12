@@ -5,12 +5,12 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.flatMap
 import com.github.michaelbull.result.map
 import com.onewelcome.core.facade.FirebaseMessagingFacade
-import com.onewelcome.data.datastore.DataStore
+import com.onewelcome.data.datastore.ShowcaseDataStore
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class NewFirebaseTokenUpdateUseCase @Inject constructor(
-  private val dataStore: DataStore,
+  private val dataStore: ShowcaseDataStore,
   private val firebaseMessagingFacade: FirebaseMessagingFacade,
   private val refreshMobileAuthPushTokenUseCase: RefreshMobileAuthPushTokenUseCase
 ) {
