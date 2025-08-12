@@ -29,18 +29,21 @@ See the documentation below for instructions on setting Gradle properties:
 
 ## Receiving push messages (optional)
 
-In order to use the Firebase Cloud Messaging you need to replace sample `app/google-services.json` file with one downloaded from
-the [Firebase Console](https://console.firebase.google.com/). There are to approaches you can take to add your own configuration:
+To use Firebase Cloud Messaging, replacement of `app/google-services.json` with file downloaded from your own project
+on [Firebase Console](https://console.firebase.google.com/) is needed.
 
-1. You can simply create two new apps in you Firebase project with following application IDs: `com.onewelcome.showcaseapp.developer` and
-   `com.onewelcome.showcaseapp.internal`.
-   Then you just need to replace `app/google-services.json` with your own.
-2. `com.onewelcome.showcaseapp.internal` is an internal variant of the app used for testing purposes. If you don't want to create two
-   separate apps, you can just setup the app for developer variant `com.onewelcome.showcaseapp.developer`.
-   You can see that in current `google-services.json` file there are dummy values. You can just replace the values for
-   `com.onewelcome.showcaseapp.developer` with you own and leave the internal variant unchanged, as you won't need it.
+**If you ignore this step, you won't be able to receive push messages from the backend.**
 
-If you need more information on how to set up Firebase Messaging, please take a look at
+1. Create a new project on [Firebase Console](https://console.firebase.google.com/).
+2. Navigate to project settings and create two new Android apps with following application IDs:
+
+- `com.onewelcome.showcaseapp.developer`
+- `com.onewelcome.showcaseapp.internal`
+
+3. Download the `google-services.json` file and replace it with sample `app/google-services.json` present in the project.
+
+Alternatively, if internal build variant is not needed, you can create just `com.onewelcome.showcaseapp.developer` project and edit the
+content for the `developer` part inside the sample file.
+
+For more information on how to set up Firebase Messaging, please take a look at
 [Google Documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase).
-
-If you ignore this step, you won't be able to receive push messages from the Access.
