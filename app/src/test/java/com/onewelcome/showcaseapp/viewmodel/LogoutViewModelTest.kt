@@ -66,7 +66,7 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `Given SDK is not initialized, When viewmodel is initialized, Then state should be updated`() {
+  fun `When viewmodel is initialized, Then state should be initial`() {
     initializeViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE)
