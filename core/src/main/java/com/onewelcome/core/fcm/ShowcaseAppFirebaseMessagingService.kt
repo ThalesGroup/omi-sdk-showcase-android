@@ -1,10 +1,9 @@
 package com.onewelcome.core.fcm
 
-import com.github.michaelbull.result.flatMap
 import com.google.firebase.messaging.FirebaseMessagingService
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
+import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RefreshMobileAuthPushTokenUseCase
+import com.onewelcome.data.datastore.DataStore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,15 +14,21 @@ import javax.inject.Inject
 class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
 
   @Inject
-  lateinit var omiSdkInitializationUseCase: OmiSdkInitializationUseCase
+  lateinit var isSdkInitializedUseCase: IsSdkInitializedUseCase
 
   @Inject
   lateinit var refreshMobileAuthPushTokenUseCase: RefreshMobileAuthPushTokenUseCase
 
+  @Inject
+  lateinit var dataStore: DataStore
+
   override fun onNewToken(token: String) {
     CoroutineScope(Dispatchers.Default).launch {
-      omiSdkInitializationUseCase.initialize(OmiSdkInitializationSettings.DEFAULT)
-        .flatMap { refreshMobileAuthPushTokenUseCase.execute(token) }
+      if (isSdkInitializedUseCase.execute()) {
+        refreshMobileAuthPushTokenUseCase.execute(token)
+      } else {
+        dataStore.setFirebaseTokenUpdateNeeded(true)
+      }
     }
   }
 }
