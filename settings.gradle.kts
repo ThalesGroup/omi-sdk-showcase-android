@@ -33,7 +33,7 @@ private fun RepositoryHandler.setupOmiSdkRepo() {
     val artifactoryUser = providers.gradleProperty("artifactory_user").get()
     val artifactoryPassword = providers.gradleProperty("artifactory_password").get()
     maven {
-      url = uri("https://repo.onewelcome.com/artifactory/public")
+      url = uri("https://thalescpliam.jfrog.io/artifactory/onegini-sdk")
       credentials {
         username = artifactoryUser
         password = artifactoryPassword

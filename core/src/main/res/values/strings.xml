@@ -40,6 +40,7 @@
   <string name="section_title_mobile_authentication_enrollment">Enroll for mobile authentication</string>
   <string name="section_title_mobile_authentication_push_enrollment">Enroll for mobile authentication with push</string>
   <string name="section_title_user_deregistration">User Deregistration</string>
+  <string name="section_title_change_pin">Change PIN</string>
 
   <!-- SDK Initialization -->
   <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
@@ -164,4 +165,12 @@
   <string name="max_attempts">Max attempts: %s</string>
   <string name="failed_attempts">Failed attempts: %s</string>
   <string name="remaining_attempts">Remaining attempts: %s</string>
+
+  <!-- Change PIN -->
+  <string name="change_pin">Change PIN</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_pin_change_tooltip">SDK needs to be initialized to perform PIN change</string>
+  <string name="user_needs_to_be_authenticated_to_perform_pin_change_tooltip">User needs to be authenticated to perform PIN change</string>
+  <string name="change_pin_description">SDK offers a way to change the PIN for the currently logged in user profile.</string>
+  <string name="pin_changed_successfully">PIN changed successfully</string>
+
 </resources>
