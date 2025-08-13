@@ -16,7 +16,6 @@ class OmiSdkEngine @Inject constructor(
   @ApplicationContext private val context: Context,
   private val createPinRequestHandler: CreatePinRequestHandler,
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
   private val oneginiConfigModel: OneginiConfigModel
 ) : OmiSdkFacade {
 
@@ -27,11 +26,11 @@ class OmiSdkEngine @Inject constructor(
     return OneginiClientBuilder(context, createPinRequestHandler, pinAuthenticationRequestHandler)
       .setConfigModel(oneginiConfigModel)
       .shouldStoreCookies(settings.shouldStoreCookies)
-      .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
       .apply {
         settings.httpConnectTimeout?.let { setHttpConnectTimeout(it) }
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }
         settings.deviceConfigCacheDuration?.let { setDeviceConfigCacheDurationSeconds(it) }
+        settings.browserRegistrationRequestHandler?.let { setBrowserRegistrationRequestHandler(it) }
       }.build()
   }
 }
