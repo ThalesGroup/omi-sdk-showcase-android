@@ -12,6 +12,7 @@ object AndroidConfig {
   const val APPLICATION_ID = "com.onewelcome.showcaseapp"
   const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
   const val CORE_MODULE = ":core"
+  const val DATA_MODULE = ":data"
   const val INTERNAL_MODULE = ":internal"
   const val ENVIRONMENT_FLAVOR_DIMENSION = "environment"
   const val IS_INTERNAL_VARIANT = "IS_INTERNAL_VARIANT"
