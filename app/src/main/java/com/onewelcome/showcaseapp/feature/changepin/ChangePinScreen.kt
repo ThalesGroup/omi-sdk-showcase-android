@@ -48,7 +48,7 @@ fun ChangePinScreen(
 }
 
 @Composable
-fun ChangePinScreenContent(
+private fun ChangePinScreenContent(
   onNavigateBack: () -> Unit,
   uiState: State,
   onEvent: (UiEvent) -> Unit,
@@ -77,7 +77,7 @@ fun ChangePinScreenContent(
 }
 
 @Composable
-fun ChangePinButton(onEvent: (UiEvent) -> Unit) {
+private fun ChangePinButton(onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
       .fillMaxWidth()
@@ -147,7 +147,7 @@ private fun PinChangeResult(result: Result<Unit, Throwable>) {
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+private fun Preview() {
   ChangePinScreenContent(
     uiState = State(),
     onEvent = {},
