@@ -55,10 +55,9 @@ class MobileAuthenticationWithPushEnrollmentViewModel @Inject constructor(
   }
 
   private fun loadInitialData() {
-    val isSdkInitialized = isSdkInitializedUseCase.execute()
     val authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
     uiState = uiState.copy(
-      isSdkInitialized = isSdkInitialized,
+      isSdkInitialized = isSdkInitializedUseCase.execute(),
       authenticatedUserProfile = authenticatedUserProfile,
       isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuth(authenticatedUserProfile),
       isUserEnrolledForMobileAuthWithPush = isUserEnrolledForMobileAuthWithPush(authenticatedUserProfile),
