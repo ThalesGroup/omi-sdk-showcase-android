@@ -1,11 +1,12 @@
 package com.onewelcome.showcaseapp.viewmodel
 
-import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
-import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.util.TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER
+import com.onewelcome.core.util.TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT
 import com.onewelcome.core.util.TestConstants.TEST_PIN
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.FakePinCallback
-import com.onewelcome.showcaseapp.feature.pin.CreatePinViewModel
+import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -18,63 +19,64 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import javax.inject.Inject
 
+
 @HiltAndroidTest
 @Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
-class CreatePinViewModelTest {
+class PinAuthenticationInputViewModelTest {
 
   @get:Rule
   val hiltRule = HiltAndroidRule(this)
 
   @Inject
-  lateinit var createPinRequestHandler: CreatePinRequestHandler
-
-  private val mockOneginiPinValidationError: OneginiPinValidationError = mock()
+  lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
 
   val pinCallback = FakePinCallback()
 
-  private lateinit var viewModel: CreatePinViewModel
+  private lateinit var viewModel: PinAuthenticationInputViewModel
 
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = CreatePinViewModel(createPinRequestHandler)
+    viewModel = PinAuthenticationInputViewModel(pinAuthenticationRequestHandler)
   }
 
   @Test
-  fun `When pin creation is started, Then state should be updated`() {
-    val expected = viewModel.uiState.copy(maxPinLength = 5)
+  fun `When authentication is started, Then data should be updated`() {
+    val expected = viewModel.uiState.copy(authenticationAttemptCounter = TEST_AUTHENTICATION_ATTEMPT_COUNTER)
 
-    createPinRequestHandler.startPinCreation(TEST_USER_PROFILE_1, pinCallback, 5)
-    viewModel = CreatePinViewModel(createPinRequestHandler)
+    pinAuthenticationRequestHandler.startAuthentication(TEST_USER_PROFILE_1, pinCallback, TEST_AUTHENTICATION_ATTEMPT_COUNTER)
 
     assertThat(viewModel.uiState).isEqualTo(expected)
   }
 
   @Test
-  fun `When invalid pin is provided, Then state should be updated`() {
-    val pinValidationErrorMessage = "pin validation error"
-    whenever(mockOneginiPinValidationError.message).thenReturn(pinValidationErrorMessage)
-    val expected = viewModel.uiState.copy(pinValidationError = pinValidationErrorMessage)
+  fun `When pin authentication is retried, Then data should be updated`() {
+    val expected = viewModel.uiState.copy(
+      authenticationAttemptCounter = TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT,
+      pinValidationError = "Wrong PIN, try again"
+    )
 
-    createPinRequestHandler.onNextPinCreationAttempt(mockOneginiPinValidationError)
+    pinAuthenticationRequestHandler.startAuthentication(
+      TEST_USER_PROFILE_1,
+      pinCallback,
+      TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT
+    )
 
     assertThat(viewModel.uiState).isEqualTo(expected)
   }
 
   @Test
-  fun `When Pin creation is finished, Then navigation event should be sent`() {
+  fun `When pin authentication is finished, Then navigation event should be sent`() {
     val expected = NavigationEvent.PopBackStack
 
-    createPinRequestHandler.finishPinCreation()
+    pinAuthenticationRequestHandler.finishAuthentication()
 
     runTest {
       assertThat(viewModel.navigationEvents.first()).isEqualTo(expected)
@@ -83,8 +85,8 @@ class CreatePinViewModelTest {
 
   @Test
   fun `When Submit event is sent, Then accept authentication request should be triggered`() {
-    val spyCreatePinRequestHandler = spy(createPinRequestHandler)
-    viewModel = CreatePinViewModel(spyCreatePinRequestHandler)
+    val spyCreatePinRequestHandler = spy(pinAuthenticationRequestHandler)
+    viewModel = PinAuthenticationInputViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.Submit(TEST_PIN))
 
@@ -93,8 +95,8 @@ class CreatePinViewModelTest {
 
   @Test
   fun `When Cancel event is sent, Then deny authentication request should be triggered`() {
-    val spyCreatePinRequestHandler = spy(createPinRequestHandler)
-    viewModel = CreatePinViewModel(spyCreatePinRequestHandler)
+    val spyCreatePinRequestHandler = spy(pinAuthenticationRequestHandler)
+    viewModel = PinAuthenticationInputViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.Cancel)
 
