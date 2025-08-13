@@ -13,6 +13,8 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
+import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SdkInitializationViewModel @Inject constructor(
-  private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase
+  private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase,
+  private val newFirebaseTokenUpdateUseCase: NewFirebaseTokenUpdateUseCase,
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -33,6 +37,7 @@ class SdkInitializationViewModel @Inject constructor(
       is UiEvent.ChangeShouldStoreCookiesValue -> uiState = uiState.copy(shouldStoreCookies = event.value)
       is UiEvent.ChangeDeviceConfigCacheDurationValue -> uiState = uiState.copy(deviceConfigCacheDurationSeconds = event.value)
       is UiEvent.InitializeOneginiSdk -> initializeOmiSdk()
+      is UiEvent.UpdateSelectedHandlers -> uiState = uiState.copy(selectedHandlers = event.value)
     }
   }
 
@@ -41,7 +46,10 @@ class SdkInitializationViewModel @Inject constructor(
       shouldStoreCookies = uiState.shouldStoreCookies,
       httpConnectTimeout = uiState.httpConnectTimeout,
       httpReadTimeout = uiState.httpReadTimeout,
-      deviceConfigCacheDuration = uiState.deviceConfigCacheDurationSeconds
+      deviceConfigCacheDuration = uiState.deviceConfigCacheDurationSeconds,
+      browserRegistrationRequestHandler = browserRegistrationRequestHandler.takeIf {
+        uiState.selectedHandlers.contains(HandlerType.BROWSER_REGISTRATION)
+      }
     )
     viewModelScope.launch {
       uiState = uiState.copy(isLoading = true)
@@ -53,6 +61,7 @@ class SdkInitializationViewModel @Inject constructor(
   }
 
   data class State(
+    val selectedHandlers: List<HandlerType> = HandlerType.entries,
     val shouldStoreCookies: Boolean = true,
     val httpConnectTimeout: Int? = null,
     val httpReadTimeout: Int? = null,
@@ -67,5 +76,6 @@ class SdkInitializationViewModel @Inject constructor(
     data class ChangeHttpReadTimeoutValue(val value: Int?) : UiEvent
     data class ChangeDeviceConfigCacheDurationValue(val value: Int?) : UiEvent
     data object InitializeOneginiSdk : UiEvent
+    data class UpdateSelectedHandlers(val value: List<HandlerType>) : UiEvent
   }
 }

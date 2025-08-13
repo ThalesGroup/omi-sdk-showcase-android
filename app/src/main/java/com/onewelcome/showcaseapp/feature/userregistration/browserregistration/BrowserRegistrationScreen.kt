@@ -3,6 +3,7 @@ package com.onewelcome.showcaseapp.feature.userregistration.browserregistration
 import android.content.Intent
 import android.os.Parcel
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -72,7 +73,7 @@ fun BrowserRegistrationScreen(
 
 @Composable
 fun RegistrationIntentListener(onEvent: (UiEvent) -> Unit) {
-  val activity = LocalContext.current as ComponentActivity
+  val activity = LocalActivity.current as ComponentActivity
   DisposableEffect(Unit) {
     val listener = Consumer<Intent> { intent ->
       intent.data?.let { onEvent.invoke(UiEvent.HandleRegistrationCallback(it)) }
