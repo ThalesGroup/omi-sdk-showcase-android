@@ -133,6 +133,7 @@ dependencies {
 
   //Kotlin Result
   implementation(libs.kotlin.result)
+  implementation(libs.kotlin.result.coroutines)
 
   // Test
   testImplementation(libs.androidx.junit)

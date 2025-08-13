@@ -31,7 +31,7 @@ import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.B
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedIdentityProvider
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedScopes
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UseDefaultIdentityProvider
-import com.onewelcome.showcaseapp.utils.ResultAssert
+import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -221,11 +221,14 @@ class BrowserRegistrationViewModelTest {
 
   @Test
   fun `Given sdk is not initialized, When register event is sent, Then error should be returned`() {
+    val expectedState = viewModel.uiState.copy(result = Err(IllegalStateException("Onegini SDK instance not yet initialized")))
+
     viewModel.onEvent(StartBrowserRegistration)
 
-    ResultAssert
-      .assertThat(viewModel.uiState.result!!)
-      .hasErrorInstance(IllegalStateException::class.java, "Onegini SDK instance not yet initialized")
+    assertThat(viewModel.uiState)
+      .usingRecursiveComparison()
+      .withEqualsForThrowable()
+      .isEqualTo(expectedState)
   }
 
   @Test

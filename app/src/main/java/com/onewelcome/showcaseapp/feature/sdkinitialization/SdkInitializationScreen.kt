@@ -30,6 +30,7 @@ import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseNumberTextField
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.State
@@ -181,7 +182,7 @@ private fun InitializationResult(uiState: State) {
           })
       }
       ?.onFailure {
-        Text("${it.errorType.code}: ${it.message}")
+        Text(it.toErrorResultString())
       }
   }
 }

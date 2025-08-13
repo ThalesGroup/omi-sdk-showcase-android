@@ -69,6 +69,7 @@ omiSdk-developer = { group = "com.onegini.mobile.sdk.android", name = "onegini-s
 
 # Kotlin Result
 kotlin-result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version.ref = "kotlinResult" }
+kotlin-result-coroutines = { group = "com.michael-bull.kotlin-result", name = "kotlin-result-coroutines", version.ref = "kotlinResult" }
 
 # Robolectric
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectic" }
