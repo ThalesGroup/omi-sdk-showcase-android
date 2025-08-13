@@ -157,7 +157,7 @@ class LogoutViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
+    omiSdkEngineFake.initialize(TestConstants.getTestDefaultSdkInitializationSettings())
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 

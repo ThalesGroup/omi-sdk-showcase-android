@@ -1,7 +1,7 @@
 package com.onewelcome.internal.testcases.initialization
 
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
-import com.onewelcome.core.util.TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
+import com.onewelcome.core.util.TestConstants.getTestDefaultSdkInitializationSettings
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
@@ -21,8 +21,8 @@ class SdkInitializationTestCases @Inject constructor(
   )
 
   private suspend fun sdkInitialized(): TestStatus {
-    sdkInitializationUseCase.initialize(TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
-    val result = sdkInitializationUseCase.initialize(TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
+    sdkInitializationUseCase.initialize(getTestDefaultSdkInitializationSettings())
+    val result = sdkInitializationUseCase.initialize(getTestDefaultSdkInitializationSettings())
     return if (result.isOk) {
       TestStatus.Passed
     } else {
