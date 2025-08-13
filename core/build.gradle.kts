@@ -1,4 +1,5 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
+import com.onewelcome.buildsrc.AndroidConfig.DATA_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -43,6 +44,9 @@ android {
 }
 
 dependencies {
+  // Project modules
+  implementation(project(DATA_MODULE))
+
   // Android
   implementation(libs.androidx.core.ktx)
 
@@ -75,6 +79,10 @@ dependencies {
       isTransitive = true
     }
   }
+
+  //Firebase
+  api(platform(libs.firebase.bom))
+  api(libs.firebase.messaging)
 
   // Test
   testImplementation(libs.androidx.junit)

@@ -28,6 +28,7 @@
   <string name="label_otp">OTP</string>
   <string name="label_push">Push</string>
   <string name="status_mobile_authentication_enrollment">Mobile authentication enrollment</string>
+  <string name="status_post_notifications_permission">Post notifications permission</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
@@ -136,14 +137,27 @@
   <string name="mobile_authentication">Mobile authentication</string>
   <string name="mobile_authentication_description">SDK provides secure and user-friendly two-factor authentication. It supports OTP and push based authentication. You need to first enroll for mobile authentication before handling any transactions.</string>
   <string name="sdk_needs_to_be_initialized_to_perform_enrollment">SDK needs to be initialized to perform enrollment</string>
-  <string name="status_user_enrolled_for_mobile_authentication">Enrolled for mobile authentication</string>
 
   <!-- Mobile Authentication Enrollment-->
   <string name="label_mobile_authentication_enrollment_success">Mobile authentication enrollment success</string>
   <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP.</string>
   <string name="button_mobile_authentication_enrollment">Enroll</string>
-  <string name="mobile_auth_enrollemnt_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
+  <string name="mobile_auth_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
   <string name="user_enrolled_for_mobile_authentication_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication</string>
+  <string name="status_user_enrolled_for_mobile_authentication">Enrolled for mobile authentication</string>
+
+  <!-- Mobile Authentication With Push Enrollment-->
+  <string name="label_mobile_authentication_push_enrollment_success">Mobile authentication with push enrollment success</string>
+  <string name="mobile_authentication_push_enrollment_description">Enables user to use mobile authentication with push messages. It is required to include correct Firebase\'s google-services.json file connected to your project to be able to receive push messages. More info on Firebase setup can be found in README file of this project.</string>
+  <string name="button_mobile_authentication_push_enrollment">Enroll</string>
+  <string name="mobile_auth_push_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication with push</string>
+  <string name="user_needs_to_be_enrolled_for_mobile_authentication">User profile has to be enrolled for mobile authentication (OTP) before it can be enrolled for mobile authentication with push</string>
+  <string name="status_user_enrolled_for_mobile_authentication_with_push">Enrolled for mobile authentication with push</string>
+  <string name="user_enrolled_for_mobile_authentication_with_push_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication with push</string>
+  <string name="post_notifications_permission_tooltip">Notification permission is not mandatory. Pushes will still be received, but the app won\'t be able to inform the user via system notification.</string>
+  <string name="post_notifications_permission_dialog_title">Post notifications permission</string>
+  <string name="post_notifications_permission_dialog_description">To change the post notifications permission you need to navigate to application settings.</string>
+  <string name="navigate_to_settings">Navigate to settings</string>
 
   <!-- PIN -->
   <string name="enter_pin">Enter PIN</string>

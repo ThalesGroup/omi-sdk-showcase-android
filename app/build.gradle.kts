@@ -1,6 +1,7 @@
 import com.onewelcome.buildsrc.AndroidConfig.APPLICATION_ID
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
+import com.onewelcome.buildsrc.AndroidConfig.DATA_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
 import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
@@ -18,6 +19,7 @@ plugins {
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.hilt.plugin)
+  alias(libs.plugins.google.services)
 }
 
 android {
@@ -78,11 +80,13 @@ dependencies {
   // Project modules
   implementation(project(CORE_MODULE))
   implementation(project(INTERNAL_MODULE))
+  testImplementation(project(DATA_MODULE))
 
   // Android
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.ui)
+  implementation(libs.androidx.activity.compose)
 
   // Lifecycle
   implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -99,7 +103,6 @@ dependencies {
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.ui.tooling)
   implementation(libs.androidx.compose.ui.test.manifest)
-  implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.lifecycle.lifecycle.viewmodel.compose)
   implementation(libs.androidx.compose.runtime.livedata)
   implementation(libs.androidx.navigation)
