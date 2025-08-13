@@ -4,6 +4,7 @@ import androidx.annotation.FloatRange
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onewelcome.core.util.Constants
 
 fun Color.darken(@FloatRange(from = 0.0, to = 1.0) factor: Float) =
@@ -22,5 +23,12 @@ fun Modifier.invisibleIf(invisible: Boolean): Modifier {
     this.alpha(0f)
   } else {
     this
+  }
+}
+
+fun Throwable.toErrorResultString(): String {
+  return when (this) {
+    is OneginiError -> "${this.errorType.code}: ${this.message}"
+    else -> "$this"
   }
 }

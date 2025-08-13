@@ -56,8 +56,9 @@ private fun getSections(): List<SectionItem> {
   return listOf(
     SectionItem(stringResource(R.string.section_title_sdk_initialization), Screens.SdkInitialization),
     SectionItem(stringResource(R.string.section_title_user_registration), Screens.UserRegistration),
-    SectionItem(stringResource(R.string.section_title_user_deregistration), Screens.UserDeregistration),
     SectionItem(stringResource(R.string.section_title_user_authentication), Screens.UserAuthentication),
+    SectionItem(stringResource(R.string.section_title_mobile_authentication), Screens.MobileAuthentication),
+    SectionItem(stringResource(R.string.section_title_user_deregistration), Screens.UserDeregistration)
   )
 }
 

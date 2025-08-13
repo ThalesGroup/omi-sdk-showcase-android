@@ -6,6 +6,8 @@ import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
+import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
@@ -19,6 +21,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -43,6 +46,12 @@ class InfoViewModelTest {
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 
   @Inject
+  lateinit var isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase
+
+  @Inject
+  lateinit var isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase
+
+  @Inject
   lateinit var oneginiClientMock: OneginiClient
 
   @Inject
@@ -55,7 +64,13 @@ class InfoViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = InfoViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, getAuthenticatedUserProfileUseCase)
+    viewModel = InfoViewModel(
+      isSdkInitializedUseCase,
+      getUserProfilesUseCase,
+      getAuthenticatedUserProfileUseCase,
+      isUserEnrolledForMobileAuthUseCase,
+      isUserEnrolledForMobileAuthWithPushUseCase
+    )
   }
 
   @Test
@@ -82,8 +97,15 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockUserProfileIds()
+    mockMobileAuthEnrollmentStatus()
+    mockMobileAuthEnrollmentWithPushStatus()
     val expectedState =
-      viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = TEST_USER_PROFILES_IDS, authenticatedUserProfileId = "")
+      viewModel.uiState.copy(
+        isSdkInitialized = true,
+        userProfileIds = TEST_USER_PROFILES_IDS,
+        authenticatedUserProfileId = "",
+        mobileAuthenticationEnrollmentState = TEST_USER_PROFILES_IDS.map { InfoViewModel.MobileAuthEnrollmentState(it, true, true) }
+      )
 
     viewModel.updateData()
 
@@ -91,7 +113,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and the are no authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given sdk is initialized and the is no authenticated user profile, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
 
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
@@ -102,7 +124,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and the are authenticated user profiles, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given sdk is initialized and the is authenticated user profile, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
     mockUserClient()
     mockAuthenticatedUserProfileId()
@@ -111,6 +133,57 @@ class InfoViewModelTest {
       isSdkInitialized = true,
       userProfileIds = emptyList(),
       authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized, When getting user profiles failed, Then mobile auth enrollment list should be empty`() {
+    mockSdkInitialized()
+    mockUserProfilesError()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = emptyList(),
+      mobileAuthenticationEnrollmentState = emptyList()
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized, When mobile auth enrollment check failed, Then mobile auth enrollment list should be empty`() {
+    mockSdkInitialized()
+    mockUserProfileIds()
+    mockMobileAuthEnrollmentStatusError()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = emptyList(),
+      mobileAuthenticationEnrollmentState = emptyList()
+    )
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized, When mobile auth enrollment with push check failed, Then mobile auth enrollment list should be empty`() {
+    mockSdkInitialized()
+    mockUserProfileIds()
+    mockMobileAuthEnrollmentStatus()
+    mockMobileAuthEnrollmentWithPushStatusError()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      userProfileIds = emptyList(),
+      mobileAuthenticationEnrollmentState = emptyList()
     )
 
     viewModel.updateData()
@@ -131,7 +204,27 @@ class InfoViewModelTest {
     whenever(userClientMock.userProfiles).thenReturn(TEST_USER_PROFILES)
   }
 
+  private fun mockUserProfilesError() {
+    whenever(userClientMock.userProfiles).thenThrow(RuntimeException("Some exception"))
+  }
+
   private fun mockAuthenticatedUserProfileId() {
     whenever(userClientMock.authenticatedUserProfile).thenReturn(TEST_USER_PROFILE_1)
+  }
+
+  private fun mockMobileAuthEnrollmentStatus() {
+    whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenReturn(true)
+  }
+
+  private fun mockMobileAuthEnrollmentStatusError() {
+    whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenThrow(RuntimeException("Some excpetion"))
+  }
+
+  private fun mockMobileAuthEnrollmentWithPushStatus() {
+    whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenReturn(true)
+  }
+
+  private fun mockMobileAuthEnrollmentWithPushStatusError() {
+    whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenThrow(RuntimeException("Some excpetion"))
   }
 }

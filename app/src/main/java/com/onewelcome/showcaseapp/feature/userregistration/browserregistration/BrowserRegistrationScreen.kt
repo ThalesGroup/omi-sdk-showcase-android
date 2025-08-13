@@ -43,6 +43,7 @@ import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.R.string.identity_providers
@@ -244,7 +245,7 @@ private fun RegistrationResult(userProfilesResult: Result<Pair<UserProfile, Cust
           Text(stringResource(R.string.custom_info, it.second.toString()))
         }
       }
-      ?.onFailure { Text("$it") }
+      ?.onFailure { Text(it.toErrorResultString()) }
   }
 }
 

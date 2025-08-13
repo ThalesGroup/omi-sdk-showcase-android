@@ -7,10 +7,10 @@ import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.core.util.TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
-import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -42,7 +42,7 @@ class SdkInitializationViewModelTest {
   lateinit var omiSdkInitializationUseCase: OmiSdkInitializationUseCase
 
   @Inject
-  lateinit var omiSdkEngineFake: OmiSdkEngineFake
+  lateinit var omiSdkEngineFake: OmiSdkFacade
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient

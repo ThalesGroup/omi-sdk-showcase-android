@@ -21,7 +21,6 @@ import androidx.navigation.NavController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseCard
@@ -29,6 +28,7 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel.State
@@ -138,13 +138,7 @@ private fun UserProfileSelectionSection(
 private fun DeregistrationResult(result: Result<Unit, Throwable>) {
   Column {
     result.onSuccess { Text(stringResource(R.string.label_user_deregistration_success)) }
-      .onFailure {
-        val errorText = when (it) {
-          is OneginiError -> "${it.errorType.code}: ${it.message}"
-          else -> "$it"
-        }
-        Text(errorText)
-      }
+      .onFailure { Text(it.toErrorResultString()) }
   }
 }
 

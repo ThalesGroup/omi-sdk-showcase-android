@@ -15,9 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.onewelcome.core.components.ShowcaseStatusCard
+import com.onewelcome.core.components.ShowcaseUserProfileStatusTableCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.feature.info.InfoViewModel.MobileAuthEnrollmentState
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 
 @Composable
@@ -70,6 +72,26 @@ private fun StatusList(uiState: State) {
       title = stringResource(R.string.authenticated_profile),
       description = getAuthenticatedProfile(uiState.authenticatedUserProfileId)
     )
+    UserProfilesEnrolledForMobileAuth(uiState.mobileAuthenticationEnrollmentState)
+  }
+}
+
+@Composable
+private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<MobileAuthEnrollmentState>) {
+  if (mobileAuthEnrollmentStatus.isEmpty()) {
+    ShowcaseStatusCard(
+      title = stringResource(R.string.status_mobile_authentication_enrollment),
+      description = stringResource(R.string.no_user_profiles)
+    )
+  } else {
+    ShowcaseUserProfileStatusTableCard(
+      title = stringResource(R.string.status_mobile_authentication_enrollment)
+    ) {
+      headerRow(stringResource(R.string.label_user_profile), stringResource(R.string.label_otp), stringResource(R.string.label_push))
+      mobileAuthEnrollmentStatus.forEach {
+        contentRow(it.userProfileId, it.isUserEnrolledForMobileAuth, it.isUserEnrolledForMobileAuthWithPush)
+      }
+    }
   }
 }
 
