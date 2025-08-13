@@ -2,15 +2,20 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.onegini.mobile.sdk.android.client.DeviceClient
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiRefreshMobileAuthPushTokenHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
+import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.core.util.TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
+import com.onewelcome.showcaseapp.fakes.FirebaseMessagingFacadeFake
+import com.onewelcome.showcaseapp.fakes.ShowcaseDataStoreFake
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -24,6 +29,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -42,11 +48,21 @@ class SdkInitializationViewModelTest {
   lateinit var omiSdkInitializationUseCase: OmiSdkInitializationUseCase
 
   @Inject
+  lateinit var newFirebaseTokenUpdateUseCase: NewFirebaseTokenUpdateUseCase
+
+  @Inject
   lateinit var omiSdkEngineFake: OmiSdkFacade
+
+  @Inject
+  lateinit var firebaseMessagingFacadeFake: FirebaseMessagingFacadeFake
+
+  @Inject
+  lateinit var showcaseDataStoreFake: ShowcaseDataStoreFake
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient
 
+  private val deviceClientMock = mock<DeviceClient>()
   private val oneginiInitializationError: OneginiInitializationError = mock()
 
   private lateinit var viewModel: SdkInitializationViewModel
@@ -54,7 +70,8 @@ class SdkInitializationViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = SdkInitializationViewModel(omiSdkInitializationUseCase)
+    whenever(oneginiClientMock.getDeviceClient()).thenReturn(deviceClientMock)
+    viewModel = SdkInitializationViewModel(omiSdkInitializationUseCase, newFirebaseTokenUpdateUseCase)
   }
 
   @Test
@@ -159,6 +176,48 @@ class SdkInitializationViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedStateAfterInitialization)
   }
 
+  @Test
+  fun `should not refresh mobile auth push token when there is no new firebase token`() {
+    whenSdkInitializedSuccessfully()
+
+    showcaseDataStoreFake.isFirebaseTokenUpdateNeeded = false
+    viewModel.onEvent(UiEvent.InitializeOneginiSdk)
+
+    verify(deviceClientMock, times(0)).refreshMobileAuthPushToken(any(), any())
+  }
+
+  @Test
+  fun `should not refresh mobile auth push token when sdk initialization failed`() {
+    whenSdkInitializedWithError()
+
+    showcaseDataStoreFake.isFirebaseTokenUpdateNeeded = false
+    viewModel.onEvent(UiEvent.InitializeOneginiSdk)
+
+    verify(deviceClientMock, times(0)).refreshMobileAuthPushToken(any(), any())
+  }
+
+  @Test
+  fun `should refresh mobile auth push token when there is new firebase token`() {
+    whenMobileAuthPushTokenRefreshedSuccessfully()
+
+    showcaseDataStoreFake.isFirebaseTokenUpdateNeeded = true
+    viewModel.onEvent(UiEvent.InitializeOneginiSdk)
+
+    verify(deviceClientMock).refreshMobileAuthPushToken(any(), any())
+    assertThat(showcaseDataStoreFake.isFirebaseTokenUpdateNeeded).isFalse()
+  }
+
+  @Test
+  fun `should not update refresh needed flag when refresh mobile auth push token failed`() {
+    whenMobileAuthPushTokenRefreshFailed()
+
+    showcaseDataStoreFake.isFirebaseTokenUpdateNeeded = true
+    viewModel.onEvent(UiEvent.InitializeOneginiSdk)
+
+    verify(deviceClientMock).refreshMobileAuthPushToken(any(), any())
+    assertThat(showcaseDataStoreFake.isFirebaseTokenUpdateNeeded).isTrue()
+  }
+
   private fun whenSdkInitializedSuccessfully(removedUserProfiles: Set<UserProfile> = emptySet()) {
     whenever(oneginiClientMock.start(any()))
       .thenAnswer { invocation ->
@@ -171,6 +230,20 @@ class SdkInitializationViewModelTest {
       .thenAnswer { invocation ->
         invocation.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
       }
+  }
+
+  private fun whenMobileAuthPushTokenRefreshedSuccessfully() {
+    whenSdkInitializedSuccessfully()
+    whenever(deviceClientMock.refreshMobileAuthPushToken(any(), any())).thenAnswer { invocation ->
+      invocation.getArgument<OneginiRefreshMobileAuthPushTokenHandler>(1).onSuccess()
+    }
+  }
+
+  private fun whenMobileAuthPushTokenRefreshFailed() {
+    whenSdkInitializedSuccessfully()
+    whenever(deviceClientMock.refreshMobileAuthPushToken(any(), any())).thenAnswer { invocation ->
+      invocation.getArgument<OneginiRefreshMobileAuthPushTokenHandler>(1).onError(mock())
+    }
   }
 
   companion object {

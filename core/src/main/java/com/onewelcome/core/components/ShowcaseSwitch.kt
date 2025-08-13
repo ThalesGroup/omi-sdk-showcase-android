@@ -1,5 +1,6 @@
 package com.onewelcome.core.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -12,13 +13,15 @@ import androidx.compose.ui.tooling.preview.Preview
 fun ShowcaseSwitch(
   shouldBeChecked: Boolean,
   onCheck: (Boolean) -> Unit,
-  text: String,
+  label: @Composable (() -> Unit)? = null,
   tooltipContent: @Composable (() -> Unit)? = null,
 ) {
   Row(
     verticalAlignment = Alignment.CenterVertically
   ) {
-    Text(text, modifier = Modifier.weight(1f))
+    Box(modifier = Modifier.weight(1f)) {
+      label?.let { it() }
+    }
     Switch(
       checked = shouldBeChecked,
       onCheckedChange = onCheck
@@ -33,7 +36,7 @@ private fun Preview() {
   ShowcaseSwitch(
     true,
     {},
-    "Switch me",
+    { Text("Switch me") },
     { Text("Switch tooltip") }
   )
 }

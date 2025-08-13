@@ -13,6 +13,7 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SdkInitializationViewModel @Inject constructor(
-  private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase
+  private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase,
+  private val newFirebaseTokenUpdateUseCase: NewFirebaseTokenUpdateUseCase
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -46,7 +48,10 @@ class SdkInitializationViewModel @Inject constructor(
     viewModelScope.launch {
       uiState = uiState.copy(isLoading = true)
       omiSdkInitializationUseCase.initialize(settings)
-        .onSuccess { uiState = uiState.copy(result = Ok(it)) }
+        .onSuccess {
+          uiState = uiState.copy(result = Ok(it))
+          newFirebaseTokenUpdateUseCase.execute()
+        }
         .onFailure { uiState = uiState.copy(result = Err(it)) }
         .also { uiState = uiState.copy(isLoading = false) }
     }

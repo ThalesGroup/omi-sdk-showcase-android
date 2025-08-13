@@ -58,6 +58,7 @@ class MobileAuthenticationEnrollmentViewModel @Inject constructor(
         enrollmentResult = enrollForMobileAuthenticationUseCase.execute(),
         isLoading = false
       )
+      loadInitialData()
     }
   }
 

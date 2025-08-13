@@ -84,7 +84,7 @@ private fun AuthenticatedUserSection(authenticatedUserProfile: UserProfile?) {
     title = stringResource(R.string.authenticated_profile),
     description = authenticatedUserProfile?.let { stringResource(R.string.user_profile_id, it.profileId) },
     status = authenticatedUserProfile != null,
-    tooltipContent = { Text(stringResource(R.string.mobile_auth_enrollemnt_authenticated_user_requirement_tooltip)) }
+    tooltipContent = { Text(stringResource(R.string.mobile_auth_enrollment_authenticated_user_requirement_tooltip)) }
   )
 }
 
