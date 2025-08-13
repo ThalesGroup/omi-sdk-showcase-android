@@ -16,13 +16,4 @@ data class OmiSdkInitializationSettings(
 //  val mobileAuthWithPushBiometricRequestHandler: MobileAuthWithPushBiometricRequestHandler? = null,
 //  val mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler? = null,
 //  val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler? = null
-) {
-  companion object {
-    val DEFAULT = OmiSdkInitializationSettings(
-      shouldStoreCookies = true,
-      httpConnectTimeout = null,
-      httpReadTimeout = null,
-      deviceConfigCacheDuration = null
-    )
-  }
-}
+)

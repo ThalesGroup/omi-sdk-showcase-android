@@ -54,7 +54,10 @@ class SdkInitializationViewModel @Inject constructor(
     viewModelScope.launch {
       uiState = uiState.copy(isLoading = true)
       omiSdkInitializationUseCase.initialize(settings)
-        .onSuccess { uiState = uiState.copy(result = Ok(it)) }
+        .onSuccess {
+          uiState = uiState.copy(result = Ok(it))
+          newFirebaseTokenUpdateUseCase.execute()
+        }
         .onFailure { uiState = uiState.copy(result = Err(it)) }
         .also { uiState = uiState.copy(isLoading = false) }
     }
