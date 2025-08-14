@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.onewelcome.core.usecase.LogoutUseCase
 import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
@@ -15,6 +16,7 @@ import com.onewelcome.internal.testcases.authentication.PinAuthenticationTestCas
 import com.onewelcome.internal.testcases.browserregistation.BrowserRegistrationTestCases
 import com.onewelcome.internal.testcases.deregistration.UserDeregistrationTestCases
 import com.onewelcome.internal.testcases.initialization.SdkInitializationTestCases
+import com.onewelcome.internal.testcases.logout.LogoutTestCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,12 +28,13 @@ class OsCompatibilityViewModel @Inject constructor(
   browserRegistrationTestCases: BrowserRegistrationTestCases,
   sdkInitializationTestCases: SdkInitializationTestCases,
   userDeregistrationTestCases: UserDeregistrationTestCases,
-  pinAuthenticationTestCases: PinAuthenticationTestCases
+  pinAuthenticationTestCases: PinAuthenticationTestCases,
+  logoutTestCases: LogoutTestCases
 ) : ViewModel() {
   private val testCategories = listOf(
     sdkInitializationTestCases.tests,
     browserRegistrationTestCases.tests,
-//    TODO("Add commented tests as part of custom registration AOSA-26. User profile registered is needed.")
+    logoutTestCases.tests,
 //    userDeregistrationTestCases.tests,
 //    pinAuthenticationTestCases.tests
     )
