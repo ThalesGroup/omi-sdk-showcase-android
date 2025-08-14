@@ -7,7 +7,7 @@ data class OmiSdkInitializationSettings(
   val httpConnectTimeout: Int?,
   val httpReadTimeout: Int?,
   val deviceConfigCacheDuration: Int?,
-  val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler? = null,
+  val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler?,
   //TODO: Uncomment handlers when working on given authentication
 //  val biometricAuthenticationRequestHandler: BiometricAuthenticationRequestHandler? = null,
 //  val customAuthenticationRequestHandler: CustomAuthenticationRequestHandler? = null,
