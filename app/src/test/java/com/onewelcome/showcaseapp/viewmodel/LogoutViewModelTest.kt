@@ -82,7 +82,7 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized and authenticated user profile user present, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given SDK is initialized and authenticated user profile is present, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile()
 

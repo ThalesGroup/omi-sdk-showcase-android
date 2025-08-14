@@ -122,7 +122,7 @@ private fun SdkInitializationSection(isSdkInitialized: Boolean) {
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+private fun Preview() {
   LogoutScreenContent(
     State(),
     {},
