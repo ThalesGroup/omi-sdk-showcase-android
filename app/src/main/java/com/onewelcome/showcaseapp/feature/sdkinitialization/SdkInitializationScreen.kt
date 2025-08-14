@@ -32,10 +32,12 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
+import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseCheckbox
 import com.onewelcome.core.components.ShowcaseExpandableCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseNumberTextField
+import com.onewelcome.core.components.ShowcaseSwitch
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
@@ -86,6 +88,12 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     Column(
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
+      ShowcaseCard {
+        ShowcaseSwitch(
+          shouldBeChecked = uiState.shouldInitializeSdkOnAppStart,
+          onCheck = { onEvent.invoke(UiEvent.UpdateSdkAutoInitialization(it)) },
+          label = { Text(stringResource(R.string.sdk_initialization_on_app_start), style = MaterialTheme.typography.titleMedium) })
+      }
       ShowcaseExpandableCard(
         title = stringResource(label_sdk_settings)
       ) { SdkSettings(uiState, onEvent) }

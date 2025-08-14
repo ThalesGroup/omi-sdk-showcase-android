@@ -8,6 +8,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiRefreshMobileAuthPushTokenHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
@@ -63,6 +64,9 @@ class SdkInitializationViewModelTest {
   @Inject
   lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 
+  @Inject
+  lateinit var preferencesManager: PreferencesManager
+
   private val deviceClientMock = mock<DeviceClient>()
   private val oneginiInitializationError: OneginiInitializationError = mock()
 
@@ -72,7 +76,12 @@ class SdkInitializationViewModelTest {
   fun setup() {
     hiltRule.inject()
     whenever(oneginiClientMock.getDeviceClient()).thenReturn(deviceClientMock)
-    viewModel = SdkInitializationViewModel(omiSdkInitializationUseCase, newFirebaseTokenUpdateUseCase, browserRegistrationRequestHandler)
+    viewModel = SdkInitializationViewModel(
+      omiSdkInitializationUseCase,
+      newFirebaseTokenUpdateUseCase,
+      browserRegistrationRequestHandler,
+      preferencesManager
+    )
   }
 
   @Test

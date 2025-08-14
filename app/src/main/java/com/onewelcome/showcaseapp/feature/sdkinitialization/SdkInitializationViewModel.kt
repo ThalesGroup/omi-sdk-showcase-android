@@ -12,6 +12,7 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
@@ -25,10 +26,17 @@ class SdkInitializationViewModel @Inject constructor(
   private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase,
   private val newFirebaseTokenUpdateUseCase: NewFirebaseTokenUpdateUseCase,
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+  private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
     private set
+
+  init {
+    viewModelScope.launch {
+      uiState = uiState.copy(shouldInitializeSdkOnAppStart = preferencesManager.isSdkAutoInitializationEnabled())
+    }
+  }
 
   fun onEvent(event: UiEvent) {
     when (event) {
@@ -38,7 +46,15 @@ class SdkInitializationViewModel @Inject constructor(
       is UiEvent.ChangeDeviceConfigCacheDurationValue -> uiState = uiState.copy(deviceConfigCacheDurationSeconds = event.value)
       is UiEvent.InitializeOneginiSdk -> initializeOmiSdk()
       is UiEvent.UpdateSelectedHandlers -> uiState = uiState.copy(selectedHandlers = event.value)
+      is UiEvent.UpdateSdkAutoInitialization -> updateSdkInitializationValue(event)
     }
+  }
+
+  private fun updateSdkInitializationValue(event: UiEvent.UpdateSdkAutoInitialization) {
+    viewModelScope.launch {
+      preferencesManager.setSdkAutoInitializationEnabled(event.value)
+    }
+    uiState = uiState.copy(shouldInitializeSdkOnAppStart = event.value)
   }
 
   private fun initializeOmiSdk() {
@@ -70,6 +86,7 @@ class SdkInitializationViewModel @Inject constructor(
     val httpReadTimeout: Int? = null,
     val deviceConfigCacheDurationSeconds: Int? = null,
     val isLoading: Boolean = false,
+    val shouldInitializeSdkOnAppStart: Boolean = true,
     val result: Result<Set<UserProfile>, OneginiInitializationError>? = null
   )
 
@@ -80,5 +97,6 @@ class SdkInitializationViewModel @Inject constructor(
     data class ChangeDeviceConfigCacheDurationValue(val value: Int?) : UiEvent
     data object InitializeOneginiSdk : UiEvent
     data class UpdateSelectedHandlers(val value: List<HandlerType>) : UiEvent
+    data class UpdateSdkAutoInitialization(val value: Boolean) : UiEvent
   }
 }
