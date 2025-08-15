@@ -14,8 +14,8 @@ import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
-import com.onewelcome.core.util.TestConstants.getTestDefaultSdkInitializationSettings
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
+import com.onewelcome.core.util.TestConstants.getTestDefaultSdkInitializationSettings
 import com.onewelcome.showcaseapp.fakes.ShowcaseDataStoreFake
 import com.onewelcome.showcaseapp.feature.sdkinitialization.HandlerType
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
@@ -23,6 +23,7 @@ import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationVie
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -82,6 +83,40 @@ class SdkInitializationViewModelTest {
       browserRegistrationRequestHandler,
       preferencesManager
     )
+  }
+
+  @Test
+  fun `Given SDK auto initialization is enabled, When viewmodel is initialized, state should be updated`() {
+    val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = true)
+    runTest {
+      preferencesManager.setSdkAutoInitializationEnabled(true)
+    }
+
+    viewModel = SdkInitializationViewModel(
+      omiSdkInitializationUseCase,
+      newFirebaseTokenUpdateUseCase,
+      browserRegistrationRequestHandler,
+      preferencesManager
+    )
+
+    assertThat(viewModel.uiState).isEqualTo(expected)
+  }
+
+  @Test
+  fun `Given SDK auto initialization is disabled, When viewmodel is initialized, state should be updated`() {
+    val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = false)
+    runTest {
+      preferencesManager.setSdkAutoInitializationEnabled(false)
+    }
+
+    viewModel = SdkInitializationViewModel(
+      omiSdkInitializationUseCase,
+      newFirebaseTokenUpdateUseCase,
+      browserRegistrationRequestHandler,
+      preferencesManager
+    )
+
+    assertThat(viewModel.uiState).isEqualTo(expected)
   }
 
   @Test
@@ -265,6 +300,10 @@ class SdkInitializationViewModelTest {
     whenever(deviceClientMock.refreshMobileAuthPushToken(any(), any())).thenAnswer { invocation ->
       invocation.getArgument<OneginiRefreshMobileAuthPushTokenHandler>(1).onError(mock())
     }
+  }
+
+  private fun whenSdkAutoInitializationIsEnabled() {
+
   }
 
   companion object {

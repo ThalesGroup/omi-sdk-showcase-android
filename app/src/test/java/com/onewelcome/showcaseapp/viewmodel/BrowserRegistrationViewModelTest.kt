@@ -379,7 +379,7 @@ class BrowserRegistrationViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null))
+    omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null, browserRegistrationRequestHandler))
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 
