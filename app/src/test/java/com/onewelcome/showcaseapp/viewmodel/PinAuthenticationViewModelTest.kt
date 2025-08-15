@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetRegisteredAuthenticatorsUseCase
@@ -68,6 +69,9 @@ class PinAuthenticationViewModelTest {
 
   @Inject
   lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+
+  @Inject
+  lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 
   @Inject
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
@@ -275,7 +279,7 @@ class PinAuthenticationViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null))
+    omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null, browserRegistrationRequestHandler))
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 

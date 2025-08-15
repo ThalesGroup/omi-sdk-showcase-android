@@ -10,6 +10,7 @@ import javax.inject.Singleton
 class ShowcaseDataStoreFake @Inject constructor() : ShowcaseDataStore {
 
   var isFirebaseTokenUpdateNeeded: Boolean = false
+  var isSdkAutoInitializedEnabled: Boolean = true
 
   override fun isFirebaseTokenUpdateNeeded(): Flow<Boolean> {
     return flowOf(isFirebaseTokenUpdateNeeded)
@@ -17,5 +18,13 @@ class ShowcaseDataStoreFake @Inject constructor() : ShowcaseDataStore {
 
   override suspend fun setFirebaseTokenUpdateNeeded(value: Boolean) {
     isFirebaseTokenUpdateNeeded = value
+  }
+
+  override fun isSdkAutoInitializationEnabled(): Flow<Boolean> {
+    return flowOf(isSdkAutoInitializedEnabled)
+  }
+
+  override suspend fun setSdkAutoInitializationEnabled(value: Boolean) {
+    isSdkAutoInitializedEnabled = value
   }
 }

@@ -9,6 +9,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollment
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.EnrollForMobileAuthenticationUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -58,6 +59,9 @@ class MobileAuthenticationEnrollmentViewModelTest {
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient
+
+  @Inject
+  lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 
   private val userClientMock = mock<UserClient>()
   private val oneginiMobileAuthEnrollmentError = mock<OneginiMobileAuthEnrollmentError>()
@@ -223,7 +227,7 @@ class MobileAuthenticationEnrollmentViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkFacade.initialize(OmiSdkInitializationSettings(true, null, null, null))
+    omiSdkFacade.initialize(OmiSdkInitializationSettings(true, null, null, null, browserRegistrationRequestHandler))
   }
 
   private fun mockAuthenticatedUserProfile(isAuthenticated: Boolean) {
