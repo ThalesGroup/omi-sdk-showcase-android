@@ -18,7 +18,7 @@ import dagger.hilt.testing.TestInstallIn
 @Module
 @TestInstallIn(
   components = [SingletonComponent::class],
-  replaces = [FacadeModule::class, ManagerModule::class]
+  replaces = [FacadeModule::class]
 )
 interface FakeFacadeModule {
 
@@ -30,7 +30,4 @@ interface FakeFacadeModule {
 
   @Binds
   fun bindPermissionsFacadeFake(permissionsFacadeFake: PermissionsFacadeFake): PermissionsFacade
-
-  @Binds
-  fun bindPreferencesManagerFake(preferencesManagerFake: PreferencesManagerFake): PreferencesManager
 }
