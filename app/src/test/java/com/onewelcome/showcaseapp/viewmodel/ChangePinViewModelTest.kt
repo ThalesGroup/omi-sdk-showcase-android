@@ -182,7 +182,7 @@ class ChangePinViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(TestConstants.getTestDefaultSdkInitializationSettings())
+    omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 

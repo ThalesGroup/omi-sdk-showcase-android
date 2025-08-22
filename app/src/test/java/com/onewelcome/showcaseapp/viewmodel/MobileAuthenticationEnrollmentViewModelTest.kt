@@ -223,7 +223,7 @@ class MobileAuthenticationEnrollmentViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkFacade.initialize(TestConstants.getTestDefaultSdkInitializationSettings())
+    omiSdkFacade.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
   }
 
   private fun mockAuthenticatedUserProfile(isAuthenticated: Boolean) {
