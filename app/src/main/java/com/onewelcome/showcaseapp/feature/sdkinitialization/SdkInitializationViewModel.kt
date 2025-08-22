@@ -65,6 +65,7 @@ class SdkInitializationViewModel @Inject constructor(
 
   data class State(
     val selectedHandlers: List<HandlerType> = HandlerType.entries,
+    val handlers: List<HandlerType> = HandlerType.entries,
     val shouldStoreCookies: Boolean = true,
     val httpConnectTimeout: Int? = null,
     val httpReadTimeout: Int? = null,
