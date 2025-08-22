@@ -80,7 +80,7 @@ class SdkInitializationViewModelTest {
   }
 
   @Test
-  fun `Given SDK auto initialization is enabled, When viewmodel is initialized, state should be updated`() {
+  fun `Given SDK auto initialization is enabled, When viewmodel is initialized, Then state should be updated`() {
     val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = true)
     runTest {
       preferencesManager.setSdkAutoInitializationEnabled(true)
@@ -96,7 +96,7 @@ class SdkInitializationViewModelTest {
   }
 
   @Test
-  fun `Given SDK auto initialization is disabled, When viewmodel is initialized, state should be updated`() {
+  fun `Given SDK auto initialization is disabled, When viewmodel is initialized, Then state should be updated`() {
     val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = false)
     runTest {
       preferencesManager.setSdkAutoInitializationEnabled(false)
