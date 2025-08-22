@@ -6,10 +6,9 @@ import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 
 object TestConstants {
-  fun getTestDefaultSdkInitializationSettings() = OmiSdkInitializationSettings(
+  val TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS= OmiSdkInitializationSettings(
     shouldStoreCookies = true,
     httpConnectTimeout = null,
     httpReadTimeout = null,
