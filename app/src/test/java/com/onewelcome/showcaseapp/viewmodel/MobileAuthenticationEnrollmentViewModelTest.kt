@@ -7,13 +7,13 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthEnrollmentHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollmentError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.EnrollForMobileAuthenticationUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
+import com.onewelcome.core.util.TestConstants
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.State
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentViewModel.UiEvent
@@ -227,7 +227,7 @@ class MobileAuthenticationEnrollmentViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkFacade.initialize(OmiSdkInitializationSettings(true, null, null, null, browserRegistrationRequestHandler))
+    omiSdkFacade.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
   }
 
   private fun mockAuthenticatedUserProfile(isAuthenticated: Boolean) {

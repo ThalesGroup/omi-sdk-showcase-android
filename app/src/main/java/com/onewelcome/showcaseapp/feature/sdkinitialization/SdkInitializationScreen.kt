@@ -84,46 +84,43 @@ private fun SdkInitializationScreenContent(
 
 @Composable
 private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
-  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
-    Column(
-      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
-    ) {
-      ShowcaseCard {
-        ShowcaseSwitch(
-          shouldBeChecked = uiState.shouldInitializeSdkOnAppStart,
-          onCheck = { onEvent.invoke(UiEvent.UpdateSdkAutoInitialization(it)) },
-          label = { Text(stringResource(R.string.sdk_initialization_on_app_start), style = MaterialTheme.typography.titleMedium) })
-      }
-      ShowcaseExpandableCard(
-        title = stringResource(label_sdk_settings)
-      ) { SdkSettings(uiState, onEvent) }
-      ShowcaseExpandableCard(
-        title = stringResource(label_http_settings)
-      ) { HttpSettings(uiState, onEvent) }
-      ShowcaseExpandableCard(
-        title = stringResource(label_title_handlers)
-      ) { HandlersSettings(onEvent) }
-      ShowcaseExpandableCard(
-        title = stringResource(label_custom_authenticators)
-      ) { } //TODO To be done in scope of EXAMPLEAND-155
-      ShowcaseExpandableCard(
-        title = stringResource(label_custom_identity_providers)
-      ) { } //TODO To be done in scope of EXAMPLEAND-156  }
+  Column(
+    verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+  ) {
+    ShowcaseCard {
+      ShowcaseSwitch(
+        shouldBeChecked = uiState.shouldInitializeSdkOnAppStart,
+        onCheck = { onEvent.invoke(UiEvent.UpdateSdkAutoInitialization(it)) },
+        label = { Text(stringResource(R.string.sdk_initialization_on_app_start), style = MaterialTheme.typography.titleMedium) })
     }
+    ShowcaseExpandableCard(
+      title = stringResource(label_sdk_settings)
+    ) { SdkSettings(uiState, onEvent) }
+    ShowcaseExpandableCard(
+      title = stringResource(label_http_settings)
+    ) { HttpSettings(uiState, onEvent) }
+    ShowcaseExpandableCard(
+      title = stringResource(label_title_handlers)
+    ) { HandlersSettings(uiState, onEvent) }
+    ShowcaseExpandableCard(
+      title = stringResource(label_custom_authenticators)
+    ) { } //TODO To be done in scope of EXAMPLEAND-155
+    ShowcaseExpandableCard(
+      title = stringResource(label_custom_identity_providers)
+    ) { } //TODO To be done in scope of EXAMPLEAND-156  }
   }
 }
 
 @Composable
-private fun HandlersSettings(onEvent: (UiEvent) -> Unit) {
-  val handlers = HandlerType.entries.toList()
-  var selectedHandlers by remember { mutableStateOf(handlers) }
+private fun HandlersSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
+  var selectedHandlers by remember { mutableStateOf(uiState.selectedHandlers) }
   Column(modifier = Modifier.padding(Dimensions.mPadding)) {
-    handlers.forEach { handler ->
+    uiState.handlers.forEach { handler ->
       Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
       ) {
-        Text(handler.displayName, modifier = Modifier.weight(1f))
+        Text(handler.title, modifier = Modifier.weight(1f))
         Checkbox(
           checked = selectedHandlers.contains(handler),
           onCheckedChange = { isChecked ->

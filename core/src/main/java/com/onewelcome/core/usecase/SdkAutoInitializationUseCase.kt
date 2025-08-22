@@ -1,8 +1,8 @@
 package com.onewelcome.core.usecase
 
+import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.OmiSdkEngine
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.data.datastore.ShowcaseDataStore
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -10,7 +10,6 @@ import javax.inject.Inject
 class SdkAutoInitializationUseCase @Inject constructor(
   private val dataStore: ShowcaseDataStore,
   private val omiSdkEngine: OmiSdkEngine,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
 ) {
   suspend fun execute() {
     if (dataStore.isSdkAutoInitializationEnabled().first() == true) {
@@ -19,7 +18,7 @@ class SdkAutoInitializationUseCase @Inject constructor(
         httpReadTimeout = null,
         deviceConfigCacheDuration = null,
         httpConnectTimeout = null,
-        browserRegistrationRequestHandler = browserRegistrationRequestHandler,
+        handlers = HandlerType.entries,
       )
       omiSdkEngine.initialize(sdkInitializationSettings)
     }
