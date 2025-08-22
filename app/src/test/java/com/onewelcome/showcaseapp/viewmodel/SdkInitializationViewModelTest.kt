@@ -8,15 +8,13 @@ import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiRefreshMobileAuthPushTokenHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
-import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
-import com.onewelcome.core.util.TestConstants.getTestDefaultSdkInitializationSettings
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.showcaseapp.fakes.ShowcaseDataStoreFake
-import com.onewelcome.showcaseapp.feature.sdkinitialization.HandlerType
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -60,9 +58,6 @@ class SdkInitializationViewModelTest {
   @Inject
   lateinit var oneginiClientMock: OneginiClient
 
-  @Inject
-  lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
-
   private val deviceClientMock = mock<DeviceClient>()
   private val oneginiInitializationError: OneginiInitializationError = mock()
 
@@ -72,12 +67,12 @@ class SdkInitializationViewModelTest {
   fun setup() {
     hiltRule.inject()
     whenever(oneginiClientMock.getDeviceClient()).thenReturn(deviceClientMock)
-    viewModel = SdkInitializationViewModel(omiSdkInitializationUseCase, newFirebaseTokenUpdateUseCase, browserRegistrationRequestHandler)
+    viewModel = SdkInitializationViewModel(omiSdkInitializationUseCase, newFirebaseTokenUpdateUseCase)
   }
 
   @Test
   fun `should initialize sdk with default parameters`() {
-    val expectedValue = getTestDefaultSdkInitializationSettings(browserRegistrationRequestHandler)
+    val expectedValue = OmiSdkInitializationSettings(true, null, null, null, listOf(HandlerType.BROWSER_REGISTRATION))
     whenSdkInitializedSuccessfully()
 
     viewModel.onEvent(UiEvent.InitializeOneginiSdk)
