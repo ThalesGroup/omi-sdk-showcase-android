@@ -7,13 +7,13 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthWithPushEnrollmentHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthWithPushEnrollmentError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.usecase.EnrollForMobileAuthenticationWithPushUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
+import com.onewelcome.core.util.TestConstants
 import com.onewelcome.showcaseapp.fakes.FirebaseMessagingFacadeFake
 import com.onewelcome.showcaseapp.fakes.PermissionsFacadeFake
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel
@@ -368,7 +368,7 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkFacade.initialize(OmiSdkInitializationSettings(true, null, null, null))
+    omiSdkFacade.initialize(TestConstants.getTestDefaultSdkInitializationSettings())
   }
 
   private fun mockAuthenticatedUserProfile(isAuthenticated: Boolean) {

@@ -12,8 +12,8 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
-import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,6 @@ import javax.inject.Inject
 class SdkInitializationViewModel @Inject constructor(
   private val omiSdkInitializationUseCase: OmiSdkInitializationUseCase,
   private val newFirebaseTokenUpdateUseCase: NewFirebaseTokenUpdateUseCase,
-  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -47,9 +46,7 @@ class SdkInitializationViewModel @Inject constructor(
       httpConnectTimeout = uiState.httpConnectTimeout,
       httpReadTimeout = uiState.httpReadTimeout,
       deviceConfigCacheDuration = uiState.deviceConfigCacheDurationSeconds,
-      browserRegistrationRequestHandler = browserRegistrationRequestHandler.takeIf {
-        uiState.selectedHandlers.contains(HandlerType.BROWSER_REGISTRATION)
-      }
+      handlers = uiState.selectedHandlers,
     )
     viewModelScope.launch {
       uiState = uiState.copy(isLoading = true)

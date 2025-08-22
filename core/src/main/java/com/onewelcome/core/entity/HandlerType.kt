@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.feature.sdkinitialization
+package com.onewelcome.core.entity
 
 //TODO: Uncomment handlers when working on given authentication
 enum class HandlerType(val title: String) {
