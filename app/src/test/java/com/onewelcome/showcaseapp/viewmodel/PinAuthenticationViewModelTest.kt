@@ -14,6 +14,7 @@ import com.onewelcome.core.usecase.GetRegisteredAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.PinAuthenticationUseCase
+import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.FakePinAuthenticator
@@ -279,7 +280,7 @@ class PinAuthenticationViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null, browserRegistrationRequestHandler))
+    omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 

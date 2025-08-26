@@ -82,7 +82,7 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized and authenticated user profile user present, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given SDK is initialized and authenticated user profile is present, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile()
 
@@ -157,7 +157,7 @@ class LogoutViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(TestConstants.getTestDefaultSdkInitializationSettings())
+    omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 
