@@ -4,6 +4,7 @@ import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
+import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
@@ -16,7 +17,8 @@ class OmiSdkEngine @Inject constructor(
   @ApplicationContext private val context: Context,
   private val createPinRequestHandler: CreatePinRequestHandler,
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
-  private val oneginiConfigModel: OneginiConfigModel
+  private val oneginiConfigModel: OneginiConfigModel,
+  private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 ) : OmiSdkFacade {
 
   override val oneginiClient
@@ -30,7 +32,15 @@ class OmiSdkEngine @Inject constructor(
         settings.httpConnectTimeout?.let { setHttpConnectTimeout(it) }
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }
         settings.deviceConfigCacheDuration?.let { setDeviceConfigCacheDurationSeconds(it) }
-        settings.browserRegistrationRequestHandler?.let { setBrowserRegistrationRequestHandler(it) }
+        setOptionalHandlers(settings)
       }.build()
+  }
+
+  private fun OneginiClientBuilder.setOptionalHandlers(settings: OmiSdkInitializationSettings) {
+    settings.handlers.forEach {
+      when (it) {
+        HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
+      }
+    }
   }
 }

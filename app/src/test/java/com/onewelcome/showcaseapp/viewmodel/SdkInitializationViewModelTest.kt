@@ -8,16 +8,14 @@ import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiRefreshMobileAuthPushTokenHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
-import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
-import com.onewelcome.core.util.TestConstants.getTestDefaultSdkInitializationSettings
 import com.onewelcome.showcaseapp.fakes.ShowcaseDataStoreFake
-import com.onewelcome.showcaseapp.feature.sdkinitialization.HandlerType
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -63,9 +61,6 @@ class SdkInitializationViewModelTest {
   lateinit var oneginiClientMock: OneginiClient
 
   @Inject
-  lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
-
-  @Inject
   lateinit var preferencesManager: PreferencesManager
 
   private val deviceClientMock = mock<DeviceClient>()
@@ -80,13 +75,12 @@ class SdkInitializationViewModelTest {
     viewModel = SdkInitializationViewModel(
       omiSdkInitializationUseCase,
       newFirebaseTokenUpdateUseCase,
-      browserRegistrationRequestHandler,
       preferencesManager
     )
   }
 
   @Test
-  fun `Given SDK auto initialization is enabled, When viewmodel is initialized, state should be updated`() {
+  fun `Given SDK auto initialization is enabled, When viewmodel is initialized, Then state should be updated`() {
     val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = true)
     runTest {
       preferencesManager.setSdkAutoInitializationEnabled(true)
@@ -95,7 +89,6 @@ class SdkInitializationViewModelTest {
     viewModel = SdkInitializationViewModel(
       omiSdkInitializationUseCase,
       newFirebaseTokenUpdateUseCase,
-      browserRegistrationRequestHandler,
       preferencesManager
     )
 
@@ -103,7 +96,7 @@ class SdkInitializationViewModelTest {
   }
 
   @Test
-  fun `Given SDK auto initialization is disabled, When viewmodel is initialized, state should be updated`() {
+  fun `Given SDK auto initialization is disabled, When viewmodel is initialized, Then state should be updated`() {
     val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = false)
     runTest {
       preferencesManager.setSdkAutoInitializationEnabled(false)
@@ -112,7 +105,6 @@ class SdkInitializationViewModelTest {
     viewModel = SdkInitializationViewModel(
       omiSdkInitializationUseCase,
       newFirebaseTokenUpdateUseCase,
-      browserRegistrationRequestHandler,
       preferencesManager
     )
 
@@ -121,7 +113,7 @@ class SdkInitializationViewModelTest {
 
   @Test
   fun `should initialize sdk with default parameters`() {
-    val expectedValue = getTestDefaultSdkInitializationSettings(browserRegistrationRequestHandler)
+    val expectedValue = OmiSdkInitializationSettings(true, null, null, null, listOf(HandlerType.BROWSER_REGISTRATION))
     whenSdkInitializedSuccessfully()
 
     viewModel.onEvent(UiEvent.InitializeOneginiSdk)
@@ -300,10 +292,6 @@ class SdkInitializationViewModelTest {
     whenever(deviceClientMock.refreshMobileAuthPushToken(any(), any())).thenAnswer { invocation ->
       invocation.getArgument<OneginiRefreshMobileAuthPushTokenHandler>(1).onError(mock())
     }
-  }
-
-  private fun whenSdkAutoInitializationIsEnabled() {
-
   }
 
   companion object {

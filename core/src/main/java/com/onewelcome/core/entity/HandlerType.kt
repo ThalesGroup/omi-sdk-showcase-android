@@ -1,8 +1,8 @@
-package com.onewelcome.showcaseapp.feature.sdkinitialization
+package com.onewelcome.core.entity
 
 //TODO: Uncomment handlers when working on given authentication
-enum class HandlerType {
-  BROWSER_REGISTRATION,
+enum class HandlerType(val title: String) {
+  BROWSER_REGISTRATION("Browser registration"),
 //  BIOMETRIC_AUTHENTICATION,
 //  CUSTOM_AUTHENTICATION,
 //  MOBILE_AUTH_WITH_PUSH,
@@ -11,9 +11,3 @@ enum class HandlerType {
 //  MOBILE_AUTH_WITH_PUSH_CUSTOM,
 //  MOBILE_AUTH_WITH_OTP
 }
-
-val HandlerType.displayName: String
-  get() = name
-    .lowercase()
-    .split('_')
-    .joinToString(" ") { word -> word.replaceFirstChar { it.uppercaseChar() } }
