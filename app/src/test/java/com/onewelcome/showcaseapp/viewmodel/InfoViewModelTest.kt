@@ -2,6 +2,8 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -60,6 +62,9 @@ class InfoViewModelTest {
 
   @Inject
   lateinit var permissionsFacadeFake: PermissionsFacadeFake
+
+  @Inject
+  lateinit var browserRegistrationRequestHandler: BrowserRegistrationRequestHandler
 
   private val userClientMock: UserClient = mock()
 

@@ -57,6 +57,7 @@ dependencies {
 
   // Coroutines
   implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.kotlinx.coroutines.test)
 
   // Hilt
   implementation(libs.hilt.library)
