@@ -8,11 +8,12 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 
 object TestConstants {
-  val TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS = OmiSdkInitializationSettings(
+  val TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS= OmiSdkInitializationSettings(
     shouldStoreCookies = true,
     httpConnectTimeout = null,
     httpReadTimeout = null,
-    deviceConfigCacheDuration = null
+    deviceConfigCacheDuration = null,
+    handlers = emptyList(),
   )
   val TEST_USER_PROFILE_1 = UserProfile("123456")
   val TEST_USER_PROFILE_2 = UserProfile("654321")

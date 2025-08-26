@@ -7,11 +7,11 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiDeregisterUserProfileHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeregistrationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.usecase.DeregisterUserUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.util.TestConstants
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationViewModel.UiEvent
@@ -206,7 +206,7 @@ class UserDeregistrationViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkFacade.initialize(OmiSdkInitializationSettings(true, null, null, null))
+    omiSdkFacade.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
   }
 
   private fun mockNoUserProfiles() {

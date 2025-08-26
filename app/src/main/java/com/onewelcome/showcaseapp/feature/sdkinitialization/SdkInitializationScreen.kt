@@ -2,14 +2,21 @@ package com.onewelcome.showcaseapp.feature.sdkinitialization
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -33,6 +40,11 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.R.string.label_custom_authenticators
+import com.onewelcome.showcaseapp.R.string.label_custom_identity_providers
+import com.onewelcome.showcaseapp.R.string.label_http_settings
+import com.onewelcome.showcaseapp.R.string.label_sdk_settings
+import com.onewelcome.showcaseapp.R.string.label_title_handlers
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.State
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
 
@@ -70,47 +82,55 @@ private fun SdkInitializationScreenContent(
 
 @Composable
 private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
-  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
-    Text(
-      text = stringResource(R.string.required),
-      style = MaterialTheme.typography.titleSmall
-    )
-    RequiredSettings()
-    Text(
-      text = stringResource(R.string.optional),
-      style = MaterialTheme.typography.titleSmall
-    )
-    OptionalSettings(uiState, onEvent)
-  }
-}
-
-@Composable
-private fun RequiredSettings() {
-  ShowcaseExpandableCard(title = stringResource(R.string.label_title_handlers)) {} //TODO To be done in scope of EXAMPLEAND-153
-}
-
-@Composable
-private fun OptionalSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     ShowcaseExpandableCard(
-      title = stringResource(R.string.label_sdk_settings)
+      title = stringResource(label_sdk_settings)
     ) { SdkSettings(uiState, onEvent) }
     ShowcaseExpandableCard(
-      title = stringResource(R.string.label_http_settings)
+      title = stringResource(label_http_settings)
     ) { HttpSettings(uiState, onEvent) }
     ShowcaseExpandableCard(
-      title = stringResource(R.string.label_custom_authenticators)
+      title = stringResource(label_title_handlers)
+    ) { HandlersSettings(uiState, onEvent) }
+    ShowcaseExpandableCard(
+      title = stringResource(label_custom_authenticators)
     ) { } //TODO To be done in scope of EXAMPLEAND-155
     ShowcaseExpandableCard(
-      title = stringResource(R.string.label_custom_identity_providers)
+      title = stringResource(label_custom_identity_providers)
     ) { } //TODO To be done in scope of EXAMPLEAND-156  }
   }
 }
 
 @Composable
-fun SdkSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
+private fun HandlersSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
+  var selectedHandlers by remember { mutableStateOf(uiState.selectedHandlers) }
+  Column(modifier = Modifier.padding(Dimensions.mPadding)) {
+    uiState.handlers.forEach { handler ->
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(handler.title, modifier = Modifier.weight(1f))
+        Checkbox(
+          checked = selectedHandlers.contains(handler),
+          onCheckedChange = { isChecked ->
+            selectedHandlers = if (isChecked) {
+              selectedHandlers + handler
+            } else {
+              selectedHandlers - handler
+            }
+            onEvent.invoke(UiEvent.UpdateSelectedHandlers(selectedHandlers))
+          }
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun SdkSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     modifier = Modifier.padding(Dimensions.mPadding)
   ) {
