@@ -8,13 +8,12 @@ import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiRefreshMobileAuthPushTokenHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
 import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
-import com.onewelcome.core.util.TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
-import com.onewelcome.showcaseapp.fakes.FirebaseMessagingFacadeFake
 import com.onewelcome.showcaseapp.fakes.ShowcaseDataStoreFake
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationViewModel.UiEvent
@@ -54,9 +53,6 @@ class SdkInitializationViewModelTest {
   lateinit var omiSdkEngineFake: OmiSdkFacade
 
   @Inject
-  lateinit var firebaseMessagingFacadeFake: FirebaseMessagingFacadeFake
-
-  @Inject
   lateinit var showcaseDataStoreFake: ShowcaseDataStoreFake
 
   @Inject
@@ -76,13 +72,14 @@ class SdkInitializationViewModelTest {
 
   @Test
   fun `should initialize sdk with default parameters`() {
+    val expectedValue = OmiSdkInitializationSettings(true, null, null, null, listOf(HandlerType.BROWSER_REGISTRATION))
     whenSdkInitializedSuccessfully()
 
     viewModel.onEvent(UiEvent.InitializeOneginiSdk)
 
     argumentCaptor<OmiSdkInitializationSettings> {
       verify(omiSdkEngineFake).initialize(capture())
-      assertThat(firstValue).isEqualTo(TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
+      assertThat(firstValue).isEqualTo(expectedValue)
     }
   }
 
@@ -218,6 +215,16 @@ class SdkInitializationViewModelTest {
     assertThat(showcaseDataStoreFake.isFirebaseTokenUpdateNeeded).isTrue()
   }
 
+  @Test
+  fun `should update selectedHandlers parameter successfully`() {
+    assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE)
+
+    viewModel.onEvent(UiEvent.UpdateSelectedHandlers(emptyList()))
+
+    val expectedState = INITIAL_STATE.copy(selectedHandlers = emptyList())
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
   private fun whenSdkInitializedSuccessfully(removedUserProfiles: Set<UserProfile> = emptySet()) {
     whenever(oneginiClientMock.start(any()))
       .thenAnswer { invocation ->
@@ -253,7 +260,8 @@ class SdkInitializationViewModelTest {
       httpReadTimeout = null,
       deviceConfigCacheDurationSeconds = null,
       isLoading = false,
-      result = null
+      result = null,
+      selectedHandlers = HandlerType.entries
     )
   }
 }

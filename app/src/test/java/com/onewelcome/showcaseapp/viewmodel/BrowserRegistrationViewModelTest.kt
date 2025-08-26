@@ -8,7 +8,6 @@ import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onewelcome.core.OneginiConfigModel
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.usecase.BrowserRegistrationUseCase
@@ -16,6 +15,7 @@ import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.Constants
+import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
 import com.onewelcome.core.util.TestConstants.TEST_IDENTITY_PROVIDERS
 import com.onewelcome.core.util.TestConstants.TEST_SELECTED_IDENTITY_PROVIDER
@@ -379,7 +379,7 @@ class BrowserRegistrationViewModelTest {
   }
 
   private fun mockSdkInitialized() {
-    omiSdkEngineFake.initialize(OmiSdkInitializationSettings(true, null, null, null))
+    omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 
