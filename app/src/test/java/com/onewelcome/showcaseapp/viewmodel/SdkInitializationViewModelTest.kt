@@ -9,6 +9,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiRefreshMobileAuthPushToken
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.entity.HandlerType
+import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.usecase.NewFirebaseTokenUpdateUseCase
@@ -20,6 +21,7 @@ import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationVie
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -58,6 +60,9 @@ class SdkInitializationViewModelTest {
   @Inject
   lateinit var oneginiClientMock: OneginiClient
 
+  @Inject
+  lateinit var preferencesManager: PreferencesManager
+
   private val deviceClientMock = mock<DeviceClient>()
   private val oneginiInitializationError: OneginiInitializationError = mock()
 
@@ -67,7 +72,43 @@ class SdkInitializationViewModelTest {
   fun setup() {
     hiltRule.inject()
     whenever(oneginiClientMock.getDeviceClient()).thenReturn(deviceClientMock)
-    viewModel = SdkInitializationViewModel(omiSdkInitializationUseCase, newFirebaseTokenUpdateUseCase)
+    viewModel = SdkInitializationViewModel(
+      omiSdkInitializationUseCase,
+      newFirebaseTokenUpdateUseCase,
+      preferencesManager
+    )
+  }
+
+  @Test
+  fun `Given SDK auto initialization is enabled, When viewmodel is initialized, Then state should be updated`() {
+    val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = true)
+    runTest {
+      preferencesManager.setSdkAutoInitializationEnabled(true)
+    }
+
+    viewModel = SdkInitializationViewModel(
+      omiSdkInitializationUseCase,
+      newFirebaseTokenUpdateUseCase,
+      preferencesManager
+    )
+
+    assertThat(viewModel.uiState).isEqualTo(expected)
+  }
+
+  @Test
+  fun `Given SDK auto initialization is disabled, When viewmodel is initialized, Then state should be updated`() {
+    val expected = INITIAL_STATE.copy(shouldInitializeSdkOnAppStart = false)
+    runTest {
+      preferencesManager.setSdkAutoInitializationEnabled(false)
+    }
+
+    viewModel = SdkInitializationViewModel(
+      omiSdkInitializationUseCase,
+      newFirebaseTokenUpdateUseCase,
+      preferencesManager
+    )
+
+    assertThat(viewModel.uiState).isEqualTo(expected)
   }
 
   @Test
