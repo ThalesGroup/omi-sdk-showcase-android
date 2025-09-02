@@ -61,7 +61,8 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 private fun getSections(): List<SectionItem> {
   return listOf(
     SectionItem(stringResource(R.string.section_title_mobile_authentication_enrollment), Screens.MobileAuthenticationEnrollment),
-    SectionItem(stringResource(R.string.section_title_mobile_authentication_push_enrollment), Screens.MobileAuthenticationPushEnrollment)
+    SectionItem(stringResource(R.string.section_title_mobile_authentication_push_enrollment), Screens.MobileAuthenticationPushEnrollment),
+    SectionItem(stringResource(R.string.section_title_push_authentication), Screens.PushAuthentication),
   )
 }
 
