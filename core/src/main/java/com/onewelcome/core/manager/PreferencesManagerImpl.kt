@@ -14,4 +14,8 @@ class PreferencesManagerImpl @Inject constructor(
   override suspend fun setSdkAutoInitializationEnabled(value: Boolean) {
     dataStore.setSdkAutoInitializationEnabled(value)
   }
+
+  override suspend fun setFirebaseTokenUpdateNeeded(value: Boolean) {
+    dataStore.setFirebaseTokenUpdateNeeded(true)
+  }
 }

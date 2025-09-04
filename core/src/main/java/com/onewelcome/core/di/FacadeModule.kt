@@ -2,6 +2,8 @@ package com.onewelcome.core.di
 
 import com.onewelcome.core.facade.FirebaseMessagingFacade
 import com.onewelcome.core.facade.FirebaseMessagingFacadeImpl
+import com.onewelcome.core.facade.JsonFacade
+import com.onewelcome.core.facade.JsonFacadeImpl
 import com.onewelcome.core.facade.PermissionsFacade
 import com.onewelcome.core.facade.PermissionsFacadeIml
 import com.onewelcome.core.omisdk.OmiSdkEngine
@@ -23,4 +25,7 @@ interface FacadeModule {
 
   @Binds
   fun bindPermissionsFacade(contextCompatFacadeIml: PermissionsFacadeIml): PermissionsFacade
+
+  @Binds
+  fun bindJsonFacade(jsonFacade: JsonFacadeImpl): JsonFacade
 }
