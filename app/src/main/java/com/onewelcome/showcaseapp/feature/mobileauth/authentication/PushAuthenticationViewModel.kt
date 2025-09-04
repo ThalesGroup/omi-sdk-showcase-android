@@ -4,10 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.get
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.facade.PermissionsFacade
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
+import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
@@ -21,7 +24,9 @@ class PushAuthenticationViewModel @Inject constructor(
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
   private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase,
-  private val permissionsFacade: PermissionsFacade
+  private val permissionsFacade: PermissionsFacade,
+  private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
+  private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -32,7 +37,15 @@ class PushAuthenticationViewModel @Inject constructor(
   }
 
   fun onEvent(event: UiEvent) {
+    when (event) {
+      UiEvent.AuthenticateWithPush -> authenticateWithPush()
+    }
+  }
 
+  private fun authenticateWithPush() {
+    getAuthenticatedUserProfileUseCase.execute().get()
+      ?.let { userProfile -> authenticateWithPushUseCase.execute(userProfile, mobileAuthWithPushRequestHandler) }
+      ?: { uiState = uiState.copy(result = Err(IllegalArgumentException("User needs to be authenticated to perform push authentication"))) }
   }
 
   private fun loadInitialData() {
