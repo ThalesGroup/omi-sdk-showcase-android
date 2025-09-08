@@ -18,9 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.showcaseapp.PushNavigationViewModel
 
 @Composable
-fun TransactionConfirmationScreen(homeNavController: NavHostController) {
+fun TransactionConfirmationScreen(homeNavController: NavHostController, transactionsViewModel: PushNavigationViewModel) {
   TransactionConfirmationScreenContent { homeNavController.popBackStack() }
 }
 

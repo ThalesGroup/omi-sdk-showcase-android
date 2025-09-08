@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
+import com.onewelcome.showcaseapp.PushNavigationViewModel
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
@@ -33,6 +35,7 @@ import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
@@ -41,11 +44,16 @@ import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScree
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(pushNavigationViewModel: PushNavigationViewModel = hiltViewModel()) {
   val rootNavController = rememberNavController()
   val homeNavController = rememberNavController()
   val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentRootDestination = rootNavBackStackEntry?.destination
+  LaunchedEffect(Unit) {
+    pushNavigationViewModel.pushEvent.collect {
+      rootNavController.navigate(Screens.TransactionConfirmation.route)
+    }
+  }
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
@@ -59,7 +67,7 @@ fun BottomNavigationBar() {
       startDestination = Screens.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      bottomNavigationScreens(homeNavController, rootNavController)
+      bottomNavigationScreens(homeNavController, rootNavController, pushNavigationViewModel)
       pinFullScreenPages(rootNavController)
     }
   }
@@ -72,11 +80,14 @@ private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostControl
 
 private fun NavGraphBuilder.bottomNavigationScreens(
   homeNavController: NavHostController,
-  rootNavController: NavHostController
+  rootNavController: NavHostController,
+  transactionsViewModel: PushNavigationViewModel
 ) {
   composable(Screens.Home.route) { HomeScreenNavHost(homeNavController, rootNavController) }
   composable(Screens.Info.route) { InfoScreen() }
   composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
+  composable(Screens.Transactions.route) { TransactionsScreen(transactionsViewModel) }
+  composable(Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(rootNavController, transactionsViewModel) }
 }
 
 @Composable
@@ -86,7 +97,7 @@ private fun ScreenWithNavBar(
   homeNavController: NavHostController
 ) {
   NavigationBar {
-    BottomNavigationItem.getBottomNavigationItems(LocalContext.current).forEachIndexed { _, navigationItem ->
+    BottomNavigationBarItem.getBottomNavigationItems(LocalContext.current).forEachIndexed { _, navigationItem ->
       NavigationBarItem(
         selected = navigationItem.route == currentRootDestination?.route,
         label = {
@@ -131,7 +142,5 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.ChangePin.route) { ChangePinScreen(homeNavController, rootNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
     composable(Screens.PushAuthentication.route) { PushAuthenticationScreen(homeNavController) }
-    composable(Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(homeNavController) }
-
   }
 }
