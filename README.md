@@ -44,6 +44,7 @@ on [Firebase Console](https://console.firebase.google.com/) is needed.
 
 Alternatively, if internal build variant is not needed, you can create just `com.onewelcome.showcaseapp.developer` project and edit the
 content for the `developer` part inside the sample file.
+//TODO: Add mention about the cloud messaging api and service accounts https://console.firebase.google.com/u/5/project/showcase-app-88e13/settings/cloudmessaging/android:com.onewelcome.showcaseapp.developer
 
 For more information on how to set up Firebase Messaging, please take a look at
 [Google Documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase).
