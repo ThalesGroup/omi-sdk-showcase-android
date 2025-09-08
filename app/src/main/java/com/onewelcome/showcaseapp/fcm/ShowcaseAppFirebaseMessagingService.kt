@@ -14,6 +14,9 @@ import com.onewelcome.core.facade.JsonFacade
 import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RefreshMobileAuthPushTokenUseCase
+import com.onewelcome.core.util.Constants.MESSAGE_KEY
+import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
+import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,11 +75,5 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
         Err(IllegalArgumentException("Content of remote message is empty"))
       }
     } ?: Err(IllegalArgumentException("Content of remote message is null"))
-  }
-
-  companion object {
-    const val MESSAGE_KEY = "message"
-    const val TRANSACTION_ID_KEY = "transactionId"
-    const val PROFILE_ID_KEY = "profileId"
   }
 }

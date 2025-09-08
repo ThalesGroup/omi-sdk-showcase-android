@@ -22,4 +22,7 @@ object Constants {
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
 
   const val MOBILE_AUTH_CHANNEL_ID = "mobile_auth_channel"
+  const val MESSAGE_KEY = "message"
+  const val TRANSACTION_ID_KEY = "transactionId"
+  const val PROFILE_ID_KEY = "profileId"
 }
