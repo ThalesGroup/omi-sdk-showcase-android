@@ -3,6 +3,7 @@ package com.onewelcome.showcaseapp.fcm
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import com.onewelcome.core.util.Constants
+import com.onewelcome.showcaseapp.R
 import javax.inject.Inject
 
 class NotificationSender @Inject constructor(
@@ -15,7 +16,7 @@ class NotificationSender @Inject constructor(
 
   private fun buildNewTransactionNotification(notificationBundle: Bundle) =
     notificationFacade.getNotificationBuilder(Constants.MOBILE_AUTH_CHANNEL_ID)
-//      .setSmallIcon(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_notification_overlay, null))
+      .setSmallIcon(R.drawable.notification_icon)
       .setContentTitle("New pending transaction")
       .setContentText("There is transaction waiting for confirmation")
       .setPriority(NotificationCompat.PRIORITY_MAX)
