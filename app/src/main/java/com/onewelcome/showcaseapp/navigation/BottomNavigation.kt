@@ -33,6 +33,7 @@ import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
@@ -130,5 +131,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.ChangePin.route) { ChangePinScreen(homeNavController, rootNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
     composable(Screens.PushAuthentication.route) { PushAuthenticationScreen(homeNavController) }
+    composable(Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(homeNavController) }
+
   }
 }
