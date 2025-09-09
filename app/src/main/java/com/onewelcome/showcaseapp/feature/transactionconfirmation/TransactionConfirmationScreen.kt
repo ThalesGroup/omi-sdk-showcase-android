@@ -10,6 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +24,9 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toReadableDate
-import org.bouncycastle.util.Times
+import kotlinx.coroutines.delay
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun TransactionConfirmationScreen(
@@ -67,7 +74,7 @@ private fun TransactionConfirmationScreenContent(
         }
         Column {
           Text("Time to live in seconds", style = MaterialTheme.typography.titleMedium)
-          Text(oneginiMobileAuthWithPushRequest.timeToLiveSeconds.toString())
+          CountdownTimer(oneginiMobileAuthWithPushRequest.timestamp, oneginiMobileAuthWithPushRequest.timeToLiveSeconds).toString()
         }
         Row(
           horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing),
@@ -96,11 +103,30 @@ private fun TransactionConfirmationScreenContent(
   }
 }
 
+@Composable
+private fun CountdownTimer(
+  timestamp: Long,
+  timeToLiveInSeconds: Int,
+) {
+  val expirationTime = timestamp + TimeUnit.SECONDS.toMillis(timeToLiveInSeconds.toLong())
+  val totalRemainingSeconds = TimeUnit.MILLISECONDS.toSeconds(expirationTime - System.currentTimeMillis()).toInt()
+  var secondsLeft by remember { mutableIntStateOf(totalRemainingSeconds) }
+  LaunchedEffect(totalRemainingSeconds) {
+    while (secondsLeft > 0) {
+      delay(1000L)
+      secondsLeft--
+    }
+  }
+  val minutes = TimeUnit.SECONDS.toMinutes(secondsLeft.toLong())
+  val seconds = secondsLeft % 60
+  Text(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds))
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
   TransactionConfirmationScreenContent(
     {},
-    OneginiMobileAuthWithPushRequest("transactionId", "message", "userProfile", System.currentTimeMillis(), 300000)
+    OneginiMobileAuthWithPushRequest("transactionId", "message", "userProfile", System.currentTimeMillis(), 300)
   )
 }
