@@ -1,6 +1,11 @@
 package com.onewelcome.showcaseapp.navigation
 
 import com.onewelcome.core.util.Constants
+import com.onewelcome.core.util.Constants.MESSAGE_KEY
+import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
+import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
+import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
+import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 
 sealed class Screens(val route: String) {
   data object Home : Screens("home_route")
@@ -21,5 +26,5 @@ sealed class Screens(val route: String) {
   data object Logout : Screens("logout")
   data object PinAuthenticationInput : Screens("pin_authentication_input_${Constants.FULLSCREEN_PAGE}")
   data object CreatePinInput : Screens("create_pin_input_${Constants.FULLSCREEN_PAGE}")
-  data object TransactionConfirmation : Screens("transaction_confirmation")
+  data object TransactionConfirmation : Screens("transaction_confirmation/{$TRANSACTION_ID_KEY}/{$MESSAGE_KEY}/{$PROFILE_ID_KEY}/{$TIMESTAMP_KEY}/{$TIME_TO_LIVE_SECONDS_KEY}")
 }

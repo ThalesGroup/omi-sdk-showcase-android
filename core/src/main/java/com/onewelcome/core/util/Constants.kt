@@ -25,4 +25,7 @@ object Constants {
   const val MESSAGE_KEY = "message"
   const val TRANSACTION_ID_KEY = "transactionId"
   const val PROFILE_ID_KEY = "profileId"
+  const val TIMESTAMP_KEY ="timestamp"
+  const val TIME_TO_LIVE_SECONDS_KEY ="timeToLiveSeconds"
+
 }

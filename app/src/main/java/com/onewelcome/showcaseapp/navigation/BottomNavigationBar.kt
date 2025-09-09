@@ -16,11 +16,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.theme.isNotFullScreenRoute
+import com.onewelcome.core.util.Constants.MESSAGE_KEY
+import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
+import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
+import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
+import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.PushNavigationViewModel
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
@@ -49,11 +57,7 @@ fun BottomNavigationBar(pushNavigationViewModel: PushNavigationViewModel = hiltV
   val homeNavController = rememberNavController()
   val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentRootDestination = rootNavBackStackEntry?.destination
-  LaunchedEffect(Unit) {
-    pushNavigationViewModel.pushEvent.collect {
-      rootNavController.navigate(Screens.TransactionConfirmation.route)
-    }
-  }
+  ListenForPushEvents(pushNavigationViewModel, rootNavController)
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
@@ -73,6 +77,18 @@ fun BottomNavigationBar(pushNavigationViewModel: PushNavigationViewModel = hiltV
   }
 }
 
+@Composable
+private fun ListenForPushEvents(
+  pushNavigationViewModel: PushNavigationViewModel,
+  rootNavController: NavHostController
+) {
+  LaunchedEffect(Unit) {
+    pushNavigationViewModel.pushEvent.collect {
+      rootNavController.navigate("transaction_confirmation/${it.transactionId}/${it.message}/${it.userProfileId}/${it.timestamp}/${it.timeToLiveSeconds}")
+    }
+  }
+}
+
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
@@ -87,7 +103,24 @@ private fun NavGraphBuilder.bottomNavigationScreens(
   composable(Screens.Info.route) { InfoScreen() }
   composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
   composable(Screens.Transactions.route) { TransactionsScreen(transactionsViewModel) }
-  composable(Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(rootNavController, transactionsViewModel) }
+  composable(
+    route = Screens.TransactionConfirmation.route,
+    arguments = listOf(
+      navArgument(TRANSACTION_ID_KEY) { type = NavType.StringType },
+      navArgument(MESSAGE_KEY) { type = NavType.StringType },
+      navArgument(PROFILE_ID_KEY) { type = NavType.StringType },
+      navArgument(TIMESTAMP_KEY) { type = NavType.LongType },
+      navArgument(TIME_TO_LIVE_SECONDS_KEY) { type = NavType.IntType },
+    )
+  ) { backStackEntry ->
+    val transactionId = backStackEntry.arguments?.getString(TRANSACTION_ID_KEY) ?: ""
+    val message = backStackEntry.arguments?.getString(MESSAGE_KEY) ?: ""
+    val profileId = backStackEntry.arguments?.getString(PROFILE_ID_KEY) ?: ""
+    val timestamp = backStackEntry.arguments?.getLong(TIMESTAMP_KEY) ?: 0L
+    val timeToLiveSeconds = backStackEntry.arguments?.getInt(TIME_TO_LIVE_SECONDS_KEY) ?: 0
+    val oneginiMobileAuthWithPushRequest = OneginiMobileAuthWithPushRequest(transactionId, message, profileId, timestamp, timeToLiveSeconds)
+    TransactionConfirmationScreen(rootNavController, oneginiMobileAuthWithPushRequest)
+  }
 }
 
 @Composable
