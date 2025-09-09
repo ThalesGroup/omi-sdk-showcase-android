@@ -14,6 +14,8 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.theme.ShowcaseAppTheme
 import com.onewelcome.core.util.Constants.MESSAGE_KEY
 import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
+import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
+import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
 import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 import com.onewelcome.showcaseapp.navigation.BottomNavigationBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +35,9 @@ class ShowcaseActivity : ComponentActivity() {
       val pushData = OneginiMobileAuthWithPushRequest(
         data.getString(TRANSACTION_ID_KEY) ?: "",
         data.getString(MESSAGE_KEY) ?: "",
-        data.getString(PROFILE_ID_KEY) ?: ""
+        data.getString(PROFILE_ID_KEY) ?: "",
+        data.getLong(TIMESTAMP_KEY),
+        data.getInt(TIME_TO_LIVE_SECONDS_KEY)
       )
       pushNavigationViewModel.onNewPush(pushData)
     }

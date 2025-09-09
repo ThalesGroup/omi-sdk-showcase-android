@@ -16,6 +16,8 @@ import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RefreshMobileAuthPushTokenUseCase
 import com.onewelcome.core.util.Constants.MESSAGE_KEY
 import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
+import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
+import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
 import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -64,6 +66,8 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
       MESSAGE_KEY to mobileAuthRequest.message,
       TRANSACTION_ID_KEY to mobileAuthRequest.transactionId,
       PROFILE_ID_KEY to mobileAuthRequest.userProfileId,
+      TIMESTAMP_KEY to mobileAuthRequest.timestamp,
+      TIME_TO_LIVE_SECONDS_KEY to mobileAuthRequest.timeToLiveSeconds,
     )
   }
 
