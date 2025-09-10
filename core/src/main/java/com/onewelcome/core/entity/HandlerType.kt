@@ -5,7 +5,7 @@ enum class HandlerType(val title: String) {
   BROWSER_REGISTRATION("Browser registration"),
 //  BIOMETRIC_AUTHENTICATION,
 //  CUSTOM_AUTHENTICATION,
-//  MOBILE_AUTH_WITH_PUSH,
+  MOBILE_AUTH_WITH_PUSH("Mobile authentication with push"),
 //  MOBILE_AUTH_WITH_PUSH_PIN,
 //  MOBILE_AUTH_WITH_PUSH_BIOMETRIC,
 //  MOBILE_AUTH_WITH_PUSH_CUSTOM,
