@@ -36,7 +36,6 @@ import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
 import com.onewelcome.showcaseapp.feature.logout.LogoutScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
-import com.onewelcome.showcaseapp.feature.mobileauth.authentication.PushAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
@@ -174,6 +173,5 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.MobileAuthenticationPushEnrollment.route) { MobileAuthenticationWithPushEnrollmentScreen(homeNavController) }
     composable(Screens.ChangePin.route) { ChangePinScreen(homeNavController, rootNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
-    composable(Screens.PushAuthentication.route) { PushAuthenticationScreen(homeNavController) }
   }
 }

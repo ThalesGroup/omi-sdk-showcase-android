@@ -4,17 +4,21 @@ import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPush
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MobileAuthWithPushRequestHandler @Inject constructor() : OneginiMobileAuthWithPushRequestHandler {
+
+  var acceptDenyCallback: OneginiAcceptDenyCallback? = null
+
   override fun startAuthentication(
     mobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
     callback: OneginiAcceptDenyCallback
   ) {
-    TODO("Not yet implemented")
+    acceptDenyCallback = callback
   }
 
   override fun finishAuthentication() {
-    TODO("Not yet implemented")
+    acceptDenyCallback = null
   }
-
 }
