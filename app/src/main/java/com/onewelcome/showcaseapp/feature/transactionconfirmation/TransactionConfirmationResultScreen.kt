@@ -39,7 +39,7 @@ fun TransactionConfirmationResultScreenContent(uiState: TransactionConfirmationV
     ) {
       uiState.result
         ?.onSuccess {
-          Text("Transaction finished successfully", style = MaterialTheme.typography.titleLarge)
+          Text("Transaction accepted successfully", style = MaterialTheme.typography.titleLarge)
           Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
             Text("Custom Info", style = MaterialTheme.typography.titleMedium)
             Text(it.toString())

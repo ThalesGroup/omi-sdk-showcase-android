@@ -27,24 +27,12 @@ class ShowcaseActivity : ComponentActivity() {
 
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
-    handlePushNotification(intent.extras)
-  }
-
-  private fun handlePushNotification(extras: Bundle?) {
-    extras?.let { data ->
-      val pushData = OneginiMobileAuthWithPushRequest(
-        data.getString(TRANSACTION_ID_KEY) ?: "",
-        data.getString(MESSAGE_KEY) ?: "",
-        data.getString(PROFILE_ID_KEY) ?: "",
-        data.getLong(TIMESTAMP_KEY),
-        data.getInt(TIME_TO_LIVE_SECONDS_KEY)
-      )
-      pushNavigationViewModel.onNewPush(pushData)
-    }
+    intent.extras?.let { handlePushNotification(it) }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    handleIntent()
     enableEdgeToEdge()
     setContent {
       ShowcaseAppTheme {
@@ -55,6 +43,27 @@ class ShowcaseActivity : ComponentActivity() {
           BottomNavigationBar()
         }
       }
+    }
+  }
+
+  private fun handleIntent() {
+    intent?.extras?.let { handlePushNotification(it) }
+  }
+
+  private fun handlePushNotification(extras: Bundle) {
+    val transactionId = extras.getString(TRANSACTION_ID_KEY)
+    val message = extras.getString(MESSAGE_KEY)
+    val profileId = extras.getString(PROFILE_ID_KEY)
+    val isValidPushNotification = transactionId != null && message != null && profileId != null
+    if (isValidPushNotification) {
+      val pushRequest = OneginiMobileAuthWithPushRequest(
+        transactionId,
+        message,
+        profileId,
+        extras.getLong(TIMESTAMP_KEY),
+        extras.getInt(TIME_TO_LIVE_SECONDS_KEY)
+      )
+      pushNavigationViewModel.onNewPush(pushRequest)
     }
   }
 }

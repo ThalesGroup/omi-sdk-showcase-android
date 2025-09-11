@@ -76,8 +76,8 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
       if (content.isNotEmpty()) {
         Ok(jsonFacade.fromJson(content, OneginiMobileAuthWithPushRequest::class.java))
       } else {
-        Err(IllegalArgumentException("Content of remote message is empty"))
+        Err(IllegalArgumentException("Content of the remote message is empty"))
       }
-    } ?: Err(IllegalArgumentException("Content of remote message is null"))
+    } ?: Err(IllegalArgumentException("Content of the remote message is null"))
   }
 }
