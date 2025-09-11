@@ -1,6 +1,7 @@
 package com.onewelcome.showcaseapp.fcm
 
 import android.os.Bundle
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
@@ -56,9 +57,7 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
   override fun onMessageReceived(message: RemoteMessage) {
     parseRemoteMessage(message)
       .onSuccess { notificationSender.showNewTransactionNotification(createBundleForNotification(it)) }
-      .onFailure {
-        //TODO figure out what should happen
-      }
+      .onFailure { Log.e("ShowcaseAppFirebaseMessagingService::onMessageReceived", "Failure on parsing remote message: $it") }
   }
 
   private fun createBundleForNotification(mobileAuthRequest: OneginiMobileAuthWithPushRequest): Bundle {

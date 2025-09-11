@@ -185,7 +185,4 @@
   <string name="button_logout_user">Logout</string>
   <string name="logout_description">SDK offers a way to logout currently logged in user profile. Logout does not fail if there is no authenticated user profile.</string>
 
-  <!-- Push Authentication -->
-  <string name="mobile_auth_push_authentication_authenticated_user_requirement_tooltip">User needs to be authenticated to perform push authentication</string>
-
 </resources>

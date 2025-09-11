@@ -20,6 +20,7 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.UiState
 
 @Composable
 fun TransactionConfirmationResultScreen(navController: NavController, viewModel: TransactionConfirmationViewModel) {
@@ -27,7 +28,7 @@ fun TransactionConfirmationResultScreen(navController: NavController, viewModel:
 }
 
 @Composable
-fun TransactionConfirmationResultScreenContent(uiState: TransactionConfirmationViewModel.UiState, popBackStack: () -> Unit) {
+fun TransactionConfirmationResultScreenContent(uiState: UiState, popBackStack: () -> Unit) {
   Scaffold(
     topBar = { ShowcaseTopBar("Transaction result", popBackStack) }
   ) { contentPadding ->
@@ -75,5 +76,5 @@ fun TransactionConfirmationResultScreenContent(uiState: TransactionConfirmationV
 @Preview
 @Composable
 private fun Preview() {
-  TransactionConfirmationResultScreenContent(TransactionConfirmationViewModel.UiState(), {})
+  TransactionConfirmationResultScreenContent(UiState()) {}
 }

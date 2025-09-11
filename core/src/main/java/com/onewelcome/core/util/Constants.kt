@@ -28,8 +28,4 @@ object Constants {
   const val PROFILE_ID_KEY = "profileId"
   const val TIMESTAMP_KEY ="timestamp"
   const val TIME_TO_LIVE_SECONDS_KEY ="timeToLiveSeconds"
-
-  // CustomInfo
-  const val STATUS_KEY = "status"
-  const val DATA_KEY = "data"
 }

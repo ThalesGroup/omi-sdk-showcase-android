@@ -32,7 +32,7 @@ import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
 import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
 import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 import com.onewelcome.internal.OsCompatibilityScreen
-import com.onewelcome.showcaseapp.PushNavigationViewModel
+import com.onewelcome.showcaseapp.PushViewModel
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
@@ -54,12 +54,12 @@ import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScree
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
 
 @Composable
-fun BottomNavigationBar(pushNavigationViewModel: PushNavigationViewModel = hiltViewModel()) {
+fun ScreenHostContainer() {
   val rootNavController = rememberNavController()
   val homeNavController = rememberNavController()
   val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentRootDestination = rootNavBackStackEntry?.destination
-  ListenForPushEvents(pushNavigationViewModel, rootNavController)
+  ListenForPushEvents(rootNavController)
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
@@ -81,11 +81,11 @@ fun BottomNavigationBar(pushNavigationViewModel: PushNavigationViewModel = hiltV
 
 @Composable
 private fun ListenForPushEvents(
-  pushNavigationViewModel: PushNavigationViewModel,
-  rootNavController: NavHostController
+  rootNavController: NavHostController,
+  pushViewModel: PushViewModel = hiltViewModel(),
 ) {
   LaunchedEffect(Unit) {
-    pushNavigationViewModel.pushEvent.collect {
+    pushViewModel.pushEvent.collect {
       rootNavController.navigate("transaction_confirmation/${it.transactionId}/${it.message}/${it.userProfileId}/${it.timestamp}/${it.timeToLiveSeconds}")
     }
   }

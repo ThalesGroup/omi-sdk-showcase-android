@@ -17,13 +17,13 @@ import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
 import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
 import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
 import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
-import com.onewelcome.showcaseapp.navigation.BottomNavigationBar
+import com.onewelcome.showcaseapp.navigation.ScreenHostContainer
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ShowcaseActivity : ComponentActivity() {
 
-  private val pushNavigationViewModel: PushNavigationViewModel by viewModels()
+  private val pushViewModel: PushViewModel by viewModels()
 
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
@@ -40,7 +40,7 @@ class ShowcaseActivity : ComponentActivity() {
           modifier = Modifier.fillMaxSize(),
           color = MaterialTheme.colorScheme.background
         ) {
-          BottomNavigationBar()
+          ScreenHostContainer()
         }
       }
     }
@@ -63,7 +63,7 @@ class ShowcaseActivity : ComponentActivity() {
         extras.getLong(TIMESTAMP_KEY),
         extras.getInt(TIME_TO_LIVE_SECONDS_KEY)
       )
-      pushNavigationViewModel.onNewPush(pushRequest)
+      pushViewModel.onNewPush(pushRequest)
     }
   }
 }
