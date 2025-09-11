@@ -73,7 +73,7 @@ fun BottomNavigationBar(pushNavigationViewModel: PushNavigationViewModel = hiltV
       startDestination = Screens.Home.route,
       modifier = Modifier.padding(paddingValues = paddingValues)
     ) {
-      bottomNavigationScreens(homeNavController, rootNavController, pushNavigationViewModel)
+      bottomNavigationScreens(homeNavController, rootNavController)
       pinFullScreenPages(rootNavController)
     }
   }
@@ -99,12 +99,11 @@ private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostControl
 private fun NavGraphBuilder.bottomNavigationScreens(
   homeNavController: NavHostController,
   rootNavController: NavHostController,
-  transactionsViewModel: PushNavigationViewModel
 ) {
   composable(Screens.Home.route) { HomeScreenNavHost(homeNavController, rootNavController) }
   composable(Screens.Info.route) { InfoScreen() }
   composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
-  composable(Screens.Transactions.route) { TransactionsScreen(transactionsViewModel) }
+  composable(Screens.Transactions.route) { TransactionsScreen() }
   navigation(startDestination = Screens.TransactionConfirmation.route, route = "sharedViewModelFlow") {
     composable(
       route = Screens.TransactionConfirmation.route,
