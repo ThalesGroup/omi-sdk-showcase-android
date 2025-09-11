@@ -21,6 +21,7 @@ object Constants {
   const val FULLSCREEN_PAGE = "fullscreen"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
 
+  // OneginiMobileAuthWithPushRequest
   const val MOBILE_AUTH_CHANNEL_ID = "mobile_auth_channel"
   const val MESSAGE_KEY = "message"
   const val TRANSACTION_ID_KEY = "transactionId"
@@ -28,4 +29,7 @@ object Constants {
   const val TIMESTAMP_KEY ="timestamp"
   const val TIME_TO_LIVE_SECONDS_KEY ="timeToLiveSeconds"
 
+  // CustomInfo
+  const val STATUS_KEY = "status"
+  const val DATA_KEY = "data"
 }

@@ -19,28 +19,49 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toReadableDate
+import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.NavigationEvent.NavigateToTransactionResultScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.UiEvent
+import com.onewelcome.showcaseapp.navigation.Screens
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun TransactionConfirmationScreen(
-  homeNavController: NavHostController,
+  navController: NavHostController,
   oneginiMobileAuthWithPushRequest: OneginiMobileAuthWithPushRequest,
-  viewModel: TransactionConfirmationViewModel = hiltViewModel()
+  viewModel: TransactionConfirmationViewModel,
 ) {
+  ListenForNavigationEvents(viewModel.navigationEvents, navController)
   TransactionConfirmationScreenContent(
-    onNavigateBack = { homeNavController.popBackStack() },
+    onNavigateBack = { navController.popBackStack() },
     oneginiMobileAuthWithPushRequest = oneginiMobileAuthWithPushRequest,
     onEvent = { viewModel.onEvent(it) }
   )
+}
+
+@Composable
+private fun ListenForNavigationEvents(
+  navigationEvents: Flow<TransactionConfirmationViewModel.NavigationEvent>,
+  navController: NavHostController
+) {
+  LaunchedEffect(Unit) {
+    navigationEvents.collect {
+      when (it) {
+        NavigateToTransactionResultScreen -> navController.navigate(Screens.TransactionConfirmationResult.route) {
+          popUpTo(navController.currentDestination?.id ?: return@navigate) {
+            inclusive = true
+          }
+        }
+      }
+    }
+  }
 }
 
 @Composable
@@ -94,26 +115,61 @@ private fun ButtonsSection(onEvent: (UiEvent) -> Unit) {
 
 @Composable
 private fun TransactionInfoSection(oneginiMobileAuthWithPushRequest: OneginiMobileAuthWithPushRequest) {
-  Column {
-    Text("Transaction ID", style = MaterialTheme.typography.titleMedium)
-    Text(oneginiMobileAuthWithPushRequest.transactionId)
-  }
-  Column {
-    Text("Message", style = MaterialTheme.typography.titleMedium)
-    Text(oneginiMobileAuthWithPushRequest.message)
-  }
+  TransactionIdSection(oneginiMobileAuthWithPushRequest.transactionId)
+  MessageSection(oneginiMobileAuthWithPushRequest.message)
+  ProfileIdSection(oneginiMobileAuthWithPushRequest.userProfileId)
+  TimeBasedSection(oneginiMobileAuthWithPushRequest.timestamp, oneginiMobileAuthWithPushRequest.timeToLiveSeconds)
+}
+
+@Composable
+private fun ProfileIdSection(userProfileId: String) {
   Column {
     Text("Profile ID", style = MaterialTheme.typography.titleMedium)
-    Text(oneginiMobileAuthWithPushRequest.userProfileId)
+    Text(userProfileId)
   }
+}
+
+@Composable
+private fun MessageSection(message: String) {
   Column {
-    Text("Timestamp", style = MaterialTheme.typography.titleMedium)
-    Text(oneginiMobileAuthWithPushRequest.timestamp.toReadableDate())
+    Text("Message", style = MaterialTheme.typography.titleMedium)
+    Text(message)
   }
+}
+
+@Composable
+private fun TransactionIdSection(transactionId: String) {
+  Column {
+    Text("Transaction ID", style = MaterialTheme.typography.titleMedium)
+    Text(transactionId)
+  }
+}
+
+@Composable
+private fun TimeBasedSection(timestamp: Long, timeToLiveSeconds: Int) {
+  TimestampSection(timestamp)
+  CountdownTimerSection(timestamp, timeToLiveSeconds)
+}
+
+@Composable
+private fun CountdownTimerSection(timestamp: Long, timeToLiveSeconds: Int) {
   Column {
     Text("Time to live in seconds", style = MaterialTheme.typography.titleMedium)
-    CountdownTimer(oneginiMobileAuthWithPushRequest.timestamp, oneginiMobileAuthWithPushRequest.timeToLiveSeconds).toString()
+    if (timestamp != 0L) CountdownTimer(timestamp, timeToLiveSeconds).toString() else NoDataAvailableText()
   }
+}
+
+@Composable
+private fun TimestampSection(timestamp: Long) {
+  Column {
+    Text("Timestamp", style = MaterialTheme.typography.titleMedium)
+    if (timestamp != 0L) Text(timestamp.toReadableDate()) else NoDataAvailableText()
+  }
+}
+
+@Composable
+private fun NoDataAvailableText() {
+  Text("No data available")
 }
 
 @Composable

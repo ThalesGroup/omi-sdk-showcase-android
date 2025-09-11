@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.core.util.Constants.MESSAGE_KEY
@@ -43,6 +45,7 @@ import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
+import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationResultScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
@@ -102,23 +105,32 @@ private fun NavGraphBuilder.bottomNavigationScreens(
   composable(Screens.Info.route) { InfoScreen() }
   composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
   composable(Screens.Transactions.route) { TransactionsScreen(transactionsViewModel) }
-  composable(
-    route = Screens.TransactionConfirmation.route,
-    arguments = listOf(
-      navArgument(TRANSACTION_ID_KEY) { type = NavType.StringType },
-      navArgument(MESSAGE_KEY) { type = NavType.StringType },
-      navArgument(PROFILE_ID_KEY) { type = NavType.StringType },
-      navArgument(TIMESTAMP_KEY) { type = NavType.LongType },
-      navArgument(TIME_TO_LIVE_SECONDS_KEY) { type = NavType.IntType },
-    )
-  ) { backStackEntry ->
-    val transactionId = backStackEntry.arguments?.getString(TRANSACTION_ID_KEY) ?: ""
-    val message = backStackEntry.arguments?.getString(MESSAGE_KEY) ?: ""
-    val profileId = backStackEntry.arguments?.getString(PROFILE_ID_KEY) ?: ""
-    val timestamp = backStackEntry.arguments?.getLong(TIMESTAMP_KEY) ?: 0L
-    val timeToLiveSeconds = backStackEntry.arguments?.getInt(TIME_TO_LIVE_SECONDS_KEY) ?: 0
-    val oneginiMobileAuthWithPushRequest = OneginiMobileAuthWithPushRequest(transactionId, message, profileId, timestamp, timeToLiveSeconds)
-    TransactionConfirmationScreen(rootNavController, oneginiMobileAuthWithPushRequest)
+  navigation(startDestination = Screens.TransactionConfirmation.route, route = "sharedViewModelFlow") {
+    composable(
+      route = Screens.TransactionConfirmation.route,
+      arguments = listOf(
+        navArgument(TRANSACTION_ID_KEY) { type = NavType.StringType },
+        navArgument(MESSAGE_KEY) { type = NavType.StringType },
+        navArgument(PROFILE_ID_KEY) { type = NavType.StringType },
+        navArgument(TIMESTAMP_KEY) { type = NavType.LongType },
+        navArgument(TIME_TO_LIVE_SECONDS_KEY) { type = NavType.IntType },
+      )
+    ) { backStackEntry ->
+      val transactionId = backStackEntry.arguments?.getString(TRANSACTION_ID_KEY) ?: ""
+      val message = backStackEntry.arguments?.getString(MESSAGE_KEY) ?: ""
+      val profileId = backStackEntry.arguments?.getString(PROFILE_ID_KEY) ?: ""
+      val timestamp = backStackEntry.arguments?.getLong(TIMESTAMP_KEY) ?: 0L
+      val timeToLiveSeconds = backStackEntry.arguments?.getInt(TIME_TO_LIVE_SECONDS_KEY) ?: 0
+      val oneginiMobileAuthWithPushRequest =
+        OneginiMobileAuthWithPushRequest(transactionId, message, profileId, timestamp, timeToLiveSeconds)
+
+      val parentEntry = remember(backStackEntry) { rootNavController.getBackStackEntry("sharedViewModelFlow") }
+      TransactionConfirmationScreen(rootNavController, oneginiMobileAuthWithPushRequest, hiltViewModel(parentEntry))
+    }
+    composable(Screens.TransactionConfirmationResult.route) { backStackEntry ->
+      val parentEntry = remember(backStackEntry) { rootNavController.getBackStackEntry("sharedViewModelFlow") }
+      TransactionConfirmationResultScreen(rootNavController, hiltViewModel(parentEntry))
+    }
   }
 }
 
