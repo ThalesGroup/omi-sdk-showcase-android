@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PushNavigationViewModel @Inject constructor(
+class PushViewModel @Inject constructor(
   private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
 ) : ViewModel() {
   private val _pushEvent = Channel<OneginiMobileAuthWithPushRequest>(Channel.BUFFERED)

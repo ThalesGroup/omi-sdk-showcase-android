@@ -16,6 +16,7 @@ import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsViewModel.State
+
 //TODO: Finish screen as part of https://onewelcome.atlassian.net/browse/AOSA-11
 @Composable
 fun TransactionsScreen(viewModel: TransactionsViewModel = hiltViewModel()) {

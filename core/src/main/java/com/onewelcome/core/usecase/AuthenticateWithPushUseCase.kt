@@ -3,6 +3,7 @@ package com.onewelcome.core.usecase
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -19,14 +20,17 @@ class AuthenticateWithPushUseCase @Inject constructor(private val omiSdkFacade: 
   val authenticationEvent = _authenticationEvent.receiveAsFlow()
 
   fun execute(pushRequest: OneginiMobileAuthWithPushRequest) {
-    omiSdkFacade.oneginiClient.getUserClient().handleMobileAuthWithPushRequest(pushRequest, object : OneginiMobileAuthenticationHandler {
-      override fun onSuccess(customInfo: CustomInfo?) {
-        _authenticationEvent.trySend(Ok(customInfo))
-      }
+    runCatching {
+      omiSdkFacade.oneginiClient.getUserClient()
+        .handleMobileAuthWithPushRequest(pushRequest, object : OneginiMobileAuthenticationHandler {
+          override fun onSuccess(customInfo: CustomInfo?) {
+            _authenticationEvent.trySend(Ok(customInfo))
+          }
 
-      override fun onError(error: OneginiMobileAuthenticationError) {
-        _authenticationEvent.trySend(Err(error))
-      }
-    })
+          override fun onError(error: OneginiMobileAuthenticationError) {
+            _authenticationEvent.trySend(Err(error))
+          }
+        })
+    }
   }
 }
