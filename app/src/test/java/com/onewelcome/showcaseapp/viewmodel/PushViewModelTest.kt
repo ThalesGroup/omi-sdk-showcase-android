@@ -6,7 +6,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandle
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.util.TestConstants
-import com.onewelcome.showcaseapp.PushViewModel
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -17,7 +17,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -43,7 +42,7 @@ class PushViewModelTest {
 
   private val userClientMock = mock<UserClient>()
 
-  lateinit var viewModel: PushViewModel
+  lateinit var viewModel: SharedPushViewModel
 
   val pushRequest = OneginiMobileAuthWithPushRequest("transactionId", "message", "userProfileId")
 
@@ -53,7 +52,7 @@ class PushViewModelTest {
     mockSdkInitialized()
     whenever(oneginiClientMock.getUserClient()).thenReturn(userClientMock)
 
-    viewModel = PushViewModel(authenticateWithPushUseCase)
+    viewModel = SharedPushViewModel(authenticateWithPushUseCase)
   }
 
   @Test

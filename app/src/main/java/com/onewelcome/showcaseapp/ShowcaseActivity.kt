@@ -17,13 +17,14 @@ import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
 import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
 import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
 import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.navigation.ScreenHostContainer
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ShowcaseActivity : ComponentActivity() {
 
-  private val pushViewModel: PushViewModel by viewModels()
+  private val sharedPushViewModel: SharedPushViewModel by viewModels()
 
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
@@ -63,7 +64,7 @@ class ShowcaseActivity : ComponentActivity() {
         extras.getLong(TIMESTAMP_KEY),
         extras.getInt(TIME_TO_LIVE_SECONDS_KEY)
       )
-      pushViewModel.onNewPush(pushRequest)
+      sharedPushViewModel.onNewPush(pushRequest)
     }
   }
 }

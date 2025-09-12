@@ -1,4 +1,4 @@
-package com.onewelcome.showcaseapp.feature.transactionconfirmation
+package com.onewelcome.showcaseapp.feature.push
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,11 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.Result
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
+import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
-import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.NavigationEvent.NavigateToTransactionResultScreen
-import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.UiEvent.Accept
-import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.UiEvent.Reject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -20,33 +18,41 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TransactionConfirmationViewModel @Inject constructor(
+class SharedPushViewModel @Inject constructor(
+  private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
-  authenticateWithPushUseCase: AuthenticateWithPushUseCase,
 ) : ViewModel() {
-
   var uiState by mutableStateOf(UiState())
 
-  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.Factory.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
     viewModelScope.launch {
       authenticateWithPushUseCase.authenticationEvent.collect {
         uiState = uiState.copy(result = it)
-        _navigationEvents.trySend(NavigateToTransactionResultScreen)
+        _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
       }
+    }
+  }
+
+  fun onNewPush(pushRequest: OneginiMobileAuthWithPushRequest) {
+    viewModelScope.launch {
+      uiState = uiState.copy(pushRequest = pushRequest)
+      authenticateWithPushUseCase.execute(pushRequest)
+      _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
     }
   }
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      Accept -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
-      Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
+      UiEvent.Accept -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+      UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
     }
   }
 
   data class UiState(
+    val pushRequest: OneginiMobileAuthWithPushRequest? = null,
     val result: Result<CustomInfo?, OneginiMobileAuthenticationError>? = null
   )
 
@@ -57,5 +63,6 @@ class TransactionConfirmationViewModel @Inject constructor(
 
   sealed interface NavigationEvent {
     data object NavigateToTransactionResultScreen : NavigationEvent
+    data object NavigateToTransactionConfirmationScreen : NavigationEvent
   }
 }

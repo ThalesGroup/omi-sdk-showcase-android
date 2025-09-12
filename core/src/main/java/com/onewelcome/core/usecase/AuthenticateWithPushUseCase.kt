@@ -12,9 +12,7 @@ import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class AuthenticateWithPushUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
   private val _authenticationEvent = Channel<Result<CustomInfo?, OneginiMobileAuthenticationError>>(Channel.BUFFERED)
   val authenticationEvent = _authenticationEvent.receiveAsFlow()

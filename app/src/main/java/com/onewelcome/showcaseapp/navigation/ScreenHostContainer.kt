@@ -10,29 +10,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.theme.isNotFullScreenRoute
-import com.onewelcome.core.util.Constants.MESSAGE_KEY
-import com.onewelcome.core.util.Constants.PROFILE_ID_KEY
-import com.onewelcome.core.util.Constants.TIMESTAMP_KEY
-import com.onewelcome.core.util.Constants.TIME_TO_LIVE_SECONDS_KEY
-import com.onewelcome.core.util.Constants.TRANSACTION_ID_KEY
 import com.onewelcome.internal.OsCompatibilityScreen
-import com.onewelcome.showcaseapp.PushViewModel
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
@@ -59,7 +50,8 @@ fun ScreenHostContainer() {
   val homeNavController = rememberNavController()
   val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentRootDestination = rootNavBackStackEntry?.destination
-  ListenForPushEvents(rootNavController)
+  val sharedPushViewModel: SharedPushViewModel = hiltViewModel()
+  ListenForPushEvents(rootNavController, sharedPushViewModel)
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
@@ -75,6 +67,7 @@ fun ScreenHostContainer() {
     ) {
       bottomNavigationScreens(homeNavController, rootNavController)
       pinFullScreenPages(rootNavController)
+      pushScreens(rootNavController, sharedPushViewModel)
     }
   }
 }
@@ -82,12 +75,24 @@ fun ScreenHostContainer() {
 @Composable
 private fun ListenForPushEvents(
   rootNavController: NavHostController,
-  pushViewModel: PushViewModel = hiltViewModel(),
+  sharedPushViewModel: SharedPushViewModel,
 ) {
   LaunchedEffect(Unit) {
-    pushViewModel.pushEvent.collect {
-      rootNavController.navigate("transaction_confirmation/${it.transactionId}/${it.message}/${it.userProfileId}/${it.timestamp}/${it.timeToLiveSeconds}")
+    sharedPushViewModel.navigationEvents.collect {
+      when (it) {
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
+          popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+        }
+      }
     }
+  }
+}
+
+private fun NavGraphBuilder.pushScreens(rootNavController: NavHostController, sharedPushViewModel: SharedPushViewModel) {
+  navigation(startDestination = Screens.TransactionConfirmation.route, route = "sharedViewModelFlow") {
+    composable(route = Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(rootNavController, sharedPushViewModel) }
+    composable(Screens.TransactionConfirmationResult.route) { TransactionConfirmationResultScreen(rootNavController, sharedPushViewModel) }
   }
 }
 
@@ -104,33 +109,6 @@ private fun NavGraphBuilder.bottomNavigationScreens(
   composable(Screens.Info.route) { InfoScreen() }
   composable(Screens.OsCompatibility.route) { OsCompatibilityScreen() }
   composable(Screens.Transactions.route) { TransactionsScreen() }
-  navigation(startDestination = Screens.TransactionConfirmation.route, route = "sharedViewModelFlow") {
-    composable(
-      route = Screens.TransactionConfirmation.route,
-      arguments = listOf(
-        navArgument(TRANSACTION_ID_KEY) { type = NavType.StringType },
-        navArgument(MESSAGE_KEY) { type = NavType.StringType },
-        navArgument(PROFILE_ID_KEY) { type = NavType.StringType },
-        navArgument(TIMESTAMP_KEY) { type = NavType.LongType },
-        navArgument(TIME_TO_LIVE_SECONDS_KEY) { type = NavType.IntType },
-      )
-    ) { backStackEntry ->
-      val transactionId = backStackEntry.arguments?.getString(TRANSACTION_ID_KEY) ?: ""
-      val message = backStackEntry.arguments?.getString(MESSAGE_KEY) ?: ""
-      val profileId = backStackEntry.arguments?.getString(PROFILE_ID_KEY) ?: ""
-      val timestamp = backStackEntry.arguments?.getLong(TIMESTAMP_KEY) ?: 0L
-      val timeToLiveSeconds = backStackEntry.arguments?.getInt(TIME_TO_LIVE_SECONDS_KEY) ?: 0
-      val oneginiMobileAuthWithPushRequest =
-        OneginiMobileAuthWithPushRequest(transactionId, message, profileId, timestamp, timeToLiveSeconds)
-
-      val parentEntry = remember(backStackEntry) { rootNavController.getBackStackEntry("sharedViewModelFlow") }
-      TransactionConfirmationScreen(rootNavController, oneginiMobileAuthWithPushRequest, hiltViewModel(parentEntry))
-    }
-    composable(Screens.TransactionConfirmationResult.route) { backStackEntry ->
-      val parentEntry = remember(backStackEntry) { rootNavController.getBackStackEntry("sharedViewModelFlow") }
-      TransactionConfirmationResultScreen(rootNavController, hiltViewModel(parentEntry))
-    }
-  }
 }
 
 @Composable
