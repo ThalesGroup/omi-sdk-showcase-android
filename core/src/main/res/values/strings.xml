@@ -15,6 +15,10 @@
   <string name="register">Register</string>
   <string name="cancel">Cancel</string>
   <string name="submit">Submit</string>
+  <string name="accept">Accept</string>
+  <string name="reject">Reject</string>
+  <string name="error">Error</string>
+  <string name="close">Close</string>
   <string name="authenticate">Authenticate</string>
   <string name="user_profile">User profile: %s</string>
   <string name="custom_info">Custom info: %s</string>
@@ -184,5 +188,20 @@
   <string name="logout_performed_successfully">Logout performed successfully</string>
   <string name="button_logout_user">Logout</string>
   <string name="logout_description">SDK offers a way to logout currently logged in user profile. Logout does not fail if there is no authenticated user profile.</string>
+
+  <!-- Transaction Confirmation -->
+  <string name="transaction_screen">Transaction screen</string>
+  <string name="profile_id">Profile ID</string>
+  <string name="message">Message</string>
+  <string name="transaction_id">Transaction ID</string>
+  <string name="time_to_live_seconds">Time to live in seconds</string>
+  <string name="timestamp">Timestamp</string>
+  <string name="no_data_available">No data available</string>
+
+  <!-- Transaction Confirmation Result -->
+  <string name="transaction_result">Transaction result</string>
+  <string name="transaction_accepted_successfully">Transaction accepted successfully</string>
+  <string name="custom_info_plain">Custom info</string>
+  <string name="transaction_failed">Transaction failed</string>
 
 </resources>
