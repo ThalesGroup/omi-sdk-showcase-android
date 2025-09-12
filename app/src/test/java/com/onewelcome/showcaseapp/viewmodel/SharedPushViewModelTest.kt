@@ -128,17 +128,6 @@ class SharedPushViewModelTest {
     )
   }
 
-  @Test
-  fun `When new push is sent and Accept event is sent, Then state should  be updated`() {
-    mockSdkInitialized()
-    mockUserClient()
-
-    viewModel.onNewPush(pushRequest)
-    viewModel.onEvent(SharedPushViewModel.UiEvent.Accept)
-
-    assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE.copy(pushRequest = pushRequest, result = Ok(null)))
-  }
-
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)

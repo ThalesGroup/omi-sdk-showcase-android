@@ -114,7 +114,7 @@ private fun ProfileIdSection(userProfileId: String) {
 @Composable
 private fun MessageSection(message: String) {
   Column {
-    Text(stringResource(R.string.message), style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.message_content), style = MaterialTheme.typography.titleMedium)
     Text(message)
   }
 }

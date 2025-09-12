@@ -192,7 +192,7 @@
   <!-- Transaction Confirmation -->
   <string name="transaction_screen">Transaction screen</string>
   <string name="profile_id">Profile ID</string>
-  <string name="message">Message</string>
+  <string name="message_content">Message</string>
   <string name="transaction_id">Transaction ID</string>
   <string name="time_to_live_seconds">Time to live in seconds</string>
   <string name="timestamp">Timestamp</string>
