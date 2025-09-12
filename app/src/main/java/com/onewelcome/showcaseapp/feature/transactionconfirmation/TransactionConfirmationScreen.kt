@@ -24,51 +24,29 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toReadableDate
-import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.NavigationEvent.NavigateToTransactionResultScreen
-import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.UiEvent
-import com.onewelcome.showcaseapp.navigation.Screens
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiEvent
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun TransactionConfirmationScreen(
   navController: NavHostController,
-  oneginiMobileAuthWithPushRequest: OneginiMobileAuthWithPushRequest,
-  viewModel: TransactionConfirmationViewModel,
+  viewModel: SharedPushViewModel,
 ) {
-  ListenForNavigationEvents(viewModel.navigationEvents, navController)
   TransactionConfirmationScreenContent(
     onNavigateBack = { navController.popBackStack() },
-    oneginiMobileAuthWithPushRequest = oneginiMobileAuthWithPushRequest,
-    onEvent = { viewModel.onEvent(it) }
+    onEvent = { viewModel.onEvent(it) },
+    uiState = viewModel.uiState,
   )
-}
-
-@Composable
-private fun ListenForNavigationEvents(
-  navigationEvents: Flow<TransactionConfirmationViewModel.NavigationEvent>,
-  navController: NavHostController
-) {
-  LaunchedEffect(Unit) {
-    navigationEvents.collect {
-      when (it) {
-        NavigateToTransactionResultScreen -> navController.navigate(Screens.TransactionConfirmationResult.route) {
-          popUpTo(navController.currentDestination?.id ?: return@navigate) {
-            inclusive = true
-          }
-        }
-      }
-    }
-  }
 }
 
 @Composable
 private fun TransactionConfirmationScreenContent(
   onNavigateBack: () -> Unit,
-  oneginiMobileAuthWithPushRequest: OneginiMobileAuthWithPushRequest,
   onEvent: (UiEvent) -> Unit,
+  uiState: SharedPushViewModel.UiState,
 ) {
   Scaffold(
     topBar = { ShowcaseTopBar("Transaction screen", onNavigateBack) }
@@ -80,7 +58,7 @@ private fun TransactionConfirmationScreenContent(
         verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing),
         modifier = Modifier.padding(horizontal = Dimensions.mPadding)
       ) {
-        TransactionInfoSection(oneginiMobileAuthWithPushRequest)
+        TransactionInfoSection(uiState.pushRequest)
         ButtonsSection(onEvent)
       }
     }
@@ -114,11 +92,13 @@ private fun ButtonsSection(onEvent: (UiEvent) -> Unit) {
 }
 
 @Composable
-private fun TransactionInfoSection(oneginiMobileAuthWithPushRequest: OneginiMobileAuthWithPushRequest) {
-  TransactionIdSection(oneginiMobileAuthWithPushRequest.transactionId)
-  MessageSection(oneginiMobileAuthWithPushRequest.message)
-  ProfileIdSection(oneginiMobileAuthWithPushRequest.userProfileId)
-  TimeBasedSection(oneginiMobileAuthWithPushRequest.timestamp, oneginiMobileAuthWithPushRequest.timeToLiveSeconds)
+private fun TransactionInfoSection(oneginiMobileAuthWithPushRequest: OneginiMobileAuthWithPushRequest?) {
+  oneginiMobileAuthWithPushRequest?.let {
+    TransactionIdSection(oneginiMobileAuthWithPushRequest.transactionId)
+    MessageSection(oneginiMobileAuthWithPushRequest.message)
+    ProfileIdSection(oneginiMobileAuthWithPushRequest.userProfileId)
+    TimeBasedSection(oneginiMobileAuthWithPushRequest.timestamp, oneginiMobileAuthWithPushRequest.timeToLiveSeconds)
+  }
 }
 
 @Composable
@@ -196,7 +176,7 @@ private fun CountdownTimer(
 private fun Preview() {
   TransactionConfirmationScreenContent(
     {},
-    OneginiMobileAuthWithPushRequest("transactionId", "message", "userProfile", System.currentTimeMillis(), 300),
-    {}
+    {},
+    SharedPushViewModel.UiState(),
   )
 }

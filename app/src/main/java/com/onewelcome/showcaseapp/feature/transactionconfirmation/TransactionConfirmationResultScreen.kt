@@ -20,10 +20,11 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
-import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationViewModel.UiState
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiState
 
 @Composable
-fun TransactionConfirmationResultScreen(navController: NavController, viewModel: TransactionConfirmationViewModel) {
+fun TransactionConfirmationResultScreen(navController: NavController, viewModel: SharedPushViewModel) {
   TransactionConfirmationResultScreenContent(viewModel.uiState) { navController.popBackStack() }
 }
 
