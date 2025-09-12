@@ -18,12 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toReadableDate
+import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiEvent
 import kotlinx.coroutines.delay
@@ -49,7 +51,7 @@ private fun TransactionConfirmationScreenContent(
   uiState: SharedPushViewModel.UiState,
 ) {
   Scaffold(
-    topBar = { ShowcaseTopBar("Transaction screen", onNavigateBack) }
+    topBar = { ShowcaseTopBar(stringResource(R.string.transaction_screen), onNavigateBack) }
   ) { contentPadding ->
     Column(
       modifier = Modifier.padding(contentPadding),
@@ -78,7 +80,7 @@ private fun ButtonsSection(onEvent: (UiEvent) -> Unit) {
         .weight(1f),
       onClick = { onEvent.invoke(UiEvent.Accept) }
     ) {
-      Text("Accept")
+      Text(stringResource(R.string.accept))
     }
     Button(
       modifier = Modifier
@@ -86,7 +88,7 @@ private fun ButtonsSection(onEvent: (UiEvent) -> Unit) {
         .weight(1f),
       onClick = { onEvent.invoke(UiEvent.Reject) }
     ) {
-      Text("Reject")
+      Text(stringResource(R.string.reject))
     }
   }
 }
@@ -104,7 +106,7 @@ private fun TransactionInfoSection(oneginiMobileAuthWithPushRequest: OneginiMobi
 @Composable
 private fun ProfileIdSection(userProfileId: String) {
   Column {
-    Text("Profile ID", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.profile_id), style = MaterialTheme.typography.titleMedium)
     Text(userProfileId)
   }
 }
@@ -112,7 +114,7 @@ private fun ProfileIdSection(userProfileId: String) {
 @Composable
 private fun MessageSection(message: String) {
   Column {
-    Text("Message", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.message), style = MaterialTheme.typography.titleMedium)
     Text(message)
   }
 }
@@ -120,7 +122,7 @@ private fun MessageSection(message: String) {
 @Composable
 private fun TransactionIdSection(transactionId: String) {
   Column {
-    Text("Transaction ID", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.transaction_id), style = MaterialTheme.typography.titleMedium)
     Text(transactionId)
   }
 }
@@ -134,7 +136,7 @@ private fun TimeBasedSection(timestamp: Long, timeToLiveSeconds: Int) {
 @Composable
 private fun CountdownTimerSection(timestamp: Long, timeToLiveSeconds: Int) {
   Column {
-    Text("Time to live in seconds", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.time_to_live_seconds), style = MaterialTheme.typography.titleMedium)
     if (timestamp != 0L) CountdownTimer(timestamp, timeToLiveSeconds).toString() else NoDataAvailableText()
   }
 }
@@ -142,14 +144,14 @@ private fun CountdownTimerSection(timestamp: Long, timeToLiveSeconds: Int) {
 @Composable
 private fun TimestampSection(timestamp: Long) {
   Column {
-    Text("Timestamp", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.timestamp), style = MaterialTheme.typography.titleMedium)
     if (timestamp != 0L) Text(timestamp.toReadableDate()) else NoDataAvailableText()
   }
 }
 
 @Composable
 private fun NoDataAvailableText() {
-  Text("No data available")
+  Text(stringResource(R.string.no_data_available))
 }
 
 @Composable

@@ -14,12 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiState
 
@@ -31,7 +33,7 @@ fun TransactionConfirmationResultScreen(navController: NavController, viewModel:
 @Composable
 fun TransactionConfirmationResultScreenContent(uiState: UiState, popBackStack: () -> Unit) {
   Scaffold(
-    topBar = { ShowcaseTopBar("Transaction result", popBackStack) }
+    topBar = { ShowcaseTopBar(stringResource(R.string.transaction_result), popBackStack) }
   ) { contentPadding ->
     Column(
       modifier = Modifier
@@ -41,16 +43,16 @@ fun TransactionConfirmationResultScreenContent(uiState: UiState, popBackStack: (
     ) {
       uiState.result
         ?.onSuccess {
-          Text("Transaction accepted successfully", style = MaterialTheme.typography.titleLarge)
+          Text(stringResource(R.string.transaction_accepted_successfully), style = MaterialTheme.typography.titleLarge)
           Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
-            Text("Custom Info", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.custom_info_plain), style = MaterialTheme.typography.titleMedium)
             Text(it.toString())
           }
         }
         ?.onFailure {
-          Text("Transaction failed", style = MaterialTheme.typography.titleLarge)
+          Text(stringResource(R.string.transaction_failed), style = MaterialTheme.typography.titleLarge)
           Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
-            Text("Exception", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.error), style = MaterialTheme.typography.titleMedium)
             Text(it.toString())
           }
         }
@@ -67,7 +69,7 @@ fun TransactionConfirmationResultScreenContent(uiState: UiState, popBackStack: (
             .height(Dimensions.actionButtonHeight),
           onClick = popBackStack
         ) {
-          Text("Close")
+          Text(stringResource(R.string.close))
         }
       }
     }
