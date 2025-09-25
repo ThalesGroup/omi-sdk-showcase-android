@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PermissionsFacadeIml @Inject constructor(
+class PermissionsFacadeImpl @Inject constructor(
   @ApplicationContext private val context: Context
 ) : PermissionsFacade {
 

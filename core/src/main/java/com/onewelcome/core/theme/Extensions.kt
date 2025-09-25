@@ -36,4 +36,4 @@ fun Throwable.toErrorResultString(): String {
   }
 }
 
-fun Long.toReadableDate(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(this))
+fun Long.toReadableDate(): String = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault()).format(Date(this))

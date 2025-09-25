@@ -18,9 +18,12 @@ import com.onewelcome.internal.testcases.deregistration.UserDeregistrationTestCa
 import com.onewelcome.internal.testcases.initialization.SdkInitializationTestCases
 import com.onewelcome.internal.testcases.logout.LogoutTestCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.bouncycastle.util.test.SimpleTest.runTest
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,7 +54,9 @@ class OsCompatibilityViewModel @Inject constructor(
   private fun runTests() {
     uiState = uiState.copy(isLoading = true)
     markAllTestsAsRunning()
+    CoroutineScope(Dispatchers.Main.immediate)
     viewModelScope.launch {
+      ensureActive()
       runTestsSequentially()
       evaluateResult()
     }
@@ -67,7 +72,8 @@ class OsCompatibilityViewModel @Inject constructor(
   private suspend fun runTestsSequentially() {
     for ((categoryIndex, category) in uiState.testCategories.withIndex()) {
       for ((caseIndex, testCase) in category.testCases.withIndex()) {
-        val result = withContext(Dispatchers.Default) { runTest(testCase) }
+        val result = runTest(testCase)
+//        val result = withContext(Dispatchers.Default) { runTest(testCase) }
         updateTestCase(categoryIndex, caseIndex, result)
       }
     }
@@ -103,6 +109,7 @@ class OsCompatibilityViewModel @Inject constructor(
   }
 
   private suspend fun runTest(testCase: TestCase): TestStatus {
+
     return testCase.testFunction.invoke()
   }
 

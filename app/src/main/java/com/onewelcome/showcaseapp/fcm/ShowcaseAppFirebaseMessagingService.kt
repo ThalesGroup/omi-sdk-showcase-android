@@ -8,6 +8,7 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.github.michaelbull.result.runCatching
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
@@ -73,7 +74,9 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
   private fun parseRemoteMessage(remoteMessage: RemoteMessage): Result<OneginiMobileAuthWithPushRequest, Throwable> {
     return remoteMessage.data["content"]?.let { content ->
       if (content.isNotEmpty()) {
-        Ok(jsonFacade.fromJson(content, OneginiMobileAuthWithPushRequest::class.java))
+        runCatching { jsonFacade.fromJson(content, OneginiMobileAuthWithPushRequest::class.java) }
+          .onSuccess { Ok(it) }
+          .onFailure { Err("Failed to parse OneginiMobileAuthWithPushRequest") }
       } else {
         Err(IllegalArgumentException("Content of the remote message is empty"))
       }

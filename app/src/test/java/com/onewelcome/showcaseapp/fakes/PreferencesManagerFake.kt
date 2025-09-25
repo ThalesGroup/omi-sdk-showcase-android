@@ -19,4 +19,8 @@ class PreferencesManagerFake @Inject constructor() : PreferencesManager {
   override suspend fun setFirebaseTokenUpdateNeeded(value: Boolean) {
     isFirebaseTokenUpdateNeeded = value
   }
+
+  override suspend fun isFirebaseTokenUpdateNeeded(): Boolean {
+    return isFirebaseTokenUpdateNeeded
+  }
 }
