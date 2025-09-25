@@ -2,31 +2,29 @@ package com.onewelcome.core.usecase
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
+import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
-class AuthenticateWithPushUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
-  private val _authenticationEvent = Channel<Result<CustomInfo?, OneginiMobileAuthenticationError>>(Channel.BUFFERED)
-  val authenticationEvent = _authenticationEvent.receiveAsFlow()
-
+class AuthenticateWithPushUseCase @Inject constructor(
+  private val omiSdkFacade: OmiSdkFacade,
+  private val notificationEventDispatcher: NotificationEventDispatcher,
+) {
   fun execute(pushRequest: OneginiMobileAuthWithPushRequest) {
     runCatching {
       omiSdkFacade.oneginiClient.getUserClient()
         .handleMobileAuthWithPushRequest(pushRequest, object : OneginiMobileAuthenticationHandler {
           override fun onSuccess(customInfo: CustomInfo?) {
-            _authenticationEvent.trySend(Ok(customInfo))
+            notificationEventDispatcher.send(Ok(customInfo))
           }
 
           override fun onError(error: OneginiMobileAuthenticationError) {
-            _authenticationEvent.trySend(Err(error))
+            notificationEventDispatcher.send(Err(error))
           }
         })
     }

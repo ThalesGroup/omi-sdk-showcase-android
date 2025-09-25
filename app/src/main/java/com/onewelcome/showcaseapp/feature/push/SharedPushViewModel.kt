@@ -9,6 +9,7 @@ import com.github.michaelbull.result.Result
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
+import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class SharedPushViewModel @Inject constructor(
   private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
+  private val notificationEventDispatcher: NotificationEventDispatcher,
 ) : ViewModel() {
   var uiState by mutableStateOf(UiState())
 
@@ -29,7 +31,7 @@ class SharedPushViewModel @Inject constructor(
 
   init {
     viewModelScope.launch {
-      authenticateWithPushUseCase.authenticationEvent.collect {
+      notificationEventDispatcher.authenticationEvent.collect {
         uiState = uiState.copy(result = it)
         _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
       }
@@ -39,6 +41,7 @@ class SharedPushViewModel @Inject constructor(
   fun onNewPush(pushRequest: OneginiMobileAuthWithPushRequest) {
     viewModelScope.launch {
       uiState = uiState.copy(pushRequest = pushRequest)
+
       authenticateWithPushUseCase.execute(pushRequest)
       _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
     }

@@ -204,4 +204,8 @@
   <string name="custom_info_plain">Custom info</string>
   <string name="transaction_failed">Transaction failed</string>
 
+  <!-- Notifications -->
+  <string name="new_pending_transaction">New pending transaction</string>
+  <string name="transaction_waiting_for_confirmation">New pending transaction</string>
+
 </resources>

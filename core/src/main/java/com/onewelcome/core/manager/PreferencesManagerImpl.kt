@@ -16,6 +16,10 @@ class PreferencesManagerImpl @Inject constructor(
   }
 
   override suspend fun setFirebaseTokenUpdateNeeded(value: Boolean) {
-    dataStore.setFirebaseTokenUpdateNeeded(true)
+    dataStore.setFirebaseTokenUpdateNeeded(value)
+  }
+
+  override suspend fun isFirebaseTokenUpdateNeeded(): Boolean {
+    return dataStore.isFirebaseTokenUpdateNeeded().first()
   }
 }

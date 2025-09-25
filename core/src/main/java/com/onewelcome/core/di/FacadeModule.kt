@@ -5,7 +5,7 @@ import com.onewelcome.core.facade.FirebaseMessagingFacadeImpl
 import com.onewelcome.core.facade.JsonFacade
 import com.onewelcome.core.facade.JsonFacadeImpl
 import com.onewelcome.core.facade.PermissionsFacade
-import com.onewelcome.core.facade.PermissionsFacadeIml
+import com.onewelcome.core.facade.PermissionsFacadeImpl
 import com.onewelcome.core.omisdk.OmiSdkEngine
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import dagger.Binds
@@ -24,8 +24,14 @@ interface FacadeModule {
   fun bindFirebaseMessagingFacade(firebaseMessagingFacade: FirebaseMessagingFacadeImpl): FirebaseMessagingFacade
 
   @Binds
-  fun bindPermissionsFacade(contextCompatFacadeIml: PermissionsFacadeIml): PermissionsFacade
+  fun bindPermissionsFacade(contextCompatFacadeIml: PermissionsFacadeImpl): PermissionsFacade
 
   @Binds
   fun bindJsonFacade(jsonFacade: JsonFacadeImpl): JsonFacade
+
+  @Binds
+  fun bindNotificationFacade(notificationFacadeImpl: NotificationFacadeImpl): NotificationFacade
+
+  @Binds
+  fun bindPendingIntentFacade(pendingIntentFacadeImpl: PendingIntentFacadeImpl): PendingIntentFacade
 }

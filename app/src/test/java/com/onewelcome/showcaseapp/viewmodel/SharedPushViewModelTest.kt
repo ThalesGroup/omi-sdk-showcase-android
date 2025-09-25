@@ -62,9 +62,6 @@ class SharedPushViewModelTest {
     viewModel = SharedPushViewModel(authenticateWithPushUseCase, mobileAuthWithPushRequestHandler)
   }
 
-  //accept
-  //reject
-
   @Test
   fun `When viewmodel is initialized, Then default state should be returned`() {
     val expectedState = INITIAL_STATE
