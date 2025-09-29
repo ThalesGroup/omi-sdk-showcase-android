@@ -6,7 +6,9 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class NotificationEventDispatcher @Inject constructor() {
   private val _authenticationEvent = Channel<Result<CustomInfo?, OneginiMobileAuthenticationError>>(Channel.BUFFERED)
   val authenticationEvent = _authenticationEvent.receiveAsFlow()
