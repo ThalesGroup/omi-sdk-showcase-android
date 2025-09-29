@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
+import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.util.TestConstants
@@ -48,6 +49,9 @@ class SharedPushViewModelTest {
   @Inject
   lateinit var oneginiClientMock: OneginiClient
 
+  @Inject
+  lateinit var notificationEventDispatcher: NotificationEventDispatcher
+
   lateinit var viewModel: SharedPushViewModel
 
   private val userClientMock: UserClient = mock()
@@ -59,7 +63,7 @@ class SharedPushViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = SharedPushViewModel(authenticateWithPushUseCase, mobileAuthWithPushRequestHandler)
+    viewModel = SharedPushViewModel(authenticateWithPushUseCase, mobileAuthWithPushRequestHandler, notificationEventDispatcher)
   }
 
   @Test
