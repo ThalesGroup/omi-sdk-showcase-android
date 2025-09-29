@@ -28,10 +28,4 @@ interface FacadeModule {
 
   @Binds
   fun bindJsonFacade(jsonFacade: JsonFacadeImpl): JsonFacade
-
-  @Binds
-  fun bindNotificationFacade(notificationFacadeImpl: NotificationFacadeImpl): NotificationFacade
-
-  @Binds
-  fun bindPendingIntentFacade(pendingIntentFacadeImpl: PendingIntentFacadeImpl): PendingIntentFacade
 }

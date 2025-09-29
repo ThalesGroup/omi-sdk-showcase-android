@@ -3,6 +3,7 @@ package com.onewelcome.showcaseapp.fcm
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Bundle
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.onewelcome.core.facade.PermissionsFacade
@@ -26,8 +27,8 @@ class NotificationSender @Inject constructor(
   private fun buildNewTransactionNotification(notificationBundle: Bundle) =
     NotificationCompat.Builder(context, Constants.MOBILE_AUTH_CHANNEL_ID)
       .setSmallIcon(R.drawable.notification_icon)
-      .setContentTitle(R.string.new_pending_transaction)
-      .setContentText(R.string.transaction_waiting_for_confirmation)
+      .setContentTitle(context.getString(R.string.new_pending_transaction))
+      .setContentText(context.getString(R.string.transaction_waiting_for_confirmation))
       .setPriority(NotificationCompat.PRIORITY_MAX)
       .setVibrate(NOTIFICATION_VIBRATION_PATTERN)
       .setAutoCancel(true)

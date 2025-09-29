@@ -113,7 +113,7 @@ class SdkInitializationViewModelTest {
 
   @Test
   fun `should initialize sdk with default parameters`() {
-    val expectedValue = OmiSdkInitializationSettings(true, null, null, null, listOf(HandlerType.BROWSER_REGISTRATION))
+    val expectedValue = OmiSdkInitializationSettings(true, null, null, null, listOf(HandlerType.BROWSER_REGISTRATION, HandlerType.MOBILE_AUTH_WITH_PUSH))
     whenSdkInitializedSuccessfully()
 
     viewModel.onEvent(UiEvent.InitializeOneginiSdk)
