@@ -20,7 +20,7 @@ class NotificationChannelManager @Inject constructor(@ApplicationContext private
   @RequiresApi(Build.VERSION_CODES.O)
   private fun registerMobileAuthChannel() {
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    NotificationChannel(
+    val notificationChannel = NotificationChannel(
       Constants.MOBILE_AUTH_CHANNEL_ID,
       "Transactions",
       NotificationManager.IMPORTANCE_HIGH,
@@ -30,6 +30,6 @@ class NotificationChannelManager @Inject constructor(@ApplicationContext private
         enableVibration(true)
         lockscreenVisibility = Notification.VISIBILITY_PRIVATE
       }
-      .let { notificationManager.createNotificationChannel(it) }
+    notificationManager.createNotificationChannel(notificationChannel)
   }
 }
