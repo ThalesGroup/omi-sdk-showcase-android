@@ -1,6 +1,8 @@
 package com.onewelcome.showcaseapp.feature.pin
 
 import androidx.lifecycle.viewModelScope
+import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent.PopBackStack
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Cancel
@@ -12,10 +14,38 @@ import javax.inject.Inject
 @HiltViewModel
 class PinAuthenticationInputViewModel @Inject constructor(
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
+  private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
 ) : PinViewModel() {
   init {
     listenForPinAuthenticationAttemptCounterUpdateEvent()
     listenForFinishedPinAuthenticationEvent()
+    listenForPushPinAttemptCounterUpdateEvent()
+    listenForFinishedPushPinAuthenticationEvent()
+  }
+
+  private fun listenForFinishedPushPinAuthenticationEvent() {
+    viewModelScope.launch {
+      mobileAuthWithPushPinRequestHandler.finishPinAuthenticationFlow.collect {
+        _navigationEvents.send(PopBackStack)
+      }
+    }
+  }
+
+  private fun listenForPushPinAttemptCounterUpdateEvent() {
+    viewModelScope.launch {
+      mobileAuthWithPushPinRequestHandler.authenticationAttemptCounterFlow.collect {
+        updateAttemptCounter(it)
+      }
+    }
+  }
+
+  private fun updateAttemptCounter(counter: AuthenticationAttemptCounter) {
+    val shouldShowErrorMessage = counter.failedAttempts > 0
+    uiState = if (shouldShowErrorMessage) {
+      uiState.copy(authenticationAttemptCounter = counter, pinValidationError = "Wrong PIN, try again")
+    } else {
+      uiState.copy(authenticationAttemptCounter = counter)
+    }
   }
 
   override fun onEvent(event: UiEvent) {
@@ -28,12 +58,7 @@ class PinAuthenticationInputViewModel @Inject constructor(
   private fun listenForPinAuthenticationAttemptCounterUpdateEvent() {
     viewModelScope.launch {
       pinAuthenticationRequestHandler.authenticationAttemptCounterFlow.collect {
-        val shouldShowErrorMessage = it.failedAttempts > 0
-        uiState = if (shouldShowErrorMessage) {
-          uiState.copy(authenticationAttemptCounter = it, pinValidationError = "Wrong PIN, try again")
-        } else {
-          uiState.copy(authenticationAttemptCounter = it)
-        }
+        updateAttemptCounter(it)
       }
     }
   }

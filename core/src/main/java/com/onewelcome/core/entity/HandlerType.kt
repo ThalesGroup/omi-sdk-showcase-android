@@ -6,7 +6,7 @@ enum class HandlerType(val title: String) {
 //  BIOMETRIC_AUTHENTICATION,
 //  CUSTOM_AUTHENTICATION,
   MOBILE_AUTH_WITH_PUSH("Mobile authentication with push"),
-//  MOBILE_AUTH_WITH_PUSH_PIN,
+  MOBILE_AUTH_WITH_PUSH_PIN("Mobile authentication with push and pin"),
 //  MOBILE_AUTH_WITH_PUSH_BIOMETRIC,
 //  MOBILE_AUTH_WITH_PUSH_CUSTOM,
 //  MOBILE_AUTH_WITH_OTP

@@ -10,12 +10,15 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthentication
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.notification.NotificationEventDispatcher
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +26,7 @@ class SharedPushViewModel @Inject constructor(
   private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val notificationEventDispatcher: NotificationEventDispatcher,
+  private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
 ) : ViewModel() {
   var uiState by mutableStateOf(UiState())
 
@@ -35,21 +39,28 @@ class SharedPushViewModel @Inject constructor(
         uiState = uiState.copy(result = it)
         _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
       }
+      mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
+       _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+      }
     }
   }
 
   fun onNewPush(pushRequest: OneginiMobileAuthWithPushRequest) {
     viewModelScope.launch {
       uiState = uiState.copy(pushRequest = pushRequest)
-
-      authenticateWithPushUseCase.execute(pushRequest)
       _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+      withContext(Dispatchers.IO) {
+        authenticateWithPushUseCase.execute(pushRequest)
+      }
     }
   }
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.Accept -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+      UiEvent.Accept -> {
+        mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+        mobileAuthWithPushPinRequestHandler.pinCallback
+      }
       UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
     }
   }
@@ -67,5 +78,6 @@ class SharedPushViewModel @Inject constructor(
   sealed interface NavigationEvent {
     data object NavigateToTransactionResultScreen : NavigationEvent
     data object NavigateToTransactionConfirmationScreen : NavigationEvent
+    data object NavigateToPinConfirmationScreen : NavigationEvent
   }
 }
