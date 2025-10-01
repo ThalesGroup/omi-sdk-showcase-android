@@ -3,12 +3,14 @@ package com.onewelcome.core.omisdk
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
+import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,6 +23,7 @@ class OmiSdkEngine @Inject constructor(
   private val oneginiConfigModel: OneginiConfigModel,
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
+  private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
 ) : OmiSdkFacade {
 
   override val oneginiClient
@@ -43,6 +46,7 @@ class OmiSdkEngine @Inject constructor(
       when (it) {
         HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
       }
     }
   }

@@ -84,6 +84,8 @@ private fun ListenForPushEvents(
         SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
           popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
         }
+
+        SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen -> rootNavController.navigate(Screens.PinAuthentication)
       }
     }
   }
