@@ -5,7 +5,6 @@ import com.onewelcome.buildsrc.AndroidConfig.DATA_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
 import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
-import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_SDK
@@ -25,7 +24,7 @@ plugins {
 android {
   defaultConfig {
     compileSdk = COMPILE_SDK
-    namespace = NAMESPACE
+    namespace = "com.onewelcome.showcaseapp"
     applicationId = APPLICATION_ID
     minSdk = MIN_SDK
     targetSdk = TARGET_SDK
@@ -62,6 +61,7 @@ android {
   }
 
   buildFeatures {
+    buildConfig = true
     compose = true
   }
 

@@ -2,8 +2,8 @@ package com.onewelcome.internal.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.onewelcome.showcaseapp.BuildConfig
-import com.onewelcome.showcaseapp.R
+import com.onewelcome.core.R
+import com.onewelcome.internal.BuildConfig
 
 data class AppVersionInfo(
   val version: String,

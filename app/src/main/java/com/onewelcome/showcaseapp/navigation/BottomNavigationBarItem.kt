@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.onewelcome.showcaseapp.BuildConfig
+import com.onewelcome.internal.BuildConfig
 import com.onewelcome.showcaseapp.R
 
 data class BottomNavigationBarItem(

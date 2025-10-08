@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.darken
-import com.onewelcome.showcaseapp.R
+import com.onewelcome.core.R
 
 private const val ARROW_POINT_DOWN_ROTATION = 0f
 private const val ARROW_POINT_UP_ROTATION = 180f
