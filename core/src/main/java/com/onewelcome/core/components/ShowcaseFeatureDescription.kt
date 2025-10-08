@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import com.onewelcome.core.theme.Dimensions
-import com.onewelcome.showcaseapp.R
+import com.onewelcome.core.R
 
 @Composable
 fun ShowcaseFeatureDescription(description: String, link: String) {

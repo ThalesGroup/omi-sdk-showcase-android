@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.success
-import com.onewelcome.showcaseapp.R
+import com.onewelcome.core.R
 
 private const val USER_PROFILE_COLUMN_WEIGHT = 0.3f
 private const val STATUS_COLUMNS_TOTAL_WEIGHT = 0.7f

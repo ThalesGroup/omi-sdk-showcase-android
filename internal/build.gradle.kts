@@ -3,7 +3,6 @@ import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
 import com.onewelcome.buildsrc.AndroidConfig.IS_INTERNAL_VARIANT
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
-import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TEST_INSTRUMENTATION_RUNNER
@@ -20,7 +19,7 @@ plugins {
 android {
   defaultConfig {
     compileSdk = COMPILE_SDK
-    namespace = NAMESPACE
+    namespace = "com.onewelcome.internal"
     minSdk = MIN_SDK
     testInstrumentationRunner = TEST_INSTRUMENTATION_RUNNER
     buildConfigField("String", "VERSION_NAME", "\"${VERSION_NAME}\"")
