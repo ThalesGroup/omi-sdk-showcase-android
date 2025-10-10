@@ -2,10 +2,7 @@ package com.onewelcome.showcaseapp.feature.mobileauth.enrollment
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -44,6 +41,7 @@ import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.State
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.UiEvent
+import com.onewelcome.showcaseapp.navigation.openAppSettings
 
 @Composable
 fun MobileAuthenticationWithPushEnrollmentScreen(
@@ -209,13 +207,6 @@ private fun ShowPermissionSettingsAlertDialog(onEvent: (UiEvent) -> Unit) {
     }
 
   )
-}
-
-private fun Activity.openAppSettings() {
-  Intent(
-    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-    Uri.fromParts("package", packageName, null)
-  ).also(::startActivity)
 }
 
 @Composable
