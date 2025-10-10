@@ -21,4 +21,7 @@ class PermissionsFacadeImpl @Inject constructor(
       true
     }
   }
+
+  override fun checkCameraPermission() =
+    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 }

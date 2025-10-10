@@ -120,6 +120,14 @@ dependencies {
   // DataStore
   implementation(libs.androidx.datastore)
 
+  // Camera
+  implementation(libs.mlkit.barcode.scanning)
+  implementation(libs.camera.mlkit.vision)
+  implementation(libs.androidx.camera.core)
+  implementation(libs.camera.camera2)
+  implementation(libs.camera.lifecycle)
+  implementation(libs.camera.view)
+
   // OMI SDK
   debugApi(libs.omiSdk.developer) {
     artifact {

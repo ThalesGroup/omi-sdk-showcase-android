@@ -62,6 +62,7 @@ private fun getSections(): List<SectionItem> {
   return listOf(
     SectionItem(stringResource(R.string.section_title_mobile_authentication_enrollment), Screens.MobileAuthenticationEnrollment),
     SectionItem(stringResource(R.string.section_title_mobile_authentication_push_enrollment), Screens.MobileAuthenticationPushEnrollment),
+    SectionItem(stringResource(R.string.section_title_mobile_authentication_with_otp), Screens.MobileAuthenticationWithOtp),
   )
 }
 
