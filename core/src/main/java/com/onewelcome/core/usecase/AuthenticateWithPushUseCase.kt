@@ -1,5 +1,6 @@
 package com.onewelcome.core.usecase
 
+import android.util.Log
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.runCatching
