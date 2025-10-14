@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -19,6 +22,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseCard
@@ -26,6 +33,7 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTextField
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.otp.MobileAuthenticationWithOtpViewModel.UiEvent
@@ -77,9 +85,12 @@ private fun MobileAuthenticationWithOtpContent(
       )
     },
     settings = { SettingsSection(uiState, onEvent, onNavigateToQrCodeScanner) },
-    result = null, //TODO update result
+    result = uiState.authenticationResult?.let { { AuthenticationResult(it) } },
     action = { AuthenticateButton(uiState, onEvent) }
   )
+  uiState.mobileAuthRequestToHandle?.let { request ->
+    ShowAuthRequestAlertDialog(request, onEvent)
+  }
 }
 
 @Composable
@@ -154,13 +165,88 @@ private fun UserEnrolledForMobileAuthSection(isUserEnrolledForMobileAuth: Boolea
 }
 
 @Composable
+private fun AuthenticationResult(result: Result<Unit, Throwable>) {
+  Column {
+    result
+      .onSuccess { Text(stringResource(R.string.mobile_authentication_with_otp_success)) }
+      .onFailure { Text(it.toErrorResultString()) }
+  }
+}
+
+@Composable
 private fun AuthenticateButton(uiState: UiState, onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(UiEvent.AuthenticateWithOtp) }) {
-    Text(stringResource(R.string.mobile_authentication_with_otp_authenticate))
+    onClick = { onEvent(UiEvent.AuthenticateWithOtp) }
+  ) {
+    if (uiState.isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+      )
+    } else {
+      Text(stringResource(R.string.mobile_authentication_with_otp_authenticate))
+    }
+  }
+}
+
+@Composable
+private fun ShowAuthRequestAlertDialog(request: OneginiMobileAuthenticationRequest, onEvent: (UiEvent) -> Unit) {
+  AlertDialog(
+    onDismissRequest = { onEvent(UiEvent.AuthRequestHandled) },
+    title = {
+      Text(stringResource(R.string.mobile_authentication_with_otp_request_dialog_title))
+    },
+    text = {
+      MobileAuthRequestDetails(request)
+    },
+    confirmButton = {
+      TextButton(
+        onClick = {
+          onEvent(UiEvent.AuthRequestHandled)
+          onEvent(UiEvent.AcceptAuthRequest)
+        }) {
+        Text(stringResource(R.string.accept))
+      }
+    },
+    dismissButton = {
+      TextButton(onClick = {
+        onEvent(UiEvent.AuthRequestHandled)
+        onEvent(UiEvent.RejectAuthRequest)
+      }) {
+        Text(stringResource(R.string.reject))
+      }
+    }
+
+  )
+}
+
+@Composable
+private fun MobileAuthRequestDetails(request: OneginiMobileAuthenticationRequest) {
+  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
+    RequestInfoRecord(stringResource(R.string.mobile_authentication_with_otp_message), request.message)
+    RequestInfoRecord(stringResource(R.string.mobile_authentication_with_otp_type), request.type)
+    RequestInfoRecord(stringResource(R.string.mobile_authentication_with_otp_user_profile), request.userProfile.profileId)
+    RequestInfoRecord(stringResource(R.string.mobile_authentication_with_otp_transaction_id), request.transactionId)
+    request.signingData?.let {
+      RequestInfoRecord(stringResource(R.string.mobile_authentication_with_otp_signing_data), it)
+    }
+  }
+}
+
+@Composable
+private fun RequestInfoRecord(title: String, value: String) {
+  Column {
+    Text(
+      text = title,
+      style = MaterialTheme.typography.titleMedium
+    )
+    Text(
+      text = value,
+      style = MaterialTheme.typography.bodyMedium
+    )
   }
 }
 
@@ -170,6 +256,25 @@ private fun Preview() {
   MobileAuthenticationWithOtpContent(
     onNavigateBack = {},
     uiState = UiState(),
+    onEvent = {},
+    onNavigateToQrCodeScanner = {}
+  )
+}
+
+@Preview
+@Composable
+private fun PreviewAlertDialog() {
+  MobileAuthenticationWithOtpContent(
+    onNavigateBack = {},
+    uiState = UiState(
+      mobileAuthRequestToHandle = OneginiMobileAuthenticationRequest(
+        message = "Demo message",
+        type = "otp",
+        userProfile = UserProfile("QWERTY"),
+        transactionId = "transaction_id",
+        signingData = "signing_data"
+      )
+    ),
     onEvent = {},
     onNavigateToQrCodeScanner = {}
   )

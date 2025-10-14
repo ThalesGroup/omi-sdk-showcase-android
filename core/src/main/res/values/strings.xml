@@ -178,6 +178,13 @@
   <string name="mobile_authentication_with_otp_sdk_initialized_tooltip">SDK needs to be initialized to perform mobile authentication with OTP</string>
   <string name="mobile_authentication_with_otp_authenticated_user_requirement_tooltip">User has to be authenticated to perform mobile authentication with OTP</string>
   <string name="mobile_authentication_with_otp_enrolled_tooltip">User profile has to be enrolled for mobile authentication with OTP</string>
+  <string name="mobile_authentication_with_otp_success">Mobile authentication with OTP success</string>
+  <string name="mobile_authentication_with_otp_request_dialog_title">Mobile authentication request</string>
+  <string name="mobile_authentication_with_otp_message">Message</string>
+  <string name="mobile_authentication_with_otp_type">Type</string>
+  <string name="mobile_authentication_with_otp_user_profile">User profile</string>
+  <string name="mobile_authentication_with_otp_transaction_id">Transaction ID</string>
+  <string name="mobile_authentication_with_otp_signing_data">Signing data</string>
 
   <!-- PIN -->
   <string name="enter_pin">Enter PIN</string>
@@ -223,4 +230,9 @@
   <string name="camera_permission_dialog_title">Camera permission</string>
   <string name="camera_permission_dialog_description">To change the camera permission you need to navigate to application settings.</string>
   <string name="qr_code_scanner_content_description">Open QR code scanner</string>
+
+  <!-- Handlers -->
+  <string name="handler_browser_registration">Browser registration</string>
+  <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
+  <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
 </resources>

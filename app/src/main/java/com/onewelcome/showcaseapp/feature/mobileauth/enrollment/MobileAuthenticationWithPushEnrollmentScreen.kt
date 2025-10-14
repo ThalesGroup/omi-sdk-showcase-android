@@ -29,7 +29,6 @@ import androidx.navigation.NavHostController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseCard
@@ -37,6 +36,7 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.State
@@ -155,13 +155,6 @@ private fun EnrollmentResult(result: Result<Unit, Throwable>) {
     result
       .onSuccess { Text(stringResource(R.string.label_mobile_authentication_push_enrollment_success)) }
       .onFailure { Text(it.toErrorResultString()) }
-  }
-}
-
-private fun Throwable.toErrorResultString(): String {
-  return when (this) {
-    is OneginiError -> "${this.errorType.code}: ${this.message}"
-    else -> "$this"
   }
 }
 
