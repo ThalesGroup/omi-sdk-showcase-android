@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.sdkinitialization
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
