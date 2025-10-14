@@ -81,8 +81,7 @@ private fun ListenForPushEvents(
       when (it) {
         SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
         SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> {
-          val previousRoute = rootNavController.previousBackStackEntry?.destination?.route
-          if (previousRoute == Screens.TransactionConfirmation.route) {
+          if (rootNavController.currentDestination?.route == Screens.TransactionConfirmation.route) {
             rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
               popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
             }
