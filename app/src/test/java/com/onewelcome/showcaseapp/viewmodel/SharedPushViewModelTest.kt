@@ -10,13 +10,18 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
+import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.SdkAutoInitializationUseCase
 import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
+import com.onewelcome.showcaseapp.fakes.PreferencesManagerFake
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -47,14 +52,24 @@ class SharedPushViewModelTest {
   lateinit var omiSdkEngineFake: OmiSdkEngineFake
 
   @Inject
-  lateinit var oneginiClientMock: OneginiClient
+  lateinit var oneginiClient: OneginiClient
 
   @Inject
   lateinit var notificationEventDispatcher: NotificationEventDispatcher
 
+  @Inject
+  lateinit var isSdkInitializedUseCase: IsSdkInitializedUseCase
+
+  @Inject
+  lateinit var preferencesManager: PreferencesManagerFake
+
+  @Inject
+  lateinit var sdkAutoInitializationUseCase: SdkAutoInitializationUseCase
+
   lateinit var viewModel: SharedPushViewModel
 
   private val userClientMock: UserClient = mock()
+
 
   private val mockOneginiMobileAuthenticationError: OneginiMobileAuthenticationError = mock()
 
@@ -63,7 +78,14 @@ class SharedPushViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = SharedPushViewModel(authenticateWithPushUseCase, mobileAuthWithPushRequestHandler, notificationEventDispatcher)
+    viewModel = SharedPushViewModel(
+      authenticateWithPushUseCase,
+      mobileAuthWithPushRequestHandler,
+      notificationEventDispatcher,
+      isSdkInitializedUseCase,
+      preferencesManager,
+      sdkAutoInitializationUseCase
+    )
   }
 
   @Test
@@ -129,13 +151,27 @@ class SharedPushViewModelTest {
     )
   }
 
+  @Test
+  fun `Given SDK is not initialized and it is not auto initialized, When new push is sent, Then state should be updated`() {
+    runTest {
+      preferencesManager.setSdkAutoInitializationEnabled(false)
+    }
+    viewModel.onNewPush(pushRequest)
+    val expectedState = viewModel.uiState.copy(
+      pushRequest = pushRequest,
+      result = Err(IllegalStateException("SDK needs to be initialized to handle push transactions"))
+    )
+
+    assertThat(viewModel.uiState).usingRecursiveComparison().withEqualsForThrowable().isEqualTo(expectedState)
+  }
+
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
-    whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
+    whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClient)
   }
 
   private fun mockUserClient() {
-    whenever(oneginiClientMock.getUserClient()).thenReturn(userClientMock)
+    whenever(oneginiClient.getUserClient()).thenReturn(userClientMock)
   }
 
   companion object {
