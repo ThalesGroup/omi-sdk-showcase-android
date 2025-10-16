@@ -7,7 +7,12 @@ import javax.inject.Singleton
 @Singleton
 class PermissionsFacadeFake @Inject constructor() : PermissionsFacade {
   var postNotificationsPermissionGranted = false
+  var cameraPermissionGranted = false
   override fun checkPostNotificationsPermission(): Boolean {
     return postNotificationsPermissionGranted
+  }
+
+  override fun checkCameraPermission(): Boolean {
+    return cameraPermissionGranted
   }
 }

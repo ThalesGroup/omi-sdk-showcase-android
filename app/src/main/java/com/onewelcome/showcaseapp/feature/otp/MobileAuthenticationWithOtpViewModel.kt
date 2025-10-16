@@ -74,7 +74,7 @@ class MobileAuthenticationWithOtpViewModel @Inject constructor(
 
   private fun authenticateWithOtp() {
     viewModelScope.launch {
-      uiState = uiState.copy(isLoading = false)
+      uiState = uiState.copy(isLoading = true)
       uiState = uiState.copy(
         authenticationResult = authenticateWithOtpUseCase.invoke(uiState.otp),
         isLoading = false
