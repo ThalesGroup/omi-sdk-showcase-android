@@ -1,7 +1,6 @@
 package com.onewelcome.showcaseapp
 
 import android.app.Application
-import android.util.Log
 import com.onewelcome.core.facade.SdkAutoInitializationFacadeImpl
 import com.onewelcome.showcaseapp.fcm.NotificationChannelManager
 import dagger.hilt.android.HiltAndroidApp
