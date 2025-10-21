@@ -91,32 +91,30 @@ private fun QrCodeScanner(onNavigateBack: (String) -> Unit) {
 
   AndroidView(
     modifier = Modifier.fillMaxSize(),
-    factory = { ctx ->
-
+    factory = { context ->
       val options = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
         .build()
       val barcodeScanner = BarcodeScanning.getClient(options)
-      val executor = ContextCompat.getMainExecutor(ctx)
+      val executor = ContextCompat.getMainExecutor(context)
       val mlKitAnalyzer = MlKitAnalyzer(
         listOf(barcodeScanner),
         ImageAnalysis.COORDINATE_SYSTEM_VIEW_REFERENCED,
         executor
-      ) { result: MlKitAnalyzer.Result? ->
+      ) { result: MlKitAnalyzer.Result ->
         if (hasScanned) return@MlKitAnalyzer
-
-        val barcode = result?.getValue(barcodeScanner)?.firstOrNull()
-        if (barcode?.rawValue != null) {
-          hasScanned = true
-          onNavigateBack(barcode.rawValue ?: "")
-        }
+        result.getValue(barcodeScanner)
+          ?.firstOrNull()
+          ?.rawValue
+          ?.let { value ->
+            hasScanned = true
+            onNavigateBack(value)
+          }
       }
-
-      cameraController.setImageAnalysisAnalyzer(executor, mlKitAnalyzer)
-      cameraController.bindToLifecycle(lifecycleOwner)
-
-      PreviewView(ctx).apply {
-        this.controller = cameraController
+      PreviewView(context).apply {
+        cameraController.setImageAnalysisAnalyzer(executor, mlKitAnalyzer)
+        cameraController.bindToLifecycle(lifecycleOwner)
+        controller = cameraController
       }
     }
   )

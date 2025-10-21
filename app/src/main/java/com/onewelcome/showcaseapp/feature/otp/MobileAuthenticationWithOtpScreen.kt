@@ -43,17 +43,17 @@ import com.onewelcome.showcaseapp.navigation.getResult
 
 @Composable
 fun MobileAuthenticationWithOtpScreen(
-  navController: NavController,
-  qrCodeScannerNavController: NavController,
+  homeNavController: NavController,
+  rootNavController: NavController,
   viewModel: MobileAuthenticationWithOtpViewModel = hiltViewModel()
 ) {
-  HandleNavigationResult(qrCodeScannerNavController, viewModel::onEvent)
+  HandleNavigationResult(rootNavController, viewModel::onEvent)
 
   MobileAuthenticationWithOtpContent(
-    onNavigateBack = { navController.popBackStack() },
+    onNavigateBack = { homeNavController.popBackStack() },
     uiState = viewModel.uiState,
     onEvent = viewModel::onEvent,
-    onNavigateToQrCodeScanner = { qrCodeScannerNavController.navigate(Screens.QrCodeScanner.route) }
+    onNavigateToQrCodeScanner = { rootNavController.navigate(Screens.QrCodeScanner.route) }
   )
 }
 
@@ -195,7 +195,10 @@ private fun AuthenticateButton(uiState: UiState, onEvent: (UiEvent) -> Unit) {
 @Composable
 private fun ShowAuthRequestAlertDialog(request: OneginiMobileAuthenticationRequest, onEvent: (UiEvent) -> Unit) {
   AlertDialog(
-    onDismissRequest = { onEvent(UiEvent.AuthRequestHandled) },
+    onDismissRequest = {
+      onEvent(UiEvent.AuthRequestHandled)
+      onEvent(UiEvent.RejectAuthRequest)
+    },
     title = {
       Text(stringResource(R.string.mobile_authentication_with_otp_request_dialog_title))
     },
