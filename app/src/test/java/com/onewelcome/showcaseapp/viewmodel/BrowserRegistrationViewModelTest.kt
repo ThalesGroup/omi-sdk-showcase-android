@@ -117,80 +117,83 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and there are new user profiles and identity providers, When viewmodel is initialized, Then updated state should be returned`() {
-    mockSdkInitialized()
-    mockUserClient()
-    mockBrowserIdentityProviders()
-    mockUserProfiles()
+  fun `Given sdk is initialized and there are new user profiles and identity providers, When viewmodel is initialized, Then updated state should be returned`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
+      mockBrowserIdentityProviders()
+      mockUserProfiles()
 
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      identityProviders = TEST_IDENTITY_PROVIDERS,
-      userProfileIds = TEST_USER_PROFILES_IDS,
-      selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
-    )
+      val expectedState = viewModel.uiState.copy(
+        isSdkInitialized = true,
+        identityProviders = TEST_IDENTITY_PROVIDERS,
+        userProfileIds = TEST_USER_PROFILES_IDS,
+        selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
+      )
 
-    viewModel = BrowserRegistrationViewModel(
-      isSdkInitializedUseCase,
-      browserRegistrationUseCase,
-      getBrowserIdentityProvidersUseCase,
-      getUserProfilesUseCase,
-      oneginiConfigModel,
-      browserRegistrationRequestHandler,
-      createPinRequestHandler,
-    )
+      viewModel = BrowserRegistrationViewModel(
+        isSdkInitializedUseCase,
+        browserRegistrationUseCase,
+        getBrowserIdentityProvidersUseCase,
+        getUserProfilesUseCase,
+        oneginiConfigModel,
+        browserRegistrationRequestHandler,
+        createPinRequestHandler,
+      )
 
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
-
-  @Test
-  fun `Given sdk is initialized and there are new user profiles, When viewmodel is initialized, Then updated state should be returned`() {
-    mockSdkInitialized()
-    mockUserClient()
-    mockUserProfiles()
-
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      userProfileIds = TEST_USER_PROFILES_IDS
-    )
-
-    viewModel = BrowserRegistrationViewModel(
-      isSdkInitializedUseCase,
-      browserRegistrationUseCase,
-      getBrowserIdentityProvidersUseCase,
-      getUserProfilesUseCase,
-      oneginiConfigModel,
-      browserRegistrationRequestHandler,
-      createPinRequestHandler,
-    )
-
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
-  fun `Given sdk is initialized and there are new identity providers, When viewmodel is initialized, Then updated state should be returned`() {
-    mockSdkInitialized()
-    mockUserClient()
-    mockBrowserIdentityProviders()
+  fun `Given sdk is initialized and there are new user profiles, When viewmodel is initialized, Then updated state should be returned`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
+      mockUserProfiles()
 
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      identityProviders = TEST_IDENTITY_PROVIDERS,
-      selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
-    )
+      val expectedState = viewModel.uiState.copy(
+        isSdkInitialized = true,
+        userProfileIds = TEST_USER_PROFILES_IDS
+      )
 
-    viewModel = BrowserRegistrationViewModel(
-      isSdkInitializedUseCase,
-      browserRegistrationUseCase,
-      getBrowserIdentityProvidersUseCase,
-      getUserProfilesUseCase,
-      oneginiConfigModel,
-      browserRegistrationRequestHandler,
-      createPinRequestHandler,
-    )
+      viewModel = BrowserRegistrationViewModel(
+        isSdkInitializedUseCase,
+        browserRegistrationUseCase,
+        getBrowserIdentityProvidersUseCase,
+        getUserProfilesUseCase,
+        oneginiConfigModel,
+        browserRegistrationRequestHandler,
+        createPinRequestHandler,
+      )
 
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
+
+  @Test
+  fun `Given sdk is initialized and there are new identity providers, When viewmodel is initialized, Then updated state should be returned`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
+      mockBrowserIdentityProviders()
+
+      val expectedState = viewModel.uiState.copy(
+        isSdkInitialized = true,
+        identityProviders = TEST_IDENTITY_PROVIDERS,
+        selectedIdentityProvider = TEST_SELECTED_IDENTITY_PROVIDER
+      )
+
+      viewModel = BrowserRegistrationViewModel(
+        isSdkInitializedUseCase,
+        browserRegistrationUseCase,
+        getBrowserIdentityProvidersUseCase,
+        getUserProfilesUseCase,
+        oneginiConfigModel,
+        browserRegistrationRequestHandler,
+        createPinRequestHandler,
+      )
+
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
   fun `When update selected identity providers event is sent, Then updated state should be returned`() {
@@ -232,7 +235,7 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, When register event is sent, Then should successfully register user and update user profiles`() {
+  fun `Given sdk is initialized, When register event is sent, Then should successfully register user and update user profiles`() = runTest {
     mockSdkInitialized()
     mockUserClient()
     whenRegisteredUserSuccessfully()
@@ -259,7 +262,7 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, When register event is sent and sdk returns error, Then state should be updated accordingly`() {
+  fun `Given sdk is initialized, When register event is sent and sdk returns error, Then state should be updated accordingly`() = runTest {
     mockSdkInitialized()
     mockUserClient()
     whenRegisteredUserUnsuccessfully()
@@ -284,37 +287,39 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and should use default identity provider, When register event is sent, Then should pass identity provider as null`() {
-    mockSdkInitialized()
-    mockUserClient()
+  fun `Given sdk is initialized and should use default identity provider, When register event is sent, Then should pass identity provider as null`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
 
-    viewModel.onEvent(UseDefaultIdentityProvider(true))
-    viewModel.onEvent(StartBrowserRegistration)
+      viewModel.onEvent(UseDefaultIdentityProvider(true))
+      viewModel.onEvent(StartBrowserRegistration)
 
-    argumentCaptor<OneginiIdentityProvider> {
-      verify(userClientMock).registerUser(capture(), anyOrNull(), any())
-      assertThat(firstValue).isEqualTo(null)
+      argumentCaptor<OneginiIdentityProvider> {
+        verify(userClientMock).registerUser(capture(), anyOrNull(), any())
+        assertThat(firstValue).isEqualTo(null)
+      }
     }
-  }
 
   @Test
-  fun `Given sdk is initialized and should use selected identity provider, When register event is sent, Then should pass identity provider as selected identity provider`() {
-    mockSdkInitialized()
-    mockUserClient()
-    mockBrowserIdentityProviders()
+  fun `Given sdk is initialized and should use selected identity provider, When register event is sent, Then should pass identity provider as selected identity provider`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
+      mockBrowserIdentityProviders()
 
-    viewModel.onEvent(UpdateSelectedIdentityProvider(TEST_SELECTED_IDENTITY_PROVIDER))
-    viewModel.onEvent(StartBrowserRegistration)
+      viewModel.onEvent(UpdateSelectedIdentityProvider(TEST_SELECTED_IDENTITY_PROVIDER))
+      viewModel.onEvent(StartBrowserRegistration)
 
-    argumentCaptor<OneginiIdentityProvider> {
-      verify(userClientMock).registerUser(capture(), anyOrNull(), any())
-      assertThat(firstValue).isEqualTo(TEST_SELECTED_IDENTITY_PROVIDER)
+      argumentCaptor<OneginiIdentityProvider> {
+        verify(userClientMock).registerUser(capture(), anyOrNull(), any())
+        assertThat(firstValue).isEqualTo(TEST_SELECTED_IDENTITY_PROVIDER)
+      }
     }
-  }
 
 
   @Test
-  fun `Given sdk is initialized and default scopes are selected, When register event is sent, Then should pass default scopes`() {
+  fun `Given sdk is initialized and default scopes are selected, When register event is sent, Then should pass default scopes`() = runTest {
     mockSdkInitialized()
     mockUserClient()
 
@@ -334,23 +339,24 @@ class BrowserRegistrationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, When register event is sent, Then isRegistrationCancellationEnabled value should behave properly`() {
-    mockSdkInitialized()
-    mockUserClient()
-    whenRegisteredUserSuccessfully()
-    mockUserProfiles()
-    whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
-      .thenAnswer { invocation ->
-        assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(true)
-        invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(TEST_USER_PROFILE_1, TEST_CUSTOM_INFO)
-      }
+  fun `Given sdk is initialized, When register event is sent, Then isRegistrationCancellationEnabled value should behave properly`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
+      whenRegisteredUserSuccessfully()
+      mockUserProfiles()
+      whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
+        .thenAnswer { invocation ->
+          assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(true)
+          invocation.getArgument<OneginiRegistrationHandler>(2).onSuccess(TEST_USER_PROFILE_1, TEST_CUSTOM_INFO)
+        }
 
-    assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
+      assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
 
-    viewModel.onEvent(StartBrowserRegistration)
+      viewModel.onEvent(StartBrowserRegistration)
 
-    assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
-  }
+      assertThat(viewModel.uiState.isRegistrationCancellationEnabled).isEqualTo(false)
+    }
 
   @Test
   fun `Given sdk is initialized, When registration finished successfully, Then pin navigation event should be sent`() {
@@ -378,7 +384,7 @@ class BrowserRegistrationViewModelTest {
       }
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }

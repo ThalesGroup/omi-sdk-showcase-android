@@ -25,6 +25,7 @@ import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -95,27 +96,29 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized and no user profile in authenticated, When view model is initialized, Then state should be updated`() {
-    givenSdkInitializedAndNoUserAuthenticated()
+  fun `Given SDK is initialized and no user profile in authenticated, When view model is initialized, Then state should be updated`() =
+    runTest {
+      givenSdkInitializedAndNoUserAuthenticated()
 
-    assertThat(viewModel.uiState).isEqualTo(
-      DEFAULT_STATE.copy(
-        isSdkInitialized = true
+      assertThat(viewModel.uiState).isEqualTo(
+        DEFAULT_STATE.copy(
+          isSdkInitialized = true
+        )
       )
-    )
-  }
+    }
 
   @Test
-  fun `Given SDK is initialized and user profile is authenticated, When view model is initialized, Then state should be updated`() {
-    givenSdkInitializedAndUserAuthenticated()
+  fun `Given SDK is initialized and user profile is authenticated, When view model is initialized, Then state should be updated`() =
+    runTest {
+      givenSdkInitializedAndUserAuthenticated()
 
-    assertThat(viewModel.uiState).isEqualTo(
-      DEFAULT_STATE.copy(
-        isSdkInitialized = true,
-        authenticatedUserProfile = AUTHENTICATED_USER_PROFILE
+      assertThat(viewModel.uiState).isEqualTo(
+        DEFAULT_STATE.copy(
+          isSdkInitialized = true,
+          authenticatedUserProfile = AUTHENTICATED_USER_PROFILE
+        )
       )
-    )
-  }
+    }
 
   @Test
   fun `Given firebase token fetch is not available, When EnrollForMobileAuthenticationWithPush event is sent, Then error result should be returned`() {
@@ -144,71 +147,75 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
   }
 
   @Test
-  fun `Given no user profile is authenticated, When EnrollForMobileAuthenticationWithPush event is sent, Then error result should be returned`() {
-    givenSdkInitializedAndNoUserAuthenticated()
+  fun `Given no user profile is authenticated, When EnrollForMobileAuthenticationWithPush event is sent, Then error result should be returned`() =
+    runTest {
+      givenSdkInitializedAndNoUserAuthenticated()
 
-    viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
+      viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
 
-    assertThat(viewModel.uiState)
-      .usingRecursiveComparison()
-      .withEqualsForThrowable()
-      .isEqualTo(
-        DEFAULT_STATE.copy(
-          isSdkInitialized = true,
-          enrollmentResult = Err(oneginiMobileAuthWithPushEnrollmentError)
+      assertThat(viewModel.uiState)
+        .usingRecursiveComparison()
+        .withEqualsForThrowable()
+        .isEqualTo(
+          DEFAULT_STATE.copy(
+            isSdkInitialized = true,
+            enrollmentResult = Err(oneginiMobileAuthWithPushEnrollmentError)
+          )
         )
-      )
-  }
+    }
 
   @Test
-  fun `Given user profile is authenticated, When EnrollForMobileAuthenticationWithPush event finishes with success, Then success result should be returned`() {
-    givenUserProfileIsAuthenticatedAndEnrollmentSuccess()
+  fun `Given user profile is authenticated, When EnrollForMobileAuthenticationWithPush event finishes with success, Then success result should be returned`() =
+    runTest {
+      givenUserProfileIsAuthenticatedAndEnrollmentSuccess()
 
-    viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
+      viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
 
-    assertThat(viewModel.uiState)
-      .isEqualTo(
-        DEFAULT_STATE.copy(
-          isSdkInitialized = true,
-          authenticatedUserProfile = AUTHENTICATED_USER_PROFILE,
-          enrollmentResult = Ok(Unit)
+      assertThat(viewModel.uiState)
+        .isEqualTo(
+          DEFAULT_STATE.copy(
+            isSdkInitialized = true,
+            authenticatedUserProfile = AUTHENTICATED_USER_PROFILE,
+            enrollmentResult = Ok(Unit)
+          )
         )
-      )
-  }
+    }
 
   @Test
-  fun `Given user profile is authenticated, When EnrollForMobileAuthenticationWithPush event finished with error, Then error result should be returned`() {
-    givenUserProfileIsAuthenticatedAndEnrollmentFailed()
+  fun `Given user profile is authenticated, When EnrollForMobileAuthenticationWithPush event finished with error, Then error result should be returned`() =
+    runTest {
+      givenUserProfileIsAuthenticatedAndEnrollmentFailed()
 
-    viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
+      viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
 
-    assertThat(viewModel.uiState)
-      .usingRecursiveComparison()
-      .withEqualsForType(ThrowableEquals(), Throwable::class.java)
-      .isEqualTo(
-        DEFAULT_STATE.copy(
-          isSdkInitialized = true,
-          authenticatedUserProfile = AUTHENTICATED_USER_PROFILE,
-          enrollmentResult = Err(oneginiMobileAuthWithPushEnrollmentError)
+      assertThat(viewModel.uiState)
+        .usingRecursiveComparison()
+        .withEqualsForType(ThrowableEquals(), Throwable::class.java)
+        .isEqualTo(
+          DEFAULT_STATE.copy(
+            isSdkInitialized = true,
+            authenticatedUserProfile = AUTHENTICATED_USER_PROFILE,
+            enrollmentResult = Err(oneginiMobileAuthWithPushEnrollmentError)
+          )
         )
-      )
-  }
+    }
 
   @Test
-  fun `Given user profile is authenticated, When EnrollForMobileAuthenticationWithPush event is sent, Then loading state should be true`() {
-    givenUserProfileIsAuthenticated()
+  fun `Given user profile is authenticated, When EnrollForMobileAuthenticationWithPush event is sent, Then loading state should be true`() =
+    runTest {
+      givenUserProfileIsAuthenticated()
 
-    viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
+      viewModel.onEvent(UiEvent.EnrollForMobileAuthenticationWithPush)
 
-    assertThat(viewModel.uiState)
-      .isEqualTo(
-        DEFAULT_STATE.copy(
-          isSdkInitialized = true,
-          authenticatedUserProfile = AUTHENTICATED_USER_PROFILE,
-          isLoading = true
+      assertThat(viewModel.uiState)
+        .isEqualTo(
+          DEFAULT_STATE.copy(
+            isSdkInitialized = true,
+            authenticatedUserProfile = AUTHENTICATED_USER_PROFILE,
+            isLoading = true
+          )
         )
-      )
-  }
+    }
 
   @Test
   fun `Given post notifications permission granted, When PostNotificationsPermissionClicked event is sent, Then should show settings dialog`() {
@@ -322,33 +329,33 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(DEFAULT_STATE.copy(isPostNotificationPermissionGranted = true))
   }
 
-  private fun givenSdkInitializedAndNoUserAuthenticated() {
+  private suspend fun givenSdkInitializedAndNoUserAuthenticated() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile(false)
     initializeViewModel()
     mockMobileAuthWithPushEnrollmentError()
   }
 
-  private fun givenSdkInitializedAndUserAuthenticated() {
+  private suspend fun givenSdkInitializedAndUserAuthenticated() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile(true)
     initializeViewModel()
   }
 
-  private fun givenUserProfileIsAuthenticated() {
+  private suspend fun givenUserProfileIsAuthenticated() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile(true)
     initializeViewModel()
   }
 
-  private fun givenUserProfileIsAuthenticatedAndEnrollmentSuccess() {
+  private suspend fun givenUserProfileIsAuthenticatedAndEnrollmentSuccess() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile(true)
     initializeViewModel()
     mockMobileAuthWithPushEnrollmentSuccess()
   }
 
-  private fun givenUserProfileIsAuthenticatedAndEnrollmentFailed() {
+  private suspend fun givenUserProfileIsAuthenticatedAndEnrollmentFailed() {
     mockSdkInitialized()
     mockAuthenticatedUserProfile(true)
     initializeViewModel()
@@ -371,7 +378,7 @@ class MobileAuthenticationWithPushEnrollmentViewModelTest {
     )
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkFacade.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
   }
 

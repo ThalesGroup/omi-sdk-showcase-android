@@ -2,6 +2,7 @@ package com.onewelcome.core.usecase
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
@@ -15,9 +16,9 @@ class AuthenticateWithPushUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade,
   private val notificationEventDispatcher: NotificationEventDispatcher,
 ) {
-  fun execute(pushRequest: OneginiMobileAuthWithPushRequest) {
-    runCatching {
-      omiSdkFacade.oneginiClient.getUserClient()
+  suspend fun execute(pushRequest: OneginiMobileAuthWithPushRequest): Result<Unit, Throwable> {
+    return runCatching {
+      omiSdkFacade.getOneginiClientNew().getUserClient()
         .handleMobileAuthWithPushRequest(pushRequest, object : OneginiMobileAuthenticationHandler {
           override fun onSuccess(customInfo: CustomInfo?) {
             notificationEventDispatcher.send(Ok(customInfo))

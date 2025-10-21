@@ -6,7 +6,6 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
@@ -28,6 +27,7 @@ import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -108,7 +108,7 @@ class PinAuthenticationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, When LoadData event is sent, Then data should be updated`() {
+  fun `Given sdk is initialized, When LoadData event is sent, Then data should be updated`() = runTest {
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true)
     mockSdkInitialized()
 
@@ -119,7 +119,7 @@ class PinAuthenticationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and user profiles are present, When LoadData event is sent, Then data should be updated`() {
+  fun `Given sdk is initialized and user profiles are present, When LoadData event is sent, Then data should be updated`() = runTest {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfiles = TEST_USER_PROFILES,
@@ -136,23 +136,24 @@ class PinAuthenticationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, registered and authenticated user profiles are present, When LoadData event is sent, Then data should be updated`() {
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      userProfiles = TEST_USER_PROFILES,
-      selectedUserProfile = TEST_USER_PROFILES.first(),
-      isAuthenticateButtonEnabled = true,
-      authenticatedUserProfile = TEST_USER_PROFILE_1
-    )
-    mockSdkInitialized()
-    mockUserClient()
-    mockUserProfiles()
-    mockAuthenticatedProfile()
+  fun `Given sdk is initialized, registered and authenticated user profiles are present, When LoadData event is sent, Then data should be updated`() =
+    runTest {
+      val expectedState = viewModel.uiState.copy(
+        isSdkInitialized = true,
+        userProfiles = TEST_USER_PROFILES,
+        selectedUserProfile = TEST_USER_PROFILES.first(),
+        isAuthenticateButtonEnabled = true,
+        authenticatedUserProfile = TEST_USER_PROFILE_1
+      )
+      mockSdkInitialized()
+      mockUserClient()
+      mockUserProfiles()
+      mockAuthenticatedProfile()
 
-    viewModel.onEvent(LoadData)
+      viewModel.onEvent(LoadData)
 
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
   fun `When update selected user profile event is sent, Then data should be updated`() {
@@ -176,72 +177,75 @@ class PinAuthenticationViewModelTest {
   }
 
   @Test
-  fun `Given user profile is selected, When start pin authentication event is sent and finished successfully, Then data should be updated`() {
-    val expectedState = viewModel.uiState.copy(
-      result = Ok(Pair(TEST_USER_PROFILE_1, null)),
-      isSdkInitialized = true,
-      userProfiles = TEST_USER_PROFILES,
-      selectedUserProfile = TEST_USER_PROFILES.first(),
-      isAuthenticateButtonEnabled = true,
-    )
-    mockSdkInitialized()
-    mockUserClient()
-    mockUserProfiles()
-    mockRegisteredAuthenticators()
-    mockSuccessfulPinAuthentication()
+  fun `Given user profile is selected, When start pin authentication event is sent and finished successfully, Then data should be updated`() =
+    runTest {
+      val expectedState = viewModel.uiState.copy(
+        result = Ok(Pair(TEST_USER_PROFILE_1, null)),
+        isSdkInitialized = true,
+        userProfiles = TEST_USER_PROFILES,
+        selectedUserProfile = TEST_USER_PROFILES.first(),
+        isAuthenticateButtonEnabled = true,
+      )
+      mockSdkInitialized()
+      mockUserClient()
+      mockUserProfiles()
+      mockRegisteredAuthenticators()
+      mockSuccessfulPinAuthentication()
 
-    viewModel.onEvent(LoadData)
-    viewModel.onEvent(StartPinAuthentication)
+      viewModel.onEvent(LoadData)
+      viewModel.onEvent(StartPinAuthentication)
 
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
-
-  @Test
-  fun `Given user profile is selected, When start pin authentication event is sent and finishes with error, Then error should be returned`() {
-    val expectedState = viewModel.uiState.copy(
-      result = Err(mockOneginiAuthenticationError),
-      isSdkInitialized = true,
-      userProfiles = TEST_USER_PROFILES,
-      selectedUserProfile = TEST_USER_PROFILES.first(),
-      isAuthenticateButtonEnabled = true,
-    )
-    mockSdkInitialized()
-    mockUserClient()
-    mockUserProfiles()
-    mockRegisteredAuthenticators()
-    mockUnsuccessfulPinAuthentication()
-
-    viewModel.onEvent(LoadData)
-    viewModel.onEvent(StartPinAuthentication)
-
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
-  fun `Given user profile is selected and there's no authenticators, When start pin authentication event is sent, Then error should be returned`() {
-    val expectedState = viewModel.uiState.copy(
-      result = Err(NoSuchElementException("Collection contains no element matching the predicate.")),
-      isSdkInitialized = true,
-      userProfiles = TEST_USER_PROFILES,
-      selectedUserProfile = TEST_USER_PROFILES.first(),
-      isAuthenticateButtonEnabled = true,
-    )
-    mockSdkInitialized()
-    mockUserClient()
-    mockUserProfiles()
-    mockNoRegisteredAuthenticators()
+  fun `Given user profile is selected, When start pin authentication event is sent and finishes with error, Then error should be returned`() =
+    runTest {
+      val expectedState = viewModel.uiState.copy(
+        result = Err(mockOneginiAuthenticationError),
+        isSdkInitialized = true,
+        userProfiles = TEST_USER_PROFILES,
+        selectedUserProfile = TEST_USER_PROFILES.first(),
+        isAuthenticateButtonEnabled = true,
+      )
+      mockSdkInitialized()
+      mockUserClient()
+      mockUserProfiles()
+      mockRegisteredAuthenticators()
+      mockUnsuccessfulPinAuthentication()
 
-    viewModel.onEvent(LoadData)
-    viewModel.onEvent(StartPinAuthentication)
+      viewModel.onEvent(LoadData)
+      viewModel.onEvent(StartPinAuthentication)
 
-    assertThat(viewModel.uiState)
-      .usingRecursiveComparison()
-      .withEqualsForThrowable()
-      .isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
-  fun `When cancel pin authentication event is sent, Then deny authentication request should be triggered`() {
+  fun `Given user profile is selected and there's no authenticators, When start pin authentication event is sent, Then error should be returned`() =
+    runTest {
+      val expectedState = viewModel.uiState.copy(
+        result = Err(NoSuchElementException("Collection contains no element matching the predicate.")),
+        isSdkInitialized = true,
+        userProfiles = TEST_USER_PROFILES,
+        selectedUserProfile = TEST_USER_PROFILES.first(),
+        isAuthenticateButtonEnabled = true,
+      )
+      mockSdkInitialized()
+      mockUserClient()
+      mockUserProfiles()
+      mockNoRegisteredAuthenticators()
+
+      viewModel.onEvent(LoadData)
+      viewModel.onEvent(StartPinAuthentication)
+
+      assertThat(viewModel.uiState)
+        .usingRecursiveComparison()
+        .withEqualsForThrowable()
+        .isEqualTo(expectedState)
+    }
+
+  @Test
+  fun `When cancel pin authentication event is sent, Then deny authentication request should be triggered`()  {
     val spyPinAuthenticationRequestHandler = spy(pinAuthenticationRequestHandler)
     viewModel = PinAuthenticationViewModel(
       isSdkInitializedUseCase,
@@ -279,7 +283,7 @@ class PinAuthenticationViewModelTest {
     whenever(userClientMock.getRegisteredAuthenticators(any())).thenReturn(setOf())
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }

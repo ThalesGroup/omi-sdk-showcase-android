@@ -20,6 +20,7 @@ import com.onewelcome.showcaseapp.utils.ThrowableEquals
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -81,7 +82,7 @@ class ChangePinViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given SDK is initialized, When viewmodel is initialized, Then state should be updated`() = runTest {
     mockSdkInitialized()
 
     initializeViewModel()
@@ -90,22 +91,23 @@ class ChangePinViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized and authenticated user profile user present, When viewmodel is initialized, Then state should be updated`() {
-    mockSdkInitialized()
-    mockAuthenticatedUserProfile()
+  fun `Given SDK is initialized and authenticated user profile user present, When viewmodel is initialized, Then state should be updated`() =
+    runTest {
+      mockSdkInitialized()
+      mockAuthenticatedUserProfile()
 
-    initializeViewModel()
+      initializeViewModel()
 
-    assertThat(viewModel.uiState).isEqualTo(
-      INITIAL_STATE.copy(
-        isSdkInitialized = true,
-        authenticatedUserProfile = TEST_USER_PROFILE_1
+      assertThat(viewModel.uiState).isEqualTo(
+        INITIAL_STATE.copy(
+          isSdkInitialized = true,
+          authenticatedUserProfile = TEST_USER_PROFILE_1
+        )
       )
-    )
-  }
+    }
 
   @Test
-  fun `When StartPinChange event is sent and finishes successfully, Then state should be updated`() {
+  fun `When StartPinChange event is sent and finishes successfully, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockAuthenticatedUserProfile()
     mockSuccessfulPinChange()
@@ -123,7 +125,7 @@ class ChangePinViewModelTest {
   }
 
   @Test
-  fun `When StartPinChange event is sent and finishes with error, Then state should be updated`() {
+  fun `When StartPinChange event is sent and finishes with error, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockAuthenticatedUserProfile()
     mockUnsuccessfulPinChange()
@@ -181,7 +183,7 @@ class ChangePinViewModelTest {
     whenever(omiSdkEngineFake.oneginiClient.getUserClient().authenticatedUserProfile).thenReturn(TEST_USER_PROFILE_1)
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }

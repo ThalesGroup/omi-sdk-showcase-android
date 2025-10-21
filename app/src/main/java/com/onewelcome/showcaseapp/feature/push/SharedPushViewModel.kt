@@ -70,9 +70,7 @@ class SharedPushViewModel @Inject constructor(
   }
 
   private suspend fun handleSdkAutoInitialize(pushRequest: OneginiMobileAuthWithPushRequest) {
-    sdkAutoInitializationUseCase.deferredResult?.await()
-      ?.onSuccess { proceedWithAuthentication(pushRequest) }
-      ?.onFailure { handleSdkNotInitialized(it) }
+    proceedWithAuthentication(pushRequest)
   }
 
   private fun handleSdkNotInitialized(error: Throwable) {
@@ -81,8 +79,11 @@ class SharedPushViewModel @Inject constructor(
   }
 
   private fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
-    authenticateWithPushUseCase.execute(pushRequest)
-    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+    viewModelScope.launch {
+      authenticateWithPushUseCase.execute(pushRequest)
+        .onSuccess { _navigationEvents.send(NavigationEvent.NavigateToTransactionConfirmationScreen) }
+        .onFailure { handleSdkNotInitialized(it) }
+    }
   }
 
   fun onEvent(event: UiEvent) {

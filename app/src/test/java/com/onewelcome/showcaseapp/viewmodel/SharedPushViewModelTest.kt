@@ -96,7 +96,7 @@ class SharedPushViewModelTest {
   }
 
   @Test
-  fun `When new push is sent, Then state should be updated`() {
+  fun `When new push is sent, Then state should be updated`() = runTest {
     mockSdkInitialized()
 
     viewModel.onNewPush(pushRequest)
@@ -105,7 +105,7 @@ class SharedPushViewModelTest {
   }
 
   @Test
-  fun `When new push is sent and authentication is successful and returns null, Then state should be updated`() {
+  fun `When new push is sent and authentication is successful and returns null, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockUserClient()
 
@@ -119,7 +119,7 @@ class SharedPushViewModelTest {
   }
 
   @Test
-  fun `When new push is sent and authentication is successful and returns Custom Info, Then state should be updated`() {
+  fun `When new push is sent and authentication is successful and returns Custom Info, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockUserClient()
 
@@ -133,7 +133,7 @@ class SharedPushViewModelTest {
   }
 
   @Test
-  fun `When new push is sent and authentication failed, Then state should be updated`() {
+  fun `When new push is sent and authentication failed, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockUserClient()
 
@@ -165,7 +165,7 @@ class SharedPushViewModelTest {
     assertThat(viewModel.uiState).usingRecursiveComparison().withEqualsForThrowable().isEqualTo(expectedState)
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClient)
   }

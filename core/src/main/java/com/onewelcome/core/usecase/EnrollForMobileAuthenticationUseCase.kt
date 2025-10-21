@@ -16,21 +16,20 @@ class EnrollForMobileAuthenticationUseCase @Inject constructor(
   private val omiSdkFacade: OmiSdkFacade
 ) {
 
-  suspend fun execute(): Result<Unit, Throwable> {
+  suspend fun execute(): Result<Unit, Throwable> = runCatching {
+    val oneginiClient = omiSdkFacade.getOneginiClientNew()
     return suspendCancellableCoroutine { continuation ->
-      runCatching {
-        omiSdkFacade.oneginiClient.getUserClient().enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler {
-          override fun onError(error: OneginiMobileAuthEnrollmentError) {
-            continuation.resume(Err(error))
-          }
+      oneginiClient.getUserClient().enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler {
+        override fun onError(error: OneginiMobileAuthEnrollmentError) {
+          continuation.resume(Err(error))
+        }
 
-          override fun onSuccess() {
-            continuation.resume(Ok(Unit))
-          }
-        })
-      }.onFailure {
-        continuation.resume(Err(it))
-      }
+        override fun onSuccess() {
+          continuation.resume(Ok(Unit))
+        }
+      })
     }
+  }.onFailure {
+    Err(it)
   }
 }

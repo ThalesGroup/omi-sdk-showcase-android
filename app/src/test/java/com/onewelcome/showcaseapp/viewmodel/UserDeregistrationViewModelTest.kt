@@ -20,6 +20,7 @@ import com.onewelcome.showcaseapp.utils.withEqualsForThrowable
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -80,7 +81,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should load initial data when SDK is initialized and no profiles registered`() {
+  fun `should load initial data when SDK is initialized and no profiles registered`() = runTest {
     whenNoUserProfilesRegistered()
 
     initViewModel()
@@ -89,7 +90,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should load initial data when SDK is initialized and profiles are registered`() {
+  fun `should load initial data when SDK is initialized and profiles are registered`() = runTest {
     whenUserProfilesAreRegistered()
 
     initViewModel()
@@ -104,7 +105,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should update selected user profile`() {
+  fun `should update selected user profile`() = runTest {
     whenUserProfilesAreRegistered()
     initViewModel()
     assertThat(viewModel.uiState).isEqualTo(USER_PROFILES_LOADED_STATE)
@@ -115,7 +116,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should successfully deregister user`() {
+  fun `should successfully deregister user`() = runTest {
     whenUserProfilesAreRegistered()
     whenever(userClientMock.deregisterUser(eq(UserProfile("123456")), any()))
       .thenAnswer { invocation ->
@@ -136,7 +137,7 @@ class UserDeregistrationViewModelTest {
 
 
   @Test
-  fun `should show loading when deregistering user`() {
+  fun `should show loading when deregistering user`() = runTest {
     whenUserProfilesAreRegistered()
     initViewModel()
     whenever(userClientMock.deregisterUser(eq(UserProfile("123456")), any()))
@@ -151,7 +152,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should update profiles list after user deregistration`() {
+  fun `should update profiles list after user deregistration`() = runTest {
     whenUserProfilesAreRegistered()
     whenever(userClientMock.deregisterUser(eq(UserProfile("123456")), any()))
       .thenAnswer { invocation ->
@@ -165,7 +166,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should return error when user profile is not selected`() {
+  fun `should return error when user profile is not selected`() = runTest {
     val expectedState = INITIAL_STATE.copy(
       isSdkInitialized = true,
       result = Err(IllegalArgumentException("User profile not selected"))
@@ -182,7 +183,7 @@ class UserDeregistrationViewModelTest {
   }
 
   @Test
-  fun `should return error when user deregistration failed`() {
+  fun `should return error when user deregistration failed`() = runTest {
     whenUserProfilesAreRegistered()
     whenever(userClientMock.deregisterUser(eq(UserProfile("123456")), any()))
       .thenAnswer { invocation ->
@@ -199,17 +200,17 @@ class UserDeregistrationViewModelTest {
     viewModel = UserDeregistrationViewModel(isSdkInitializedUseCase, getUserProfilesUseCase, deregisterUserUseCase)
   }
 
-  private fun whenNoUserProfilesRegistered() {
+  private suspend fun whenNoUserProfilesRegistered() {
     mockSdkInitialized()
     mockNoUserProfiles()
   }
 
-  private fun whenUserProfilesAreRegistered() {
+  private suspend fun whenUserProfilesAreRegistered() {
     mockSdkInitialized()
     mockRegisteredUserProfiles()
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkFacade.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
   }
 

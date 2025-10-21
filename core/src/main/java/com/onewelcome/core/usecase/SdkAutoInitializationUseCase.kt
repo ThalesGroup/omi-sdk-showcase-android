@@ -1,24 +1,19 @@
 package com.onewelcome.core.usecase
 
-import com.github.michaelbull.result.Result
-import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import com.onewelcome.data.datastore.ShowcaseDataStore
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SdkAutoInitializationUseCase @Inject constructor(
-  private val sdkInitializationUseCase: OmiSdkInitializationUseCase
+  private val sdkInitializationUseCase: OmiSdkInitializationUseCase,
+  private val dataStore: ShowcaseDataStore
 ) {
-  var deferredResult: Deferred<Result<Set<UserProfile>, OneginiInitializationError>>? = null
-  fun execute() {
-    deferredResult = CoroutineScope(Dispatchers.IO).async {
+  suspend fun execute() {
+    if (dataStore.isSdkAutoInitializationEnabled().first()) {
       val sdkInitializationSettings = OmiSdkInitializationSettings(
         shouldStoreCookies = true,
         httpReadTimeout = null,

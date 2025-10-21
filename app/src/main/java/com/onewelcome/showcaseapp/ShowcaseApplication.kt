@@ -1,7 +1,7 @@
 package com.onewelcome.showcaseapp
 
 import android.app.Application
-import com.onewelcome.core.facade.SdkAutoInitializationFacadeImpl
+import com.onewelcome.core.usecase.SdkAutoInitializationUseCase
 import com.onewelcome.showcaseapp.fcm.NotificationChannelManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class ShowcaseApplication : Application() {
 
   @Inject
-  lateinit var autoInitializationManager: SdkAutoInitializationFacadeImpl
+  lateinit var autoInitializationUseCase: SdkAutoInitializationUseCase
 
   @Inject
   lateinit var notificationChannelManager: NotificationChannelManager
@@ -26,7 +26,7 @@ class ShowcaseApplication : Application() {
 
   private fun autoInitializeSdk() {
     CoroutineScope(Dispatchers.IO).launch {
-      autoInitializationManager.execute()
+      autoInitializationUseCase.execute()
     }
   }
 }

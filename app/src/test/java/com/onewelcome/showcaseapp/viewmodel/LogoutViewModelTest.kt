@@ -18,6 +18,7 @@ import com.onewelcome.showcaseapp.utils.ThrowableEquals
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -73,7 +74,7 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given SDK is initialized, When viewmodel is initialized, Then state should be updated`() = runTest {
     mockSdkInitialized()
 
     initializeViewModel()
@@ -82,22 +83,23 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `Given SDK is initialized and authenticated user profile is present, When viewmodel is initialized, Then state should be updated`() {
-    mockSdkInitialized()
-    mockAuthenticatedUserProfile()
+  fun `Given SDK is initialized and authenticated user profile is present, When viewmodel is initialized, Then state should be updated`() =
+    runTest {
+      mockSdkInitialized()
+      mockAuthenticatedUserProfile()
 
-    initializeViewModel()
+      initializeViewModel()
 
-    assertThat(viewModel.uiState).isEqualTo(
-      INITIAL_STATE.copy(
-        isSdkInitialized = true,
-        authenticatedUserProfile = TEST_USER_PROFILE_1
+      assertThat(viewModel.uiState).isEqualTo(
+        INITIAL_STATE.copy(
+          isSdkInitialized = true,
+          authenticatedUserProfile = TEST_USER_PROFILE_1
+        )
       )
-    )
-  }
+    }
 
   @Test
-  fun `When Logout event is sent and finishes successfully, Then state should be updated`() {
+  fun `When Logout event is sent and finishes successfully, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockSuccessfulLogout()
 
@@ -113,7 +115,7 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `When Logout event is sent and finishes with error, Then state should be updated`() {
+  fun `When Logout event is sent and finishes with error, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockUnsuccessfulLogout()
 
@@ -129,7 +131,7 @@ class LogoutViewModelTest {
   }
 
   @Test
-  fun `When logout event is sent, Then loading state should be updated`() {
+  fun `When logout event is sent, Then loading state should be updated`() = runTest {
     mockSdkInitialized()
     whenever(userClientMock.logout(any()))
       .thenAnswer { invocation ->
@@ -156,7 +158,7 @@ class LogoutViewModelTest {
       .isEqualTo(INITIAL_STATE.copy(result = Err(expectedException)))
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }

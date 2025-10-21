@@ -2,7 +2,6 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
@@ -19,6 +18,7 @@ import com.onewelcome.showcaseapp.feature.info.InfoViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -93,7 +93,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and there are no user profiles, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given sdk is initialized and there are no user profiles, When viewmodel is initialized, Then state should be updated`() = runTest {
     mockSdkInitialized()
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
 
@@ -103,7 +103,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and there are user profiles, When viewmodel is initialized, Then state should be updated`() {
+  fun `Given sdk is initialized and there are user profiles, When viewmodel is initialized, Then state should be updated`() = runTest {
     mockSdkInitialized()
     mockUserClient()
     mockUserProfileIds()
@@ -123,35 +123,37 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized and the is no authenticated user profile, When viewmodel is initialized, Then state should be updated`() {
-    mockSdkInitialized()
+  fun `Given sdk is initialized and the is no authenticated user profile, When viewmodel is initialized, Then state should be updated`() =
+    runTest {
+      mockSdkInitialized()
 
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
+      val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
 
-    viewModel.updateData()
+      viewModel.updateData()
 
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
-
-  @Test
-  fun `Given sdk is initialized and the is authenticated user profile, When viewmodel is initialized, Then state should be updated`() {
-    mockSdkInitialized()
-    mockUserClient()
-    mockAuthenticatedUserProfileId()
-
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      userProfileIds = emptyList(),
-      authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId
-    )
-
-    viewModel.updateData()
-
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
-  fun `Given sdk is initialized, When getting user profiles failed, Then mobile auth enrollment list should be empty`() {
+  fun `Given sdk is initialized and the is authenticated user profile, When viewmodel is initialized, Then state should be updated`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserClient()
+      mockAuthenticatedUserProfileId()
+
+      val expectedState = viewModel.uiState.copy(
+        isSdkInitialized = true,
+        userProfileIds = emptyList(),
+        authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId
+      )
+
+      viewModel.updateData()
+
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
+
+  @Test
+  fun `Given sdk is initialized, When getting user profiles failed, Then mobile auth enrollment list should be empty`() = runTest {
     mockSdkInitialized()
     mockUserProfilesError()
 
@@ -167,7 +169,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, When mobile auth enrollment check failed, Then mobile auth enrollment list should be empty`() {
+  fun `Given sdk is initialized, When mobile auth enrollment check failed, Then mobile auth enrollment list should be empty`() = runTest {
     mockSdkInitialized()
     mockUserProfileIds()
     mockMobileAuthEnrollmentStatusError()
@@ -184,22 +186,23 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given sdk is initialized, When mobile auth enrollment with push check failed, Then mobile auth enrollment list should be empty`() {
-    mockSdkInitialized()
-    mockUserProfileIds()
-    mockMobileAuthEnrollmentStatus()
-    mockMobileAuthEnrollmentWithPushStatusError()
+  fun `Given sdk is initialized, When mobile auth enrollment with push check failed, Then mobile auth enrollment list should be empty`() =
+    runTest {
+      mockSdkInitialized()
+      mockUserProfileIds()
+      mockMobileAuthEnrollmentStatus()
+      mockMobileAuthEnrollmentWithPushStatusError()
 
-    val expectedState = viewModel.uiState.copy(
-      isSdkInitialized = true,
-      userProfileIds = emptyList(),
-      mobileAuthenticationEnrollmentState = emptyList()
-    )
+      val expectedState = viewModel.uiState.copy(
+        isSdkInitialized = true,
+        userProfileIds = emptyList(),
+        mobileAuthenticationEnrollmentState = emptyList()
+      )
 
-    viewModel.updateData()
+      viewModel.updateData()
 
-    assertThat(viewModel.uiState).isEqualTo(expectedState)
-  }
+      assertThat(viewModel.uiState).isEqualTo(expectedState)
+    }
 
   @Test
   fun `Given post notification permission is granted, When viewmodel is initialized, Then state should be updated`() {
@@ -225,7 +228,7 @@ class InfoViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
-  private fun mockSdkInitialized() {
+  private suspend fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
