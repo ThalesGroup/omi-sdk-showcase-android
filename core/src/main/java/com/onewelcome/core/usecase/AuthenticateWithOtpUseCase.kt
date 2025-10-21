@@ -14,7 +14,7 @@ import kotlin.coroutines.resume
 
 class AuthenticateWithOtpUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
 
-  suspend fun invoke(otp: String): Result<Unit, Throwable> {
+  suspend fun execute(otp: String): Result<Unit, Throwable> {
     return suspendCancellableCoroutine { continuation ->
       runCatching {
         omiSdkFacade.oneginiClient.getUserClient().handleMobileAuthWithOtp(otp, object : OneginiMobileAuthWithOtpHandler{
