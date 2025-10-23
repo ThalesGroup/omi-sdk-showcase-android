@@ -7,11 +7,11 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
+import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.usecase.SdkAutoInitializationUseCase
 import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
@@ -64,7 +64,7 @@ class SharedPushViewModelTest {
   lateinit var preferencesManager: PreferencesManagerFake
 
   @Inject
-  lateinit var sdkAutoInitializationUseCase: SdkAutoInitializationUseCase
+  lateinit var sdkAutoInitializationManager: SdkAutoInitializationManager
 
   lateinit var viewModel: SharedPushViewModel
 
@@ -84,7 +84,7 @@ class SharedPushViewModelTest {
       notificationEventDispatcher,
       isSdkInitializedUseCase,
       preferencesManager,
-      sdkAutoInitializationUseCase
+      sdkAutoInitializationManager
     )
   }
 

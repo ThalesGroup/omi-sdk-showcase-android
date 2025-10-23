@@ -1,7 +1,5 @@
 package com.onewelcome.core.di
 
-import com.onewelcome.core.facade.SdkAutoInitializationFacade
-import com.onewelcome.core.facade.SdkAutoInitializationFacadeImpl
 import com.onewelcome.core.facade.FirebaseMessagingFacade
 import com.onewelcome.core.facade.FirebaseMessagingFacadeImpl
 import com.onewelcome.core.facade.JsonFacade
@@ -30,7 +28,4 @@ interface FacadeModule {
 
   @Binds
   fun bindJsonFacade(jsonFacade: JsonFacadeImpl): JsonFacade
-
-  @Binds
-  fun bindAutoInitializationFacade(autoInitializationFacadeImpl: SdkAutoInitializationFacadeImpl): SdkAutoInitializationFacade
 }
