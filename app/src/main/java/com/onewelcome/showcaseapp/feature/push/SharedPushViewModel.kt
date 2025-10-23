@@ -12,11 +12,11 @@ import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.manager.PreferencesManager
+import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.usecase.SdkAutoInitializationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -30,7 +30,7 @@ class SharedPushViewModel @Inject constructor(
   private val notificationEventDispatcher: NotificationEventDispatcher,
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val preferencesManager: PreferencesManager,
-  private val sdkAutoInitializationUseCase: SdkAutoInitializationUseCase,
+  private val sdkAutoInitializationManager: SdkAutoInitializationManager
 ) : ViewModel() {
   var uiState by mutableStateOf(UiState())
 
@@ -70,7 +70,7 @@ class SharedPushViewModel @Inject constructor(
   }
 
   private suspend fun handleSdkAutoInitialize(pushRequest: OneginiMobileAuthWithPushRequest) {
-    sdkAutoInitializationUseCase.deferredResult?.await()
+    sdkAutoInitializationManager.deferredResult?.await()
       ?.onSuccess { proceedWithAuthentication(pushRequest) }
       ?.onFailure { handleSdkNotInitialized(it) }
   }
