@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,7 +31,6 @@ class SdkAutoInitializationManager @Inject constructor(
           httpConnectTimeout = null,
           handlers = HandlerType.entries,
         )
-        delay(4000)
         sdkInitializationUseCase.initialize(sdkInitializationSettings)
       }
     }
