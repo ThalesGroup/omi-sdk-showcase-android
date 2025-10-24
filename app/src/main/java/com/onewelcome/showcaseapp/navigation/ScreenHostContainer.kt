@@ -20,7 +20,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
@@ -84,19 +83,26 @@ private fun ListenForPushEvents(
     sharedPushViewModel.navigationEvents.collect {
       when (it) {
         SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
-        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
-          popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> {
+          if (rootNavController.currentDestination?.route == Screens.TransactionConfirmation.route) {
+            rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
+              popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+            }
+          } else {
+            rootNavController.navigate(Screens.TransactionConfirmationResult.route)
+          }
         }
       }
     }
   }
 }
 
-private fun NavGraphBuilder.pushScreens(rootNavController: NavHostController, sharedPushViewModel: SharedPushViewModel) {
-  navigation(startDestination = Screens.TransactionConfirmation.route, route = "sharedViewModelFlow") {
-    composable(route = Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(rootNavController, sharedPushViewModel) }
-    composable(Screens.TransactionConfirmationResult.route) { TransactionConfirmationResultScreen(rootNavController, sharedPushViewModel) }
-  }
+private fun NavGraphBuilder.pushScreens(
+  rootNavController: NavHostController,
+  sharedPushViewModel: SharedPushViewModel
+) {
+  composable(Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(rootNavController, sharedPushViewModel) }
+  composable(Screens.TransactionConfirmationResult.route) { TransactionConfirmationResultScreen(rootNavController, sharedPushViewModel) }
 }
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
