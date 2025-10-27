@@ -5,6 +5,7 @@ import com.onewelcome.core.util.Constants
 sealed class Screens(val route: String) {
   data object Home : Screens("home_route")
   data object Info : Screens("info_route")
+  data object Transactions : Screens("transaction_route")
   data object SdkInitialization : Screens("sdk_initialization")
   data object OsCompatibility : Screens("os_compatibility")
   data object UserRegistration : Screens("user_registration")
@@ -19,4 +20,6 @@ sealed class Screens(val route: String) {
   data object Logout : Screens("logout")
   data object PinAuthenticationInput : Screens("pin_authentication_input_${Constants.FULLSCREEN_PAGE}")
   data object CreatePinInput : Screens("create_pin_input_${Constants.FULLSCREEN_PAGE}")
+  data object TransactionConfirmation : Screens("transaction_confirmation")
+  data object TransactionConfirmationResult : Screens("transaction_confirmation_result")
 }

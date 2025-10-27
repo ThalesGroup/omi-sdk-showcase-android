@@ -3,6 +3,7 @@
   <string name="showcase_activity_name">Showcase App</string>
   <string name="home_screen_name">Home</string>
   <string name="info_screen_name">Info</string>
+  <string name="transactions_screen_name">Transactions</string>
   <string name="os_compatibility_screen_name">OS Compatibility</string>
   <string name="required">Required</string>
   <string name="optional">Optional</string>
@@ -14,6 +15,10 @@
   <string name="register">Register</string>
   <string name="cancel">Cancel</string>
   <string name="submit">Submit</string>
+  <string name="accept">Accept</string>
+  <string name="reject">Reject</string>
+  <string name="error">Error</string>
+  <string name="close">Close</string>
   <string name="authenticate">Authenticate</string>
   <string name="user_profile">User profile: %s</string>
   <string name="custom_info">Custom info: %s</string>
@@ -42,6 +47,7 @@
   <string name="section_title_user_deregistration">User Deregistration</string>
   <string name="section_title_change_pin">Change PIN</string>
   <string name="section_title_logout">Logout</string>
+  <string name="section_title_push_authentication">Push Authentication</string>
 
   <!-- SDK Initialization -->
   <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
@@ -182,5 +188,24 @@
   <string name="logout_performed_successfully">Logout performed successfully</string>
   <string name="button_logout_user">Logout</string>
   <string name="logout_description">SDK offers a way to logout currently logged in user profile. Logout does not fail if there is no authenticated user profile.</string>
+
+  <!-- Transaction Confirmation -->
+  <string name="transaction_screen">Transaction screen</string>
+  <string name="profile_id">Profile ID</string>
+  <string name="message_content">Message</string>
+  <string name="transaction_id">Transaction ID</string>
+  <string name="time_to_live_seconds">Time to live in seconds</string>
+  <string name="timestamp">Timestamp</string>
+  <string name="no_data_available">No data available</string>
+
+  <!-- Transaction Confirmation Result -->
+  <string name="transaction_result">Transaction result</string>
+  <string name="transaction_accepted_successfully">Transaction accepted successfully</string>
+  <string name="custom_info_plain">Custom info</string>
+  <string name="transaction_failed">Transaction failed</string>
+
+  <!-- Notifications -->
+  <string name="new_pending_transaction">New pending transaction</string>
+  <string name="transaction_waiting_for_confirmation">New pending transaction</string>
 
 </resources>
