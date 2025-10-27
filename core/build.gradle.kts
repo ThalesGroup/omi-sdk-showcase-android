@@ -1,7 +1,6 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.DATA_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
-import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TEST_INSTRUMENTATION_RUNNER
@@ -17,7 +16,7 @@ plugins {
 android {
   defaultConfig {
     compileSdk = COMPILE_SDK
-    namespace = NAMESPACE
+    namespace = "com.onewelcome.core"
     minSdk = MIN_SDK
     testInstrumentationRunner = TEST_INSTRUMENTATION_RUNNER
   }

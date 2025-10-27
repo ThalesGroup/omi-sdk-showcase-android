@@ -16,10 +16,12 @@ sealed class Screens(val route: String) {
   data object MobileAuthentication : Screens("mobile_authentication")
   data object MobileAuthenticationEnrollment : Screens("mobile_authentication_enrollment")
   data object MobileAuthenticationPushEnrollment : Screens("mobile_authentication_push_enrollment")
+  data object MobileAuthenticationWithOtp : Screens("mobile_authentication_with_otp")
   data object ChangePin : Screens("change_pin")
   data object Logout : Screens("logout")
   data object PinAuthenticationInput : Screens("pin_authentication_input_${Constants.FULLSCREEN_PAGE}")
   data object CreatePinInput : Screens("create_pin_input_${Constants.FULLSCREEN_PAGE}")
   data object TransactionConfirmation : Screens("transaction_confirmation")
   data object TransactionConfirmationResult : Screens("transaction_confirmation_result")
+  data object QrCodeScanner : Screens("qr_code_scanner_${Constants.FULLSCREEN_PAGE}")
 }

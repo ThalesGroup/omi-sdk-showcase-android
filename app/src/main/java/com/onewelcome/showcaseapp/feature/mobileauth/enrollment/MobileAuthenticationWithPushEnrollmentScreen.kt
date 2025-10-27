@@ -2,10 +2,7 @@ package com.onewelcome.showcaseapp.feature.mobileauth.enrollment
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -32,7 +29,6 @@ import androidx.navigation.NavHostController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseCard
@@ -40,10 +36,12 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.State
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentViewModel.UiEvent
+import com.onewelcome.showcaseapp.navigation.openAppSettings
 
 @Composable
 fun MobileAuthenticationWithPushEnrollmentScreen(
@@ -160,13 +158,6 @@ private fun EnrollmentResult(result: Result<Unit, Throwable>) {
   }
 }
 
-private fun Throwable.toErrorResultString(): String {
-  return when (this) {
-    is OneginiError -> "${this.errorType.code}: ${this.message}"
-    else -> "$this"
-  }
-}
-
 @Composable
 private fun EnrollmentButton(uiState: State, onEvent: (UiEvent) -> Unit) {
   Button(
@@ -209,13 +200,6 @@ private fun ShowPermissionSettingsAlertDialog(onEvent: (UiEvent) -> Unit) {
     }
 
   )
-}
-
-private fun Activity.openAppSettings() {
-  Intent(
-    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-    Uri.fromParts("package", packageName, null)
-  ).also(::startActivity)
 }
 
 @Composable

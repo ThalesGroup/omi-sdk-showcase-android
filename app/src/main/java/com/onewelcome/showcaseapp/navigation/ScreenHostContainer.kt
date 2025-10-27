@@ -29,6 +29,8 @@ import com.onewelcome.showcaseapp.feature.logout.LogoutScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
+import com.onewelcome.showcaseapp.feature.otp.MobileAuthenticationWithOtpScreen
+import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
 import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
@@ -67,6 +69,7 @@ fun ScreenHostContainer() {
       bottomNavigationScreens(homeNavController, rootNavController)
       pinFullScreenPages(rootNavController)
       pushScreens(rootNavController, sharedPushViewModel)
+      qrCodeScanner(rootNavController)
     }
   }
 }
@@ -105,6 +108,10 @@ private fun NavGraphBuilder.pushScreens(
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
+}
+
+private fun NavGraphBuilder.qrCodeScanner(rootNavController: NavHostController) {
+  composable(Screens.QrCodeScanner.route) { QrCodeScannerScreen(rootNavController) }
 }
 
 private fun NavGraphBuilder.bottomNavigationScreens(
@@ -166,6 +173,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
     composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }
     composable(Screens.MobileAuthenticationPushEnrollment.route) { MobileAuthenticationWithPushEnrollmentScreen(homeNavController) }
+    composable(Screens.MobileAuthenticationWithOtp.route) { MobileAuthenticationWithOtpScreen(homeNavController, rootNavController) }
     composable(Screens.ChangePin.route) { ChangePinScreen(homeNavController, rootNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
   }

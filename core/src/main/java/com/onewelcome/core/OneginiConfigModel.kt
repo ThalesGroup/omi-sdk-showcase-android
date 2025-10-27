@@ -2,7 +2,6 @@ package com.onewelcome.core
 
 import android.os.Build
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
-import com.onewelcome.showcaseapp.R
 import javax.inject.Inject
 
 class OneginiConfigModel @Inject constructor() : OneginiClientConfigModel {
