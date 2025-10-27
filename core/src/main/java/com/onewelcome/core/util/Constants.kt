@@ -20,4 +20,14 @@ object Constants {
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   const val FULLSCREEN_PAGE = "fullscreen"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
+  const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss"
+  val NOTIFICATION_VIBRATION_PATTERN = longArrayOf(0, 500, 500, 500)
+
+  // OneginiMobileAuthWithPushRequest
+  const val MOBILE_AUTH_CHANNEL_ID = "mobile_auth_channel"
+  const val MESSAGE_KEY = "message"
+  const val TRANSACTION_ID_KEY = "transactionId"
+  const val PROFILE_ID_KEY = "profileId"
+  const val TIMESTAMP_KEY ="timestamp"
+  const val TIME_TO_LIVE_SECONDS_KEY ="timeToLiveSeconds"
 }

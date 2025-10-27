@@ -40,7 +40,7 @@
           android:resource="@xml/file_paths" />
     </provider>
     <service
-        android:name="com.onewelcome.core.fcm.ShowcaseAppFirebaseMessagingService"
+        android:name="com.onewelcome.showcaseapp.fcm.ShowcaseAppFirebaseMessagingService"
         android:exported="false">
       <intent-filter>
         <action android:name="com.google.firebase.MESSAGING_EVENT" />

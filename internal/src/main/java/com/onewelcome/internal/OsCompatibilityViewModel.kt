@@ -37,7 +37,7 @@ class OsCompatibilityViewModel @Inject constructor(
     logoutTestCases.tests,
 //    userDeregistrationTestCases.tests,
 //    pinAuthenticationTestCases.tests
-    )
+  )
 
   var uiState by mutableStateOf(State(testCategories = testCategories))
     private set

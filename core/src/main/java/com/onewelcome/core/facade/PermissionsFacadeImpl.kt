@@ -10,9 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PermissionsFacadeIml @Inject constructor(
+class PermissionsFacadeImpl @Inject constructor(
   @ApplicationContext private val context: Context
-) : PermissionsFacade{
+) : PermissionsFacade {
 
   override fun checkPostNotificationsPermission(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

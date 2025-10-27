@@ -6,6 +6,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onewelcome.core.util.Constants
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun Color.darken(@FloatRange(from = 0.0, to = 1.0) factor: Float) =
   Color(
@@ -32,3 +35,5 @@ fun Throwable.toErrorResultString(): String {
     else -> "$this"
   }
 }
+
+fun Long.toReadableDate(): String = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault()).format(Date(this))
