@@ -48,7 +48,22 @@ content for the `developer` part inside the sample file.
 4. Now, you need to setup Push Messaging Configuration on the backend side. To do that, navigate again to your project
    on [Firebase Console](https://console.firebase.google.com/) -> Project settings -> Cloud messaging. Click on Manage Service Accounts and
    Create Service Account with Cloud Messaging permissions and copy its Key ID. Next, open your backend admin web page and navigate to
-   Configuration -> Mobile authentication -> Push messaging configuration. Create new configuration and upload the Key. 
+   Configuration -> Mobile authentication -> Push messaging configuration. Create new configuration and upload the Key.
 
 For more information on how to set up Firebase Messaging, please take a look at
 [Google Documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase).
+
+## Handling mobile authentication (OTP/Push)
+
+To begin mobile authentication, call the backend API, which will either generate an OTP code or send a push notification to the user’s
+device.
+The backend provides the following endpoint for this purpose:
+
+`POST /oauth/api/v4/authenticate/user`
+
+Detailed documentation and
+usage examples are available in
+the [Access mobile authentication documentation](https://thalesdocs.com/oip/mobile-id/mobile-id-access/mobile-authn/mobile-authentication-v4/index.html#mobile-authentication-initialization).
+
+For mobile authentication using OTP, a convenient way to test is as follows: copy the `otp` value from the API response and paste it
+into an online QR Code generator. You can then scan the generated QR code using the OMI Showcase App.

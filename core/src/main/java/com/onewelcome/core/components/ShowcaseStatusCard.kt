@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.success
-import com.onewelcome.showcaseapp.R
+import com.onewelcome.core.R
 
 @Composable
 fun ShowcaseStatusCard(
