@@ -18,10 +18,11 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
-import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.StatelessUserRegistrationUseCase
+import com.onewelcome.core.usecase.UserRegistrationUseCase
 import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -32,7 +33,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BrowserRegistrationViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
-  private val browserRegistrationUseCase: BrowserRegistrationUseCase,
+  private val userRegistrationUseCase: UserRegistrationUseCase,
+  private val statelessUserRegistrationUseCase: StatelessUserRegistrationUseCase,
   private val getBrowserIdentityProvidersUseCase: GetBrowserIdentityProvidersUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val oneginiConfigModel: OneginiConfigModel,
@@ -63,6 +65,7 @@ class BrowserRegistrationViewModel @Inject constructor(
       is UiEvent.CancelRegistration -> cancelRegistration()
       is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
       is UiEvent.HandleRegistrationCallback -> handleRegistrationCallback(event.uri)
+      is UiEvent.SetStatelessRegistration -> uiState = uiState.copy(isStatelessRegistration = event.isStateless)
     }
   }
 
@@ -107,8 +110,12 @@ class BrowserRegistrationViewModel @Inject constructor(
   }
 
   private fun startRegistration() {
-    registerUser()
-    listenForPinScreenNavigationEvent()
+    if (uiState.isStatelessRegistration) {
+      registerStatelessUser()
+    } else {
+      registerUser()
+      listenForPinScreenNavigationEvent()
+    }
   }
 
   private fun listenForPinScreenNavigationEvent() {
@@ -119,10 +126,20 @@ class BrowserRegistrationViewModel @Inject constructor(
     }
   }
 
+  private fun registerStatelessUser() {
+    viewModelScope.launch {
+      uiState = uiState.copy(isRegistrationCancellationEnabled = true)
+      statelessUserRegistrationUseCase
+        .execute(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
+        .onSuccess { handleSuccess(UserProfile.stateless to it) }
+        .onFailure { handleFailure(it) }
+    }
+  }
+
   private fun registerUser() {
     viewModelScope.launch {
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
-      browserRegistrationUseCase
+      userRegistrationUseCase
         .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess { handleSuccess(it) }
         .onFailure { handleFailure(it) }
@@ -156,6 +173,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     val shouldUseDefaultIdentityProvider: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val isRegistrationCancellationEnabled: Boolean = false,
+    val isStatelessRegistration: Boolean = false
   )
 
   sealed interface UiEvent {
@@ -165,6 +183,7 @@ class BrowserRegistrationViewModel @Inject constructor(
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
     data class HandleRegistrationCallback(val uri: Uri) : UiEvent
+    data class SetStatelessRegistration(val isStateless: Boolean) : UiEvent
   }
 
   sealed interface NavigationEvent {
