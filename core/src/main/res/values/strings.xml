@@ -34,6 +34,7 @@
   <string name="label_push">Push</string>
   <string name="status_mobile_authentication_enrollment">Mobile authentication enrollment</string>
   <string name="status_post_notifications_permission">Post notifications permission</string>
+  <string name="status_registered_authenticators">Registered authenticators</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
