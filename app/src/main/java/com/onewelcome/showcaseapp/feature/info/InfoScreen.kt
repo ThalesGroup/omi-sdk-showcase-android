@@ -9,11 +9,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseUserProfileStatusTableCard
 import com.onewelcome.core.theme.Dimensions
@@ -26,7 +29,9 @@ import com.onewelcome.showcaseapp.feature.info.InfoViewModel.State
 fun InfoScreen(
   viewModel: InfoViewModel = hiltViewModel()
 ) {
-  viewModel.updateData()
+  LaunchedEffect(Unit) {
+    viewModel.updateData()
+  }
   InfoScreenContent(viewModel.uiState)
 }
 
@@ -72,11 +77,39 @@ private fun StatusList(uiState: State) {
       title = stringResource(R.string.authenticated_profile),
       description = getAuthenticatedProfile(uiState.authenticatedUserProfileId)
     )
+    UserProfilesAuthenticators(uiState.authenticatorsState)
     UserProfilesEnrolledForMobileAuth(uiState.mobileAuthenticationEnrollmentState)
     ShowcaseStatusCard(
       title = stringResource(R.string.status_post_notifications_permission),
       status = uiState.isPostNotificationPermissionGranted,
     )
+  }
+}
+
+@Composable
+private fun UserProfilesAuthenticators(authenticatorsState: List<InfoViewModel.AuthenticatorsState>) {
+  if (authenticatorsState.isEmpty()) {
+    ShowcaseStatusCard(
+      title = stringResource(R.string.status_registered_authenticators),
+      description = stringResource(R.string.no_user_profiles)
+    )
+  } else {
+    val authenticatorColumns = remember(authenticatorsState) { getAuthenticatorColumns(authenticatorsState) }
+    val userProfileRows = remember(authenticatorsState, authenticatorColumns) {
+      getUserProfileRows(authenticatorsState, authenticatorColumns)
+    }
+
+    ShowcaseUserProfileStatusTableCard(
+      title = stringResource(R.string.status_registered_authenticators)
+    ) {
+      headerRow(
+        stringResource(R.string.label_user_profile),
+        *authenticatorColumns.map { it.type.name }.toTypedArray()
+      )
+      userProfileRows.forEach { (userProfileId, statuses) ->
+        contentRow(userProfileId, *statuses.toBooleanArray())
+      }
+    }
   }
 }
 
@@ -106,6 +139,23 @@ private fun getUserProfiles(userProfiles: List<String>): String =
 @Composable
 private fun getAuthenticatedProfile(userProfile: String): String =
   userProfile.takeIf { it.isNotEmpty() } ?: stringResource(R.string.no_authenticated_user_profile)
+
+private fun getAuthenticatorColumns(authenticatorsState: List<InfoViewModel.AuthenticatorsState>) =
+  authenticatorsState
+    .flatMap { it.authenticators }
+    .distinctBy { it.type }
+    .sortedBy { it.type.index }
+
+private fun getUserProfileRows(
+  authenticatorsState: List<InfoViewModel.AuthenticatorsState>,
+  authenticatorColumns: List<OneginiAuthenticator>
+) =
+  authenticatorsState.map { userState ->
+    val authenticatorStatuses = authenticatorColumns.map { authenticatorType ->
+      userState.authenticators.find { it.type == authenticatorType.type }?.isRegistered ?: false
+    }
+    userState.userProfileId to authenticatorStatuses
+  }
 
 @Preview(showBackground = true)
 @Composable
