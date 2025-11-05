@@ -72,6 +72,10 @@ private fun StatusList(uiState: State) {
       title = stringResource(R.string.authenticated_profile),
       description = getAuthenticatedProfile(uiState.authenticatedUserProfileId)
     )
+    ShowcaseStatusCard(
+      title = stringResource(R.string.stateless_session),
+      status = uiState.isInStatelessSession
+    )
     UserProfilesEnrolledForMobileAuth(uiState.mobileAuthenticationEnrollmentState)
     ShowcaseStatusCard(
       title = stringResource(R.string.status_post_notifications_permission),
