@@ -229,7 +229,6 @@ class InfoViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
-  //TODO
   @Test
   fun `Given user is in stateless session, When viewmodel is initialized, Then stateless session state should be updated`() {
     mockSdkInitialized()
