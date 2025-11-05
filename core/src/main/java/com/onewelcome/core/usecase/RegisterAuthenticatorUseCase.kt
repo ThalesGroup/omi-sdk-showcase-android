@@ -9,17 +9,17 @@ import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorRegistrationH
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onewelcome.core.omisdk.OmiSdkEngine
+import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class RegisterAuthenticatorUseCase @Inject constructor(private val omiSdkEngine: OmiSdkEngine) {
+class RegisterAuthenticatorUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
 
   suspend fun execute(authenticator: OneginiAuthenticator): Result<CustomInfo?, Throwable> {
     return suspendCancellableCoroutine { continuation ->
       runCatching {
-        omiSdkEngine.oneginiClient.getUserClient().registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
+        omiSdkFacade.oneginiClient.getUserClient().registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
           override fun onSuccess(customInfo: CustomInfo?) {
             continuation.resume(Ok(customInfo))
           }

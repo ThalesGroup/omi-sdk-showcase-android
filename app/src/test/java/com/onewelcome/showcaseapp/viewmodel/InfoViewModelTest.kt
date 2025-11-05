@@ -2,9 +2,9 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
+import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
@@ -55,6 +55,9 @@ class InfoViewModelTest {
   lateinit var isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase
 
   @Inject
+  lateinit var getAuthenticatorsUseCase: GetAuthenticatorsUseCase
+
+  @Inject
   lateinit var oneginiClientMock: OneginiClient
 
   @Inject
@@ -79,6 +82,7 @@ class InfoViewModelTest {
       getAuthenticatedUserProfileUseCase,
       isUserEnrolledForMobileAuthUseCase,
       isUserEnrolledForMobileAuthWithPushUseCase,
+      getAuthenticatorsUseCase,
       permissionsFacadeFake
     )
   }
