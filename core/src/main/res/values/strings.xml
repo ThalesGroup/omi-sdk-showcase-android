@@ -28,6 +28,7 @@
   <string name="status_sdk_initialized">SDK Initialized</string>
   <string name="user_profiles">User profiles</string>
   <string name="authenticated_profile">Authenticated user profile</string>
+  <string name="stateless_session">Stateless session</string>
   <string name="no_user_profile_authenticated">No user profile authenticated</string>
   <string name="user_profile_id">Profile ID: %s</string>
   <string name="label_otp">OTP</string>
@@ -121,6 +122,8 @@
   <string name="del">Delete</string>
   <string name="clear">Clear</string>
   <string name="idp_item_label">Name: %s\nID: %s</string>
+  <string name="stateless_registration_label">Stateless registration</string>
+  <string name="stateless_registration_tooltip">Stateless registration does not create a user profile. Once the session expires user needs to register again.</string>
 
   <!-- Authentication -->
   <string name="user_authentication">User authentication</string>
