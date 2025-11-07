@@ -43,6 +43,7 @@
   <string name="section_title_user_authentication">User Authentication</string>
   <string name="section_title_authenticator_settings">Authenticator Settings</string>
   <string name="section_title_pin_authentication">Pin Authentication</string>
+  <string name="section_title_biometric_authentication">Biometric Authentication</string>
   <string name="section_title_mobile_authentication">Mobile Authentication</string>
   <string name="section_title_mobile_authentication_enrollment">Enroll for mobile authentication</string>
   <string name="section_title_mobile_authentication_push_enrollment">Enroll for mobile authentication with push</string>
@@ -132,9 +133,11 @@
   <string name="cancel_authentication">Cancel authentication</string>
   <string name="authentication_choose_user_profile">Select User Profile that will be authenticated.</string>
   <string name="pin_authentication_description">When at least one user is registered, SDK offers a possibility to log in using PIN authentication. PIN is set during user registration.</string>
+  <string name="biometric_authentication_description">When at least one user is registered and has biometric authenticator registered, SDK offers a possibility to log in using biometrics. Biometric authenticator can be enabled in authenticator settings section.</string>
   <string name="user_authentication_description">When at least one user is registered, SDK offers a possibility to log in using number of authenticators.</string>
   <string name="authentication_successful">Authentication successful</string>
   <string name="authentication_requirement_tooltip">At least one user profile needs to be registered to perform authentication</string>
+  <string name="biometric_authenticator_requirement_tooltip">Biometric authenticator has to be registered for selected user profile to perform biometric authentication</string>
 
   <!-- Authenticator settings -->
   <string name="authenticator_settings_authenticators_header">Authenticators</string>
