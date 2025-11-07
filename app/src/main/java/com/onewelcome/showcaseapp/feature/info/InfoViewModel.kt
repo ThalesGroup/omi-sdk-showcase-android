@@ -15,6 +15,7 @@ import com.onewelcome.core.facade.PermissionsFacade
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
+import com.onewelcome.core.usecase.IsInStatelessSessionUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
@@ -27,6 +28,7 @@ class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
+  private val isInStatelessSessionUseCase: IsInStatelessSessionUseCase,
   private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
   private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase,
   private val getAuthenticatorsUseCase: GetAuthenticatorsUseCase,
@@ -39,6 +41,7 @@ class InfoViewModel @Inject constructor(
   fun updateData() {
     updateIsSdkInitialized()
     updateAuthenticatedUserProfile()
+    updateStatelessSessionStatus()
     updatePostNotificationPermissionStatus()
     viewModelScope.launch {
       with(getUserProfilesUseCase.execute()) {
@@ -57,6 +60,12 @@ class InfoViewModel @Inject constructor(
     getAuthenticatedUserProfileUseCase.execute()
       .onSuccess { uiState = uiState.copy(authenticatedUserProfileId = it?.profileId ?: "") }
       .onFailure { uiState = uiState.copy(authenticatedUserProfileId = "") }
+  }
+
+  private fun updateStatelessSessionStatus() {
+    isInStatelessSessionUseCase.execute()
+      .onSuccess { uiState = uiState.copy(isInStatelessSession = it) }
+      .onFailure { uiState = uiState.copy(isInStatelessSession = false) }
   }
 
   private fun updatePostNotificationPermissionStatus() {
@@ -100,6 +109,7 @@ class InfoViewModel @Inject constructor(
     val userProfileIds: List<String> = emptyList(),
     val authenticatedUserProfileId: String = "",
     val authenticatorsState: List<AuthenticatorsState> = emptyList(),
+    val isInStatelessSession: Boolean = false,
     val mobileAuthenticationEnrollmentState: List<MobileAuthEnrollmentState> = emptyList(),
     val isPostNotificationPermissionGranted: Boolean = false
   )
