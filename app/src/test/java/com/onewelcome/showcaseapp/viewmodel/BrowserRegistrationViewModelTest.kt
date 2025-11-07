@@ -5,15 +5,18 @@ import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiStatelessRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
-import com.onewelcome.core.usecase.BrowserRegistrationUseCase
 import com.onewelcome.core.usecase.GetBrowserIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.StatelessUserRegistrationUseCase
+import com.onewelcome.core.usecase.UserRegistrationUseCase
 import com.onewelcome.core.util.Constants
 import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_CUSTOM_INFO
@@ -27,6 +30,8 @@ import com.onewelcome.showcaseapp.fakes.FakePinCallback
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.NavigationEvent
+import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.CancelRegistration
+import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.SetStatelessRegistration
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.StartBrowserRegistration
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedIdentityProvider
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationViewModel.UiEvent.UpdateSelectedScopes
@@ -61,7 +66,10 @@ class BrowserRegistrationViewModelTest {
   val hiltRule = HiltAndroidRule(this)
 
   @Inject
-  lateinit var browserRegistrationUseCase: BrowserRegistrationUseCase
+  lateinit var userRegistrationUseCase: UserRegistrationUseCase
+
+  @Inject
+  lateinit var statelessUserRegistrationUseCase: StatelessUserRegistrationUseCase
 
   @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
@@ -100,7 +108,8 @@ class BrowserRegistrationViewModelTest {
     hiltRule.inject()
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
-      browserRegistrationUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
@@ -132,7 +141,8 @@ class BrowserRegistrationViewModelTest {
 
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
-      browserRegistrationUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
@@ -156,7 +166,8 @@ class BrowserRegistrationViewModelTest {
 
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
-      browserRegistrationUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
@@ -181,7 +192,8 @@ class BrowserRegistrationViewModelTest {
 
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
-      browserRegistrationUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
@@ -246,7 +258,8 @@ class BrowserRegistrationViewModelTest {
 
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
-      browserRegistrationUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
@@ -271,7 +284,8 @@ class BrowserRegistrationViewModelTest {
 
     viewModel = BrowserRegistrationViewModel(
       isSdkInitializedUseCase,
-      browserRegistrationUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
       getBrowserIdentityProvidersUseCase,
       getUserProfilesUseCase,
       oneginiConfigModel,
@@ -328,7 +342,7 @@ class BrowserRegistrationViewModelTest {
 
   @Test
   fun `When cancel registration event is sent, Then sdk handler should call cancel registration`() {
-    viewModel.onEvent(BrowserRegistrationViewModel.UiEvent.CancelRegistration)
+    viewModel.onEvent(CancelRegistration)
 
     verify(browserRegistrationRequestHandler).cancelRegistration()
   }
@@ -364,6 +378,132 @@ class BrowserRegistrationViewModelTest {
     }
   }
 
+  @Test
+  fun `When set stateless registration event is sent, Then updated state should be returned`() {
+    val expectedState = viewModel.uiState.copy(isStatelessRegistration = true)
+
+    viewModel.onEvent(SetStatelessRegistration(true))
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is not initialized and in stateless mode, When register event is sent, Then error should be returned`() {
+    val expectedState = viewModel.uiState.copy(
+      isStatelessRegistration = true,
+      result = Err(IllegalStateException("Onegini SDK instance not yet initialized"))
+    )
+
+    viewModel.onEvent(SetStatelessRegistration(true))
+    viewModel.onEvent(StartBrowserRegistration)
+
+    assertThat(viewModel.uiState)
+      .usingRecursiveComparison()
+      .withEqualsForThrowable()
+      .isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and in stateless mode, When register event is sent, Then should successfully stateless register user`() {
+    mockSdkInitialized()
+    mockUserClient()
+    whenRegisteredStatelessUserSuccessfully()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      isStatelessRegistration = true,
+      result = Ok(Pair(UserProfile.stateless, TEST_CUSTOM_INFO)),
+    )
+
+    viewModel = BrowserRegistrationViewModel(
+      isSdkInitializedUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
+      getBrowserIdentityProvidersUseCase,
+      getUserProfilesUseCase,
+      oneginiConfigModel,
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
+    )
+    viewModel.onEvent(SetStatelessRegistration(true))
+    viewModel.onEvent(StartBrowserRegistration)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and in stateless mode, When register event is sent and sdk returns error, Then state should be updated accordingly`() {
+    mockSdkInitialized()
+    mockUserClient()
+    whenRegisteredStatelessUserUnsuccessfully()
+
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      isStatelessRegistration = true,
+      result = Err(mockOneginiRegistrationError)
+    )
+
+    viewModel = BrowserRegistrationViewModel(
+      isSdkInitializedUseCase,
+      userRegistrationUseCase,
+      statelessUserRegistrationUseCase,
+      getBrowserIdentityProvidersUseCase,
+      getUserProfilesUseCase,
+      oneginiConfigModel,
+      browserRegistrationRequestHandler,
+      createPinRequestHandler,
+    )
+    viewModel.onEvent(SetStatelessRegistration(true))
+    viewModel.onEvent(StartBrowserRegistration)
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given sdk is initialized and should use default identity provider and in stateless mode, When register event is sent, Then should pass identity provider as null`() {
+    mockSdkInitialized()
+    mockUserClient()
+
+    viewModel.onEvent(SetStatelessRegistration(true))
+    viewModel.onEvent(UseDefaultIdentityProvider(true))
+    viewModel.onEvent(StartBrowserRegistration)
+
+    argumentCaptor<OneginiIdentityProvider> {
+      verify(userClientMock).registerStatelessUser(capture(), anyOrNull(), any())
+      assertThat(firstValue).isEqualTo(null)
+    }
+  }
+
+  @Test
+  fun `Given sdk is initialized and should use selected identity provider and in stateless mode, When register event is sent, Then should pass identity provider as selected identity provider`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockBrowserIdentityProviders()
+
+    viewModel.onEvent(SetStatelessRegistration(true))
+    viewModel.onEvent(UpdateSelectedIdentityProvider(TEST_SELECTED_IDENTITY_PROVIDER))
+    viewModel.onEvent(StartBrowserRegistration)
+
+    argumentCaptor<OneginiIdentityProvider> {
+      verify(userClientMock).registerStatelessUser(capture(), anyOrNull(), any())
+      assertThat(firstValue).isEqualTo(TEST_SELECTED_IDENTITY_PROVIDER)
+    }
+  }
+
+  @Test
+  fun `Given sdk is initialized and default scopes are selected and in stateless mode, When register event is sent, Then should pass default scopes`() {
+    mockSdkInitialized()
+    mockUserClient()
+
+    viewModel.onEvent(SetStatelessRegistration(true))
+    viewModel.onEvent(StartBrowserRegistration)
+
+    argumentCaptor<Array<String?>> {
+      verify(userClientMock).registerStatelessUser(anyOrNull(), capture(), any())
+      assertThat(firstValue).isEqualTo(TEST_SELECTED_SCOPES.toTypedArray())
+    }
+  }
+
   private fun whenRegisteredUserSuccessfully() {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
       .thenAnswer { invocation ->
@@ -371,10 +511,24 @@ class BrowserRegistrationViewModelTest {
       }
   }
 
+  private fun whenRegisteredStatelessUserSuccessfully() {
+    whenever(userClientMock.registerStatelessUser(anyOrNull(), anyOrNull(), any()))
+      .thenAnswer { invocation ->
+        invocation.getArgument<OneginiStatelessRegistrationHandler>(2).onSuccess(TEST_CUSTOM_INFO)
+      }
+  }
+
   private fun whenRegisteredUserUnsuccessfully() {
     whenever(userClientMock.registerUser(anyOrNull(), anyOrNull(), any()))
       .thenAnswer { invocation ->
         invocation.getArgument<OneginiRegistrationHandler>(2).onError(mockOneginiRegistrationError)
+      }
+  }
+
+  private fun whenRegisteredStatelessUserUnsuccessfully() {
+    whenever(userClientMock.registerStatelessUser(anyOrNull(), anyOrNull(), any()))
+      .thenAnswer { invocation ->
+        invocation.getArgument<OneginiStatelessRegistrationHandler>(2).onError(mockOneginiRegistrationError)
       }
   }
 
