@@ -40,6 +40,7 @@ class ChangePinViewModel @Inject constructor(
     if (isSdkInitialized) {
       updateAuthenticatedUserProfile()
     }
+    listenForPinInputScreenNavigationEvents()
   }
 
   private fun updateAuthenticatedUserProfile() {
@@ -52,7 +53,6 @@ class ChangePinViewModel @Inject constructor(
     when (event) {
       is UiEvent.StartPinChange -> {
         changePin()
-        listenForPinInputScreenNavigationEvents()
       }
     }
   }

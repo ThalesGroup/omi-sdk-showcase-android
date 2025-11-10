@@ -120,7 +120,7 @@ private fun HandlersSettings(uiState: State, onEvent: (UiEvent) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
       ) {
-        Text(handler.title, modifier = Modifier.weight(1f))
+        Text(stringResource(handler.title), modifier = Modifier.weight(1f))
         Checkbox(
           checked = selectedHandlers.contains(handler),
           onCheckedChange = { isChecked ->

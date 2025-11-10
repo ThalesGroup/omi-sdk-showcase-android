@@ -3,13 +3,13 @@ package com.onewelcome.core.omisdk
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
-import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
@@ -24,10 +24,11 @@ class OmiSdkEngine @Inject constructor(
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
+  private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler
 ) : OmiSdkFacade {
 
   override val oneginiClient
-    get() = OneginiClient.Companion.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
+    get() = OneginiClient.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
 
   override fun initialize(settings: OmiSdkInitializationSettings): OneginiClient {
     return OneginiClientBuilder(context, createPinRequestHandler, pinAuthenticationRequestHandler)
@@ -46,6 +47,7 @@ class OmiSdkEngine @Inject constructor(
       when (it) {
         HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
       }
     }

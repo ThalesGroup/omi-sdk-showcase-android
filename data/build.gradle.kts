@@ -1,6 +1,5 @@
 import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
-import com.onewelcome.buildsrc.AndroidConfig.NAMESPACE
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
 import com.onewelcome.buildsrc.AndroidConfig.TARGET_COMPATIBILITY
 
@@ -12,7 +11,7 @@ plugins {
 }
 
 android {
-  namespace = NAMESPACE
+  namespace = "com.onewelcome.data"
   compileSdk = COMPILE_SDK
 
   defaultConfig {
