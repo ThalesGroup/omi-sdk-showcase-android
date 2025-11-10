@@ -172,7 +172,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
     composable(Screens.AuthenticatorSettings.route) { AuthenticatorSettingsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }
-    composable(Screens.BiometricAuthentication.route) { BiometricAuthenticationScreen(homeNavController) }
+    composable(Screens.BiometricAuthentication.route) { BiometricAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
     composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }

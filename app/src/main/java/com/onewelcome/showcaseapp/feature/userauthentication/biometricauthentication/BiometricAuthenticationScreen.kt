@@ -1,5 +1,7 @@
 package com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication
 
+import android.content.Context
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,16 +9,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseCard
@@ -24,24 +36,38 @@ import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseTooltip
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationViewModel.State
 import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationViewModel.UiEvent
+import com.onewelcome.showcaseapp.navigation.Screens
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun BiometricAuthenticationScreen(
   homeNavController: NavHostController,
+  pinNavController: NavController,
   viewModel: BiometricAuthenticationViewModel = hiltViewModel()
 ) {
   BiometricAuthenticationContent(
     uiState = viewModel.uiState,
+    navigationEvents = viewModel.navigationEvents,
     onEvent = { viewModel.onEvent(it) },
-    onNavigateBack = { homeNavController.popBackStack() })
+    onNavigateBack = { homeNavController.popBackStack() },
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.PinAuthenticationInput.route) })
 }
 
 @Composable
-private fun BiometricAuthenticationContent(uiState: State, onEvent: (UiEvent) -> Unit, onNavigateBack: () -> Unit) {
+private fun BiometricAuthenticationContent(
+  uiState: State,
+  navigationEvents: Flow<NavigationEvent>,
+  onEvent: (UiEvent) -> Unit,
+  onNavigateBack: () -> Unit,
+  onNavigateToPinScreen: () -> Unit
+) {
   SdkFeatureScreen(
     title = stringResource(R.string.section_title_biometric_authentication),
     onNavigateBack = onNavigateBack,
@@ -52,9 +78,10 @@ private fun BiometricAuthenticationContent(uiState: State, onEvent: (UiEvent) ->
       )
     },
     settings = { SettingsSection(uiState, onEvent) },
-    result = null,
-    action = { AuthenticationButton(uiState.isAuthenticateButtonEnabled, onEvent) }
+    result = uiState.result?.let { { BiometricAuthenticationResult(it) } },
+    action = { AuthenticationButton(uiState.isAuthenticateButtonEnabled, uiState.isLoading, onEvent) }
   )
+  ListenForNavigationEvents(navigationEvents, onEvent, onNavigateToPinScreen)
 }
 
 @Composable
@@ -152,7 +179,7 @@ private fun AuthenticatedProfileSection(userProfile: UserProfile?) {
 }
 
 @Composable
-private fun AuthenticationButton(isEnabled: Boolean, onEvent: (UiEvent) -> Unit) {
+private fun AuthenticationButton(isEnabled: Boolean, isLoading: Boolean, onEvent: (UiEvent) -> Unit) {
   Button(
     modifier = Modifier
       .fillMaxWidth()
@@ -160,7 +187,71 @@ private fun AuthenticationButton(isEnabled: Boolean, onEvent: (UiEvent) -> Unit)
     onClick = { onEvent(UiEvent.StartBiometricAuthentication) },
     enabled = isEnabled,
   ) {
-    Text(stringResource(R.string.authenticate))
+    if (isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+      )
+    } else {
+      Text(stringResource(R.string.authenticate))
+    }
+  }
+}
+
+@Composable
+private fun BiometricAuthenticationResult(result: Result<Pair<UserProfile, CustomInfo?>, Throwable>) {
+  Column {
+    result
+      .onSuccess {
+        Column {
+          Text(stringResource(R.string.authentication_successful))
+          Text(stringResource(R.string.user_profile, it.first.profileId))
+          Text(stringResource(R.string.custom_info, it.second.toString()))
+        }
+      }
+      .onFailure { Text(it.toErrorResultString()) }
+  }
+}
+
+@Composable
+private fun ListenForNavigationEvents(
+  navigationEvents: Flow<NavigationEvent>,
+  onEvent: (UiEvent) -> Unit,
+  onNavigateToPinScreen: () -> Unit
+) {
+  val context = LocalContext.current
+  LaunchedEffect(Unit) {
+    navigationEvents.collect { event ->
+      when (event) {
+        is NavigationEvent.ShowBiometricPrompt -> showBiometricPrompt(context, event.cryptoObject, onEvent)
+        is NavigationEvent.ToPinScreen -> onNavigateToPinScreen()
+      }
+    }
+  }
+}
+
+private fun showBiometricPrompt(context: Context, cryptoObject: BiometricPrompt.CryptoObject, onEvent: (UiEvent) -> Unit) {
+  val executor = ContextCompat.getMainExecutor(context)
+  if (context is FragmentActivity) {
+    val biometricPrompt = BiometricPrompt(context, executor, getBiometricPromptAuthenticationCallback(onEvent))
+    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+      .setTitle(context.getString(R.string.biometric_prompt_title))
+      .setSubtitle(context.getString(R.string.biometric_prompt_subtitle))
+      .setNegativeButtonText(context.getString(R.string.biometric_prompt_negative_button))
+      .build()
+    biometricPrompt.authenticate(promptInfo, cryptoObject)
+  }
+}
+
+private fun getBiometricPromptAuthenticationCallback(onEvent: (UiEvent) -> Unit) = object : BiometricPrompt.AuthenticationCallback() {
+  override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+    super.onAuthenticationSucceeded(result)
+    onEvent(UiEvent.BiometricAuthenticationSuccess)
+  }
+
+  override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+    super.onAuthenticationError(errorCode, errString)
+    onEvent(UiEvent.BiometricAuthenticationError(errorCode))
   }
 }
 
@@ -169,7 +260,9 @@ private fun AuthenticationButton(isEnabled: Boolean, onEvent: (UiEvent) -> Unit)
 private fun Preview() {
   BiometricAuthenticationContent(
     uiState = State(),
+    navigationEvents = emptyFlow(),
     onEvent = {},
-    onNavigateBack = {}
+    onNavigateBack = {},
+    onNavigateToPinScreen = {}
   )
 }
