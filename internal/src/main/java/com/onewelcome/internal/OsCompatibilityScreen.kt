@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.michaelbull.result.Result
@@ -43,7 +42,6 @@ import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.util.TestResultFileCreator
 import com.onewelcome.internal.util.appVersionInfo
 import com.onewelcome.internal.util.osVersionInfo
-import com.onewelcome.showcaseapp.R
 import java.io.File
 
 @Composable

@@ -5,14 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
-import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
+import com.onewelcome.core.manager.PreferencesManager
+import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
+import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -27,10 +32,13 @@ class SharedPushViewModel @Inject constructor(
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val notificationEventDispatcher: NotificationEventDispatcher,
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
+  private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
+  private val preferencesManager: PreferencesManager,
+  private val sdkAutoInitializationManager: SdkAutoInitializationManager
 ) : ViewModel() {
   var uiState by mutableStateOf(UiState())
 
-  private val _navigationEvents = Channel<NavigationEvent>(Channel.Factory.BUFFERED)
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
@@ -40,7 +48,7 @@ class SharedPushViewModel @Inject constructor(
         _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
       }
       mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
-       _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+        _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
       }
     }
   }
@@ -48,10 +56,43 @@ class SharedPushViewModel @Inject constructor(
   fun onNewPush(pushRequest: OneginiMobileAuthWithPushRequest) {
     viewModelScope.launch {
       uiState = uiState.copy(pushRequest = pushRequest)
-      _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
-      withContext(Dispatchers.IO) {
-        authenticateWithPushUseCase.execute(pushRequest)
-      }
+      handleAuthentication(pushRequest)
+    }
+  }
+
+  private suspend fun handleAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
+    if (isSdkInitializedUseCase.execute()) {
+      proceedWithAuthentication(pushRequest)
+    } else {
+      handleSdkNotInitialized(pushRequest)
+    }
+  }
+
+  private suspend fun handleSdkNotInitialized(pushRequest: OneginiMobileAuthWithPushRequest) {
+    if (preferencesManager.isSdkAutoInitializationEnabled()) {
+      handleSdkAutoInitialize(pushRequest)
+    } else {
+      handleSdkNotInitialized(IllegalStateException("SDK needs to be initialized to handle push transactions"))
+    }
+  }
+
+  private suspend fun handleSdkAutoInitialize(pushRequest: OneginiMobileAuthWithPushRequest) {
+    sdkAutoInitializationManager.deferredResult?.await()
+      ?.onSuccess { proceedWithAuthentication(pushRequest) }
+      ?.onFailure { handleSdkNotInitialized(it) }
+  }
+
+  private fun handleSdkNotInitialized(error: Throwable) {
+    uiState = uiState.copy(result = Err(error))
+    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
+  }
+
+  private suspend fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
+    authenticateWithPushUseCase.execute(pushRequest)
+    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+    withContext(Dispatchers.IO) {
+      authenticateWithPushUseCase.execute(pushRequest)
     }
   }
 
@@ -61,13 +102,14 @@ class SharedPushViewModel @Inject constructor(
         mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
         mobileAuthWithPushPinRequestHandler.pinCallback
       }
+
       UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
     }
   }
 
   data class UiState(
     val pushRequest: OneginiMobileAuthWithPushRequest? = null,
-    val result: Result<CustomInfo?, OneginiMobileAuthenticationError>? = null
+    val result: Result<CustomInfo?, Throwable>? = null,
   )
 
   sealed interface UiEvent {
@@ -81,3 +123,4 @@ class SharedPushViewModel @Inject constructor(
     data object NavigateToPinConfirmationScreen : NavigationEvent
   }
 }
+

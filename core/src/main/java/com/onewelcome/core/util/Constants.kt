@@ -13,6 +13,8 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#enrollment"
   const val DOCUMENTATION_MOBILE_AUTHENTICATION_WITH_PUSH =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#mobile-authentication-with-push"
+  const val DOCUMENTATION_MOBILE_AUTHENTICATION_WITH_OTP =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#mobile-authentication-with-otp"
   const val DOCUMENTATION_CHANGE_PIN =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-change-pin/index.html"
   const val DOCUMENTATION_LOGOUT =
@@ -28,6 +30,9 @@ object Constants {
   const val MESSAGE_KEY = "message"
   const val TRANSACTION_ID_KEY = "transactionId"
   const val PROFILE_ID_KEY = "profileId"
-  const val TIMESTAMP_KEY ="timestamp"
-  const val TIME_TO_LIVE_SECONDS_KEY ="timeToLiveSeconds"
+  const val TIMESTAMP_KEY = "timestamp"
+  const val TIME_TO_LIVE_SECONDS_KEY = "timeToLiveSeconds"
+
+  // QR Code Scanner
+  const val QR_CODE_RESULT_KEY = "qr_code_result"
 }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class BrowserRegistrationUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
+class UserRegistrationUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
   suspend fun register(
     identityProvider: OneginiIdentityProvider?,
     scopes: List<String>
