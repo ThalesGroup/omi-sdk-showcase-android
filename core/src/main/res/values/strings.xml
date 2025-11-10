@@ -138,6 +138,9 @@
   <string name="authentication_successful">Authentication successful</string>
   <string name="authentication_requirement_tooltip">At least one user profile needs to be registered to perform authentication</string>
   <string name="biometric_authenticator_requirement_tooltip">Biometric authenticator has to be registered for selected user profile to perform biometric authentication</string>
+  <string name="biometric_prompt_title">Biometric authentication</string>
+  <string name="biometric_prompt_subtitle">Authenticate using biometrics</string>
+  <string name="biometric_prompt_negative_button">Fallback to PIN</string>
 
   <!-- Authenticator settings -->
   <string name="authenticator_settings_authenticators_header">Authenticators</string>
@@ -246,6 +249,7 @@
 
   <!-- Handlers -->
   <string name="handler_browser_registration">Browser registration</string>
+  <string name="handler_biometric_authentication">Biometric authentication</string>
   <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
   <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
 </resources>
