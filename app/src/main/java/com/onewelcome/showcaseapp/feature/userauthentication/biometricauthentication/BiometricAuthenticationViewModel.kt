@@ -118,8 +118,9 @@ class BiometricAuthenticationViewModel @Inject constructor(
     uiState.selectedUserProfile?.let { selectedUserProfile ->
       viewModelScope.launch {
         uiState = uiState.copy(isLoading = true)
-        val result = biometricAuthenticationUseCase.execute(selectedUserProfile)
-        uiState = uiState.copy(result = result, isLoading = false)
+        biometricAuthenticationUseCase.execute(selectedUserProfile)
+          .onSuccess { uiState = uiState.copy(authenticatedUserProfile = it.first) }
+          .also { result -> uiState = uiState.copy(result = result, isLoading = false) }
       }
     } ?: run {
       uiState = uiState.copy(result = Err(IllegalArgumentException("User profile not selected")))
