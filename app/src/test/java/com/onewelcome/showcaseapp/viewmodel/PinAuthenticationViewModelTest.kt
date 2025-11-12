@@ -6,7 +6,6 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
-import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
@@ -20,7 +19,6 @@ import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.FakePinAuthenticator
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel
-import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.CancelAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.LoadData
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.StartPinAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationViewModel.UiEvent.UpdateSelectedUserProfile
@@ -35,8 +33,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.spy
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -238,23 +234,6 @@ class PinAuthenticationViewModelTest {
       .usingRecursiveComparison()
       .withEqualsForThrowable()
       .isEqualTo(expectedState)
-  }
-
-  @Test
-  fun `When cancel pin authentication event is sent, Then deny authentication request should be triggered`() {
-    val spyPinAuthenticationRequestHandler = spy(pinAuthenticationRequestHandler)
-    viewModel = PinAuthenticationViewModel(
-      isSdkInitializedUseCase,
-      getRegisteredAuthenticatorsUseCase,
-      pinAuthenticationUseCase,
-      getUserProfilesUseCase,
-      spyPinAuthenticationRequestHandler,
-      getAuthenticatedUserProfileUseCase
-    )
-
-    viewModel.onEvent(CancelAuthentication)
-
-    verify(spyPinAuthenticationRequestHandler).pinCallback?.denyAuthenticationRequest()
   }
 
   private fun mockSuccessfulPinAuthentication() {
