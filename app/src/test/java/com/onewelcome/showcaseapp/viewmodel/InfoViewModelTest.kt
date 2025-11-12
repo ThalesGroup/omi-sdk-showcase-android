@@ -6,6 +6,7 @@ import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
+import com.onewelcome.core.usecase.IsInStatelessSessionUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthUseCase
 import com.onewelcome.core.usecase.IsUserEnrolledForMobileAuthWithPushUseCase
@@ -49,6 +50,9 @@ class InfoViewModelTest {
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 
   @Inject
+  lateinit var isInStatelessSessionUseCase: IsInStatelessSessionUseCase
+
+  @Inject
   lateinit var isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase
 
   @Inject
@@ -80,6 +84,7 @@ class InfoViewModelTest {
       isSdkInitializedUseCase,
       getUserProfilesUseCase,
       getAuthenticatedUserProfileUseCase,
+      isInStatelessSessionUseCase,
       isUserEnrolledForMobileAuthUseCase,
       isUserEnrolledForMobileAuthWithPushUseCase,
       getAuthenticatorsUseCase,
@@ -229,6 +234,53 @@ class InfoViewModelTest {
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
+  @Test
+  fun `Given user is in stateless session, When viewmodel is initialized, Then stateless session state should be updated`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockNoAuthenticatedUserProfile()
+    mockAccessToken()
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      isInStatelessSession = true)
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given user is in stateful session, When viewmodel is initialized, Then stateless session state should be updated`() {
+    mockSdkInitialized()
+    mockUserClient()
+    mockAuthenticatedUserProfileId()
+    mockAccessToken()
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId,
+      isInStatelessSession = false)
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `Given user has no active session, When viewmodel is initialized, Then stateless session state should be updated`(){
+    mockSdkInitialized()
+    mockUserClient()
+    mockNoAuthenticatedUserProfile()
+    mockNoAccessToken()
+    val expectedState = viewModel.uiState.copy(
+      isSdkInitialized = true,
+      authenticatedUserProfileId = "",
+      isInStatelessSession = false)
+
+    viewModel.updateData()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
@@ -264,5 +316,17 @@ class InfoViewModelTest {
 
   private fun mockMobileAuthEnrollmentWithPushStatusError() {
     whenever(userClientMock.isUserEnrolledForMobileAuthWithPush(any())).thenThrow(RuntimeException("Some excpetion"))
+  }
+
+  private fun mockNoAuthenticatedUserProfile() {
+    whenever(userClientMock.authenticatedUserProfile).thenReturn(null)
+  }
+
+  private fun mockAccessToken() {
+    whenever(userClientMock.accessToken).thenReturn("access_token")
+  }
+
+  private fun mockNoAccessToken() {
+    whenever(userClientMock.accessToken).thenReturn(null)
   }
 }

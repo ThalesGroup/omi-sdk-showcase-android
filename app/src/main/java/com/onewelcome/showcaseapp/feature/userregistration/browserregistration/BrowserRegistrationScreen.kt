@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.util.Consumer
@@ -135,6 +134,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     UserProfilesSection(uiState.userProfileIds)
     IdentityProvidersSection(uiState, onEvent)
     ScopesSection(uiState.isSdkInitialized, onEvent)
+    StatelessRegistrationSection(uiState.isStatelessRegistration, onEvent)
   }
 }
 
@@ -298,6 +298,27 @@ private fun ScopesList(onEvent: (UiEvent) -> Unit) {
           }
         )
       }
+    }
+  }
+}
+
+@Composable
+private fun StatelessRegistrationSection(isStatelessRegistration: Boolean, onEvent: (UiEvent) -> Unit) {
+  ShowcaseCard {
+    Column {
+      ShowcaseSwitch(
+        shouldBeChecked = isStatelessRegistration,
+        onCheck = { onEvent(UiEvent.SetStatelessRegistration(it)) },
+        label = {
+          Text(
+            style = MaterialTheme.typography.titleMedium,
+            text = stringResource(R.string.stateless_registration_label)
+          )
+        },
+        tooltipContent = {
+          Text(stringResource(R.string.stateless_registration_tooltip))
+        }
+      )
     }
   }
 }
