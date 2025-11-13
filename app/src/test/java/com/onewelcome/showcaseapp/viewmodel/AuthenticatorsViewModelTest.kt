@@ -17,8 +17,8 @@ import com.onewelcome.core.usecase.RegisterAuthenticatorUseCase
 import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.State
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.State
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -41,7 +41,7 @@ import javax.inject.Inject
 @HiltAndroidTest
 @Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
-class AuthenticatorSettingsViewModelTest {
+class AuthenticatorsViewModelTest {
 
   @get:Rule
   val hiltRule = HiltAndroidRule(this)
@@ -75,7 +75,7 @@ class AuthenticatorSettingsViewModelTest {
 
   private val userClientMock: UserClient = mock()
 
-  private lateinit var viewModel: AuthenticatorSettingsViewModel
+  private lateinit var viewModel: AuthenticatorsViewModel
 
   @Before
   fun setup() {
@@ -116,7 +116,7 @@ class AuthenticatorSettingsViewModelTest {
     val biometricAuthenticator = getBiometricAuthenticator(false)
     whenUserProfileIsAuthenticated(setOf(getPinAuthenticator(), biometricAuthenticator))
 
-    viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+    viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
     verify(userClientMock).registerAuthenticator(eq(biometricAuthenticator), any())
   }
@@ -130,9 +130,9 @@ class AuthenticatorSettingsViewModelTest {
         invocation.getArgument<OneginiAuthenticatorRegistrationHandler>(1).onSuccess(null)
       }
 
-    viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+    viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
-    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorSettingsViewModel.AuthenticatorOperationResult.RegisterSuccess(null))
+    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorsViewModel.AuthenticatorOperationResult.RegisterSuccess(null))
   }
 
   @Test
@@ -140,7 +140,7 @@ class AuthenticatorSettingsViewModelTest {
     val biometricAuthenticator = getBiometricAuthenticator(true)
     whenUserProfileIsAuthenticated(setOf(getPinAuthenticator(), biometricAuthenticator))
 
-    viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+    viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
     verify(userClientMock).deregisterAuthenticator(eq(biometricAuthenticator), any())
   }
@@ -154,24 +154,24 @@ class AuthenticatorSettingsViewModelTest {
         invocation.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onSuccess()
       }
 
-    viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+    viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
-    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorSettingsViewModel.AuthenticatorOperationResult.DeregisterSuccess)
+    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorsViewModel.AuthenticatorOperationResult.DeregisterSuccess)
   }
 
   @Test
   fun `Given user profile is authenticated and Biometric authenticator is disabled, When ToggleAuthenticator event is sent, Then should navigate to pin screen`() =
-    runTest{
+    runTest {
       val biometricAuthenticator = getBiometricAuthenticator(false)
       whenUserProfileIsAuthenticated(setOf(getPinAuthenticator(), biometricAuthenticator))
       whenever(userClientMock.registerAuthenticator(any(), any()))
-        .thenAnswer { invocation ->
+        .thenAnswer {
           pinAuthenticationHandler.startAuthentication(TEST_USER_PROFILE_1, mock(), mock())
         }
 
-      viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+      viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
-      assertThat(viewModel.navigationEvents.first()).isEqualTo(AuthenticatorSettingsViewModel.NavigationEvent.ToPinAuthenticationScreen)
+      assertThat(viewModel.navigationEvents.first()).isEqualTo(AuthenticatorsViewModel.NavigationEvent.ToPinAuthenticationScreen)
     }
 
   @Test
@@ -184,9 +184,9 @@ class AuthenticatorSettingsViewModelTest {
         invocation.getArgument<OneginiAuthenticatorRegistrationHandler>(1).onError(expectedException)
       }
 
-    viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+    viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
-    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorSettingsViewModel.AuthenticatorOperationResult.Error(expectedException))
+    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorsViewModel.AuthenticatorOperationResult.Error(expectedException))
   }
 
   @Test
@@ -199,9 +199,9 @@ class AuthenticatorSettingsViewModelTest {
         invocation.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onError(expectedException)
       }
 
-    viewModel.onEvent(AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
+    viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
-    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorSettingsViewModel.AuthenticatorOperationResult.Error(expectedException))
+    assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorsViewModel.AuthenticatorOperationResult.Error(expectedException))
   }
 
   private fun whenSdkIsInitialized() {
@@ -218,7 +218,7 @@ class AuthenticatorSettingsViewModelTest {
   }
 
   private fun initializeViewModel() {
-    viewModel = AuthenticatorSettingsViewModel(
+    viewModel = AuthenticatorsViewModel(
       isSdkInitializedUseCase = isSdkInitializedUseCase,
       getAuthenticatedUserProfileUseCase = getAuthenticatedUserProfileUseCase,
       getAuthenticatorsUseCase = getAuthenticatorsUseCase,

@@ -98,21 +98,26 @@ private fun UserProfilesAuthenticators(authenticatorsState: List<InfoViewModel.A
       description = stringResource(R.string.no_user_profiles)
     )
   } else {
-    val authenticatorColumns = remember(authenticatorsState) { getAuthenticatorColumns(authenticatorsState) }
-    val userProfileRows = remember(authenticatorsState, authenticatorColumns) {
-      getUserProfileRows(authenticatorsState, authenticatorColumns)
-    }
+    UserProfileAuthenticatorRegistrationStatus(authenticatorsState)
+  }
+}
 
-    ShowcaseUserProfileStatusTableCard(
-      title = stringResource(R.string.status_registered_authenticators)
-    ) {
-      headerRow(
-        stringResource(R.string.label_user_profile),
-        *authenticatorColumns.map { it.type.name }.toTypedArray()
-      )
-      userProfileRows.forEach { (userProfileId, statuses) ->
-        contentRow(userProfileId, *statuses.toBooleanArray())
-      }
+@Composable
+private fun UserProfileAuthenticatorRegistrationStatus(authenticatorsState: List<InfoViewModel.AuthenticatorsState>) {
+  val authenticatorColumns = remember(authenticatorsState) { getAuthenticatorColumns(authenticatorsState) }
+  val userProfileRows = remember(authenticatorsState, authenticatorColumns) {
+    getUserProfileRows(authenticatorsState, authenticatorColumns)
+  }
+
+  ShowcaseUserProfileStatusTableCard(
+    title = stringResource(R.string.status_registered_authenticators)
+  ) {
+    headerRow(
+      stringResource(R.string.label_user_profile),
+      *authenticatorColumns.map { it.type.name }.toTypedArray()
+    )
+    userProfileRows.forEach { (userProfileId, statuses) ->
+      contentRow(userProfileId, *statuses.toBooleanArray())
     }
   }
 }

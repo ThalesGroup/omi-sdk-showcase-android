@@ -23,20 +23,20 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.AuthenticatorOperationResult
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.NavigationEvent
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.State
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.UiEvent
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.AuthenticatorOperationResult
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.NavigationEvent
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.State
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.UiEvent
 import com.onewelcome.showcaseapp.navigation.Screens
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun AuthenticatorSettingsScreen(
+fun AuthenticatorsScreen(
   homeNavController: NavHostController,
   pinNavController: NavHostController,
-  viewModel: AuthenticatorSettingsViewModel = hiltViewModel()
+  viewModel: AuthenticatorsViewModel = hiltViewModel()
 ) {
-  AuthenticatorSettingsContent(
+  AuthenticatorsContent(
     uiState = viewModel.uiState,
     onEvent = { viewModel.onEvent(it) },
     onNavigateBack = { homeNavController.popBackStack() }
@@ -48,7 +48,7 @@ fun AuthenticatorSettingsScreen(
 }
 
 @Composable
-private fun AuthenticatorSettingsContent(
+private fun AuthenticatorsContent(
   uiState: State,
   onEvent: (UiEvent) -> Unit,
   onNavigateBack: () -> Unit
@@ -163,7 +163,7 @@ private fun ListenForPinNavigationEvent(
 @Preview
 @Composable
 private fun Preview() {
-  AuthenticatorSettingsContent(
+  AuthenticatorsContent(
     uiState = State(
       isSdkInitialized = true,
       authenticatedUserProfile = UserProfile("QWERTY"),

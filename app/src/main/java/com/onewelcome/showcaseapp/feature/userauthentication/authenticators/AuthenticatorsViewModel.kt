@@ -16,7 +16,7 @@ import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RegisterAuthenticatorUseCase
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.UiEvent.ToggleAuthenticator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthenticatorSettingsViewModel @Inject constructor(
+class AuthenticatorsViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val getAuthenticatorsUseCase: GetAuthenticatorsUseCase,

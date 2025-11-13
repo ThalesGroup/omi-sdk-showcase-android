@@ -40,7 +40,7 @@ import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationResultScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
@@ -169,7 +169,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController, rootNavController) }
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
-    composable(Screens.AuthenticatorSettings.route) { AuthenticatorSettingsScreen(homeNavController, rootNavController) }
+    composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
