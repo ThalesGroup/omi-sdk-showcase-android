@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.push
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -88,19 +89,17 @@ class SharedPushViewModel @Inject constructor(
   }
 
   private suspend fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
-    authenticateWithPushUseCase.execute(pushRequest)
+    withContext(Dispatchers.IO) { authenticateWithPushUseCase.execute(pushRequest) }
     _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
-    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
-    withContext(Dispatchers.IO) {
-      authenticateWithPushUseCase.execute(pushRequest)
-    }
   }
 
   fun onEvent(event: UiEvent) {
     when (event) {
       UiEvent.Accept -> {
         mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
-        mobileAuthWithPushPinRequestHandler.pinCallback
+        mobileAuthWithPushPinRequestHandler.pinCallback?.let {
+          Log.d("PKPK", "Am I here? PushPin flow")
+        }
       }
 
       UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
