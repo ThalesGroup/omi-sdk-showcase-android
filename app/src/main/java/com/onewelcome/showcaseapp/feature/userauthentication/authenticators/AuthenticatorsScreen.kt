@@ -14,11 +14,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.components.ShowcaseCardWithProgressIndicator
 import com.onewelcome.core.components.SdkFeatureScreen
+import com.onewelcome.core.components.ShowcaseCardWithProgressIndicator
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
+import com.onewelcome.core.entity.BiometricAuthenticatorStatus
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toErrorResultString
 import com.onewelcome.core.util.Constants
@@ -74,7 +75,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     SdkInitializationSection(uiState.isSdkInitialized)
     AuthenticatedUserSection(uiState.authenticatedUserProfile)
     if (uiState.availableAuthenticators.isNotEmpty()) {
-      AuthenticatorsSection(uiState.availableAuthenticators, uiState.isLoading, onEvent)
+      AuthenticatorsSection(uiState.availableAuthenticators, uiState.biometricAuthenticatorStatus, uiState.isLoading, onEvent)
     }
   }
 }
@@ -99,11 +100,16 @@ private fun AuthenticatedUserSection(authenticatedUserProfile: UserProfile?) {
 }
 
 @Composable
-private fun AuthenticatorsSection(availableAuthenticators: Set<OneginiAuthenticator>, isLoading: Boolean, onEvent: (UiEvent) -> Unit) {
+private fun AuthenticatorsSection(
+  availableAuthenticators: Set<OneginiAuthenticator>,
+  biometricAuthenticatorStatus: BiometricAuthenticatorStatus,
+  isLoading: Boolean,
+  onEvent: (UiEvent) -> Unit
+) {
   ShowcaseCardWithProgressIndicator(isLoading) {
     Column {
       AuthenticatorsHeader()
-      AuthenticatorsList(availableAuthenticators, onEvent)
+      AuthenticatorsList(availableAuthenticators, biometricAuthenticatorStatus, onEvent)
     }
   }
 }
@@ -118,16 +124,84 @@ private fun AuthenticatorsHeader() {
 }
 
 @Composable
-private fun AuthenticatorsList(availableAuthenticators: Set<OneginiAuthenticator>, onEvent: (UiEvent) -> Unit) {
+private fun AuthenticatorsList(
+  availableAuthenticators: Set<OneginiAuthenticator>,
+  biometricAuthenticatorStatus: BiometricAuthenticatorStatus,
+  onEvent: (UiEvent) -> Unit
+) {
   Column {
-    availableAuthenticators.forEach { authenticator ->
+    PinAuthenticator(availableAuthenticators, onEvent)
+    BiometricAuthenticator(availableAuthenticators, biometricAuthenticatorStatus, onEvent)
+    CustomAuthenticatorsList(availableAuthenticators, onEvent)
+  }
+}
+
+@Composable
+private fun PinAuthenticator(availableAuthenticators: Set<OneginiAuthenticator>, onEvent: (UiEvent) -> Unit) {
+  availableAuthenticators
+    .first { it.type == OneginiAuthenticator.Type.PIN } //PIN authenticator is always present
+    .let { authenticator ->
       ShowcaseSwitch(
         shouldBeChecked = authenticator.isRegistered,
         onCheck = { onEvent(UiEvent.ToggleAuthenticator(authenticator)) },
         label = { Text(authenticator.name, style = MaterialTheme.typography.titleMedium) }
       )
     }
+}
+
+@Composable
+private fun BiometricAuthenticator(
+  availableAuthenticators: Set<OneginiAuthenticator>,
+  biometricAuthenticatorStatus: BiometricAuthenticatorStatus,
+  onEvent: (UiEvent) -> Unit
+) {
+  availableAuthenticators
+    .find { it.type == OneginiAuthenticator.Type.BIOMETRIC }
+    ?.let { authenticator ->
+      AvailableBiometricAuthenticatorSwitch(authenticator, onEvent)
+    } ?: run { UnavailableBiometricAuthenticatorSwitch(biometricAuthenticatorStatus) }
+}
+
+@Composable
+private fun AvailableBiometricAuthenticatorSwitch(biometricAuthenticator: OneginiAuthenticator, onEvent: (UiEvent) -> Unit) {
+  ShowcaseSwitch(
+    shouldBeChecked = biometricAuthenticator.isRegistered,
+    onCheck = { onEvent(UiEvent.ToggleAuthenticator(biometricAuthenticator)) },
+    label = { Text(biometricAuthenticator.name, style = MaterialTheme.typography.titleMedium) }
+  )
+}
+
+@Composable
+private fun UnavailableBiometricAuthenticatorSwitch(biometricAuthenticatorStatus: BiometricAuthenticatorStatus) {
+  val description = if (biometricAuthenticatorStatus == BiometricAuthenticatorStatus.READER_NOT_PRESENT) {
+    stringResource(R.string.authenticator_settings_biometrics_reader_not_present_description)
+  } else {
+    stringResource(R.string.authenticator_settings_biometrics_not_enrolled_description)
   }
+  ShowcaseSwitch(
+    shouldBeChecked = false,
+    onCheck = { },
+    label = {
+      Column {
+        Text(stringResource(R.string.authenticator_settings_biometric_authenticator_name), style = MaterialTheme.typography.titleMedium)
+        Text(description, style = MaterialTheme.typography.bodySmall)
+      }
+    },
+    enabled = false
+  )
+}
+
+@Composable
+private fun CustomAuthenticatorsList(availableAuthenticators: Set<OneginiAuthenticator>, onEvent: (UiEvent) -> Unit) {
+  availableAuthenticators
+    .filter { it.type == OneginiAuthenticator.Type.CUSTOM }
+    .forEach { authenticator ->
+      ShowcaseSwitch(
+        shouldBeChecked = authenticator.isRegistered,
+        onCheck = { onEvent(UiEvent.ToggleAuthenticator(authenticator)) },
+        label = { Text(authenticator.name, style = MaterialTheme.typography.titleMedium) }
+      )
+    }
 }
 
 @Composable

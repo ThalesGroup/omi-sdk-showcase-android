@@ -146,6 +146,9 @@
   <string name="authenticator_settings_registration_success">Authenticator registered successfully\nCustom info: %s</string>
   <string name="authenticator_settings_authenticated_user_requirement_tooltip">User has to be authenticated to register/deregister authenticators</string>
   <string name="authenticator_settings_sdk_initialized_requirement_tooltip">SDK needs to be initialized to perform authenticator registration/deregistration</string>
+  <string name="authenticator_settings_biometric_authenticator_name">Biometric</string>
+  <string name="authenticator_settings_biometrics_not_enrolled_description">Biometric log in is not available. Check if biometrics are enrolled or try locking and unlocking your device</string>
+  <string name="authenticator_settings_biometrics_reader_not_present_description">Eligible biometric reader is not available on this device</string>
 
   <!-- User Deregistration -->
   <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
