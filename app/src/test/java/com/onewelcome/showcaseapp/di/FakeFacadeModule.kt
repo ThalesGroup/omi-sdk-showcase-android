@@ -1,10 +1,12 @@
 package com.onewelcome.showcaseapp.di
 
 import com.onewelcome.core.di.FacadeModule
+import com.onewelcome.core.facade.BiometricFacade
 import com.onewelcome.core.facade.FirebaseMessagingFacade
 import com.onewelcome.core.facade.JsonFacade
 import com.onewelcome.core.facade.PermissionsFacade
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
+import com.onewelcome.showcaseapp.fakes.BiometricFacadeFake
 import com.onewelcome.showcaseapp.fakes.FirebaseMessagingFacadeFake
 import com.onewelcome.showcaseapp.fakes.JsonFacadeFake
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
@@ -13,6 +15,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import javax.inject.Singleton
 
 @Module
 @TestInstallIn(
@@ -32,4 +35,8 @@ interface FakeFacadeModule {
 
   @Binds
   fun bindJsonFacadeFake(jsonFacadeFake: JsonFacadeFake): JsonFacade
+
+  @Binds
+  @Singleton
+  fun bindBiometricFacade(biometricFacade: BiometricFacadeFake): BiometricFacade
 }

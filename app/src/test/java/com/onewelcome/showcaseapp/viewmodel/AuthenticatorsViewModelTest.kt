@@ -7,15 +7,18 @@ import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorRegistrationH
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.entity.BiometricAuthenticatorStatus
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.DeregisterAuthenticatorUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
+import com.onewelcome.core.usecase.GetBiometricAuthenticatorStatusUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RegisterAuthenticatorUseCase
 import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.core.util.TestConstants.getBiometricAuthenticator
+import com.onewelcome.core.util.TestConstants.getPinAuthenticator
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.State
@@ -60,6 +63,9 @@ class AuthenticatorsViewModelTest {
 
   @Inject
   lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
+
+  @Inject
+  lateinit var getBiometricAuthenticatorStatusUseCase: GetBiometricAuthenticatorStatusUseCase
 
   @Inject
   lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
@@ -224,6 +230,7 @@ class AuthenticatorsViewModelTest {
       getAuthenticatorsUseCase = getAuthenticatorsUseCase,
       registerAuthenticatorUseCase = registerAuthenticatorUseCase,
       deregisterAuthenticatorUseCase = deregisterAuthenticatorUseCase,
+      getBiometricAuthenticatorStatusUseCase = getBiometricAuthenticatorStatusUseCase,
       pinAuthenticationRequestHandler = pinAuthenticationRequestHandler
     )
   }
@@ -249,26 +256,9 @@ class AuthenticatorsViewModelTest {
       isSdkInitialized = false,
       authenticatedUserProfile = null,
       availableAuthenticators = emptySet(),
+      biometricAuthenticatorStatus = BiometricAuthenticatorStatus.READER_NOT_PRESENT,
       isLoading = false,
       result = null
     )
-
-    private fun getPinAuthenticator() = object : OneginiAuthenticator {
-      override val id: String = "pin"
-      override val type: OneginiAuthenticator.Type = OneginiAuthenticator.Type.PIN
-      override val name: String = "PIN"
-      override val isRegistered: Boolean = true
-      override val isPreferred: Boolean = true
-      override val userProfile: UserProfile = TEST_USER_PROFILE_1
-    }
-
-    private fun getBiometricAuthenticator(isRegistered: Boolean) = object : OneginiAuthenticator {
-      override val id: String = "biometric"
-      override val type: OneginiAuthenticator.Type = OneginiAuthenticator.Type.BIOMETRIC
-      override val name: String = "BIOMETRIC"
-      override val isRegistered: Boolean = isRegistered
-      override val isPreferred: Boolean = false
-      override val userProfile: UserProfile = TEST_USER_PROFILE_1
-    }
   }
 }

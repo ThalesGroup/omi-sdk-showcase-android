@@ -6,18 +6,18 @@ import com.github.michaelbull.result.map
 import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.BiometricsAvailabilityChecker
 import com.onewelcome.core.entity.BiometricAuthenticatorStatus
+import com.onewelcome.core.facade.BiometricFacade
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import javax.inject.Inject
 
 class GetBiometricAuthenticatorStatusUseCase @Inject constructor(
-  private val biometricsAvailabilityChecker: BiometricsAvailabilityChecker,
+  private val biometricFacade: BiometricFacade,
   private val omiSdkFacade: OmiSdkFacade,
 ) {
 
   fun execute(userProfile: UserProfile): Result<BiometricAuthenticatorStatus, Throwable> {
-    val isBiometricAuthAvailable = biometricsAvailabilityChecker.isBiometricReaderAvailable()
+    val isBiometricAuthAvailable = biometricFacade.isBiometricReaderAvailable()
     return if (isBiometricAuthAvailable) {
       userProfile.getBiometricAuthenticator()
         .map { authenticator ->
