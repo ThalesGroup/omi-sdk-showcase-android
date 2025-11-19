@@ -1,6 +1,5 @@
 package com.onewelcome.showcaseapp.feature.push
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,12 +43,21 @@ class SharedPushViewModel @Inject constructor(
 
   init {
     viewModelScope.launch {
-      notificationEventDispatcher.authenticationEvent.collect {
-        uiState = uiState.copy(result = it)
-        _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
+      launch {
+        mobileAuthWithPushRequestHandler.navigateToTransactionConfirmation.collect {
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+        }
       }
-      mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
-        _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+      launch {
+        mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
+          _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+        }
+      }
+      launch {
+        notificationEventDispatcher.authenticationEvent.collect {
+          uiState = uiState.copy(result = it)
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
+        }
       }
     }
   }
@@ -90,18 +98,11 @@ class SharedPushViewModel @Inject constructor(
 
   private suspend fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
     withContext(Dispatchers.IO) { authenticateWithPushUseCase.execute(pushRequest) }
-    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
   }
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.Accept -> {
-        mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
-        mobileAuthWithPushPinRequestHandler.pinCallback?.let {
-          Log.d("PKPK", "Am I here? PushPin flow")
-        }
-      }
-
+      UiEvent.Accept -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
       UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
     }
   }
@@ -122,4 +123,3 @@ class SharedPushViewModel @Inject constructor(
     data object NavigateToPinConfirmationScreen : NavigationEvent
   }
 }
-

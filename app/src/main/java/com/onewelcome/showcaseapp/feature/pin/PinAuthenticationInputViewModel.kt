@@ -14,28 +14,17 @@ import javax.inject.Inject
 @HiltViewModel
 class PinAuthenticationInputViewModel @Inject constructor(
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
-  private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
 ) : PinViewModel() {
+
   init {
     listenForPinAuthenticationAttemptCounterUpdateEvent()
     listenForFinishedPinAuthenticationEvent()
-    listenForPushPinAttemptCounterUpdateEvent()
-    listenForFinishedPushPinAuthenticationEvent()
   }
 
-  private fun listenForFinishedPushPinAuthenticationEvent() {
-    viewModelScope.launch {
-      mobileAuthWithPushPinRequestHandler.finishPinAuthenticationFlow.collect {
-        _navigationEvents.send(PopBackStack)
-      }
-    }
-  }
-
-  private fun listenForPushPinAttemptCounterUpdateEvent() {
-    viewModelScope.launch {
-      mobileAuthWithPushPinRequestHandler.authenticationAttemptCounterFlow.collect {
-        updateAttemptCounter(it)
-      }
+  override fun onEvent(event: UiEvent) {
+    when (event) {
+      is Cancel -> pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
+      is Submit -> pinAuthenticationRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
     }
   }
 
@@ -45,13 +34,6 @@ class PinAuthenticationInputViewModel @Inject constructor(
       uiState.copy(authenticationAttemptCounter = counter, pinValidationError = "Wrong PIN, try again")
     } else {
       uiState.copy(authenticationAttemptCounter = counter)
-    }
-  }
-
-  override fun onEvent(event: UiEvent) {
-    when (event) {
-      is Cancel -> pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
-      is Submit -> pinAuthenticationRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
     }
   }
 

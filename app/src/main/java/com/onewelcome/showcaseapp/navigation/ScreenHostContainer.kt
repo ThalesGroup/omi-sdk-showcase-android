@@ -34,6 +34,7 @@ import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
 import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
+import com.onewelcome.showcaseapp.feature.pin.PushWithPinConfirmationInputViewModel
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
@@ -92,8 +93,7 @@ private fun ListenForPushEvents(
             rootNavController.navigate(Screens.TransactionConfirmationResult.route)
           }
         }
-
-        SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen -> rootNavController.navigate(Screens.PinAuthentication)
+        SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen -> rootNavController.navigate(Screens.PushWithPinConfirmationInput.route)
       }
     }
   }
@@ -109,6 +109,7 @@ private fun NavGraphBuilder.pushScreens(
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
+  composable(Screens.PushWithPinConfirmationInput.route) { PinScreen(rootNavController, hiltViewModel<PushWithPinConfirmationInputViewModel>()) }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
 }
 
