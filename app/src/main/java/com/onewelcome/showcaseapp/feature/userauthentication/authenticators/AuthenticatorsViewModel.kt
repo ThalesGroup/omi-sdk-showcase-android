@@ -11,12 +11,14 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.entity.BiometricAuthenticatorStatus
 import com.onewelcome.core.usecase.DeregisterAuthenticatorUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
+import com.onewelcome.core.usecase.GetBiometricAuthenticatorStatusUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RegisterAuthenticatorUseCase
-import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorSettingsViewModel.UiEvent.ToggleAuthenticator
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.UiEvent.ToggleAuthenticator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -24,12 +26,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthenticatorSettingsViewModel @Inject constructor(
+class AuthenticatorsViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
   private val getAuthenticatorsUseCase: GetAuthenticatorsUseCase,
   private val registerAuthenticatorUseCase: RegisterAuthenticatorUseCase,
   private val deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase,
+  private val getBiometricAuthenticatorStatusUseCase: GetBiometricAuthenticatorStatusUseCase,
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
 ) : ViewModel() {
 
@@ -54,10 +57,13 @@ class AuthenticatorSettingsViewModel @Inject constructor(
     val isSdkInitialized = isSdkInitializedUseCase.execute()
     val authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
     val availableAuthenticators = authenticatedUserProfile?.let { getAuthenticatorsUseCase.execute(it).get() } ?: emptySet()
+    val biometricAuthenticatorStatus = authenticatedUserProfile?.let { getBiometricAuthenticatorStatusUseCase.execute(it).get() }
+      ?: BiometricAuthenticatorStatus.READER_NOT_PRESENT
     uiState = uiState.copy(
       isSdkInitialized = isSdkInitialized,
       authenticatedUserProfile = authenticatedUserProfile,
-      availableAuthenticators = availableAuthenticators
+      availableAuthenticators = availableAuthenticators,
+      biometricAuthenticatorStatus = biometricAuthenticatorStatus
     )
   }
 
@@ -100,6 +106,7 @@ class AuthenticatorSettingsViewModel @Inject constructor(
     val isSdkInitialized: Boolean = false,
     val authenticatedUserProfile: UserProfile? = null,
     val availableAuthenticators: Set<OneginiAuthenticator> = emptySet(),
+    val biometricAuthenticatorStatus: BiometricAuthenticatorStatus = BiometricAuthenticatorStatus.READER_NOT_PRESENT,
     val isLoading: Boolean = false,
     val result: AuthenticatorOperationResult? = null
   )
