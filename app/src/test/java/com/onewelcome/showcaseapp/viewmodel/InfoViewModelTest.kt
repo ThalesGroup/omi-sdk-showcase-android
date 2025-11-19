@@ -2,6 +2,7 @@ package com.onewelcome.showcaseapp.viewmodel
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
@@ -14,6 +15,7 @@ import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES_IDS
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
+import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_2
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.fakes.PermissionsFacadeFake
 import com.onewelcome.showcaseapp.feature.info.InfoViewModel
@@ -113,9 +115,11 @@ class InfoViewModelTest {
 
   @Test
   fun `Given sdk is initialized and there are user profiles, When viewmodel is initialized, Then state should be updated`() {
+    val expectedAuthenticators = setOf(TestConstants.getPinAuthenticator(), TestConstants.getBiometricAuthenticator(false))
     mockSdkInitialized()
     mockUserClient()
     mockUserProfileIds()
+    mockAvailableAuthenticators(expectedAuthenticators)
     mockMobileAuthEnrollmentStatus()
     mockMobileAuthEnrollmentWithPushStatus()
     val expectedState =
@@ -123,6 +127,10 @@ class InfoViewModelTest {
         isSdkInitialized = true,
         userProfileIds = TEST_USER_PROFILES_IDS,
         authenticatedUserProfileId = "",
+        authenticatorsState = listOf(
+          InfoViewModel.AuthenticatorsState(TEST_USER_PROFILE_1.profileId, expectedAuthenticators),
+          InfoViewModel.AuthenticatorsState(TEST_USER_PROFILE_2.profileId, expectedAuthenticators),
+        ),
         mobileAuthenticationEnrollmentState = TEST_USER_PROFILES_IDS.map { InfoViewModel.MobileAuthEnrollmentState(it, true, true) }
       )
 
@@ -242,7 +250,8 @@ class InfoViewModelTest {
     mockAccessToken()
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
-      isInStatelessSession = true)
+      isInStatelessSession = true
+    )
 
     viewModel.updateData()
 
@@ -258,7 +267,8 @@ class InfoViewModelTest {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId,
-      isInStatelessSession = false)
+      isInStatelessSession = false
+    )
 
     viewModel.updateData()
 
@@ -266,7 +276,7 @@ class InfoViewModelTest {
   }
 
   @Test
-  fun `Given user has no active session, When viewmodel is initialized, Then stateless session state should be updated`(){
+  fun `Given user has no active session, When viewmodel is initialized, Then stateless session state should be updated`() {
     mockSdkInitialized()
     mockUserClient()
     mockNoAuthenticatedUserProfile()
@@ -274,7 +284,8 @@ class InfoViewModelTest {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       authenticatedUserProfileId = "",
-      isInStatelessSession = false)
+      isInStatelessSession = false
+    )
 
     viewModel.updateData()
 
@@ -328,5 +339,9 @@ class InfoViewModelTest {
 
   private fun mockNoAccessToken() {
     whenever(userClientMock.accessToken).thenReturn(null)
+  }
+
+  private fun mockAvailableAuthenticators(authenticators: Set<OneginiAuthenticator>) {
+    whenever(userClientMock.getAllAuthenticators(any())).thenReturn(authenticators)
   }
 }

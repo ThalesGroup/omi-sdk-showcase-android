@@ -15,7 +15,9 @@ import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class OmiSdkEngine @Inject constructor(
   @ApplicationContext private val context: Context,
   private val createPinRequestHandler: CreatePinRequestHandler,
