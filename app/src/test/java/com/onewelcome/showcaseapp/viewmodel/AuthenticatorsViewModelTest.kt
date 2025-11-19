@@ -19,6 +19,7 @@ import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.core.util.TestConstants.getBiometricAuthenticator
 import com.onewelcome.core.util.TestConstants.getPinAuthenticator
+import com.onewelcome.showcaseapp.fakes.BiometricFacadeFake
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsViewModel.State
@@ -72,6 +73,9 @@ class AuthenticatorsViewModelTest {
 
   @Inject
   lateinit var omiSdkEngineFake: OmiSdkEngineFake
+
+  @Inject
+  lateinit var biometricFacadeFake: BiometricFacadeFake
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient
@@ -208,6 +212,31 @@ class AuthenticatorsViewModelTest {
     viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
     assertThat(viewModel.uiState.result).isEqualTo(AuthenticatorsViewModel.AuthenticatorOperationResult.Error(expectedException))
+  }
+
+  @Test
+  fun `Given user profile is authenticated and biometric reader unavailable, When view model is initialized, Then should update biometric authenticator state`() {
+    biometricFacadeFake.biometricReaderAvailable = false
+    whenUserProfileIsAuthenticated()
+
+    assertThat(viewModel.uiState.biometricAuthenticatorStatus).isEqualTo(BiometricAuthenticatorStatus.READER_NOT_PRESENT)
+  }
+
+  @Test
+  fun `Given user profile is authenticated and biometric reader not enrolled, When view model is initialized, Then should update biometric authenticator state`() {
+    biometricFacadeFake.biometricReaderAvailable = true
+    whenUserProfileIsAuthenticated()
+
+    assertThat(viewModel.uiState.biometricAuthenticatorStatus).isEqualTo(BiometricAuthenticatorStatus.BIOMETRICS_NOT_ENROLLED)
+  }
+
+  @Test
+  fun `Given user profile is authenticated and biometric authenticator available, When view model is initialized, Then should update available authenticators`() {
+    val expectedAuthenticators = setOf(getPinAuthenticator(), getBiometricAuthenticator(false))
+    biometricFacadeFake.biometricReaderAvailable = true
+    whenUserProfileIsAuthenticated(expectedAuthenticators)
+
+    assertThat(viewModel.uiState.biometricAuthenticatorStatus).isEqualTo(BiometricAuthenticatorStatus.AVAILABLE)
   }
 
   private fun whenSdkIsInitialized() {

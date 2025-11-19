@@ -15,7 +15,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import javax.inject.Singleton
 
 @Module
 @TestInstallIn(
@@ -37,6 +36,5 @@ interface FakeFacadeModule {
   fun bindJsonFacadeFake(jsonFacadeFake: JsonFacadeFake): JsonFacade
 
   @Binds
-  @Singleton
   fun bindBiometricFacade(biometricFacade: BiometricFacadeFake): BiometricFacade
 }

@@ -21,22 +21,17 @@ import javax.inject.Singleton
 interface FacadeModule {
 
   @Binds
-  @Singleton
   fun bindOmiSdkFacade(omiSdkEngine: OmiSdkEngine): OmiSdkFacade
 
   @Binds
-  @Singleton
   fun bindFirebaseMessagingFacade(firebaseMessagingFacade: FirebaseMessagingFacadeImpl): FirebaseMessagingFacade
 
   @Binds
-  @Singleton
   fun bindPermissionsFacade(contextCompatFacadeIml: PermissionsFacadeImpl): PermissionsFacade
 
   @Binds
-  @Singleton
   fun bindJsonFacade(jsonFacade: JsonFacadeImpl): JsonFacade
 
   @Binds
-  @Singleton
   fun bindBiometricFacade(biometricFacade: BiometricFacadeImpl): BiometricFacade
 }
