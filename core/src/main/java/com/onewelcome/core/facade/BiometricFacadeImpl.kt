@@ -3,8 +3,10 @@ package com.onewelcome.core.facade
 import android.content.Context
 import androidx.biometric.BiometricManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class BiometricFacadeImpl @Inject constructor(@param:ApplicationContext private val context: Context) : BiometricFacade {
 
   override fun isBiometricReaderAvailable(): Boolean {
