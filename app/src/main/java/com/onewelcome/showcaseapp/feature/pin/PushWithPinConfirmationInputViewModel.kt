@@ -14,21 +14,12 @@ class PushWithPinConfirmationInputViewModel @Inject constructor(
 
   init {
     listenForPushPinAttemptCounterUpdateEvent()
-    listenForFinishedPushPinAuthenticationEvent()
   }
 
   override fun onEvent(event: UiEvent) {
     when (event) {
       is UiEvent.Submit -> mobileAuthWithPushPinRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
       is UiEvent.Cancel -> mobileAuthWithPushPinRequestHandler.pinCallback?.denyAuthenticationRequest()
-    }
-  }
-
-  private fun listenForFinishedPushPinAuthenticationEvent() {
-    viewModelScope.launch {
-      mobileAuthWithPushPinRequestHandler.finishPinAuthenticationFlow.collect {
-        _navigationEvents.send(NavigationEvent.NavigateToTransactionConfirmationResult)
-      }
     }
   }
 

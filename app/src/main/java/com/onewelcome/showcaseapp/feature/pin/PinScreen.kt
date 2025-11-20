@@ -54,7 +54,6 @@ fun PinScreen(
     onEvent = { viewModel.onEvent(it) },
     uiState = viewModel.uiState,
     navigationEvents = viewModel.navigationEvents,
-    navigateTo = { navController.navigate(it) }
   )
 }
 
@@ -64,10 +63,9 @@ fun PinScreenContent(
   onEvent: (UiEvent) -> Unit,
   uiState: State,
   navigationEvents: Flow<NavigationEvent>,
-  navigateTo: (String) -> Unit,
 ) {
   var pin: CharArray by remember { mutableStateOf(charArrayOf()) }
-  ListenForNavigationEvents(onNavigateBack, navigationEvents, onEvent, navigateTo)
+  ListenForNavigationEvents(onNavigateBack, navigationEvents, onEvent)
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -134,7 +132,6 @@ private fun ListenForNavigationEvents(
   onNavigateBack: () -> Unit,
   navigationEvents: Flow<NavigationEvent>,
   onEvent: (UiEvent) -> Unit,
-  navigateTo: (String) -> Unit
 ) {
   BackHandler {
     onEvent.invoke(Cancel)
@@ -143,7 +140,6 @@ private fun ListenForNavigationEvents(
     navigationEvents.collect { event ->
       when (event) {
         is NavigationEvent.PopBackStack -> onNavigateBack.invoke()
-        is NavigationEvent.NavigateToTransactionConfirmationResult -> navigateTo(Screens.TransactionConfirmationResult.route)
       }
     }
   }
@@ -227,6 +223,5 @@ fun Preview() {
       authenticationAttemptCounter = AuthenticationAttemptCounter(0, 0)
     ),
     navigationEvents = emptyFlow(),
-    {}
   )
 }
