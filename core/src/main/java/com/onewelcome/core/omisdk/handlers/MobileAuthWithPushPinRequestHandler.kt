@@ -11,14 +11,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MobileAuthWithPushPinRequestHandler @Inject constructor(): OneginiMobileAuthWithPushPinRequestHandler {
+class MobileAuthWithPushPinRequestHandler @Inject constructor() : OneginiMobileAuthWithPushPinRequestHandler {
   var pinCallback: OneginiPinCallback? = null
 
   private var _authenticationAttemptCounterFlow = Channel<AuthenticationAttemptCounter>(Channel.BUFFERED)
   val authenticationAttemptCounterFlow = _authenticationAttemptCounterFlow.receiveAsFlow()
-
-  private val _finishPinAuthenticationFlow = Channel<Unit>(Channel.BUFFERED)
-  val finishPinAuthenticationFlow = _finishPinAuthenticationFlow.receiveAsFlow()
 
   private val _startPinAuthenticationFlow = Channel<Unit>(Channel.BUFFERED)
   val startPinAuthenticationFlow = _startPinAuthenticationFlow.receiveAsFlow()
@@ -40,6 +37,5 @@ class MobileAuthWithPushPinRequestHandler @Inject constructor(): OneginiMobileAu
 
   override fun finishAuthentication() {
     pinCallback = null
-    _finishPinAuthenticationFlow.trySend(Unit)
   }
 }
