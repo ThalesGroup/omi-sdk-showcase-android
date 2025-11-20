@@ -42,6 +42,5 @@ abstract class PinViewModel : ViewModel() {
 
   sealed class NavigationEvent {
     data object PopBackStack : NavigationEvent()
-    data object NavigateToTransactionConfirmationResult : NavigationEvent()
   }
 }

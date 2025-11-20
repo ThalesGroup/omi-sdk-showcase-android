@@ -85,7 +85,9 @@ private fun ListenForPushEvents(
       when (it) {
         SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
         SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> {
-          if (rootNavController.currentDestination?.route == Screens.TransactionConfirmation.route) {
+          val currentRoute = rootNavController.currentDestination?.route
+          if (currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
+          ) {
             rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
               popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
             }
@@ -93,6 +95,7 @@ private fun ListenForPushEvents(
             rootNavController.navigate(Screens.TransactionConfirmationResult.route)
           }
         }
+
         SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen -> rootNavController.navigate(Screens.PushWithPinConfirmationInput.route)
       }
     }
@@ -109,7 +112,12 @@ private fun NavGraphBuilder.pushScreens(
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
-  composable(Screens.PushWithPinConfirmationInput.route) { PinScreen(rootNavController, hiltViewModel<PushWithPinConfirmationInputViewModel>()) }
+  composable(Screens.PushWithPinConfirmationInput.route) {
+    PinScreen(
+      rootNavController,
+      hiltViewModel<PushWithPinConfirmationInputViewModel>()
+    )
+  }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
 }
 
