@@ -19,11 +19,9 @@ import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -96,8 +94,8 @@ class SharedPushViewModel @Inject constructor(
     _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
   }
 
-  private suspend fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
-    withContext(Dispatchers.IO) { authenticateWithPushUseCase.execute(pushRequest) }
+  private fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
+    authenticateWithPushUseCase.execute(pushRequest)
   }
 
   fun onEvent(event: UiEvent) {

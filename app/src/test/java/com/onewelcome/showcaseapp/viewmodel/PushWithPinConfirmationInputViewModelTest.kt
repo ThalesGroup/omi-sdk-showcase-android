@@ -48,7 +48,7 @@ class PushWithPinConfirmationInputViewModelTest {
   }
 
   @Test
-  fun `When authentication has started, Then state should be updated`() {
+  fun `When pin confirmation has started, Then state should be updated`() {
     mobileAuthWithPushPinRequestHandler.startAuthentication(
       TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST,
       pinCallback,
@@ -60,7 +60,7 @@ class PushWithPinConfirmationInputViewModelTest {
   }
 
   @Test
-  fun `When pin authentication is retried, Then data should be updated`() {
+  fun `When pin confirmation is retried, Then data should be updated`() {
     val expected = defaultState.copy(
       authenticationAttemptCounter = TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT,
       pinValidationError = "Wrong PIN, try again"

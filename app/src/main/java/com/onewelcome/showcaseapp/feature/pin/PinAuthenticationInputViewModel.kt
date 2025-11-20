@@ -2,7 +2,6 @@ package com.onewelcome.showcaseapp.feature.pin
 
 import androidx.lifecycle.viewModelScope
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
-import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent.PopBackStack
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Cancel
@@ -15,7 +14,6 @@ import javax.inject.Inject
 class PinAuthenticationInputViewModel @Inject constructor(
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
 ) : PinViewModel() {
-
   init {
     listenForPinAuthenticationAttemptCounterUpdateEvent()
     listenForFinishedPinAuthenticationEvent()
@@ -25,15 +23,6 @@ class PinAuthenticationInputViewModel @Inject constructor(
     when (event) {
       is Cancel -> pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
       is Submit -> pinAuthenticationRequestHandler.pinCallback?.acceptAuthenticationRequest(event.pin)
-    }
-  }
-
-  private fun updateAttemptCounter(counter: AuthenticationAttemptCounter) {
-    val shouldShowErrorMessage = counter.failedAttempts > 0
-    uiState = if (shouldShowErrorMessage) {
-      uiState.copy(authenticationAttemptCounter = counter, pinValidationError = "Wrong PIN, try again")
-    } else {
-      uiState.copy(authenticationAttemptCounter = counter)
     }
   }
 
@@ -50,6 +39,15 @@ class PinAuthenticationInputViewModel @Inject constructor(
       pinAuthenticationRequestHandler.finishPinAuthenticationFlow.collect {
         _navigationEvents.send(PopBackStack)
       }
+    }
+  }
+
+  private fun updateAttemptCounter(counter: AuthenticationAttemptCounter) {
+    val shouldShowErrorMessage = counter.failedAttempts > 0
+    uiState = if (shouldShowErrorMessage) {
+      uiState.copy(authenticationAttemptCounter = counter, pinValidationError = "Wrong PIN, try again")
+    } else {
+      uiState.copy(authenticationAttemptCounter = counter)
     }
   }
 }

@@ -40,7 +40,6 @@ import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.State
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Cancel
-import com.onewelcome.showcaseapp.navigation.Screens
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
@@ -53,7 +52,7 @@ fun PinScreen(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     uiState = viewModel.uiState,
-    navigationEvents = viewModel.navigationEvents,
+    navigationEvents = viewModel.navigationEvents
   )
 }
 
