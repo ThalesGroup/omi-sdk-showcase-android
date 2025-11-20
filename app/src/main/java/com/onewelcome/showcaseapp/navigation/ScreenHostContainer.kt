@@ -30,12 +30,12 @@ import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.otp.MobileAuthenticationWithOtpScreen
-import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
 import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
 import com.onewelcome.showcaseapp.feature.pin.PushWithPinConfirmationInputViewModel
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationResultScreen
@@ -83,22 +83,24 @@ private fun ListenForPushEvents(
   LaunchedEffect(Unit) {
     sharedPushViewModel.navigationEvents.collect {
       when (it) {
-        SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
-        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> {
-          val currentRoute = rootNavController.currentDestination?.route
-          if (currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
-          ) {
-            rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
-              popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
-            }
-          } else {
-            rootNavController.navigate(Screens.TransactionConfirmationResult.route)
-          }
-        }
-
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> handleNavigationToTransactionResultScreen(rootNavController)
         SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen -> rootNavController.navigate(Screens.PushWithPinConfirmationInput.route)
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
       }
     }
+  }
+}
+
+private fun handleNavigationToTransactionResultScreen(rootNavController: NavHostController) {
+  val currentRoute = rootNavController.currentDestination?.route
+  val shouldPopBackStackOnNavigation =
+    currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
+  if (shouldPopBackStackOnNavigation) {
+    rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
+      popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+    }
+  } else {
+    rootNavController.navigate(Screens.TransactionConfirmationResult.route)
   }
 }
 
@@ -113,10 +115,7 @@ private fun NavGraphBuilder.pushScreens(
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
   composable(Screens.PushWithPinConfirmationInput.route) {
-    PinScreen(
-      rootNavController,
-      hiltViewModel<PushWithPinConfirmationInputViewModel>()
-    )
+    PinScreen(rootNavController, hiltViewModel<PushWithPinConfirmationInputViewModel>())
   }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
 }

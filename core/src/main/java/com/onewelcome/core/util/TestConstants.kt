@@ -1,9 +1,6 @@
 package com.onewelcome.core.util
 
 import android.os.Parcel
-import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollmentError
-import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
-import com.onegini.mobile.sdk.android.internal.handlers.error.builder.ErrorBuilder
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
