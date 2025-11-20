@@ -48,7 +48,7 @@ class PinAuthenticationInputViewModelTest {
   @Before
   fun setup() {
     hiltRule.inject()
-    viewModel = PinAuthenticationInputViewModel(pinAuthenticationRequestHandler, mobileAuthWithPushPinRequestHandler)
+    viewModel = PinAuthenticationInputViewModel(pinAuthenticationRequestHandler)
   }
 
   @Test
@@ -91,7 +91,7 @@ class PinAuthenticationInputViewModelTest {
   fun `When Submit event is sent, Then accept authentication request should be triggered`() {
     val spyCreatePinRequestHandler = spy(pinAuthenticationRequestHandler)
     val spyMobileAuthWithPushPinRequestHandler = spy(mobileAuthWithPushPinRequestHandler)
-    viewModel = PinAuthenticationInputViewModel(spyCreatePinRequestHandler, spyMobileAuthWithPushPinRequestHandler)
+    viewModel = PinAuthenticationInputViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.Submit(TEST_PIN))
 
@@ -102,7 +102,7 @@ class PinAuthenticationInputViewModelTest {
   fun `When Cancel event is sent, Then deny authentication request should be triggered`() {
     val spyCreatePinRequestHandler = spy(pinAuthenticationRequestHandler)
     val spyMobileAuthWithPushPinRequestHandler = spy(mobileAuthWithPushPinRequestHandler)
-    viewModel = PinAuthenticationInputViewModel(spyCreatePinRequestHandler, spyMobileAuthWithPushPinRequestHandler)
+    viewModel = PinAuthenticationInputViewModel(spyCreatePinRequestHandler)
 
     viewModel.onEvent(UiEvent.Cancel)
 
