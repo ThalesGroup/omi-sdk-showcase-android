@@ -62,7 +62,7 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 private fun getSections(): List<SectionItem> {
   return listOf(
     SectionItem(stringResource(R.string.section_title_pin_authentication), Screens.PinAuthentication),
-    SectionItem(stringResource(R.string.section_title_authenticator_settings), Screens.Authenticators)
+    SectionItem(stringResource(R.string.section_title_authenticators), Screens.Authenticators)
   )
 }
 
