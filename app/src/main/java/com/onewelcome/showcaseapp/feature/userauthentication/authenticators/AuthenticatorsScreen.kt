@@ -55,7 +55,7 @@ private fun AuthenticatorsContent(
   onNavigateBack: () -> Unit
 ) {
   SdkFeatureScreen(
-    title = stringResource(R.string.section_title_authenticator_settings),
+    title = stringResource(R.string.section_title_authenticators),
     onNavigateBack = onNavigateBack,
     description = {
       ShowcaseFeatureDescription(
@@ -65,7 +65,7 @@ private fun AuthenticatorsContent(
     },
     settings = { SettingsSection(uiState, onEvent) },
     result = uiState.result?.let { { ToggleAuthenticatorResult(it) } },
-    action = { }
+    action = { /*no-op*/ }
   )
 }
 
@@ -180,7 +180,7 @@ private fun UnavailableBiometricAuthenticatorSwitch(biometricAuthenticatorStatus
   }
   ShowcaseSwitch(
     shouldBeChecked = false,
-    onCheck = { },
+    onCheck = { /*no-op*/ },
     label = {
       Column {
         Text(stringResource(R.string.authenticator_settings_biometric_authenticator_name), style = MaterialTheme.typography.titleMedium)
@@ -228,7 +228,7 @@ private fun ListenForPinNavigationEvent(
   LaunchedEffect(Unit) {
     navigationEvents.collect { event ->
       when (event) {
-        is NavigationEvent.ToPinAuthenticationScreen -> onNavigateToPinAuthenticationInputScreen.invoke()
+        is NavigationEvent.ToPinAuthenticationInputScreen -> onNavigateToPinAuthenticationInputScreen.invoke()
       }
     }
   }

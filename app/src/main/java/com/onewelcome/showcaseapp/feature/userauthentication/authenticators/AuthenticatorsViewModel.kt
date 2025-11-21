@@ -10,8 +10,8 @@ import com.github.michaelbull.result.get
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.entity.BiometricAuthenticatorStatus
+import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.usecase.DeregisterAuthenticatorUseCase
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
@@ -57,8 +57,7 @@ class AuthenticatorsViewModel @Inject constructor(
     val isSdkInitialized = isSdkInitializedUseCase.execute()
     val authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
     val availableAuthenticators = authenticatedUserProfile?.let { getAuthenticatorsUseCase.execute(it).get() } ?: emptySet()
-    val biometricAuthenticatorStatus = authenticatedUserProfile?.let { getBiometricAuthenticatorStatusUseCase.execute(it).get() }
-      ?: BiometricAuthenticatorStatus.READER_NOT_PRESENT
+    val biometricAuthenticatorStatus = getBiometricAuthenticatorStatusUseCase.execute(availableAuthenticators)
     uiState = uiState.copy(
       isSdkInitialized = isSdkInitialized,
       authenticatedUserProfile = authenticatedUserProfile,
@@ -97,7 +96,7 @@ class AuthenticatorsViewModel @Inject constructor(
   private fun listenForPinInputScreenNavigationEvents() {
     viewModelScope.launch {
       pinAuthenticationRequestHandler.startPinAuthenticationFlow.collect {
-        _navigationEvents.send(NavigationEvent.ToPinAuthenticationScreen)
+        _navigationEvents.send(NavigationEvent.ToPinAuthenticationInputScreen)
       }
     }
   }
@@ -106,7 +105,7 @@ class AuthenticatorsViewModel @Inject constructor(
     val isSdkInitialized: Boolean = false,
     val authenticatedUserProfile: UserProfile? = null,
     val availableAuthenticators: Set<OneginiAuthenticator> = emptySet(),
-    val biometricAuthenticatorStatus: BiometricAuthenticatorStatus = BiometricAuthenticatorStatus.READER_NOT_PRESENT,
+    val biometricAuthenticatorStatus: BiometricAuthenticatorStatus = BiometricAuthenticatorStatus.BIOMETRICS_NOT_ENROLLED,
     val isLoading: Boolean = false,
     val result: AuthenticatorOperationResult? = null
   )
@@ -122,6 +121,6 @@ class AuthenticatorsViewModel @Inject constructor(
   }
 
   sealed interface NavigationEvent {
-    data object ToPinAuthenticationScreen : NavigationEvent
+    data object ToPinAuthenticationInputScreen : NavigationEvent
   }
 }
