@@ -48,8 +48,15 @@
   <string name="section_title_mobile_authentication_with_otp">Authentication with OTP</string>
   <string name="section_title_user_deregistration">User Deregistration</string>
   <string name="section_title_change_pin">Change PIN</string>
+  <string name="section_title_sdk_reset">SDK Reset</string>
   <string name="section_title_logout">Logout</string>
   <string name="section_title_push_authentication">Push Authentication</string>
+
+  <!-- SDK Reset -->
+  <string name="sdk_reset_description">SDK Reset will clear all data and reset the SDK to its initial state.</string>
+  <string name="button_sdk_reset">Reset SDK</string>
+  <string name="sdk_reset_success">SDK Reset performed successfully</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_reset_tooltip">SDK needs to be initialized to perform reset</string>
 
   <!-- SDK Initialization -->
   <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
