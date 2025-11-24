@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
@@ -54,7 +55,12 @@ private fun SdkResetScreenContent(
         link = Constants.DOCUMENTATION_SDK_RESET
       )
     },
-    settings = { SettingSection(isSdkInitialized = uiState.isSdkInitialized) },
+    settings = {
+      SettingSection(
+        isSdkInitialized = uiState.isSdkInitialized,
+        authenticatedUserProfile = uiState.authenticatedUserProfile
+      )
+    },
     result = uiState.result?.let { { SdkResetResult(it) } },
     action = { SdkResetButton(onEvent, uiState.isLoading) })
 }
@@ -92,12 +98,21 @@ private fun SdkResetResult(result: Result<Unit, Throwable>) {
 }
 
 @Composable
-private fun SettingSection(isSdkInitialized: Boolean) {
+private fun SettingSection(isSdkInitialized: Boolean, authenticatedUserProfile: UserProfile?) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     SdkInitializationSection(isSdkInitialized)
+    AuthenticatedUserProfileSection(authenticatedUserProfile)
   }
+}
+
+@Composable
+private fun AuthenticatedUserProfileSection(authenticatedUserProfile: UserProfile?) {
+  ShowcaseStatusCard(
+    title = stringResource(R.string.authenticated_profile),
+    status = authenticatedUserProfile != null,
+  )
 }
 
 @Composable

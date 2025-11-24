@@ -3,8 +3,11 @@ package com.onewelcome.showcaseapp.viewmodel
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiResetHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiResetError
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.SdkResetUseCase
 import com.onewelcome.core.util.TestConstants
@@ -44,16 +47,22 @@ class SdkResetViewModelTest {
   lateinit var sdkResetUseCase: SdkResetUseCase
 
   @Inject
+  lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
+
+  @Inject
   lateinit var omiSdkEngineFake: OmiSdkEngineFake
 
   @Inject
   lateinit var oneginiClientMock: OneginiClient
 
   private val mockOneginiResetError = mock<OneginiResetError>()
+  private val mockUserClient = mock<UserClient>()
+  private val mockUserProfile = mock<UserProfile>()
 
   @Before
   fun setup() {
     hiltRule.inject()
+    whenever(oneginiClientMock.getUserClient()).thenReturn(mockUserClient)
   }
 
   @Test
@@ -139,13 +148,38 @@ class SdkResetViewModelTest {
       .isEqualTo(INITIAL_STATE.copy(result = Err(expectedException)))
   }
 
+  @Test
+  fun `Given user is authenticated, When viewmodel is initialized, Then state should contain authenticated user profile`() {
+    mockSdkInitialized()
+    whenever(mockUserClient.authenticatedUserProfile).thenReturn(mockUserProfile)
+
+    initializeViewModel()
+
+    assertThat(viewModel.uiState.authenticatedUserProfile).isEqualTo(mockUserProfile)
+  }
+
+  @Test
+  fun `Given user is authenticated, When ResetSdk event is sent and finishes successfully, Then state should not contain authenticated user profile`() {
+    mockSdkInitialized()
+    whenever(mockUserClient.authenticatedUserProfile).thenReturn(mockUserProfile)
+    mockSuccessfulReset()
+
+    initializeViewModel()
+    
+    whenever(mockUserClient.authenticatedUserProfile).thenReturn(null)
+    
+    viewModel.onEvent(SdkResetViewModel.UiEvent.ResetSdk)
+
+    assertThat(viewModel.uiState.authenticatedUserProfile).isNull()
+  }
+
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)
     whenever(omiSdkEngineFake.oneginiClient).thenReturn(oneginiClientMock)
   }
 
   private fun initializeViewModel() {
-    viewModel = SdkResetViewModel(sdkResetUseCase, isSdkInitializedUseCase)
+    viewModel = SdkResetViewModel(sdkResetUseCase, isSdkInitializedUseCase, getAuthenticatedUserProfileUseCase)
   }
 
   private fun mockSuccessfulReset() {
@@ -167,6 +201,7 @@ class SdkResetViewModelTest {
       result = null,
       isSdkInitialized = false,
       isLoading = false,
+      authenticatedUserProfile = null
     )
   }
 }
