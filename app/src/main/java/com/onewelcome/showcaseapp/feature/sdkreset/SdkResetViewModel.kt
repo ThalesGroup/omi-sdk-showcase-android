@@ -5,16 +5,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
+import com.onewelcome.core.usecase.SdkResetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SdkResetViewModel @Inject constructor(
+  private val sdkResetUseCase: SdkResetUseCase,
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
 ) : ViewModel() {
 
@@ -39,13 +39,11 @@ class SdkResetViewModel @Inject constructor(
   private fun resetSdk() {
     uiState = uiState.copy(isLoading = true)
     viewModelScope.launch {
-      // Simulate SDK reset delay
-      delay(1000)
-      // TODO: Implement actual SDK reset logic here
+      val resetResult = sdkResetUseCase.execute()
       uiState = uiState.copy(
-        result = Ok(Unit),
+        result = resetResult,
         isLoading = false,
-        isSdkInitialized = false // Assuming reset clears initialization
+        isSdkInitialized = isSdkInitializedUseCase.execute()
       )
     }
   }
