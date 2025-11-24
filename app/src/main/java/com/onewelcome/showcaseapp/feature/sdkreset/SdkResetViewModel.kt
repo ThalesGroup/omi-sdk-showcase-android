@@ -45,9 +45,8 @@ class SdkResetViewModel @Inject constructor(
   private fun resetSdk() {
     uiState = uiState.copy(isLoading = true)
     viewModelScope.launch {
-      val resetResult = sdkResetUseCase.execute()
       uiState = uiState.copy(
-        result = resetResult,
+        result = sdkResetUseCase.execute(),
         isLoading = false,
         isSdkInitialized = isSdkInitializedUseCase.execute(),
         authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
