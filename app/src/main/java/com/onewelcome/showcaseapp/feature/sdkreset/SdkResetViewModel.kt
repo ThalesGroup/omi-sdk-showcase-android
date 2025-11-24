@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.get
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.SdkResetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +19,7 @@ import javax.inject.Inject
 class SdkResetViewModel @Inject constructor(
   private val sdkResetUseCase: SdkResetUseCase,
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
+  private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -32,8 +36,10 @@ class SdkResetViewModel @Inject constructor(
   }
 
   private fun loadInitialData() {
-    val isSdkInitialized = isSdkInitializedUseCase.execute()
-    uiState = uiState.copy(isSdkInitialized = isSdkInitialized)
+    uiState = uiState.copy(
+      isSdkInitialized = isSdkInitializedUseCase.execute(),
+      authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
+    )
   }
 
   private fun resetSdk() {
@@ -43,7 +49,8 @@ class SdkResetViewModel @Inject constructor(
       uiState = uiState.copy(
         result = resetResult,
         isLoading = false,
-        isSdkInitialized = isSdkInitializedUseCase.execute()
+        isSdkInitialized = isSdkInitializedUseCase.execute(),
+        authenticatedUserProfile = getAuthenticatedUserProfileUseCase.execute().get()
       )
     }
   }
@@ -51,7 +58,8 @@ class SdkResetViewModel @Inject constructor(
   data class State(
     val isSdkInitialized: Boolean = false,
     val isLoading: Boolean = false,
-    val result: Result<Unit, Throwable>? = null
+    val result: Result<Unit, Throwable>? = null,
+    val authenticatedUserProfile: UserProfile? = null
   )
 
   sealed interface UiEvent {
