@@ -14,15 +14,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.onewelcome.core.R
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.success
-import com.onewelcome.core.R
 
 private const val USER_PROFILE_COLUMN_WEIGHT = 0.3f
 private const val STATUS_COLUMNS_TOTAL_WEIGHT = 0.7f
@@ -32,9 +33,16 @@ interface ShowcaseUserProfileStatusTableCardScope {
   fun contentRow(userProfileId: String, vararg status: Boolean)
 }
 
-private class ShowcaseUserProfileStatusTableCardScopeImpl : ShowcaseUserProfileStatusTableCardScope {
+private class ShowcaseUserProfileStatusTableCardScopeImpl(
+  content: ShowcaseUserProfileStatusTableCardScope.() -> Unit,
+) : ShowcaseUserProfileStatusTableCardScope {
+
   val headerRow = mutableListOf<String>()
   val contentRows = mutableListOf<Pair<String, List<Boolean>>>()
+
+  init {
+    apply(content)
+  }
 
   override fun headerRow(vararg columnTitle: String) {
     headerRow.clear()
@@ -47,9 +55,9 @@ private class ShowcaseUserProfileStatusTableCardScopeImpl : ShowcaseUserProfileS
 }
 
 @Composable
-fun ShowcaseUserProfileStatusTableCard(title: String, content: @Composable ShowcaseUserProfileStatusTableCardScope.() -> Unit) {
-  val showcaseTableContent = remember { ShowcaseUserProfileStatusTableCardScopeImpl() }
-  showcaseTableContent.content()
+fun ShowcaseUserProfileStatusTableCard(title: String, content: ShowcaseUserProfileStatusTableCardScope.() -> Unit) {
+  val rememberedContent by rememberUpdatedState(content)
+  val showcaseTableContent = ShowcaseUserProfileStatusTableCardScopeImpl(rememberedContent)
 
   ShowcaseCard {
     Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
