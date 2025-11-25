@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -62,7 +64,9 @@ private fun TopBar() {
 @Composable
 private fun StatusList(uiState: State) {
   Column(
-    modifier = Modifier.padding(top = Dimensions.mPadding),
+    modifier = Modifier
+      .padding(top = Dimensions.mPadding)
+      .verticalScroll(rememberScrollState()),
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
     ShowcaseStatusCard(
@@ -108,12 +112,12 @@ private fun UserProfileAuthenticatorRegistrationStatus(authenticatorsState: List
   val userProfileRows = remember(authenticatorsState, authenticatorColumns) {
     getUserProfileRows(authenticatorsState, authenticatorColumns)
   }
-
+  val userProfileColumnTitle = stringResource(R.string.label_user_profile)
   ShowcaseUserProfileStatusTableCard(
     title = stringResource(R.string.status_registered_authenticators)
   ) {
     headerRow(
-      stringResource(R.string.label_user_profile),
+      userProfileColumnTitle,
       *authenticatorColumns.map { it.type.name }.toTypedArray()
     )
     userProfileRows.forEach { (userProfileId, statuses) ->
@@ -130,10 +134,12 @@ private fun UserProfilesEnrolledForMobileAuth(mobileAuthEnrollmentStatus: List<M
       description = stringResource(R.string.no_user_profiles)
     )
   } else {
+    val columnTitles =
+      arrayOf(stringResource(R.string.label_user_profile), stringResource(R.string.label_otp), stringResource(R.string.label_push))
     ShowcaseUserProfileStatusTableCard(
       title = stringResource(R.string.status_mobile_authentication_enrollment)
     ) {
-      headerRow(stringResource(R.string.label_user_profile), stringResource(R.string.label_otp), stringResource(R.string.label_push))
+      headerRow(*columnTitles)
       mobileAuthEnrollmentStatus.forEach {
         contentRow(it.userProfileId, it.isUserEnrolledForMobileAuth, it.isUserEnrolledForMobileAuthWithPush)
       }

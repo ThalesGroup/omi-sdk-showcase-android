@@ -42,7 +42,7 @@
   <string name="section_title_user_registration">User Registration</string>
   <string name="section_title_browser_registration">Browser Registration</string>
   <string name="section_title_user_authentication">User Authentication</string>
-  <string name="section_title_authenticator_settings">Authenticator Settings</string>
+  <string name="section_title_authenticators">Authenticators</string>
   <string name="section_title_pin_authentication">Pin Authentication</string>
   <string name="section_title_biometric_authentication">Biometric Authentication</string>
   <string name="section_title_mobile_authentication">Mobile Authentication</string>
