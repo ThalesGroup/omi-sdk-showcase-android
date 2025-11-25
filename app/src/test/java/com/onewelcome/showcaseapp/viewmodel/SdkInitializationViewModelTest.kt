@@ -118,7 +118,7 @@ class SdkInitializationViewModelTest {
       null,
       null,
       null,
-      listOf(HandlerType.BROWSER_REGISTRATION, HandlerType.MOBILE_AUTH_WITH_PUSH, HandlerType.MOBILE_AUTH_WITH_OTP)
+      listOf(HandlerType.BROWSER_REGISTRATION, HandlerType.BIOMETRIC_AUTHENTICATION, HandlerType.MOBILE_AUTH_WITH_PUSH, HandlerType.MOBILE_AUTH_WITH_OTP)
     )
     whenSdkInitializedSuccessfully()
 
