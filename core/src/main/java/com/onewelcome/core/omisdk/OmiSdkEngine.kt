@@ -1,7 +1,6 @@
 package com.onewelcome.core.omisdk
 
 import android.content.Context
-import android.util.Log
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
@@ -15,7 +14,9 @@ import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class OmiSdkEngine @Inject constructor(
   @ApplicationContext private val context: Context,
   private val createPinRequestHandler: CreatePinRequestHandler,
