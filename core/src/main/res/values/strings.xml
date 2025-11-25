@@ -48,6 +48,7 @@
   <string name="section_title_mobile_authentication_with_otp">Authentication with OTP</string>
   <string name="section_title_user_deregistration">User Deregistration</string>
   <string name="section_title_change_pin">Change PIN</string>
+  <string name="section_title_single_sign_on">Single sign-on (SSO)</string>
   <string name="section_title_logout">Logout</string>
   <string name="section_title_push_authentication">Push Authentication</string>
 
