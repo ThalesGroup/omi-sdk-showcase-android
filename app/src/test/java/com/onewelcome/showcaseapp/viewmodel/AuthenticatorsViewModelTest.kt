@@ -181,7 +181,7 @@ class AuthenticatorsViewModelTest {
 
       viewModel.onEvent(AuthenticatorsViewModel.UiEvent.ToggleAuthenticator(biometricAuthenticator))
 
-      assertThat(viewModel.navigationEvents.first()).isEqualTo(AuthenticatorsViewModel.NavigationEvent.ToPinAuthenticationScreen)
+      assertThat(viewModel.navigationEvents.first()).isEqualTo(AuthenticatorsViewModel.NavigationEvent.ToPinAuthenticationInputScreen)
     }
 
   @Test
@@ -285,7 +285,7 @@ class AuthenticatorsViewModelTest {
       isSdkInitialized = false,
       authenticatedUserProfile = null,
       availableAuthenticators = emptySet(),
-      biometricAuthenticatorStatus = BiometricAuthenticatorStatus.READER_NOT_PRESENT,
+      biometricAuthenticatorStatus = BiometricAuthenticatorStatus.BIOMETRICS_NOT_ENROLLED,
       isLoading = false,
       result = null
     )
