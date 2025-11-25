@@ -19,6 +19,8 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-change-pin/index.html"
   const val DOCUMENTATION_LOGOUT =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-logout-user/index.html"
+  const val DOCUMENTATION_SINGLE_SIGN_ON =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-sso/index.html"
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   const val FULLSCREEN_PAGE = "fullscreen"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
@@ -35,4 +37,7 @@ object Constants {
 
   // QR Code Scanner
   const val QR_CODE_RESULT_KEY = "qr_code_result"
+
+  //SSO url
+  const val SSO_URL = "https://login-mobile.in.prod.onewelcome.net/personal/dashboard"
 }
