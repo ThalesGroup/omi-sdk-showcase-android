@@ -6,6 +6,8 @@ object Constants {
   const val DOCUMENTATION_SDK_INITIALIZATION = "$DOCUMENTATION_BASE_URL/android-sdk-getting-started/android-sdk-initialize/index.html"
   const val DOCUMENTATION_USER_REGISTRATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-register-user/index.html"
   const val DOCUMENTATION_USER_DEREGISTRATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-delete-user/index.html"
+  const val DOCUMENTATION_AUTHENTICATOR_SETTINGS =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#registered-and-deregistered-authenticators"
   const val DOCUMENTATION_PIN_AUTHENTICATION =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-a-user-with-a-pin"
   const val DOCUMENTATION_USER_AUTHENTICATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/index.html"

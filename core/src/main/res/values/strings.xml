@@ -35,12 +35,14 @@
   <string name="label_push">Push</string>
   <string name="status_mobile_authentication_enrollment">Mobile authentication enrollment</string>
   <string name="status_post_notifications_permission">Post notifications permission</string>
+  <string name="status_registered_authenticators">Registered authenticators</string>
 
   <!-- Section titles -->
   <string name="section_title_sdk_initialization">SDK Initialization</string>
   <string name="section_title_user_registration">User Registration</string>
   <string name="section_title_browser_registration">Browser Registration</string>
   <string name="section_title_user_authentication">User Authentication</string>
+  <string name="section_title_authenticators">Authenticators</string>
   <string name="section_title_pin_authentication">Pin Authentication</string>
   <string name="section_title_mobile_authentication">Mobile Authentication</string>
   <string name="section_title_mobile_authentication_enrollment">Enroll for mobile authentication</string>
@@ -136,6 +138,17 @@
   <string name="user_authentication_description">When at least one user is registered, SDK offers a possibility to log in using number of authenticators.</string>
   <string name="authentication_successful">Authentication successful</string>
   <string name="authentication_requirement_tooltip">At least one user profile needs to be registered to perform authentication</string>
+
+  <!-- Authenticator settings -->
+  <string name="authenticator_settings_authenticators_header">Authenticators</string>
+  <string name="authenticator_settings_description">To enable or disable each authenticator, the user has to register or deregister the authenticator. If multiple user profiles are registered in the application, each user profile has its own set of registered authenticators.</string>
+  <string name="authenticator_settings_deregistration_success">Authenticator deregistered successfully</string>
+  <string name="authenticator_settings_registration_success">Authenticator registered successfully\nCustom info: %s</string>
+  <string name="authenticator_settings_authenticated_user_requirement_tooltip">User has to be authenticated to register/deregister authenticators</string>
+  <string name="authenticator_settings_sdk_initialized_requirement_tooltip">SDK needs to be initialized to perform authenticator registration/deregistration</string>
+  <string name="authenticator_settings_biometric_authenticator_name">Biometric</string>
+  <string name="authenticator_settings_biometrics_not_enrolled_description">Biometric log in is not available. Check if biometrics are enrolled or try locking and unlocking your device</string>
+  <string name="authenticator_settings_biometrics_reader_not_present_description">Eligible biometric reader is not available on this device</string>
 
   <!-- User Deregistration -->
   <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
