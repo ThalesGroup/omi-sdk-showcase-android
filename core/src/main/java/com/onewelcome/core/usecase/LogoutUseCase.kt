@@ -14,7 +14,7 @@ class LogoutUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) 
   suspend fun execute(): Result<Unit, Throwable> {
     return suspendCancellableCoroutine { continuation ->
       runCatching {
-        omiSdkFacade.oneginiClient.getUserClient() .logout(object : OneginiLogoutHandler {
+        omiSdkFacade.oneginiClient.getUserClient().logout(object : OneginiLogoutHandler {
           override fun onSuccess() {
             continuation.resume(Ok(Unit))
           }

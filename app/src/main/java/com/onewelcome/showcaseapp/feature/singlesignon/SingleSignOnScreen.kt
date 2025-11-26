@@ -55,6 +55,24 @@ private fun SingleSignOnScreenContent(
   onEvent: (Event) -> Unit,
   navigationEvent: Flow<SingleSignOnViewModel.NavigationEvent>
 ) {
+  navigationEventListener(navigationEvent)
+  SdkFeatureScreen(
+    title = stringResource(R.string.section_title_single_sign_on),
+    onNavigateBack = onNavigateBack,
+    description = {
+      ShowcaseFeatureDescription(
+        description = stringResource(R.string.single_sign_on_description),
+        link = Constants.DOCUMENTATION_SINGLE_SIGN_ON
+      )
+    },
+    settings = { SettingsSection(uiState) },
+    action = { SsoButton(onEvent) },
+    result = uiState.result?.let { { SsoResult(it) } }
+  )
+}
+
+@Composable
+private fun navigationEventListener(navigationEvent: Flow<SingleSignOnViewModel.NavigationEvent>) {
   val context = LocalContext.current
   LaunchedEffect(Unit) {
     navigationEvent.collect {
@@ -70,19 +88,6 @@ private fun SingleSignOnScreenContent(
       }
     }
   }
-  SdkFeatureScreen(
-    title = stringResource(R.string.section_title_single_sign_on),
-    onNavigateBack = onNavigateBack,
-    description = {
-      ShowcaseFeatureDescription(
-        description = stringResource(R.string.single_sign_on_description),
-        link = Constants.DOCUMENTATION_SINGLE_SIGN_ON
-      )
-    },
-    settings = { SettingsSection(uiState) },
-    action = { SsoButton(onEvent) },
-    result = uiState.result?.let { { SsoResult(it) } }
-  )
 }
 
 @Composable
