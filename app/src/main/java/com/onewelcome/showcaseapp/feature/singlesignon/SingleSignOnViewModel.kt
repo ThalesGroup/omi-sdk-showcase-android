@@ -33,7 +33,7 @@ class SingleSignOnViewModel @Inject constructor(
   private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
-  fun updateData() {
+  init {
     updateIsSdkInitialized()
     updateAuthenticatedUserProfile()
   }
