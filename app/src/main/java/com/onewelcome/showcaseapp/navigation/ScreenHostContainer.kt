@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
@@ -171,6 +172,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
     composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }
+    composable(Screens.BiometricAuthentication.route) { BiometricAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
     composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }

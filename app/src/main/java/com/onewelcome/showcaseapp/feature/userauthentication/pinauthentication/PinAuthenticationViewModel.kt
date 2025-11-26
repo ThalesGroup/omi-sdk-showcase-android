@@ -9,11 +9,9 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.flatMap
-import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapCatching
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.github.michaelbull.result.runCatching
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
@@ -47,7 +45,6 @@ class PinAuthenticationViewModel @Inject() constructor(
   fun onEvent(event: UiEvent) {
     when (event) {
       is UiEvent.StartPinAuthentication -> startPinAuthentication()
-      is UiEvent.CancelAuthentication -> cancelAuthentication()
       is UiEvent.UpdateSelectedUserProfile -> updateSelectedUserProfile(event)
       is UiEvent.LoadData -> loadData()
     }
@@ -84,10 +81,6 @@ class PinAuthenticationViewModel @Inject() constructor(
     getUserProfilesUseCase.execute()
       .onSuccess { uiState = uiState.copy(userProfiles = it, selectedUserProfile = it.firstOrNull()) }
       .onFailure { uiState = uiState.copy(userProfiles = emptySet()) }
-  }
-
-  private fun cancelAuthentication() {
-    pinAuthenticationRequestHandler.pinCallback?.denyAuthenticationRequest()
   }
 
   private fun startPinAuthentication() {
@@ -128,7 +121,6 @@ class PinAuthenticationViewModel @Inject() constructor(
 
   sealed interface UiEvent {
     data object StartPinAuthentication : UiEvent
-    data object CancelAuthentication : UiEvent
     data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
     data object LoadData : UiEvent
   }
