@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.singlesignon
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,7 +9,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
@@ -28,6 +31,9 @@ import com.onewelcome.core.util.Constants
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnViewModel.Event
 import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnViewModel.State
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+
 
 @Composable
 fun SingleSignOnScreen(
@@ -39,6 +45,7 @@ fun SingleSignOnScreen(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = viewModel::onEvent,
+    navigationEvent = viewModel.navigationEvents,
   )
 }
 
@@ -46,8 +53,24 @@ fun SingleSignOnScreen(
 private fun SingleSignOnScreenContent(
   uiState: State,
   onNavigateBack: () -> Unit,
-  onEvent: (Event) -> Unit
+  onEvent: (Event) -> Unit,
+  navigationEvent: Flow<SingleSignOnViewModel.NavigationEvent>
 ) {
+  val context = LocalContext.current
+  LaunchedEffect(Unit) {
+    navigationEvent.collect {
+      when (it) {
+        is SingleSignOnViewModel.NavigationEvent.OpenUrl -> {
+          Intent(Intent.ACTION_VIEW, it.uri)
+            .apply {
+              addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            }
+            .let { uri -> context.startActivity(uri) }
+        }
+      }
+    }
+  }
   SdkFeatureScreen(
     title = stringResource(R.string.section_title_single_sign_on),
     onNavigateBack = onNavigateBack,
@@ -69,7 +92,7 @@ private fun SsoButton(onEvent: (Event) -> Unit) {
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
-    onClick = { onEvent(Event.OpenUrl(Constants.SSO_URL.toUri())) },
+    onClick = { onEvent(Event.PerformSingleSignOn(Constants.SSO_URL.toUri())) },
   ) {
     Text(stringResource(R.string.single_sign_on_button))
   }
@@ -128,6 +151,7 @@ private fun Preview() {
   SingleSignOnScreenContent(
     uiState = State(),
     onNavigateBack = {},
-    onEvent = {}
+    onEvent = {},
+    navigationEvent = flowOf()
   )
 }

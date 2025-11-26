@@ -15,6 +15,8 @@ import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.SingleSignOnUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +30,9 @@ class SingleSignOnViewModel @Inject constructor(
   var uiState by mutableStateOf(State())
     private set
 
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
+  val navigationEvents = _navigationEvents.receiveAsFlow()
+
   fun updateData() {
     updateIsSdkInitialized()
     updateAuthenticatedUserProfile()
@@ -35,9 +40,11 @@ class SingleSignOnViewModel @Inject constructor(
 
   fun onEvent(event: Event) {
     when (event) {
-      is Event.OpenUrl -> {
+      is Event.PerformSingleSignOn -> {
         viewModelScope.launch {
-          uiState = uiState.copy(result = singleSignOnUseCase.execute(event.url))
+          val result = singleSignOnUseCase.execute(event.url)
+            .onSuccess { _navigationEvents.trySend(NavigationEvent.OpenUrl(it.redirectUrl)) }
+          uiState = uiState.copy(result = result)
         }
       }
     }
@@ -60,6 +67,10 @@ class SingleSignOnViewModel @Inject constructor(
   )
 
   sealed class Event {
-    data class OpenUrl(val url: Uri) : Event()
+    data class PerformSingleSignOn(val url: Uri) : Event()
+  }
+
+  sealed class NavigationEvent {
+    data class OpenUrl(val uri: Uri) : NavigationEvent()
   }
 }
