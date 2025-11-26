@@ -40,7 +40,6 @@ fun SingleSignOnScreen(
   navController: NavController,
   viewModel: SingleSignOnViewModel = hiltViewModel()
 ) {
-  viewModel.updateData()
   SingleSignOnScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
@@ -105,11 +104,11 @@ private fun SsoResult(result: Result<OneginiAppToWebSingleSignOn, Throwable>) {
       .onSuccess {
         Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
           Text(
-            "Redirect url", style = MaterialTheme.typography.titleMedium
+            stringResource(R.string.single_sign_on_redirect_url), style = MaterialTheme.typography.titleMedium
           )
           Text(it.redirectUrl.toString())
           Text(
-            "Token", style = MaterialTheme.typography.titleMedium
+            stringResource(R.string.token), style = MaterialTheme.typography.titleMedium
           )
           Text(it.token)
 
