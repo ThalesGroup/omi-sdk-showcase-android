@@ -1,6 +1,7 @@
 package com.onewelcome.core.util
 
 import android.os.Parcel
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -8,7 +9,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 
 object TestConstants {
-  val TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS= OmiSdkInitializationSettings(
+  val TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS = OmiSdkInitializationSettings(
     shouldStoreCookies = true,
     httpConnectTimeout = null,
     httpReadTimeout = null,
@@ -58,4 +59,22 @@ object TestConstants {
   val TEST_IDENTITY_PROVIDERS = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
   val TEST_SELECTED_IDENTITY_PROVIDER = TEST_IDENTITY_PROVIDERS.first()
   val TEST_PIN = charArrayOf('1', '2', '3', '4', '5')
+
+  fun getPinAuthenticator() = object : OneginiAuthenticator {
+    override val id: String = "pin"
+    override val type: OneginiAuthenticator.Type = OneginiAuthenticator.Type.PIN
+    override val name: String = "PIN"
+    override val isRegistered: Boolean = true
+    override val isPreferred: Boolean = true
+    override val userProfile: UserProfile = TEST_USER_PROFILE_1
+  }
+
+  fun getBiometricAuthenticator(isRegistered: Boolean) = object : OneginiAuthenticator {
+    override val id: String = "biometric"
+    override val type: OneginiAuthenticator.Type = OneginiAuthenticator.Type.BIOMETRIC
+    override val name: String = "BIOMETRIC"
+    override val isRegistered: Boolean = isRegistered
+    override val isPreferred: Boolean = false
+    override val userProfile: UserProfile = TEST_USER_PROFILE_1
+  }
 }

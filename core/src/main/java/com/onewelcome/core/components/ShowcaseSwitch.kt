@@ -15,6 +15,7 @@ fun ShowcaseSwitch(
   onCheck: (Boolean) -> Unit,
   label: @Composable (() -> Unit)? = null,
   tooltipContent: @Composable (() -> Unit)? = null,
+  enabled: Boolean = true
 ) {
   Row(
     verticalAlignment = Alignment.CenterVertically
@@ -23,6 +24,7 @@ fun ShowcaseSwitch(
       label?.let { it() }
     }
     Switch(
+      enabled = enabled,
       checked = shouldBeChecked,
       onCheckedChange = onCheck
     )
