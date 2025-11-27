@@ -1,10 +1,12 @@
 package com.onewelcome.showcaseapp.di
 
 import com.onewelcome.core.di.FacadeModule
+import com.onewelcome.core.facade.BiometricFacade
 import com.onewelcome.core.facade.FirebaseMessagingFacade
 import com.onewelcome.core.facade.JsonFacade
 import com.onewelcome.core.facade.PermissionsFacade
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
+import com.onewelcome.showcaseapp.fakes.BiometricFacadeFake
 import com.onewelcome.showcaseapp.fakes.FirebaseMessagingFacadeFake
 import com.onewelcome.showcaseapp.fakes.JsonFacadeFake
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
@@ -32,4 +34,7 @@ interface FakeFacadeModule {
 
   @Binds
   fun bindJsonFacadeFake(jsonFacadeFake: JsonFacadeFake): JsonFacade
+
+  @Binds
+  fun bindBiometricFacade(biometricFacade: BiometricFacadeFake): BiometricFacade
 }

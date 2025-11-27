@@ -5,11 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.michaelbull.result.coroutines.coroutineBinding
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.facade.PermissionsFacade
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
+import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsInStatelessSessionUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -27,6 +31,7 @@ class InfoViewModel @Inject constructor(
   private val isInStatelessSessionUseCase: IsInStatelessSessionUseCase,
   private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
   private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase,
+  private val getAuthenticatorsUseCase: GetAuthenticatorsUseCase,
   private val permissionsFacade: PermissionsFacade
 ) : ViewModel() {
 
@@ -39,8 +44,11 @@ class InfoViewModel @Inject constructor(
     updateStatelessSessionStatus()
     updatePostNotificationPermissionStatus()
     viewModelScope.launch {
-      updateUserProfiles()
-      updateMobileAuthEnrollmentState()
+      with(getUserProfilesUseCase.execute()) {
+        updateUserProfilesState()
+        updateAuthenticatorsState()
+        updateMobileAuthEnrollmentState()
+      }
     }
   }
 
@@ -64,15 +72,27 @@ class InfoViewModel @Inject constructor(
     uiState = uiState.copy(isPostNotificationPermissionGranted = permissionsFacade.checkPostNotificationsPermission())
   }
 
-  private suspend fun updateUserProfiles() {
-    getUserProfilesUseCase.execute()
-      .onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
+  private fun Result<Set<UserProfile>, Throwable>.updateUserProfilesState() {
+    this.onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
       .onFailure { uiState = uiState.copy(userProfileIds = emptyList()) }
   }
 
-  private suspend fun updateMobileAuthEnrollmentState() {
-    coroutineBinding {
-      getUserProfilesUseCase.execute().bind().map { userProfile ->
+  private fun Result<Set<UserProfile>, Throwable>.updateAuthenticatorsState() {
+    binding {
+      bind().map { userProfile ->
+        AuthenticatorsState(
+          userProfileId = userProfile.profileId,
+          authenticators = getAuthenticatorsUseCase.execute(userProfile).bind()
+        )
+      }
+    }
+      .onSuccess { uiState = uiState.copy(authenticatorsState = it) }
+      .onFailure { uiState = uiState.copy(authenticatorsState = emptyList()) }
+  }
+
+  private fun Result<Set<UserProfile>, Throwable>.updateMobileAuthEnrollmentState() {
+    binding {
+      bind().map { userProfile ->
         MobileAuthEnrollmentState(
           userProfileId = userProfile.profileId,
           isUserEnrolledForMobileAuth = isUserEnrolledForMobileAuthUseCase.execute(userProfile).bind(),
@@ -82,16 +102,21 @@ class InfoViewModel @Inject constructor(
     }
       .onSuccess { uiState = uiState.copy(mobileAuthenticationEnrollmentState = it) }
       .onFailure { uiState = uiState.copy(mobileAuthenticationEnrollmentState = emptyList()) }
-
   }
 
   data class State(
     val isSdkInitialized: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val authenticatedUserProfileId: String = "",
+    val authenticatorsState: List<AuthenticatorsState> = emptyList(),
     val isInStatelessSession: Boolean = false,
     val mobileAuthenticationEnrollmentState: List<MobileAuthEnrollmentState> = emptyList(),
     val isPostNotificationPermissionGranted: Boolean = false
+  )
+
+  data class AuthenticatorsState(
+    val userProfileId: String,
+    val authenticators: Set<OneginiAuthenticator>
   )
 
   data class MobileAuthEnrollmentState(

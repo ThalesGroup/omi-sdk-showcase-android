@@ -2,7 +2,6 @@ package com.onewelcome.showcaseapp
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.fragment.app.FragmentActivity
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.theme.ShowcaseAppTheme
 import com.onewelcome.core.util.Constants.MESSAGE_KEY
@@ -22,7 +22,7 @@ import com.onewelcome.showcaseapp.navigation.ScreenHostContainer
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ShowcaseActivity : ComponentActivity() {
+class ShowcaseActivity : FragmentActivity() {
 
   private val sharedPushViewModel: SharedPushViewModel by viewModels()
 
