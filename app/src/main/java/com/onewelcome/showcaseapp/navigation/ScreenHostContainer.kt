@@ -37,10 +37,14 @@ import com.onewelcome.showcaseapp.feature.pin.PushWithPinConfirmationInputViewMo
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
 import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.sdkreset.SdkResetScreen
+import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnScreen
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationResultScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
@@ -178,13 +182,17 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController, rootNavController) }
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
+    composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }
+    composable(Screens.BiometricAuthentication.route) { BiometricAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
     composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }
     composable(Screens.MobileAuthenticationPushEnrollment.route) { MobileAuthenticationWithPushEnrollmentScreen(homeNavController) }
     composable(Screens.MobileAuthenticationWithOtp.route) { MobileAuthenticationWithOtpScreen(homeNavController, rootNavController) }
     composable(Screens.ChangePin.route) { ChangePinScreen(homeNavController, rootNavController) }
+    composable(Screens.SingleSignOn.route) { SingleSignOnScreen(homeNavController) }
+    composable(Screens.SdkReset.route) { SdkResetScreen(homeNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
   }
 }

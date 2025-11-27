@@ -1,6 +1,7 @@
 package com.onewelcome.core.util
 
 import android.os.Parcel
+import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -62,4 +63,22 @@ object TestConstants {
   val TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST = OneginiMobileAuthenticationRequest(
     "message", "type", TEST_USER_PROFILE_1, "transactionId", null
   )
+
+  fun getPinAuthenticator() = object : OneginiAuthenticator {
+    override val id: String = "pin"
+    override val type: OneginiAuthenticator.Type = OneginiAuthenticator.Type.PIN
+    override val name: String = "PIN"
+    override val isRegistered: Boolean = true
+    override val isPreferred: Boolean = true
+    override val userProfile: UserProfile = TEST_USER_PROFILE_1
+  }
+
+  fun getBiometricAuthenticator(isRegistered: Boolean) = object : OneginiAuthenticator {
+    override val id: String = "biometric"
+    override val type: OneginiAuthenticator.Type = OneginiAuthenticator.Type.BIOMETRIC
+    override val name: String = "BIOMETRIC"
+    override val isRegistered: Boolean = isRegistered
+    override val isPreferred: Boolean = false
+    override val userProfile: UserProfile = TEST_USER_PROFILE_1
+  }
 }

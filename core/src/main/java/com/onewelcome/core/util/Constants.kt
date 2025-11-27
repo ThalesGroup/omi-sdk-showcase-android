@@ -6,8 +6,12 @@ object Constants {
   const val DOCUMENTATION_SDK_INITIALIZATION = "$DOCUMENTATION_BASE_URL/android-sdk-getting-started/android-sdk-initialize/index.html"
   const val DOCUMENTATION_USER_REGISTRATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-register-user/index.html"
   const val DOCUMENTATION_USER_DEREGISTRATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-delete-user/index.html"
+  const val DOCUMENTATION_AUTHENTICATOR_SETTINGS =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#registered-and-deregistered-authenticators"
   const val DOCUMENTATION_PIN_AUTHENTICATION =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-a-user-with-a-pin"
+  const val DOCUMENTATION_BIOMETRIC_AUTHENTICATION =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-user-with-biometrics"
   const val DOCUMENTATION_USER_AUTHENTICATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/index.html"
   const val DOCUMENTATION_MOBILE_AUTHENTICATION =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#enrollment"
@@ -17,8 +21,12 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#mobile-authentication-with-otp"
   const val DOCUMENTATION_CHANGE_PIN =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-change-pin/index.html"
+  const val DOCUMENTATION_SDK_RESET =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-reset-sdk/index.html"
   const val DOCUMENTATION_LOGOUT =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-logout-user/index.html"
+  const val DOCUMENTATION_SINGLE_SIGN_ON =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-sso/index.html"
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   const val FULLSCREEN_PAGE = "fullscreen"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
@@ -35,4 +43,7 @@ object Constants {
 
   // QR Code Scanner
   const val QR_CODE_RESULT_KEY = "qr_code_result"
+
+  //SSO url
+  const val SSO_URL = "https://login-mobile.in.prod.onewelcome.net/personal/dashboard"
 }
