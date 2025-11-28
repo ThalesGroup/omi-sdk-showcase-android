@@ -22,6 +22,7 @@
   <string name="authenticate">Authenticate</string>
   <string name="user_profile">User profile: %s</string>
   <string name="custom_info">Custom info: %s</string>
+  <string name="token">Token</string>
 
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>
@@ -51,6 +52,7 @@
   <string name="section_title_mobile_authentication_with_otp">Authentication with OTP</string>
   <string name="section_title_user_deregistration">User Deregistration</string>
   <string name="section_title_change_pin">Change PIN</string>
+  <string name="section_title_single_sign_on">App-to-web single sign-on (SSO)</string>
   <string name="section_title_sdk_reset">SDK Reset</string>
   <string name="section_title_logout">Logout</string>
   <string name="section_title_push_authentication">Push Authentication</string>
@@ -265,4 +267,9 @@
   <string name="handler_biometric_authentication">Biometric authentication</string>
   <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
   <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
+
+  <!-- SSO -->
+  <string name="single_sign_on_description">App-to-web single sign-on (SSO) allows you to take a session from your mobile application and extend it to a browser on the same device</string>
+  <string name="single_sign_on_redirect_url">Redirect url</string>
+  <string name="single_sign_on_button">Single sign-on</string>
 </resources>
