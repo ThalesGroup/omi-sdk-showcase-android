@@ -33,6 +33,7 @@ import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthentica
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.otp.MobileAuthenticationWithOtpScreen
 import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
+import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnScreen
 import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
@@ -180,6 +181,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.MobileAuthenticationPushEnrollment.route) { MobileAuthenticationWithPushEnrollmentScreen(homeNavController) }
     composable(Screens.MobileAuthenticationWithOtp.route) { MobileAuthenticationWithOtpScreen(homeNavController, rootNavController) }
     composable(Screens.ChangePin.route) { ChangePinScreen(homeNavController, rootNavController) }
+    composable(Screens.SingleSignOn.route) { SingleSignOnScreen(homeNavController) }
     composable(Screens.SdkReset.route) { SdkResetScreen(homeNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
   }
