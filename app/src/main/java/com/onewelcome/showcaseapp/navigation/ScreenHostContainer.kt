@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
@@ -87,11 +88,22 @@ private fun ListenForPushEvents(
   LaunchedEffect(Unit) {
     sharedPushViewModel.navigationEvents.collect {
       when (it) {
-        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> handleNavigationToTransactionResultScreen(rootNavController)
-        SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen -> rootNavController.navigate(Screens.PushWithPinConfirmationInput.route)
         SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> handleNavigationToTransactionResultScreen(rootNavController)
+        SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen ->
+          handleNavigationToPushWithPinConfirmationScreen(rootNavController)
       }
     }
+  }
+}
+
+private fun handleNavigationToPushWithPinConfirmationScreen(rootNavController: NavHostController) {
+  if (rootNavController.currentDestination?.route == Screens.TransactionConfirmation.route) {
+    rootNavController.navigate(Screens.PushWithPinConfirmationInput.route) {
+      popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+    }
+  } else {
+    rootNavController.navigate(Screens.PushWithPinConfirmationInput.route)
   }
 }
 
@@ -149,7 +161,10 @@ private fun ScreenWithNavBar(
       NavigationBarItem(
         selected = navigationItem.route == currentRootDestination?.route,
         label = {
-          Text(navigationItem.label)
+          Text(
+            text = navigationItem.label,
+            textAlign = TextAlign.Center
+          )
         },
         icon = {
           Icon(
