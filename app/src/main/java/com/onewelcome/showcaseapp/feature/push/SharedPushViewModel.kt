@@ -49,25 +49,54 @@ class SharedPushViewModel @Inject constructor(
     viewModelScope.launch {
       launch {
         mobileAuthWithPushRequestHandler.navigateToTransactionConfirmation.collect {
+          uiState = uiState.copy(pushType = PushType.PUSH)
           _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
         }
       }
       launch {
         mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
+          uiState = uiState.copy(pushType = PushType.PUSH_PIN)
           _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
         }
       }
       launch {
         mobileAuthWithBiometricRequestHandler.startBiometricAuthenticationFlow.collect {
-          _biometricEvents.trySend(BiometricEvent.ShowBiometricPrompt(it))
+          uiState = uiState.copy(pushType = PushType.PUSH_BIOMETRIC, cryptoObject = it)
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
         }
       }
       launch {
         notificationEventDispatcher.authenticationEvent.collect {
-          uiState = uiState.copy(result = it)
+          uiState = uiState.copy(pushType = null, result = it)
           _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
         }
       }
+    }
+  }
+
+  fun onEvent(event: UiEvent) {
+    when (event) {
+      is UiEvent.Accept ->
+        when (uiState.pushType) {
+          PushType.PUSH -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+          PushType.PUSH_PIN -> _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+          PushType.PUSH_BIOMETRIC -> uiState.cryptoObject?.let { _biometricEvents.trySend(BiometricEvent.ShowBiometricPrompt(it)) }
+          null -> {
+            //no-op
+          }
+        }
+
+      is UiEvent.Reject -> when (uiState.pushType) {
+        PushType.PUSH -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
+        PushType.PUSH_PIN -> mobileAuthWithPushPinRequestHandler.pinCallback?.denyAuthenticationRequest()
+        PushType.PUSH_BIOMETRIC -> mobileAuthWithBiometricRequestHandler.biometricCallback?.denyAuthenticationRequest()
+        null -> {
+          //no-op
+        }
+      }
+
+      is UiEvent.AcceptBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.userAuthenticatedSuccessfully()
+      is UiEvent.DeclineBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.denyAuthenticationRequest()
     }
   }
 
@@ -109,23 +138,11 @@ class SharedPushViewModel @Inject constructor(
     authenticateWithPushUseCase.execute(pushRequest)
   }
 
-  fun onEvent(event: UiEvent) {
-    when (event) {
-      UiEvent.Accept ->
-        mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
-          ?: _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
-
-      UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
-        ?: mobileAuthWithPushPinRequestHandler.pinCallback?.denyAuthenticationRequest()
-
-      UiEvent.AcceptBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.userAuthenticatedSuccessfully()
-      is UiEvent.DeclineBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.denyAuthenticationRequest()
-    }
-  }
-
   data class UiState(
     val pushRequest: OneginiMobileAuthWithPushRequest? = null,
     val result: Result<CustomInfo?, Throwable>? = null,
+    val cryptoObject: BiometricPrompt.CryptoObject? = null,
+    val pushType: PushType? = null,
   )
 
   sealed interface UiEvent {
@@ -143,5 +160,9 @@ class SharedPushViewModel @Inject constructor(
 
   sealed interface BiometricEvent {
     data class ShowBiometricPrompt(val cryptoObject: BiometricPrompt.CryptoObject) : BiometricEvent
+  }
+
+  enum class PushType {
+    PUSH, PUSH_PIN, PUSH_BIOMETRIC
   }
 }
