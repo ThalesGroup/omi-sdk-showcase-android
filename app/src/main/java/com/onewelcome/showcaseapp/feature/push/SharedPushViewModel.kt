@@ -48,7 +48,7 @@ class SharedPushViewModel @Inject constructor(
       }
       launch {
         mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
-          _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
         }
       }
       launch {
@@ -100,8 +100,12 @@ class SharedPushViewModel @Inject constructor(
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.Accept -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+      UiEvent.Accept ->
+        mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+          ?: _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+
       UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
+        ?: mobileAuthWithPushPinRequestHandler.pinCallback?.denyAuthenticationRequest()
     }
   }
 
