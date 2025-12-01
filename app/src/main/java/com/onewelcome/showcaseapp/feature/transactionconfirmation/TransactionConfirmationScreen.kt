@@ -1,5 +1,7 @@
 package com.onewelcome.showcaseapp.feature.transactionconfirmation
 
+import android.content.Context
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.components.ShowcaseTopBar
@@ -27,8 +32,11 @@ import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.toReadableDate
 import com.onewelcome.showcaseapp.R
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.BiometricEvent
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -41,6 +49,7 @@ fun TransactionConfirmationScreen(
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     uiState = viewModel.uiState,
+    biometricEvents = viewModel.biometricEvents,
   )
 }
 
@@ -49,7 +58,9 @@ private fun TransactionConfirmationScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit,
   uiState: SharedPushViewModel.UiState,
+  biometricEvents: Flow<BiometricEvent>,
 ) {
+  ListenForBiometricEvents(onEvent, biometricEvents)
   Scaffold(
     topBar = { ShowcaseTopBar(stringResource(R.string.transaction_screen), onNavigateBack) }
   ) { contentPadding ->
@@ -66,6 +77,44 @@ private fun TransactionConfirmationScreenContent(
     }
   }
 }
+
+@Composable
+private fun ListenForBiometricEvents(onEvent: (UiEvent) -> Unit, biometricEvents: Flow<BiometricEvent>) {
+  val context = LocalContext.current
+  LaunchedEffect(Unit) {
+    biometricEvents.collect {
+      when (it) {
+        is BiometricEvent.ShowBiometricPrompt -> showBiometricPrompt(context, it.cryptoObject, onEvent)
+      }
+    }
+  }
+}
+
+private fun showBiometricPrompt(context: Context, cryptoObject: BiometricPrompt.CryptoObject, onEvent: (UiEvent) -> Unit) {
+  val executor = ContextCompat.getMainExecutor(context)
+  if (context is FragmentActivity) {
+    val biometricPrompt = BiometricPrompt(context, executor, getBiometricPromptAuthenticationCallback(onEvent))
+    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+      .setTitle(context.getString(R.string.biometric_prompt_title))
+      .setSubtitle(context.getString(R.string.biometric_prompt_subtitle))
+      .setNegativeButtonText(context.getString(R.string.biometric_prompt_negative_button))
+      .build()
+    biometricPrompt.authenticate(promptInfo, cryptoObject)
+  }
+}
+
+private fun getBiometricPromptAuthenticationCallback(onEvent: (UiEvent) -> Unit) =
+  object : BiometricPrompt.AuthenticationCallback() {
+    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+      super.onAuthenticationSucceeded(result)
+      onEvent(UiEvent.AcceptBiometric)
+    }
+
+    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+      super.onAuthenticationError(errorCode, errString)
+      onEvent(UiEvent.DeclineBiometric(errorCode))
+    }
+  }
 
 @Composable
 private fun ButtonsSection(onEvent: (UiEvent) -> Unit) {
@@ -180,5 +229,6 @@ private fun Preview() {
     {},
     {},
     SharedPushViewModel.UiState(),
+    emptyFlow(),
   )
 }
