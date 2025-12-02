@@ -96,7 +96,7 @@ class SharedPushViewModel @Inject constructor(
       }
 
       is UiEvent.AcceptBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.userAuthenticatedSuccessfully()
-      is UiEvent.DeclineBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.denyAuthenticationRequest()
+      is UiEvent.DeclineBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.onBiometricAuthenticationError(event.errorCode)
     }
   }
 
