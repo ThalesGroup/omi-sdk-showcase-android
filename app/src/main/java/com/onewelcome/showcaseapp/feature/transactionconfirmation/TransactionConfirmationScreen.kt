@@ -97,7 +97,7 @@ private fun showBiometricPrompt(context: Context, cryptoObject: BiometricPrompt.
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
       .setTitle(context.getString(R.string.biometric_prompt_title))
       .setSubtitle(context.getString(R.string.biometric_prompt_subtitle))
-      .setNegativeButtonText(context.getString(R.string.biometric_prompt_negative_button))
+      .setNegativeButtonText(context.getString(R.string.cancel))
       .build()
     biometricPrompt.authenticate(promptInfo, cryptoObject)
   }
