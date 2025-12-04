@@ -11,6 +11,7 @@ import com.onewelcome.core.omisdk.handlers.BiometricAuthenticationHandler
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,6 +27,7 @@ class OmiSdkEngine @Inject constructor(
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
   private val biometricAuthenticationHandler: BiometricAuthenticationHandler,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
+  private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler
 ) : OmiSdkFacade {
 
@@ -51,6 +53,7 @@ class OmiSdkEngine @Inject constructor(
         HandlerType.BIOMETRIC_AUTHENTICATION -> setBiometricAuthenticationRequestHandler(biometricAuthenticationHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
       }
     }
   }

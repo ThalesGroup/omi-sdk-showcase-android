@@ -14,6 +14,7 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -28,20 +29,33 @@ class SharedPushViewModel @Inject constructor(
   private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val notificationEventDispatcher: NotificationEventDispatcher,
+  private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val preferencesManager: PreferencesManager,
   private val sdkAutoInitializationManager: SdkAutoInitializationManager
 ) : ViewModel() {
   var uiState by mutableStateOf(UiState())
 
-  private val _navigationEvents = Channel<NavigationEvent>(Channel.Factory.BUFFERED)
+  private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
   init {
     viewModelScope.launch {
-      notificationEventDispatcher.authenticationEvent.collect {
-        uiState = uiState.copy(result = it)
-        _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
+      launch {
+        mobileAuthWithPushRequestHandler.navigateToTransactionConfirmation.collect {
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+        }
+      }
+      launch {
+        mobileAuthWithPushPinRequestHandler.startPinAuthenticationFlow.collect {
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
+        }
+      }
+      launch {
+        notificationEventDispatcher.authenticationEvent.collect {
+          uiState = uiState.copy(result = it)
+          _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
+        }
       }
     }
   }
@@ -82,13 +96,16 @@ class SharedPushViewModel @Inject constructor(
 
   private fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
     authenticateWithPushUseCase.execute(pushRequest)
-    _navigationEvents.trySend(NavigationEvent.NavigateToTransactionConfirmationScreen)
   }
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      UiEvent.Accept -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+      UiEvent.Accept ->
+        mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
+          ?: _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+
       UiEvent.Reject -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
+        ?: mobileAuthWithPushPinRequestHandler.pinCallback?.denyAuthenticationRequest()
     }
   }
 
@@ -105,5 +122,6 @@ class SharedPushViewModel @Inject constructor(
   sealed interface NavigationEvent {
     data object NavigateToTransactionResultScreen : NavigationEvent
     data object NavigateToTransactionConfirmationScreen : NavigationEvent
+    data object NavigateToPinConfirmationScreen : NavigationEvent
   }
 }

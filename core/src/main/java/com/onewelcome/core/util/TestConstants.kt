@@ -5,6 +5,7 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
+import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 
@@ -59,6 +60,9 @@ object TestConstants {
   val TEST_IDENTITY_PROVIDERS = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
   val TEST_SELECTED_IDENTITY_PROVIDER = TEST_IDENTITY_PROVIDERS.first()
   val TEST_PIN = charArrayOf('1', '2', '3', '4', '5')
+  val TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST = OneginiMobileAuthenticationRequest(
+    "message", "type", TEST_USER_PROFILE_1, "transactionId", null
+  )
 
   fun getPinAuthenticator() = object : OneginiAuthenticator {
     override val id: String = "pin"

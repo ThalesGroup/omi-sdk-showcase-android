@@ -1,6 +1,7 @@
 package com.onewelcome.showcaseapp.feature.pin
 
 import androidx.lifecycle.viewModelScope
+import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.NavigationEvent.PopBackStack
 import com.onewelcome.showcaseapp.feature.pin.PinViewModel.UiEvent.Cancel
@@ -28,12 +29,7 @@ class PinAuthenticationInputViewModel @Inject constructor(
   private fun listenForPinAuthenticationAttemptCounterUpdateEvent() {
     viewModelScope.launch {
       pinAuthenticationRequestHandler.authenticationAttemptCounterFlow.collect {
-        val shouldShowErrorMessage = it.failedAttempts > 0
-        uiState = if (shouldShowErrorMessage) {
-          uiState.copy(authenticationAttemptCounter = it, pinValidationError = "Wrong PIN, try again")
-        } else {
-          uiState.copy(authenticationAttemptCounter = it)
-        }
+        updateAttemptCounter(it)
       }
     }
   }
@@ -43,6 +39,15 @@ class PinAuthenticationInputViewModel @Inject constructor(
       pinAuthenticationRequestHandler.finishPinAuthenticationFlow.collect {
         _navigationEvents.send(PopBackStack)
       }
+    }
+  }
+
+  private fun updateAttemptCounter(counter: AuthenticationAttemptCounter) {
+    val shouldShowErrorMessage = counter.failedAttempts > 0
+    uiState = if (shouldShowErrorMessage) {
+      uiState.copy(authenticationAttemptCounter = counter, pinValidationError = "Wrong PIN, try again")
+    } else {
+      uiState.copy(authenticationAttemptCounter = counter)
     }
   }
 }

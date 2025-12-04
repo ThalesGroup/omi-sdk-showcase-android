@@ -127,7 +127,11 @@ fun PinAttemptCounter(authenticationAttemptCounter: AuthenticationAttemptCounter
 }
 
 @Composable
-private fun ListenForNavigationEvents(onNavigateBack: () -> Unit, navigationEvents: Flow<NavigationEvent>, onEvent: (UiEvent) -> Unit) {
+private fun ListenForNavigationEvents(
+  onNavigateBack: () -> Unit,
+  navigationEvents: Flow<NavigationEvent>,
+  onEvent: (UiEvent) -> Unit,
+) {
   BackHandler {
     onEvent.invoke(Cancel)
   }

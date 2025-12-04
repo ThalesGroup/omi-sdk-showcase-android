@@ -9,6 +9,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthentication
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -66,6 +67,9 @@ class SharedPushViewModelTest {
   @Inject
   lateinit var sdkAutoInitializationManager: SdkAutoInitializationManager
 
+  @Inject
+  lateinit var mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler
+
   lateinit var viewModel: SharedPushViewModel
 
   private val userClientMock: UserClient = mock()
@@ -82,9 +86,10 @@ class SharedPushViewModelTest {
       authenticateWithPushUseCase,
       mobileAuthWithPushRequestHandler,
       notificationEventDispatcher,
+      mobileAuthWithPushPinRequestHandler,
       isSdkInitializedUseCase,
       preferencesManager,
-      sdkAutoInitializationManager
+      sdkAutoInitializationManager,
     )
   }
 

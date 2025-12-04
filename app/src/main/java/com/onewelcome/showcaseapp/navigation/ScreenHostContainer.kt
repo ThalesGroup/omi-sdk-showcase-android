@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
@@ -22,28 +23,29 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
-import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
 import com.onewelcome.showcaseapp.feature.info.InfoScreen
 import com.onewelcome.showcaseapp.feature.logout.LogoutScreen
-import com.onewelcome.showcaseapp.feature.sdkreset.SdkResetScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.MobileAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.mobileauth.enrollment.MobileAuthenticationWithPushEnrollmentScreen
 import com.onewelcome.showcaseapp.feature.otp.MobileAuthenticationWithOtpScreen
-import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
-import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnScreen
 import com.onewelcome.showcaseapp.feature.pin.CreatePinInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinAuthenticationInputViewModel
 import com.onewelcome.showcaseapp.feature.pin.PinScreen
+import com.onewelcome.showcaseapp.feature.pin.PushWithPinConfirmationInputViewModel
 import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.feature.qrscanner.QrCodeScannerScreen
 import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScreen
+import com.onewelcome.showcaseapp.feature.sdkreset.SdkResetScreen
+import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnScreen
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationResultScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
@@ -87,17 +89,34 @@ private fun ListenForPushEvents(
     sharedPushViewModel.navigationEvents.collect {
       when (it) {
         SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen -> rootNavController.navigate(Screens.TransactionConfirmation.route)
-        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> {
-          if (rootNavController.currentDestination?.route == Screens.TransactionConfirmation.route) {
-            rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
-              popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
-            }
-          } else {
-            rootNavController.navigate(Screens.TransactionConfirmationResult.route)
-          }
-        }
+        SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> handleNavigationToTransactionResultScreen(rootNavController)
+        SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen ->
+          handleNavigationToPushWithPinConfirmationScreen(rootNavController)
       }
     }
+  }
+}
+
+private fun handleNavigationToPushWithPinConfirmationScreen(rootNavController: NavHostController) {
+  if (rootNavController.currentDestination?.route == Screens.TransactionConfirmation.route) {
+    rootNavController.navigate(Screens.PushWithPinConfirmationInput.route) {
+      popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+    }
+  } else {
+    rootNavController.navigate(Screens.PushWithPinConfirmationInput.route)
+  }
+}
+
+private fun handleNavigationToTransactionResultScreen(rootNavController: NavHostController) {
+  val currentRoute = rootNavController.currentDestination?.route
+  val shouldPopBackStackOnNavigation =
+    currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
+  if (shouldPopBackStackOnNavigation) {
+    rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
+      popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
+    }
+  } else {
+    rootNavController.navigate(Screens.TransactionConfirmationResult.route)
   }
 }
 
@@ -111,6 +130,9 @@ private fun NavGraphBuilder.pushScreens(
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {
   composable(Screens.PinAuthenticationInput.route) { PinScreen(rootNavController, hiltViewModel<PinAuthenticationInputViewModel>()) }
+  composable(Screens.PushWithPinConfirmationInput.route) {
+    PinScreen(rootNavController, hiltViewModel<PushWithPinConfirmationInputViewModel>())
+  }
   composable(Screens.CreatePinInput.route) { PinScreen(rootNavController, hiltViewModel<CreatePinInputViewModel>()) }
 }
 
@@ -139,7 +161,10 @@ private fun ScreenWithNavBar(
       NavigationBarItem(
         selected = navigationItem.route == currentRootDestination?.route,
         label = {
-          Text(navigationItem.label)
+          Text(
+            text = navigationItem.label,
+            textAlign = TextAlign.Center
+          )
         },
         icon = {
           Icon(
