@@ -42,6 +42,7 @@
   <string name="section_title_sdk_initialization">SDK Initialization</string>
   <string name="section_title_user_registration">User Registration</string>
   <string name="section_title_browser_registration">Browser Registration</string>
+  <string name="section_title_one_step_registration">One-step registration</string>
   <string name="section_title_user_authentication">User Authentication</string>
   <string name="section_title_authenticators">Authenticators</string>
   <string name="section_title_pin_authentication">Pin Authentication</string>
@@ -122,6 +123,10 @@
   <!-- Browser registration -->
   <string name="browser_registration">Browser registration</string>
   <string name="browser_registration_description">Browser based registration allows users to complete the registration process through a web browser flow. </string>
+
+  <!-- One-step registration -->
+  <string name="one_step_registration">One-step registration</string>
+  <string name="one_step_registration_description">One-step registration is a simplified registration flow that completes the registration process in a single step without requiring browser interaction.</string>
   <string name="identity_providers">Identity providers</string>
   <string name="registration_scopes">Registration scopes</string>
   <string name="cancel_registration">Cancel registration</string>
