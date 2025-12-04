@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.viewmodel
 
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.util.TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER
 import com.onewelcome.core.util.TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER_FAILED_ATTEMPT
@@ -36,6 +37,9 @@ class PinAuthenticationInputViewModelTest {
 
   @Inject
   lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+
+  @Inject
+  lateinit var mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler
 
   val pinCallback = FakePinCallback()
 
