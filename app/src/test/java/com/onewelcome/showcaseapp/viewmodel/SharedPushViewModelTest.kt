@@ -6,6 +6,7 @@ import com.github.michaelbull.result.Ok
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBiometricCallback
@@ -28,9 +29,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -92,6 +91,8 @@ class SharedPushViewModelTest {
   private val biometricCallback: OneginiBiometricCallback = mock()
   private val mockOneginiMobileAuthenticationError: OneginiMobileAuthenticationError = mock()
   private val pushRequest = OneginiMobileAuthWithPushRequest("transactionId", "message", "userProfileId")
+  private val initError: OneginiInitializationError = mock()
+  private val initialState = SharedPushViewModel.UiState(pushRequest = null, result = null)
 
   @Before
   fun setup() {
@@ -111,7 +112,7 @@ class SharedPushViewModelTest {
   // Original Tests
   @Test
   fun `When viewmodel is initialized, Then default state should be returned`() {
-    val expectedState = INITIAL_STATE
+    val expectedState = initialState
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -122,7 +123,7 @@ class SharedPushViewModelTest {
 
     viewModel.onNewPush(pushRequest)
 
-    assertThat(viewModel.uiState).isEqualTo(INITIAL_STATE.copy(pushRequest = pushRequest))
+    assertThat(viewModel.uiState).isEqualTo(initialState.copy(pushRequest = pushRequest))
   }
 
   @Test
@@ -272,7 +273,6 @@ class SharedPushViewModelTest {
       null
     )
 
-    // Consume the transaction confirmation navigation event
     runTest {
       assertThat(viewModel.navigationEvents.first()).isEqualTo(SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen)
     }
@@ -284,22 +284,18 @@ class SharedPushViewModelTest {
     }
   }
 
-  // Biometric Event Tests
   @Test
   fun `Given PUSH_BIOMETRIC type with crypto object, When Accept event sent, Then should show biometric prompt`() {
-    val cryptoObject: CryptoObject = mock()
-    val callback: OneginiBiometricCallback = mock()
     mockSdkInitialized()
 
     mobileAuthWithBiometricRequestHandler.startAuthentication(
       TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST,
       cryptoObject,
-      callback
+      biometricCallback
     )
 
-    // Consume the transaction confirmation navigation event
     runTest {
-      viewModel.navigationEvents.first()
+      assertThat(viewModel.navigationEvents.first()).isEqualTo(SharedPushViewModel.NavigationEvent.NavigateToTransactionConfirmationScreen)
     }
 
     viewModel.onEvent(SharedPushViewModel.UiEvent.Accept)
@@ -309,51 +305,46 @@ class SharedPushViewModelTest {
     }
   }
 
-  // UI Event Handling Tests - Accept Events
   @Test
   fun `Given PUSH type, When Accept event sent, Then should call acceptAuthenticationRequest`() {
-    val callback: OneginiAcceptDenyCallback = mock()
     mockSdkInitialized()
 
-    mobileAuthWithPushRequestHandler.startAuthentication(TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST, callback)
+    mobileAuthWithPushRequestHandler.startAuthentication(TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST, acceptDenyCallback)
 
     viewModel.onEvent(SharedPushViewModel.UiEvent.Accept)
 
-    verify(callback).acceptAuthenticationRequest()
+    verify(acceptDenyCallback).acceptAuthenticationRequest()
   }
 
-  // UI Event Handling Tests - Reject Events
   @Test
-  fun `Given PUSH type, When Reject event sent, Then should call denyAuthenticationRequest`() = runTest {
-    val callback: OneginiAcceptDenyCallback = mock()
+  fun `Given PUSH type, When Reject event sent, Then should call denyAuthenticationRequest`() {
     mockSdkInitialized()
 
-    mobileAuthWithPushRequestHandler.startAuthentication(TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST, callback)
+    mobileAuthWithPushRequestHandler.startAuthentication(TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST, acceptDenyCallback)
 
     viewModel.onEvent(SharedPushViewModel.UiEvent.Reject)
 
-    verify(callback).denyAuthenticationRequest()
+    verify(acceptDenyCallback).denyAuthenticationRequest()
   }
 
   @Test
-  fun `Given PUSH_PIN type, When Reject event sent, Then should call pin callback deny`() = runTest {
-    val callback: OneginiPinCallback = mock()
+  fun `Given PUSH_PIN type, When Reject event sent, Then should call pin callback deny`() {
     mockSdkInitialized()
 
     mobileAuthWithPushPinRequestHandler.startAuthentication(
       TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST,
-      callback,
+      pinCallback,
       TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER,
       null
     )
 
     viewModel.onEvent(SharedPushViewModel.UiEvent.Reject)
 
-    verify(callback).denyAuthenticationRequest()
+    verify(pinCallback).denyAuthenticationRequest()
   }
 
   @Test
-  fun `Given PUSH_BIOMETRIC type, When Reject event sent, Then should call biometric callback deny`() = runTest {
+  fun `Given PUSH_BIOMETRIC type, When Reject event sent, Then should call biometric callback deny`() {
     val cryptoObject: CryptoObject = mock()
     val callback: OneginiBiometricCallback = mock()
     mockSdkInitialized()
@@ -370,69 +361,45 @@ class SharedPushViewModelTest {
   }
 
   @Test
-  fun `When AcceptBiometric event sent, Then should call biometric callback success`() = runTest {
-    val cryptoObject: CryptoObject = mock()
-    val callback: OneginiBiometricCallback = mock()
+  fun `When AcceptBiometric event sent, Then should call biometric callback success`() {
     mockSdkInitialized()
 
     mobileAuthWithBiometricRequestHandler.startAuthentication(
       TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST,
       cryptoObject,
-      callback
+      biometricCallback
     )
 
     viewModel.onEvent(SharedPushViewModel.UiEvent.AcceptBiometric)
 
-    verify(callback).userAuthenticatedSuccessfully()
+    verify(biometricCallback).userAuthenticatedSuccessfully()
   }
 
   @Test
-  fun `When DeclineBiometric event sent, Then should call biometric callback error with error code`() = runTest {
-    val cryptoObject: CryptoObject = mock()
-    val callback: OneginiBiometricCallback = mock()
+  fun `When DeclineBiometric event sent, Then should call biometric callback error with error code`() {
     mockSdkInitialized()
 
     mobileAuthWithBiometricRequestHandler.startAuthentication(
       TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST,
       cryptoObject,
-      callback
+      biometricCallback
     )
 
     viewModel.onEvent(SharedPushViewModel.UiEvent.DeclineBiometric(10000))
 
-    verify(callback).onBiometricAuthenticationError(10000)
+    verify(biometricCallback).onBiometricAuthenticationError(10000)
   }
 
-  // SDK Auto-Initialization Tests
-  @Test
-  fun `Given PUSH_PIN type, When Accept event sent, Then should navigate to pin confirmation`() = runTest {
-    val callback: com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback = mock()
-    mockSdkInitialized()
-
-    mobileAuthWithPushPinRequestHandler.startAuthentication(
-      TestConstants.TEST_ONEGINI_MOBILE_AUTHENTICATION_REQUEST,
-      callback,
-      TestConstants.TEST_AUTHENTICATION_ATTEMPT_COUNTER,
-      null
-    )
-
-    viewModel.onEvent(SharedPushViewModel.UiEvent.Accept)
-
-    // Skip the first navigation event (NavigateToTransactionConfirmationScreen) and get the second one
-    assertThat(viewModel.navigationEvents.drop(1).first())
-      .isEqualTo(SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen)
-  }
 
   @Test
-  fun `Given SDK auto-init enabled and fails, When new push sent, Then should show error`() = runTest {
-    preferencesManager.setSdkAutoInitializationEnabled(true)
-    val initError: com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError = mock()
-
-    val deferredResult = async {
-      Err(initError)
+  fun `Given SDK auto-init enabled and fails, When new push sent, Then should show error`() {
+    runTest {
+      preferencesManager.setSdkAutoInitializationEnabled(true)
+      val deferredResult = async {
+        Err(initError)
+      }
+      sdkAutoInitializationManager.deferredResult = deferredResult
     }
-    sdkAutoInitializationManager.deferredResult = deferredResult
-
     viewModel.onNewPush(pushRequest)
 
     assertThat(viewModel.uiState.pushRequest).isEqualTo(pushRequest)
@@ -449,6 +416,5 @@ class SharedPushViewModelTest {
   }
 
   companion object {
-    private val INITIAL_STATE = SharedPushViewModel.UiState(pushRequest = null, result = null)
   }
 }
