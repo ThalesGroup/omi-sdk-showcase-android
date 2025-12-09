@@ -1,5 +1,6 @@
 package com.onewelcome.showcaseapp.feature.userregistration.onestepregistration
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +31,7 @@ import androidx.navigation.NavController
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.SdkFeatureScreen
@@ -131,6 +134,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit, onNaviga
   ) {
     SdkInitializationSection(uiState.isSdkInitialized)
     UserProfilesSection(uiState.userProfileIds)
+    IdentityProvidersSection(uiState, onEvent)
     ScopesSection(uiState.isSdkInitialized, onEvent)
     StatelessRegistrationSection(uiState.isStatelessRegistration, onEvent)
     OtpCodeSection(uiState.otp, onEvent, onNavigateToQrCodeScanner)
@@ -245,6 +249,60 @@ private fun ScopesList(onEvent: (UiEvent) -> Unit) {
       }
     }
   }
+}
+
+@Composable
+private fun IdentityProvidersSection(
+  uiState: State,
+  onEvent: (UiEvent) -> Unit
+) {
+  if (uiState.identityProviders.isNotEmpty()) {
+    ShowcaseCard {
+      Column {
+        IdentityProvidersHeader()
+        IdentityProvidersList(uiState.selectedIdentityProvider, uiState.identityProviders, onEvent)
+        ShowcaseSwitch(
+          shouldBeChecked = uiState.shouldUseDefaultIdentityProvider,
+          onCheck = { onEvent.invoke(UiEvent.UseDefaultIdentityProvider(it)) },
+          label = { Text(stringResource(R.string.use_default_identity_provider)) },
+          tooltipContent = { Text(stringResource(R.string.default_identity_provider_tooltip_text)) }
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun IdentityProvidersList(
+  chosenIdentityProvider: OneginiIdentityProvider?,
+  identityProviders: Set<OneginiIdentityProvider>,
+  onEvent: (UiEvent) -> Unit
+) {
+  val selectedIdentityProvider = chosenIdentityProvider ?: identityProviders.first()
+  identityProviders.forEach { identityProvider ->
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onEvent.invoke(UiEvent.UpdateSelectedIdentityProvider(identityProvider)) }
+        .padding(bottom = Dimensions.sPadding)
+    ) {
+      RadioButton(
+        selected = (identityProvider == selectedIdentityProvider),
+        onClick = { onEvent.invoke(UiEvent.UpdateSelectedIdentityProvider(identityProvider)) }
+      )
+      Text(stringResource(R.string.idp_item_label, identityProvider.name, identityProvider.id))
+    }
+  }
+}
+
+@Composable
+private fun IdentityProvidersHeader() {
+  Text(
+    text = stringResource(R.string.identity_providers),
+    style = MaterialTheme.typography.titleMedium,
+    modifier = Modifier.padding(bottom = Dimensions.mPadding)
+  )
 }
 
 @Composable

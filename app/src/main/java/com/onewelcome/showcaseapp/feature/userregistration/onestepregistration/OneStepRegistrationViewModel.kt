@@ -11,9 +11,12 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
+import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.identityproviders.QrCodeIdentityProvider
+import com.onewelcome.core.usecase.GetCustomIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.StatelessUserRegistrationUseCase
@@ -30,8 +33,10 @@ class OneStepRegistrationViewModel @Inject constructor(
   isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val userRegistrationUseCase: UserRegistrationUseCase,
   private val statelessUserRegistrationUseCase: StatelessUserRegistrationUseCase,
+  private val getCustomIdentityProvidersUseCase: GetCustomIdentityProvidersUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val createPinRequestHandler: CreatePinRequestHandler,
+  private val qrCodeIdentityProvider: QrCodeIdentityProvider,
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -42,6 +47,8 @@ class OneStepRegistrationViewModel @Inject constructor(
   init {
     viewModelScope.launch {
       isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
+      updateIdentityProviders()
+      updateSelectedIdentityProvider()
       updateUserProfiles()
       updateCancellationButton()
     }
@@ -54,13 +61,28 @@ class OneStepRegistrationViewModel @Inject constructor(
       is UiEvent.SetStatelessRegistration -> uiState = uiState.copy(isStatelessRegistration = event.isStateless)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
       is UiEvent.UpdateOtpValue -> uiState = uiState.copy(otp = event.otp)
+      is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
+      is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
     }
+  }
+
+  private suspend fun updateIdentityProviders() {
+    getCustomIdentityProvidersUseCase.execute()
+      .onSuccess { uiState = uiState.copy(identityProviders = it) }
+      .onFailure { uiState = uiState.copy(identityProviders = emptySet()) }
   }
 
   private suspend fun updateUserProfiles() {
     getUserProfilesUseCase.execute()
       .onSuccess { uiState = uiState.copy(userProfileIds = it.map { it.profileId }.toList()) }
       .onFailure { uiState = uiState.copy(userProfileIds = emptyList()) }
+  }
+
+  private fun updateSelectedIdentityProvider() {
+    val identityProviders = uiState.identityProviders
+    if (identityProviders.isNotEmpty()) {
+      uiState = uiState.copy(selectedIdentityProvider = identityProviders.first())
+    }
   }
 
   private fun updateCancellationButton() {
@@ -95,7 +117,7 @@ class OneStepRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       statelessUserRegistrationUseCase
-        .execute(identityProvider = null, scopes = uiState.selectedScopes)
+        .execute(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess { handleSuccess(UserProfile.stateless to it) }
         .onFailure { handleFailure(it) }
     }
@@ -105,11 +127,14 @@ class OneStepRegistrationViewModel @Inject constructor(
     viewModelScope.launch {
       uiState = uiState.copy(isRegistrationCancellationEnabled = true)
       userRegistrationUseCase
-        .register(identityProvider = null, scopes = uiState.selectedScopes)
+        .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
         .onSuccess { handleSuccess(it) }
         .onFailure { handleFailure(it) }
     }
   }
+
+  private fun getIdentityProvider(): OneginiIdentityProvider? =
+    if (uiState.shouldUseDefaultIdentityProvider) null else uiState.selectedIdentityProvider
 
   private suspend fun handleSuccess(pair: Pair<UserProfile, CustomInfo?>) {
     uiState = uiState.copy(result = Ok(pair), isRegistrationCancellationEnabled = false)
@@ -128,8 +153,11 @@ class OneStepRegistrationViewModel @Inject constructor(
 
   data class State(
     val result: Result<Pair<UserProfile, CustomInfo?>, Throwable>? = null,
+    val identityProviders: Set<OneginiIdentityProvider> = emptySet(),
     val isSdkInitialized: Boolean = false,
+    val selectedIdentityProvider: OneginiIdentityProvider? = null,
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
+    val shouldUseDefaultIdentityProvider: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val isRegistrationCancellationEnabled: Boolean = false,
     val isStatelessRegistration: Boolean = false,
@@ -139,7 +167,9 @@ class OneStepRegistrationViewModel @Inject constructor(
   sealed interface UiEvent {
     data object StartOneStepRegistration : UiEvent
     data object CancelRegistration : UiEvent
+    data class UpdateSelectedIdentityProvider(val identityProvider: OneginiIdentityProvider) : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
+    data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
     data class SetStatelessRegistration(val isStateless: Boolean) : UiEvent
     data class UpdateOtpValue(val otp: String) : UiEvent
   }
