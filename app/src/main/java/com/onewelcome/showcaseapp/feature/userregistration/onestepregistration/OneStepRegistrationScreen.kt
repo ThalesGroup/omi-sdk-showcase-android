@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -31,6 +36,7 @@ import com.onewelcome.core.components.ShowcaseCard
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.components.ShowcaseStatusCard
 import com.onewelcome.core.components.ShowcaseSwitch
+import com.onewelcome.core.components.ShowcaseTextField
 import com.onewelcome.core.theme.Dimensions
 import com.onewelcome.core.theme.separateItemsWithComa
 import com.onewelcome.core.theme.toErrorResultString
@@ -40,6 +46,7 @@ import com.onewelcome.showcaseapp.feature.userregistration.onestepregistration.O
 import com.onewelcome.showcaseapp.feature.userregistration.onestepregistration.OneStepRegistrationViewModel.State
 import com.onewelcome.showcaseapp.feature.userregistration.onestepregistration.OneStepRegistrationViewModel.UiEvent
 import com.onewelcome.showcaseapp.navigation.Screens
+import com.onewelcome.showcaseapp.navigation.getResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
@@ -47,13 +54,17 @@ import kotlinx.coroutines.flow.emptyFlow
 fun OneStepRegistrationScreen(
   navController: NavController,
   pinNavController: NavController,
+  rootNavController: NavController,
   viewModel: OneStepRegistrationViewModel = hiltViewModel()
 ) {
+  HandleNavigationResult(rootNavController, viewModel::onEvent)
+
   OneStepRegistrationScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     onNavigateToPinScreen = { pinNavController.navigate(Screens.CreatePinInput.route) },
+    onNavigateToQrCodeScanner = { rootNavController.navigate(Screens.QrCodeScanner.route) },
     navigationEvents = viewModel.navigationEvents
   )
 }
@@ -64,6 +75,7 @@ private fun OneStepRegistrationScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit,
   onNavigateToPinScreen: () -> Unit,
+  onNavigateToQrCodeScanner: () -> Unit,
   navigationEvents: Flow<NavigationEvent>,
 ) {
   ListenForPinNavigationEvent(navigationEvents, onNavigateToPinScreen)
@@ -76,13 +88,24 @@ private fun OneStepRegistrationScreenContent(
         link = "https://thalesdocs.com/oip/omi-sdk/android-sdk/android-sdk-using/android-sdk-register-user/index.html#one-step-registration"
       )
     },
-    settings = { SettingsSection(uiState, onEvent) },
+    settings = { SettingsSection(uiState, onEvent, onNavigateToQrCodeScanner) },
     result = uiState.result?.let { { RegistrationResult(uiState.result) } },
     action = {
       RegistrationButton(onEvent)
       CancellationButton(uiState.isRegistrationCancellationEnabled, onEvent)
     }
   )
+}
+
+@Composable
+private fun HandleNavigationResult(qrCodeScannerNavController: NavController, onEvent: (UiEvent) -> Unit) {
+  LaunchedEffect(Unit) {
+    qrCodeScannerNavController.getResult<String>(Constants.QR_CODE_RESULT_KEY)?.let {
+      if (it.isNotEmpty()) {
+        onEvent(UiEvent.UpdateOtpValue(it))
+      }
+    }
+  }
 }
 
 @Composable
@@ -102,7 +125,7 @@ private fun ListenForPinNavigationEvent(
 }
 
 @Composable
-private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
+private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit, onNavigateToQrCodeScanner: () -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
@@ -110,6 +133,7 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
     UserProfilesSection(uiState.userProfileIds)
     ScopesSection(uiState.isSdkInitialized, onEvent)
     StatelessRegistrationSection(uiState.isStatelessRegistration, onEvent)
+    OtpCodeSection(uiState.otp, onEvent, onNavigateToQrCodeScanner)
   }
 }
 
@@ -245,6 +269,39 @@ private fun StatelessRegistrationSection(isStatelessRegistration: Boolean, onEve
 }
 
 @Composable
+private fun OtpCodeSection(otp: String, onEvent: (UiEvent) -> Unit, onNavigateToQrCodeScanner: () -> Unit) {
+  ShowcaseCard {
+    Column {
+      Text(
+        text = stringResource(R.string.mobile_authentication_with_otp_code),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(bottom = Dimensions.mPadding)
+      )
+      ShowcaseTextField(
+        value = otp,
+        onValueChange = { onEvent(UiEvent.UpdateOtpValue(it)) },
+        label = {
+          Text(stringResource(R.string.mobile_authentication_with_otp_code))
+        },
+        trailingIcon = {
+          IconButton(
+            onClick = { onNavigateToQrCodeScanner() }
+          ) {
+            Icon(
+              imageVector = ImageVector.vectorResource(R.drawable.qr_code_scanner),
+              contentDescription = stringResource(R.string.qr_code_scanner_content_description)
+            )
+          }
+        },
+        tooltipContent = {
+          Text(stringResource(R.string.mobile_authentication_with_otp_code_tooltip))
+        }
+      )
+    }
+  }
+}
+
+@Composable
 private fun getUserProfilesText(userProfiles: List<String>): String {
   return if (userProfiles.isNotEmpty()) {
     userProfiles.separateItemsWithComa()
@@ -261,6 +318,7 @@ fun Preview() {
     onNavigateBack = {},
     onEvent = {},
     onNavigateToPinScreen = {},
+    onNavigateToQrCodeScanner = {},
     navigationEvents = emptyFlow(),
   )
 }

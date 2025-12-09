@@ -197,7 +197,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController, rootNavController) }
-    composable(Screens.OneStepRegistration.route) { OneStepRegistrationScreen(homeNavController, rootNavController) }
+    composable(Screens.OneStepRegistration.route) { OneStepRegistrationScreen(homeNavController, rootNavController, rootNavController) }
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
     composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }

@@ -53,6 +53,7 @@ class OneStepRegistrationViewModel @Inject constructor(
       is UiEvent.CancelRegistration -> cancelRegistration()
       is UiEvent.SetStatelessRegistration -> uiState = uiState.copy(isStatelessRegistration = event.isStateless)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
+      is UiEvent.UpdateOtpValue -> uiState = uiState.copy(otp = event.otp)
     }
   }
 
@@ -131,7 +132,8 @@ class OneStepRegistrationViewModel @Inject constructor(
     val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
     val userProfileIds: List<String> = emptyList(),
     val isRegistrationCancellationEnabled: Boolean = false,
-    val isStatelessRegistration: Boolean = false
+    val isStatelessRegistration: Boolean = false,
+    val otp: String = ""
   )
 
   sealed interface UiEvent {
@@ -139,6 +141,7 @@ class OneStepRegistrationViewModel @Inject constructor(
     data object CancelRegistration : UiEvent
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class SetStatelessRegistration(val isStateless: Boolean) : UiEvent
+    data class UpdateOtpValue(val otp: String) : UiEvent
   }
 
   sealed interface NavigationEvent {
