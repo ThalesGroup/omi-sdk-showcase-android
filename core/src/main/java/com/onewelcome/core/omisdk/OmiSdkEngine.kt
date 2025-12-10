@@ -10,6 +10,7 @@ import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BiometricAuthenticationHandler
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
@@ -28,8 +29,9 @@ class OmiSdkEngine @Inject constructor(
   private val biometricAuthenticationHandler: BiometricAuthenticationHandler,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
-  private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler
-) : OmiSdkFacade {
+  private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
+  private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler,
+  ) : OmiSdkFacade {
 
   override val oneginiClient
     get() = OneginiClient.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
@@ -54,6 +56,7 @@ class OmiSdkEngine @Inject constructor(
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH_BIOMETRIC -> setMobileAuthWithPushBiometricRequestHandler(mobileAuthWithBiometricRequestHandler)
       }
     }
   }
