@@ -57,7 +57,8 @@ fun BiometricAuthenticationScreen(
     navigationEvents = viewModel.navigationEvents,
     onEvent = { viewModel.onEvent(it) },
     onNavigateBack = { homeNavController.popBackStack() },
-    onNavigateToPinScreen = { pinNavController.navigate(Screens.PinAuthenticationInput.route) })
+    onNavigateToPinScreen = { pinNavController.navigate(Screens.PinAuthenticationInput.route) },
+  )
 }
 
 @Composable
