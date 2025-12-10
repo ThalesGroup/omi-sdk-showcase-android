@@ -126,7 +126,7 @@
 
   <!-- One-step registration -->
   <string name="one_step_registration">One-step registration</string>
-  <string name="one_step_registration_description">One-step registration is a flow that completes the registration process in a single step using script present on the backend.</string>
+  <string name="one_step_registration_description">One-step registration is a flow that completes the registration process in a single step using script present on the backend./n/n In this example we use OTP optionally scanned with QR code</string>
   <string name="identity_providers">Identity providers</string>
   <string name="registration_scopes">Registration scopes</string>
   <string name="cancel_registration">Cancel registration</string>

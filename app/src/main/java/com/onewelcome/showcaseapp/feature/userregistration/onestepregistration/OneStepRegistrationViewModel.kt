@@ -14,8 +14,8 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onewelcome.core.omisdk.actions.QrCodeRegistrationAction
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
-import com.onewelcome.core.omisdk.identityproviders.QrCodeIdentityProvider
 import com.onewelcome.core.usecase.GetCustomIdentityProvidersUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -36,7 +36,7 @@ class OneStepRegistrationViewModel @Inject constructor(
   private val getCustomIdentityProvidersUseCase: GetCustomIdentityProvidersUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val createPinRequestHandler: CreatePinRequestHandler,
-  private val qrCodeIdentityProvider: QrCodeIdentityProvider,
+  private val qrCodeRegistrationAction: QrCodeRegistrationAction,
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
@@ -125,11 +125,17 @@ class OneStepRegistrationViewModel @Inject constructor(
 
   private fun registerUser() {
     viewModelScope.launch {
-      uiState = uiState.copy(isRegistrationCancellationEnabled = true)
-      userRegistrationUseCase
-        .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
-        .onSuccess { handleSuccess(it) }
-        .onFailure { handleFailure(it) }
+      launch {
+        uiState = uiState.copy(isRegistrationCancellationEnabled = true)
+        userRegistrationUseCase
+          .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
+          .onSuccess { handleSuccess(it) }
+          .onFailure { handleFailure(it) }
+      }
+      launch {
+        val callback = qrCodeRegistrationAction.customRegistrationCallback?.await()
+        callback?.returnSuccess(uiState.otp)
+      }
     }
   }
 

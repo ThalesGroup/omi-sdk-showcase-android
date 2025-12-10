@@ -19,7 +19,7 @@ class GetCustomIdentityProvidersUseCase @Inject constructor(
     return suspendCancellableCoroutine { continuation ->
       runCatching {
         omiSdkFacade.oneginiClient.getUserClient().identityProviders
-          .filter { it.toString().contains(CUSTOM_IDENTITY_PROVIDER) }
+          .filter { it.toString().contains(API_IDENTITY_PROVIDER) }
           .toSet()
       }
         .onSuccess { continuation.resume(Ok(it)) }
@@ -28,6 +28,6 @@ class GetCustomIdentityProvidersUseCase @Inject constructor(
   }
 
   companion object {
-    private const val CUSTOM_IDENTITY_PROVIDER = "CustomIdentityProvider"
+    private const val API_IDENTITY_PROVIDER = "ApiIdentityProvider"
   }
 }

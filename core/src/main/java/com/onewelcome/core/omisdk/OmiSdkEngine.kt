@@ -15,6 +15,7 @@ import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.omisdk.identityproviders.QrCodeIdentityProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +32,7 @@ class OmiSdkEngine @Inject constructor(
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
   private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler,
+  private val qrCodeIdentityProvider: QrCodeIdentityProvider,
   ) : OmiSdkFacade {
 
   override val oneginiClient
@@ -45,6 +47,7 @@ class OmiSdkEngine @Inject constructor(
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }
         settings.deviceConfigCacheDuration?.let { setDeviceConfigCacheDurationSeconds(it) }
         setOptionalHandlers(settings)
+        addCustomIdentityProvider(qrCodeIdentityProvider)
       }.build()
   }
 
@@ -61,3 +64,4 @@ class OmiSdkEngine @Inject constructor(
     }
   }
 }
+//        .addCustomIdentityProvider(new QrCodeIdentityProvider(applicationContext))

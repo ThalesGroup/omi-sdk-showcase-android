@@ -99,5 +99,4 @@ class MobileAuthenticationWithOtpViewModel @Inject constructor(
     data object RejectAuthRequest : UiEvent
     data object AuthRequestHandled : UiEvent
   }
-
 }
