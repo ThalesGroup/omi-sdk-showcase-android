@@ -12,5 +12,6 @@ enum class HandlerType(@StringRes val title: Int) {
   MOBILE_AUTH_WITH_PUSH_PIN(R.string.handler_mobile_auth_with_push_and_pin),
   //  MOBILE_AUTH_WITH_PUSH_BIOMETRIC,
 //  MOBILE_AUTH_WITH_PUSH_CUSTOM,
-  MOBILE_AUTH_WITH_OTP(R.string.handler_mobile_auth_with_otp)
+  MOBILE_AUTH_WITH_OTP(R.string.handler_mobile_auth_with_otp),
+
 }

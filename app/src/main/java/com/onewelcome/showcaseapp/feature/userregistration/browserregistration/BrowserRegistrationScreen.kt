@@ -332,7 +332,9 @@ private fun getUserProfilesText(userProfiles: List<String>): String {
   }
 }
 
+/*
 @Preview(showBackground = true)
+*/
 @Composable
 fun Preview() {
   BrowserRegistrationScreenContent(

@@ -21,57 +21,67 @@ import com.onewelcome.showcaseapp.navigation.Screens
 
 @Composable
 fun UserAuthenticationScreen(
-  navController: NavController
+    navController: NavController
 ) {
-  UserAuthenticationScreenContent(
-    onNavigateBack = { navController.popBackStack() },
-    onNavigateDeeper = { navController.navigate(it) },
-  )
+    UserAuthenticationScreenContent(
+        onNavigateBack = { navController.popBackStack() },
+        onNavigateDeeper = { navController.navigate(it) },
+    )
 }
 
 @Composable
 private fun UserAuthenticationScreenContent(
-  onNavigateBack: () -> Unit,
-  onNavigateDeeper: (String) -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateDeeper: (String) -> Unit,
 ) {
-  Scaffold(
-    topBar = {
-      ShowcaseTopBar(stringResource(R.string.user_authentication)) { onNavigateBack.invoke() }
-    }) { innerPadding ->
-    Column(
-      modifier = Modifier
-        .padding(innerPadding)
-        .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
-      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
-    ) {
-      ShowcaseFeatureDescription(stringResource(R.string.user_authentication_description), Constants.DOCUMENTATION_USER_AUTHENTICATION)
-      Sections(onNavigateDeeper)
+    Scaffold(
+        topBar = {
+            ShowcaseTopBar(stringResource(R.string.user_authentication)) { onNavigateBack.invoke() }
+        }) { innerPadding ->
+        Column(
+            modifier = Modifier
+              .padding(innerPadding)
+              .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
+            verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+        ) {
+            ShowcaseFeatureDescription(
+                stringResource(R.string.user_authentication_description),
+                Constants.DOCUMENTATION_USER_AUTHENTICATION
+            )
+            Sections(onNavigateDeeper)
+        }
     }
-  }
 }
 
 @Composable
 private fun Sections(onNavigateToSection: (String) -> Unit) {
-  getSections().forEach { section ->
-    ShowcaseCardButton(section.title, section.navigation.route, onNavigateToSection)
-  }
+    getSections().forEach { section ->
+        ShowcaseCardButton(section.title, section.navigation.route, onNavigateToSection)
+    }
 }
 
 @Composable
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
-  return listOf(
-    SectionItem(stringResource(R.string.section_title_pin_authentication), Screens.PinAuthentication),
-    SectionItem(stringResource(R.string.section_title_biometric_authentication), Screens.BiometricAuthentication),
-    SectionItem(stringResource(R.string.section_title_authenticators), Screens.Authenticators)
-  )
+    return listOf(
+        SectionItem(
+            stringResource(R.string.section_title_pin_authentication),
+            Screens.PinAuthentication
+        ),
+        SectionItem(
+            stringResource(R.string.section_title_biometric_authentication),
+            Screens.BiometricAuthentication
+        ),
+        SectionItem(stringResource(R.string.section_title_implicit_authentication), Screens.ImplicitAuthentication),
+        SectionItem(stringResource(R.string.section_title_authenticators), Screens.Authenticators)
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-  UserAuthenticationScreenContent(
-    onNavigateBack = {},
-    onNavigateDeeper = {},
-  )
+    UserAuthenticationScreenContent(
+        onNavigateBack = {},
+        onNavigateDeeper = {},
+    )
 }
