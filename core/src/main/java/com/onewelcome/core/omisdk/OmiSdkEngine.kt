@@ -6,14 +6,17 @@ import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.entity.HandlerType
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
+import com.onewelcome.core.omisdk.entity.TwoStepIdentityProvider
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BiometricAuthenticationHandler
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.omisdk.handlers.TwoStepRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.TwoStepRegistrationRequestHandler
 import com.onewelcome.core.omisdk.entity.TwoStepIdentityProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,6 +33,7 @@ class OmiSdkEngine @Inject constructor(
   private val biometricAuthenticationHandler: BiometricAuthenticationHandler,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
+  private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler,
   private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler
 ) : OmiSdkFacade {
@@ -51,33 +55,19 @@ class OmiSdkEngine @Inject constructor(
 
   private fun OneginiClientBuilder.setOptionalHandlers(settings: OmiSdkInitializationSettings) {
     settings.handlers.forEach {
-        when (it) {
-            HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(
-                browserRegistrationRequestHandler
-            )
-
-            HandlerType.BIOMETRIC_AUTHENTICATION -> setBiometricAuthenticationRequestHandler(
-                biometricAuthenticationHandler
-            )
-
-            HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(
-                mobileAuthWithPushRequestHandler
-            )
-
-            HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(
-                mobileAuthWithOtpRequestHandler
-            )
-
-            HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(
-                mobileAuthWithPushPinRequestHandler
-            )
-
-            HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(
-                setOf(
-                    TwoStepIdentityProvider(twoStepRegistrationRequestHandler)
-                )
-            )
-        }
+      when (it) {
+        HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
+        HandlerType.BIOMETRIC_AUTHENTICATION -> setBiometricAuthenticationRequestHandler(biometricAuthenticationHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH_BIOMETRIC -> setMobileAuthWithPushBiometricRequestHandler(mobileAuthWithBiometricRequestHandler)
+          HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(
+              setOf(
+                  TwoStepIdentityProvider(twoStepRegistrationRequestHandler)
+              )
+          )
+      }
     }
   }
 }
