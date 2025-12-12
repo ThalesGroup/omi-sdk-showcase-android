@@ -4,62 +4,48 @@ import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegist
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TwoStepRegistrationRequestHandler @Inject constructor() : OneginiCustomTwoStepRegistrationAction {
+  private var registrationCallback: OneginiCustomRegistrationCallback? = null
+  private val _startTwoStepInputFlow = MutableSharedFlow<TwoStepInputData>(replay = 1)
+  val startTwoStepInputFlow: SharedFlow<TwoStepInputData> = _startTwoStepInputFlow.asSharedFlow()
 
-    private var registrationCallback: OneginiCustomRegistrationCallback? = null
+  override fun initRegistration(
+    callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?
+  ) {
+    // In the first step, we send initial data to the Token Server
+    // This could be any data required to initialize the registration
+    callback.returnSuccess("12345")
+  }
 
-    private val _startTwoStepInputFlow = MutableSharedFlow<TwoStepInputData>(replay = 1)
-    val startTwoStepInputFlow: SharedFlow<TwoStepInputData> = _startTwoStepInputFlow.asSharedFlow()
+  override fun finishRegistration(
+    callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?
+  ) {
+    registrationCallback = callback
+    // Emit event to navigate to input screen with challenge code
+    val challengeCode = customInfo?.data ?: "12345"
+    _startTwoStepInputFlow.tryEmit(TwoStepInputData(challengeCode))
+  }
 
-    private val _isRegistrationInProgress = MutableStateFlow(false)
-    val isRegistrationInProgress: StateFlow<Boolean> = _isRegistrationInProgress.asStateFlow()
+  fun submitResponseCode(responseCode: String) {
+    registrationCallback?.returnSuccess(responseCode)
+    cleanUp()
+  }
 
-    override fun initRegistration(
-        callback: OneginiCustomRegistrationCallback,
-        customInfo: CustomInfo?
-    ) {
-        _isRegistrationInProgress.value = true
-        // In the first step, we send initial data to the Token Server
-        // This could be any data required to initialize the registration
-        callback.returnSuccess("12345")
-    }
+  fun cancelRegistration() {
+    registrationCallback?.returnError(Exception("Registration canceled by user"))
+    cleanUp()
+  }
 
-    override fun finishRegistration(
-        callback: OneginiCustomRegistrationCallback,
-        customInfo: CustomInfo?
-    ) {
-        registrationCallback = callback
-        // Emit event to navigate to input screen with challenge code
-        val challengeCode = customInfo?.data ?: "12345"
-        _startTwoStepInputFlow.tryEmit(TwoStepInputData(challengeCode))
-    }
+  private fun cleanUp() {
+    registrationCallback = null
+    _startTwoStepInputFlow.resetReplayCache()
+  }
 
-    fun submitResponseCode(responseCode: String) {
-        registrationCallback?.returnSuccess(responseCode)
-        cleanUp()
-    }
-
-    fun cancelRegistration() {
-        registrationCallback?.returnError(Exception("Registration canceled by user"))
-        cleanUp()
-    }
-
-    fun isInProgress(): Boolean = _isRegistrationInProgress.value
-
-    private fun cleanUp() {
-        registrationCallback = null
-        _isRegistrationInProgress.value = false
-        _startTwoStepInputFlow.resetReplayCache()
-    }
-
-    data class TwoStepInputData(val challengeCode: String)
+  data class TwoStepInputData(val challengeCode: String)
 }
