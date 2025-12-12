@@ -12,7 +12,7 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-a-user-with-a-pin"
 
   const val DOCUMENTATION_IMPLICIT_AUTHENTICATION =
-    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-a-user-with-a-pin"
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-authenticating-users-implicitly/index.html"
 
   const val DOCUMENTATION_BIOMETRIC_AUTHENTICATION =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-user-with-biometrics"
