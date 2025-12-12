@@ -60,7 +60,7 @@ class OmiSdkEngine @Inject constructor(
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_BIOMETRIC -> setMobileAuthWithPushBiometricRequestHandler(mobileAuthWithBiometricRequestHandler)
-          HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(setOf(TwoStepIdentityProvider(twoStepRegistrationRequestHandler)))
+        HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(setOf(TwoStepIdentityProvider(twoStepRegistrationRequestHandler)))
       }
     }
   }

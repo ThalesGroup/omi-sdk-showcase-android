@@ -8,15 +8,15 @@ import javax.inject.Singleton
 
 @Singleton
 class TwoStepIdentityProvider @Inject constructor(
-    private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler
+  private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler
 ) : OneginiCustomIdentityProvider {
 
-    companion object {
-        const val ID = "New2step"
-    }
+  companion object {
+    const val ID = "New2step"
+  }
 
-    override val id: String
-        get() =  ID
-    override val registrationAction: OneginiCustomRegistrationAction
-        get() = twoStepRegistrationRequestHandler
+  override val id: String
+    get() = ID
+  override val registrationAction: OneginiCustomRegistrationAction
+    get() = twoStepRegistrationRequestHandler
 }
