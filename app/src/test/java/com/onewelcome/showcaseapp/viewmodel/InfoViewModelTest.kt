@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
+import com.onewelcome.core.usecase.GetImplicitlyAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsInStatelessSessionUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -52,6 +53,9 @@ class InfoViewModelTest {
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
 
   @Inject
+  lateinit var getImplicitlyAuthenticatedUserProfileUseCase: GetImplicitlyAuthenticatedUserProfileUseCase
+
+  @Inject
   lateinit var isInStatelessSessionUseCase: IsInStatelessSessionUseCase
 
   @Inject
@@ -86,6 +90,7 @@ class InfoViewModelTest {
       isSdkInitializedUseCase,
       getUserProfilesUseCase,
       getAuthenticatedUserProfileUseCase,
+      getImplicitlyAuthenticatedUserProfileUseCase,
       isInStatelessSessionUseCase,
       isUserEnrolledForMobileAuthUseCase,
       isUserEnrolledForMobileAuthWithPushUseCase,
