@@ -17,8 +17,6 @@ import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
 import com.onewelcome.core.omisdk.handlers.TwoStepRegistrationRequestHandler
-import com.onewelcome.core.omisdk.handlers.TwoStepRegistrationRequestHandler
-import com.onewelcome.core.omisdk.entity.TwoStepIdentityProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -62,11 +60,7 @@ class OmiSdkEngine @Inject constructor(
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_BIOMETRIC -> setMobileAuthWithPushBiometricRequestHandler(mobileAuthWithBiometricRequestHandler)
-          HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(
-              setOf(
-                  TwoStepIdentityProvider(twoStepRegistrationRequestHandler)
-              )
-          )
+          HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(setOf(TwoStepIdentityProvider(twoStepRegistrationRequestHandler)))
       }
     }
   }
