@@ -14,31 +14,31 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 
 class ImplicitAuthenticationUseCase @Inject constructor(
-    private val omiSdkFacade: OmiSdkFacade,
+  private val omiSdkFacade: OmiSdkFacade,
 ) {
-    suspend fun execute(
-        userProfile: UserProfile,
-        scopes: Array<String?>?,
-    ): Result<UserProfile, Throwable> {
-        return suspendCancellableCoroutine { continuation ->
-            runCatching {
-                omiSdkFacade.oneginiClient.getUserClient().authenticateUserImplicitly(
-                    userProfile = userProfile,
-                    scopes = scopes,
-                    implicitAuthenticationHandler = object : OneginiImplicitAuthenticationHandler {
-                        override fun onSuccess(
-                            userProfile: UserProfile,
+  suspend fun execute(
+    userProfile: UserProfile,
+    scopes: Array<String?>?,
+  ): Result<UserProfile, Throwable> {
+    return suspendCancellableCoroutine { continuation ->
+      runCatching {
+        omiSdkFacade.oneginiClient.getUserClient().authenticateUserImplicitly(
+          userProfile = userProfile,
+          scopes = scopes,
+          implicitAuthenticationHandler = object : OneginiImplicitAuthenticationHandler {
+            override fun onSuccess(
+              userProfile: UserProfile,
 
-                            ) {
-                            continuation.resume(Ok(userProfile))
-                        }
+              ) {
+              continuation.resume(Ok(userProfile))
+            }
 
-                        override fun onError(error: OneginiImplicitTokenRequestError) {
-                            continuation.resume(Err(error))
-                        }
-                    }
-                )
-            }.onFailure { continuation.resume(Err(it)) }
-        }
+            override fun onError(error: OneginiImplicitTokenRequestError) {
+              continuation.resume(Err(error))
+            }
+          }
+        )
+      }.onFailure { continuation.resume(Err(it)) }
     }
+  }
 }

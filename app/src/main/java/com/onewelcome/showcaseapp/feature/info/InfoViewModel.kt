@@ -14,6 +14,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.facade.PermissionsFacade
 import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetAuthenticatorsUseCase
+import com.onewelcome.core.usecase.GetImplicitlyAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.IsInStatelessSessionUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
@@ -28,6 +29,7 @@ class InfoViewModel @Inject constructor(
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val getUserProfilesUseCase: GetUserProfilesUseCase,
   private val getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase,
+  private val getImplicitlyAuthenticatedUserProfileUseCase: GetImplicitlyAuthenticatedUserProfileUseCase,
   private val isInStatelessSessionUseCase: IsInStatelessSessionUseCase,
   private val isUserEnrolledForMobileAuthUseCase: IsUserEnrolledForMobileAuthUseCase,
   private val isUserEnrolledForMobileAuthWithPushUseCase: IsUserEnrolledForMobileAuthWithPushUseCase,
@@ -41,6 +43,7 @@ class InfoViewModel @Inject constructor(
   fun updateData() {
     updateIsSdkInitialized()
     updateAuthenticatedUserProfile()
+    updateImplicitlyAuthenticatedUserProfile()
     updateStatelessSessionStatus()
     updatePostNotificationPermissionStatus()
     viewModelScope.launch {
@@ -60,6 +63,12 @@ class InfoViewModel @Inject constructor(
     getAuthenticatedUserProfileUseCase.execute()
       .onSuccess { uiState = uiState.copy(authenticatedUserProfileId = it?.profileId ?: "") }
       .onFailure { uiState = uiState.copy(authenticatedUserProfileId = "") }
+  }
+
+  private fun updateImplicitlyAuthenticatedUserProfile() {
+    getImplicitlyAuthenticatedUserProfileUseCase.execute()
+      .onSuccess { uiState = uiState.copy(implicitlyAuthenticatedUserProfileId = it?.profileId ?: "") }
+      .onFailure { uiState = uiState.copy(implicitlyAuthenticatedUserProfileId = "") }
   }
 
   private fun updateStatelessSessionStatus() {
@@ -108,6 +117,7 @@ class InfoViewModel @Inject constructor(
     val isSdkInitialized: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val authenticatedUserProfileId: String = "",
+    val implicitlyAuthenticatedUserProfileId: String = "",
     val authenticatorsState: List<AuthenticatorsState> = emptyList(),
     val isInStatelessSession: Boolean = false,
     val mobileAuthenticationEnrollmentState: List<MobileAuthEnrollmentState> = emptyList(),

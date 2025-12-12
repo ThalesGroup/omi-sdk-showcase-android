@@ -7,7 +7,7 @@ import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import javax.inject.Inject
 
 class GetImplicitlyAuthenticatedUserProfileUseCase @Inject constructor(private val omiSdkFacade: OmiSdkFacade) {
-    fun execute(): Result<UserProfile?, Throwable> {
-        return runCatching { omiSdkFacade.oneginiClient.getUserClient().implicitlyAuthenticatedUserProfile }
-    }
+  fun execute(): Result<UserProfile?, Throwable> {
+    return runCatching { omiSdkFacade.oneginiClient.getUserClient().implicitlyAuthenticatedUserProfile }
+  }
 }

@@ -256,9 +256,7 @@ private fun getBiometricPromptAuthenticationCallback(onEvent: (UiEvent) -> Unit)
 }
 
 @Composable
-/*
 @Preview(showBackground = true)
-*/
 private fun Preview() {
   BiometricAuthenticationContent(
     uiState = State(),

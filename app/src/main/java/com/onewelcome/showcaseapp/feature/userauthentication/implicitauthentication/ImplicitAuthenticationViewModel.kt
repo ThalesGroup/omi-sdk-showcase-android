@@ -21,93 +21,88 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ImplicitAuthenticationViewModel @Inject() constructor(
-    private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
-    private val getUserProfilesUseCase: GetUserProfilesUseCase,
-    private val implicitAuthenticationUseCase: ImplicitAuthenticationUseCase,
-    private val getImplicitlyAuthenticatedUserProfileUseCase: GetImplicitlyAuthenticatedUserProfileUseCase
+  private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
+  private val getUserProfilesUseCase: GetUserProfilesUseCase,
+  private val implicitAuthenticationUseCase: ImplicitAuthenticationUseCase,
+  private val getImplicitlyAuthenticatedUserProfileUseCase: GetImplicitlyAuthenticatedUserProfileUseCase
 ) : ViewModel() {
-    var uiState by mutableStateOf(State())
-        private set
+  var uiState by mutableStateOf(State())
+    private set
 
+  init {
+    loadData()
+  }
 
-
-    fun onEvent(event: UiEvent) {
-        when (event) {
-            is UiEvent.StartImplicitAuthentication -> startImplicitAuthentication()
-            is UiEvent.UpdateSelectedUserProfile -> updateSelectedUserProfile(event)
-            is UiEvent.LoadData -> loadData()
-            is UiEvent.UpdateSelectedScopes ->  uiState = uiState.copy(selectedScopes = event.scopes)
-        }
+  fun onEvent(event: UiEvent) {
+    when (event) {
+      is UiEvent.StartImplicitAuthentication -> startImplicitAuthentication()
+      is UiEvent.UpdateSelectedUserProfile -> updateSelectedUserProfile(event)
+      is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
     }
+  }
 
-    private fun updateSelectedUserProfile(event: UiEvent.UpdateSelectedUserProfile) {
-        uiState = uiState.copy(selectedUserProfile = event.userProfile)
+  private fun updateSelectedUserProfile(event: UiEvent.UpdateSelectedUserProfile) {
+    uiState = uiState.copy(selectedUserProfile = event.userProfile)
+  }
+
+  private fun loadData() {
+    updateIsSdkInitialized()
+    updateAuthenticatedProfile()
+    viewModelScope.launch {
+      updateUserProfiles()
+      updateAuthenticateButton()
     }
+  }
 
-    private fun loadData() {
-        updateIsSdkInitialized()
-        updateAuthenticatedProfile()
-        viewModelScope.launch {
-            updateUserProfiles()
-            updateAuthenticateButton()
-        }
+  private fun updateAuthenticatedProfile() {
+    getImplicitlyAuthenticatedUserProfileUseCase.execute()
+      .onSuccess { uiState = uiState.copy(implicitlyAuthenticatedUserProfile = it) }
+      .onFailure { uiState = uiState.copy(implicitlyAuthenticatedUserProfile = null) }
+  }
+
+  private fun updateIsSdkInitialized() {
+    isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
+  }
+
+  private fun updateAuthenticateButton() {
+    uiState = uiState.copy(isAuthenticateButtonEnabled = uiState.isSdkInitialized && uiState.selectedUserProfile != null)
+  }
+
+  private suspend fun updateUserProfiles() {
+    getUserProfilesUseCase.execute()
+      .onSuccess { uiState = uiState.copy(userProfiles = it, selectedUserProfile = it.firstOrNull()) }
+      .onFailure { uiState = uiState.copy(userProfiles = emptySet()) }
+  }
+
+  private fun startImplicitAuthentication() {
+    authenticateUser()
+  }
+
+  private fun authenticateUser() {
+    uiState.selectedUserProfile?.let { selectedUserProfile ->
+      viewModelScope.launch {
+        implicitAuthenticationUseCase.execute(selectedUserProfile, uiState.selectedScopes.toTypedArray())
+          .onSuccess { uiState = uiState.copy(implicitlyAuthenticatedUserProfile = it) }
+          .also { uiState = uiState.copy(result = it) }
+      }
+    } ?: run {
+      uiState = uiState.copy(result = Err(IllegalArgumentException("User profile not selected")))
     }
+  }
 
-    private fun updateAuthenticatedProfile() {
-        getImplicitlyAuthenticatedUserProfileUseCase.execute()
-            .onSuccess { uiState = uiState.copy(authenticatedUserProfile = it) }
-            .onFailure { uiState = uiState.copy(authenticatedUserProfile = null) }
-    }
+  data class State(
+    val result: Result<UserProfile, Throwable>? = null,
+    val isSdkInitialized: Boolean = false,
+    val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
+    val userProfiles: Set<UserProfile> = emptySet(),
+    val selectedUserProfile: UserProfile? = null,
+    val isAuthenticateButtonEnabled: Boolean = false,
+    val implicitlyAuthenticatedUserProfile: UserProfile? = null,
+  )
 
-    private fun updateIsSdkInitialized() {
-        isSdkInitializedUseCase.execute().let { uiState = uiState.copy(isSdkInitialized = it) }
-    }
-
-    private fun updateAuthenticateButton() {
-        uiState = uiState.copy(isAuthenticateButtonEnabled = uiState.isSdkInitialized && uiState.selectedUserProfile != null)
-    }
-
-    private suspend fun updateUserProfiles() {
-        getUserProfilesUseCase.execute()
-            .onSuccess { uiState = uiState.copy(userProfiles = it, selectedUserProfile = it.firstOrNull()) }
-            .onFailure { uiState = uiState.copy(userProfiles = emptySet()) }
-    }
-
-    private fun startImplicitAuthentication() {
-        authenticateUser()
-    }
-
-    private fun authenticateUser() {
-        uiState.selectedUserProfile?.let { selectedUserProfile ->
-            viewModelScope.launch {
-                implicitAuthenticationUseCase.execute(selectedUserProfile, uiState.selectedScopes.toTypedArray())
-                    .onSuccess { uiState = uiState.copy(authenticatedUserProfile = it) }
-                    .also { uiState=uiState.copy(result =it) }
-            }
-        } ?: run {
-            uiState = uiState.copy(result = Err(IllegalArgumentException("User profile not selected")))
-        }
-    }
-
-
-
-    data class State(
-        val result: Result<UserProfile, Throwable>? = null,
-        val isSdkInitialized: Boolean = false,
-        val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
-        val userProfiles: Set<UserProfile> = emptySet(),
-        val selectedUserProfile: UserProfile? = null,
-        val isAuthenticateButtonEnabled: Boolean = false,
-        val authenticatedUserProfile: UserProfile? = null,
-    )
-
-    sealed interface UiEvent {
-        data object StartImplicitAuthentication : UiEvent
-        data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
-        data object LoadData : UiEvent
-        data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
-
-    }
-
-
+  sealed interface UiEvent {
+    data object StartImplicitAuthentication : UiEvent
+    data class UpdateSelectedUserProfile(val userProfile: UserProfile) : UiEvent
+    data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
+  }
 }
