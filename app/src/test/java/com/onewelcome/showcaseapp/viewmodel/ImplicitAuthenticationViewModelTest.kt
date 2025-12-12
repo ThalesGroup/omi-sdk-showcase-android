@@ -14,8 +14,8 @@ import com.onewelcome.core.util.TestConstants
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
+import com.onewelcome.showcaseapp.feature.sdkreset.SdkResetViewModel
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel
-import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel.UiEvent.LoadData
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel.UiEvent.StartImplicitAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel.UiEvent.UpdateSelectedUserProfile
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -37,8 +37,6 @@ import javax.inject.Inject
 @Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
 class ImplicitAuthenticationViewModelTest {
-
-
   @get:Rule
   val hiltRule = HiltAndroidRule(this)
 
@@ -51,25 +49,17 @@ class ImplicitAuthenticationViewModelTest {
   @Inject
   lateinit var isSdkInitializedUseCase: IsSdkInitializedUseCase
 
-
   @Inject
   lateinit var implicitAuthenticationUseCase: ImplicitAuthenticationUseCase
 
   @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
 
-
   @Inject
   lateinit var getImplicitlyAuthenticatedUserProfileUseCase: GetImplicitlyAuthenticatedUserProfileUseCase
-
-
   private val userClientMock: UserClient = mock()
-
-
   private val mockOneginiImplicitTokenRequestError: OneginiImplicitTokenRequestError = mock()
-
   lateinit var viewModel: ImplicitAuthenticationViewModel
-
 
   @Before
   fun setup() {
@@ -86,8 +76,6 @@ class ImplicitAuthenticationViewModelTest {
   fun `Given sdk is not initialized, When LoadData event is sent, Then default state should be returned`() {
     val expectedState = viewModel.uiState.copy(null, false, emptyList(), emptySet(), null, false)
 
-    viewModel.onEvent(LoadData)
-
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
@@ -95,11 +83,9 @@ class ImplicitAuthenticationViewModelTest {
   fun `Given sdk is initialized, When LoadData event is sent, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true)
     mockSdkInitialized()
-
-    viewModel.onEvent(LoadData)
+    initializeViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
-
   }
 
   @Test
@@ -113,8 +99,7 @@ class ImplicitAuthenticationViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
-
-    viewModel.onEvent(LoadData)
+    initializeViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -126,14 +111,13 @@ class ImplicitAuthenticationViewModelTest {
       userProfiles = TEST_USER_PROFILES,
       selectedUserProfile = TEST_USER_PROFILES.first(),
       isAuthenticateButtonEnabled = true,
-      authenticatedUserProfile = TEST_USER_PROFILE_1
+      implicitlyAuthenticatedUserProfile = TEST_USER_PROFILES.first()
     )
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
     mockImplicitlyAuthenticatedProfile()
-
-    viewModel.onEvent(LoadData)
+    initializeViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -146,15 +130,15 @@ class ImplicitAuthenticationViewModelTest {
       userProfiles = TEST_USER_PROFILES,
       selectedUserProfile = TEST_USER_PROFILES.first(),
       isAuthenticateButtonEnabled = true,
+      implicitlyAuthenticatedUserProfile = TEST_USER_PROFILES.first()
     )
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
     mockSuccessfulImplicitAuthentication()
+    initializeViewModel()
 
-    viewModel.onEvent(LoadData)
     viewModel.onEvent(StartImplicitAuthentication)
-
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
@@ -171,22 +155,27 @@ class ImplicitAuthenticationViewModelTest {
     mockUserClient()
     mockUserProfiles()
     mockUnsuccessfulImplicitAuthentication()
+    initializeViewModel()
 
-    viewModel.onEvent(LoadData)
     viewModel.onEvent(StartImplicitAuthentication)
-
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
   fun `When update selected user profile event is sent, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(selectedUserProfile = TEST_USER_PROFILE_1)
-
     viewModel.onEvent(UpdateSelectedUserProfile(TEST_USER_PROFILE_1))
-
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
+  private fun initializeViewModel() {
+    viewModel = ImplicitAuthenticationViewModel(
+      isSdkInitializedUseCase,
+      getUserProfilesUseCase,
+      implicitAuthenticationUseCase,
+      getImplicitlyAuthenticatedUserProfileUseCase
+    )
+  }
 
   private fun mockSdkInitialized() {
     omiSdkEngineFake.initialize(TestConstants.TEST_DEFAULT_SDK_INITIALIZATION_SETTINGS)

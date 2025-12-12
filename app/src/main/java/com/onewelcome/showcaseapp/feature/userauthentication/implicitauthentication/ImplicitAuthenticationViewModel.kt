@@ -93,7 +93,7 @@ class ImplicitAuthenticationViewModel @Inject() constructor(
   data class State(
     val result: Result<UserProfile, Throwable>? = null,
     val isSdkInitialized: Boolean = false,
-    val selectedScopes: List<String> = Constants.DEFAULT_SCOPES,
+    val selectedScopes: List<String> = emptyList(),
     val userProfiles: Set<UserProfile> = emptySet(),
     val selectedUserProfile: UserProfile? = null,
     val isAuthenticateButtonEnabled: Boolean = false,
