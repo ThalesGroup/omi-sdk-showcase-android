@@ -44,10 +44,7 @@ private fun UserAuthenticationScreenContent(
         .padding(start = Dimensions.mPadding, end = Dimensions.mPadding),
       verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
-      ShowcaseFeatureDescription(
-        stringResource(R.string.user_authentication_description),
-        Constants.DOCUMENTATION_USER_AUTHENTICATION
-      )
+      ShowcaseFeatureDescription(stringResource(R.string.user_authentication_description), Constants.DOCUMENTATION_USER_AUTHENTICATION)
       Sections(onNavigateDeeper)
     }
   }

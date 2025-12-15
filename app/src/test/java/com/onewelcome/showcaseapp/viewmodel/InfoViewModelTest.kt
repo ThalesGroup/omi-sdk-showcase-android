@@ -101,7 +101,7 @@ class InfoViewModelTest {
 
   @Test
   fun `Given sdk is not initialized, When viewmodel is initialized, Then state should be updated`() {
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = emptyList(), authenticatedUserProfileId = "")
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = false, userProfileIds = emptyList(), authenticatedUserProfileId = "", implicitlyAuthenticatedUserProfileId = "")
 
     viewModel.updateData()
 
@@ -111,7 +111,7 @@ class InfoViewModelTest {
   @Test
   fun `Given sdk is initialized and there are no user profiles, When viewmodel is initialized, Then state should be updated`() {
     mockSdkInitialized()
-    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "")
+    val expectedState = viewModel.uiState.copy(isSdkInitialized = true, userProfileIds = emptyList(), authenticatedUserProfileId = "", implicitlyAuthenticatedUserProfileId = "")
 
     viewModel.updateData()
 
@@ -132,11 +132,12 @@ class InfoViewModelTest {
         isSdkInitialized = true,
         userProfileIds = TEST_USER_PROFILES_IDS,
         authenticatedUserProfileId = "",
+        implicitlyAuthenticatedUserProfileId = "",
         authenticatorsState = listOf(
           InfoViewModel.AuthenticatorsState(TEST_USER_PROFILE_1.profileId, expectedAuthenticators),
           InfoViewModel.AuthenticatorsState(TEST_USER_PROFILE_2.profileId, expectedAuthenticators),
         ),
-        mobileAuthenticationEnrollmentState = TEST_USER_PROFILES_IDS.map { InfoViewModel.MobileAuthEnrollmentState(it, true, true) }
+        mobileAuthenticationEnrollmentState = TEST_USER_PROFILES_IDS.map { InfoViewModel.MobileAuthEnrollmentState(userProfileId = it,isUserEnrolledForMobileAuth = true,isUserEnrolledForMobileAuthWithPush = true) }
       )
 
     viewModel.updateData()
@@ -160,11 +161,13 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockAuthenticatedUserProfileId()
+    mockImplicitlyAuthenticatedUserProfileId()
 
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfileIds = emptyList(),
-      authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId
+      authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId,
+      implicitlyAuthenticatedUserProfileId = TEST_USER_PROFILE_2.profileId
     )
 
     viewModel.updateData()
@@ -252,6 +255,7 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockNoAuthenticatedUserProfile()
+    mockNoImplicitlyAuthenticatedUserProfile()
     mockAccessToken()
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
@@ -268,10 +272,12 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockAuthenticatedUserProfileId()
+    mockImplicitlyAuthenticatedUserProfileId()
     mockAccessToken()
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       authenticatedUserProfileId = TEST_USER_PROFILE_1.profileId,
+      implicitlyAuthenticatedUserProfileId =TEST_USER_PROFILE_2.profileId,
       isInStatelessSession = false
     )
 
@@ -285,10 +291,12 @@ class InfoViewModelTest {
     mockSdkInitialized()
     mockUserClient()
     mockNoAuthenticatedUserProfile()
+    mockNoImplicitlyAuthenticatedUserProfile()
     mockNoAccessToken()
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       authenticatedUserProfileId = "",
+      implicitlyAuthenticatedUserProfileId = "",
       isInStatelessSession = false
     )
 
@@ -318,6 +326,10 @@ class InfoViewModelTest {
     whenever(userClientMock.authenticatedUserProfile).thenReturn(TEST_USER_PROFILE_1)
   }
 
+  private fun mockImplicitlyAuthenticatedUserProfileId() {
+    whenever(userClientMock.implicitlyAuthenticatedUserProfile).thenReturn(TEST_USER_PROFILE_2)
+  }
+
   private fun mockMobileAuthEnrollmentStatus() {
     whenever(userClientMock.isUserEnrolledForMobileAuth(any())).thenReturn(true)
   }
@@ -338,6 +350,9 @@ class InfoViewModelTest {
     whenever(userClientMock.authenticatedUserProfile).thenReturn(null)
   }
 
+  private fun mockNoImplicitlyAuthenticatedUserProfile() {
+    whenever(userClientMock.implicitlyAuthenticatedUserProfile).thenReturn(null)
+  }
   private fun mockAccessToken() {
     whenever(userClientMock.accessToken).thenReturn("access_token")
   }
