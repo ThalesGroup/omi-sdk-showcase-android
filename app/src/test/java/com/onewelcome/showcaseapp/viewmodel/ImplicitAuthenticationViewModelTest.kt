@@ -11,13 +11,14 @@ import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.ImplicitAuthenticationUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.util.TestConstants
+import com.onewelcome.core.util.TestConstants.TEST_SELECTED_SCOPES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILES
 import com.onewelcome.core.util.TestConstants.TEST_USER_PROFILE_1
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
-import com.onewelcome.showcaseapp.feature.sdkreset.SdkResetViewModel
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel.UiEvent.StartImplicitAuthentication
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel.UiEvent.UpdateSelectedUserProfile
+import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationViewModel.UiEvent.UpdateSelectedScopes
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -73,39 +74,50 @@ class ImplicitAuthenticationViewModelTest {
   }
 
   @Test
-  fun `Given sdk is not initialized, When LoadData event is sent, Then default state should be returned`() {
-    val expectedState = viewModel.uiState.copy(null, false, emptyList(), emptySet(), null, false)
+  fun `Given sdk is not initialized, Then default state should be returned`() {
+    val expectedState = viewModel.uiState.copy(
+      result = null,
+      isSdkInitialized = false,
+      selectedScopes = emptyList(),
+      userProfiles = emptySet(),
+      selectedUserProfile = null,
+      isAuthenticateButtonEnabled = false
+    )
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
-  fun `Given sdk is initialized, When LoadData event is sent, Then data should be updated`() {
+  fun `Given sdk is initialized, When ViewModel is initialized, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(isSdkInitialized = true)
+
     mockSdkInitialized()
+
     initializeViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
-  fun `Given sdk is initialized and user profiles are present, When LoadData event is sent, Then data should be updated`() {
+  fun `Given sdk is initialized and user profiles are present, When ViewModel is initialized, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfiles = TEST_USER_PROFILES,
       selectedUserProfile = TEST_USER_PROFILES.first(),
       isAuthenticateButtonEnabled = true
     )
+
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
+
     initializeViewModel()
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
-  fun `Given sdk is initialized, registered and authenticated user profiles are present, When LoadData event is sent, Then data should be updated`() {
+  fun `Given sdk is initialized, registered and authenticated user profiles are present, When ViewModel is initialized, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(
       isSdkInitialized = true,
       userProfiles = TEST_USER_PROFILES,
@@ -113,11 +125,22 @@ class ImplicitAuthenticationViewModelTest {
       isAuthenticateButtonEnabled = true,
       implicitlyAuthenticatedUserProfile = TEST_USER_PROFILES.first()
     )
+
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
     mockImplicitlyAuthenticatedProfile()
+
     initializeViewModel()
+
+    assertThat(viewModel.uiState).isEqualTo(expectedState)
+  }
+
+  @Test
+  fun `When update selected scopes event is sent, Then updated state should be returned`() {
+    val expectedState = viewModel.uiState.copy(selectedScopes = TEST_SELECTED_SCOPES)
+
+    viewModel.onEvent(UpdateSelectedScopes(TEST_SELECTED_SCOPES))
 
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
@@ -132,13 +155,16 @@ class ImplicitAuthenticationViewModelTest {
       isAuthenticateButtonEnabled = true,
       implicitlyAuthenticatedUserProfile = TEST_USER_PROFILES.first()
     )
+
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
     mockSuccessfulImplicitAuthentication()
+
     initializeViewModel()
 
     viewModel.onEvent(StartImplicitAuthentication)
+
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
@@ -151,20 +177,25 @@ class ImplicitAuthenticationViewModelTest {
       selectedUserProfile = TEST_USER_PROFILES.first(),
       isAuthenticateButtonEnabled = true,
     )
+
     mockSdkInitialized()
     mockUserClient()
     mockUserProfiles()
     mockUnsuccessfulImplicitAuthentication()
+
     initializeViewModel()
 
     viewModel.onEvent(StartImplicitAuthentication)
+
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 
   @Test
   fun `When update selected user profile event is sent, Then data should be updated`() {
     val expectedState = viewModel.uiState.copy(selectedUserProfile = TEST_USER_PROFILE_1)
+
     viewModel.onEvent(UpdateSelectedUserProfile(TEST_USER_PROFILE_1))
+
     assertThat(viewModel.uiState).isEqualTo(expectedState)
   }
 

@@ -64,14 +64,8 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
   return listOf(
-    SectionItem(
-      stringResource(R.string.section_title_pin_authentication),
-      Screens.PinAuthentication
-    ),
-    SectionItem(
-      stringResource(R.string.section_title_biometric_authentication),
-      Screens.BiometricAuthentication
-    ),
+    SectionItem(stringResource(R.string.section_title_pin_authentication), Screens.PinAuthentication),
+    SectionItem(stringResource(R.string.section_title_biometric_authentication), Screens.BiometricAuthentication),
     SectionItem(stringResource(R.string.section_title_implicit_authentication), Screens.ImplicitAuthentication),
     SectionItem(stringResource(R.string.section_title_authenticators), Screens.Authenticators)
   )
