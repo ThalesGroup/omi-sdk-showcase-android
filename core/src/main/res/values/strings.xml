@@ -14,6 +14,7 @@
   <string name="details">Details</string>
   <string name="register">Register</string>
   <string name="cancel">Cancel</string>
+  <string name="proceed">Proceed</string>
   <string name="submit">Submit</string>
   <string name="accept">Accept</string>
   <string name="reject">Reject</string>
@@ -263,6 +264,8 @@
   <string name="transaction_waiting_for_confirmation">New pending transaction</string>
 
   <!-- QR Code Scanner -->
+  <string name="qr_code_scanning">QR Code Scanning</string>
+  <string name="qr_code_scanning_description">For testing purposes, we utilize QR code registration as a one-step registration flow.</string>
   <string name="camera_permission_dialog_title">Camera permission</string>
   <string name="camera_permission_dialog_description">To change the camera permission you need to navigate to application settings.</string>
   <string name="qr_code_scanner_content_description">Open QR code scanner</string>

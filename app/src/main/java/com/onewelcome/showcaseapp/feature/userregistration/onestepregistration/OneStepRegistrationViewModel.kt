@@ -60,7 +60,6 @@ class OneStepRegistrationViewModel @Inject constructor(
       is UiEvent.CancelRegistration -> cancelRegistration()
       is UiEvent.SetStatelessRegistration -> uiState = uiState.copy(isStatelessRegistration = event.isStateless)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
-      is UiEvent.UpdateOtpValue -> uiState = uiState.copy(otp = event.otp)
       is UiEvent.UpdateSelectedIdentityProvider -> uiState = uiState.copy(selectedIdentityProvider = event.identityProvider)
       is UiEvent.UseDefaultIdentityProvider -> uiState = uiState.copy(shouldUseDefaultIdentityProvider = event.isChecked)
     }
@@ -125,17 +124,19 @@ class OneStepRegistrationViewModel @Inject constructor(
 
   private fun registerUser() {
     viewModelScope.launch {
-      launch {
-        uiState = uiState.copy(isRegistrationCancellationEnabled = true)
-        userRegistrationUseCase
-          .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
-          .onSuccess { handleSuccess(it) }
-          .onFailure { handleFailure(it) }
-      }
-      launch {
-        val callback = qrCodeRegistrationAction.customRegistrationCallback?.await()
-        callback?.returnSuccess(uiState.otp)
-      }
+      uiState = uiState.copy(isRegistrationCancellationEnabled = true)
+      userRegistrationUseCase
+        .register(identityProvider = getIdentityProvider(), scopes = uiState.selectedScopes)
+        .onSuccess { handleSuccess(it) }
+        .onFailure { handleFailure(it) }
+    }
+    listenForQrCodeNavigationEvent()
+  }
+
+  private fun listenForQrCodeNavigationEvent() {
+    viewModelScope.launch {
+      qrCodeRegistrationAction.customRegistrationCallback?.await()
+      _navigationEvents.send(NavigationEvent.ToOneStepRegistrationOtpScreen)
     }
   }
 
@@ -166,8 +167,7 @@ class OneStepRegistrationViewModel @Inject constructor(
     val shouldUseDefaultIdentityProvider: Boolean = false,
     val userProfileIds: List<String> = emptyList(),
     val isRegistrationCancellationEnabled: Boolean = false,
-    val isStatelessRegistration: Boolean = false,
-    val otp: String = ""
+    val isStatelessRegistration: Boolean = false
   )
 
   sealed interface UiEvent {
@@ -177,10 +177,10 @@ class OneStepRegistrationViewModel @Inject constructor(
     data class UpdateSelectedScopes(val scopes: List<String>) : UiEvent
     data class UseDefaultIdentityProvider(val isChecked: Boolean) : UiEvent
     data class SetStatelessRegistration(val isStateless: Boolean) : UiEvent
-    data class UpdateOtpValue(val otp: String) : UiEvent
   }
 
   sealed interface NavigationEvent {
     data object ToPinScreen : NavigationEvent
+    data object ToOneStepRegistrationOtpScreen : NavigationEvent
   }
 }

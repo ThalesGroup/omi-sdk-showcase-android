@@ -60,16 +60,32 @@ fun OneStepRegistrationScreen(
   rootNavController: NavController,
   viewModel: OneStepRegistrationViewModel = hiltViewModel()
 ) {
-  HandleNavigationResult(rootNavController, viewModel::onEvent)
+  ListenForQrCodeNavigationEvent(viewModel.navigationEvents, navController)
 
   OneStepRegistrationScreenContent(
     uiState = viewModel.uiState,
     onNavigateBack = { navController.popBackStack() },
     onEvent = { viewModel.onEvent(it) },
     onNavigateToPinScreen = { pinNavController.navigate(Screens.CreatePinInput.route) },
-    onNavigateToQrCodeScanner = { rootNavController.navigate(Screens.QrCodeScanner.route) },
     navigationEvents = viewModel.navigationEvents
   )
+}
+
+@Composable
+private fun ListenForQrCodeNavigationEvent(
+  navigationEvents: Flow<NavigationEvent>,
+  navController: NavController
+) {
+  LaunchedEffect(Unit) {
+    navigationEvents.collect { event ->
+      when (event) {
+        is NavigationEvent.ToOneStepRegistrationOtpScreen -> {
+          navController.navigate(Screens.OneStepRegistrationOtpScreen.route)
+        }
+        else -> {}
+      }
+    }
+  }
 }
 
 @Composable
@@ -78,7 +94,6 @@ private fun OneStepRegistrationScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (UiEvent) -> Unit,
   onNavigateToPinScreen: () -> Unit,
-  onNavigateToQrCodeScanner: () -> Unit,
   navigationEvents: Flow<NavigationEvent>,
 ) {
   ListenForPinNavigationEvent(navigationEvents, onNavigateToPinScreen)
@@ -91,24 +106,13 @@ private fun OneStepRegistrationScreenContent(
         link = "https://thalesdocs.com/oip/omi-sdk/android-sdk/android-sdk-using/android-sdk-register-user/index.html#one-step-registration"
       )
     },
-    settings = { SettingsSection(uiState, onEvent, onNavigateToQrCodeScanner) },
+    settings = { SettingsSection(uiState, onEvent) },
     result = uiState.result?.let { { RegistrationResult(uiState.result) } },
     action = {
       RegistrationButton(onEvent)
       CancellationButton(uiState.isRegistrationCancellationEnabled, onEvent)
     }
   )
-}
-
-@Composable
-private fun HandleNavigationResult(qrCodeScannerNavController: NavController, onEvent: (UiEvent) -> Unit) {
-  LaunchedEffect(Unit) {
-    qrCodeScannerNavController.getResult<String>(Constants.QR_CODE_RESULT_KEY)?.let {
-      if (it.isNotEmpty()) {
-        onEvent(UiEvent.UpdateOtpValue(it))
-      }
-    }
-  }
 }
 
 @Composable
@@ -122,13 +126,14 @@ private fun ListenForPinNavigationEvent(
         is NavigationEvent.ToPinScreen -> {
           onNavigateToPinScreen.invoke()
         }
+        else -> {}
       }
     }
   }
 }
 
 @Composable
-private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit, onNavigateToQrCodeScanner: () -> Unit) {
+private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit) {
   Column(
     verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
   ) {
@@ -137,7 +142,6 @@ private fun SettingsSection(uiState: State, onEvent: (UiEvent) -> Unit, onNaviga
     IdentityProvidersSection(uiState, onEvent)
     ScopesSection(uiState.isSdkInitialized, onEvent)
     StatelessRegistrationSection(uiState.isStatelessRegistration, onEvent)
-    OtpCodeSection(uiState.otp, onEvent, onNavigateToQrCodeScanner)
   }
 }
 
@@ -327,39 +331,6 @@ private fun StatelessRegistrationSection(isStatelessRegistration: Boolean, onEve
 }
 
 @Composable
-private fun OtpCodeSection(otp: String, onEvent: (UiEvent) -> Unit, onNavigateToQrCodeScanner: () -> Unit) {
-  ShowcaseCard {
-    Column {
-      Text(
-        text = stringResource(R.string.mobile_authentication_with_otp_code),
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(bottom = Dimensions.mPadding)
-      )
-      ShowcaseTextField(
-        value = otp,
-        onValueChange = { onEvent(UiEvent.UpdateOtpValue(it)) },
-        label = {
-          Text(stringResource(R.string.mobile_authentication_with_otp_code))
-        },
-        trailingIcon = {
-          IconButton(
-            onClick = { onNavigateToQrCodeScanner() }
-          ) {
-            Icon(
-              imageVector = ImageVector.vectorResource(R.drawable.qr_code_scanner),
-              contentDescription = stringResource(R.string.qr_code_scanner_content_description)
-            )
-          }
-        },
-        tooltipContent = {
-          Text(stringResource(R.string.mobile_authentication_with_otp_code_tooltip))
-        }
-      )
-    }
-  }
-}
-
-@Composable
 private fun getUserProfilesText(userProfiles: List<String>): String {
   return if (userProfiles.isNotEmpty()) {
     userProfiles.separateItemsWithComa()
@@ -370,13 +341,12 @@ private fun getUserProfilesText(userProfiles: List<String>): String {
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+private fun Preview() {
   OneStepRegistrationScreenContent(
     uiState = State(),
     onNavigateBack = {},
     onEvent = {},
     onNavigateToPinScreen = {},
-    onNavigateToQrCodeScanner = {},
     navigationEvents = emptyFlow(),
   )
 }
