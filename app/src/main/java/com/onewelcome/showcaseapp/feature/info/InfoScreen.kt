@@ -83,7 +83,7 @@ private fun StatusList(uiState: State) {
     )
     ShowcaseStatusCard(
       title = stringResource(R.string.implicit_authenticated_profile),
-      description = getImplicitlyAuthenticatedProfile(uiState.authenticatedUserProfileId)
+      description = getImplicitlyAuthenticatedProfile(uiState.implicitlyAuthenticatedUserProfileId)
     )
     ShowcaseStatusCard(
       title = stringResource(R.string.stateless_session),
