@@ -54,7 +54,6 @@ class OmiSdkEngine @Inject constructor(
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
-
       }
     }
   }

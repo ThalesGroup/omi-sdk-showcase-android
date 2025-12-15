@@ -14,7 +14,6 @@ import com.onewelcome.core.usecase.GetImplicitlyAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.GetUserProfilesUseCase
 import com.onewelcome.core.usecase.ImplicitAuthenticationUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
-import com.onewelcome.core.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,7 +34,7 @@ class ImplicitAuthenticationViewModel @Inject() constructor(
 
   fun onEvent(event: UiEvent) {
     when (event) {
-      is UiEvent.StartImplicitAuthentication -> startImplicitAuthentication()
+      is UiEvent.StartImplicitAuthentication -> authenticateUser()
       is UiEvent.UpdateSelectedUserProfile -> updateSelectedUserProfile(event)
       is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
     }
@@ -72,10 +71,6 @@ class ImplicitAuthenticationViewModel @Inject() constructor(
     getUserProfilesUseCase.execute()
       .onSuccess { uiState = uiState.copy(userProfiles = it, selectedUserProfile = it.firstOrNull()) }
       .onFailure { uiState = uiState.copy(userProfiles = emptySet()) }
-  }
-
-  private fun startImplicitAuthentication() {
-    authenticateUser()
   }
 
   private fun authenticateUser() {

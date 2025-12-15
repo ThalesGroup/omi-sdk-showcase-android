@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,12 +67,7 @@ private fun ImplicitAuthenticationScreenContent(
     },
     settings = { SettingSection(uiState, onEvent) },
     result = uiState.result?.let { { ImplicitAuthenticationResult(it) } },
-    action = {
-      AuthenticationButton(
-        uiState.isAuthenticateButtonEnabled,
-        onEvent
-      )
-    }
+    action = { AuthenticationButton(uiState.isAuthenticateButtonEnabled, onEvent) }
   )
 }
 
