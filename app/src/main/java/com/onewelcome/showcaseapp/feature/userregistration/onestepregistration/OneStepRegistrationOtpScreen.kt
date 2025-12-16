@@ -93,7 +93,7 @@ private fun OneStepRegistrationOtpScreenContent(
     modifier = Modifier.fillMaxSize(),
     topBar = {
       ShowcaseTopBar(
-        title = stringResource(R.string.qr_code_scanning),
+        title = stringResource(R.string.one_step_registration),
         onNavigateBack = onNavigateBack
       )
     }
