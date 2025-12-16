@@ -26,10 +26,7 @@ class ImplicitAuthenticationUseCase @Inject constructor(
           userProfile = userProfile,
           scopes = scopes,
           implicitAuthenticationHandler = object : OneginiImplicitAuthenticationHandler {
-            override fun onSuccess(
-              userProfile: UserProfile,
-
-              ) {
+            override fun onSuccess(userProfile: UserProfile) {
               continuation.resume(Ok(userProfile))
             }
 
