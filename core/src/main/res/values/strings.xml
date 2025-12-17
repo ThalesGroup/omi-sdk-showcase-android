@@ -45,10 +45,12 @@
   <string name="section_title_two_step_registration">Two Step Registration</string>
   <string name="two_step_registration">Two Step Registration</string>
   <string name="two_step_registration_description">Two-step registration allows users to complete registration using a custom two-step identity provider. The first step initializes the registration, and the second step requires entering a response code.</string>
-  <string name="two_step_input_title">Enter Response Code</string>
+  <string name="two_step_input_title">Enter Optional data</string>
+  <string name="two_step_verification_title">Enter Response Code</string>
   <string name="two_step_challenge_code_label">Challenge Code</string>
   <string name="two_step_response_code_label">Response Code</string>
   <string name="two_step_response_code_hint">Enter response code</string>
+  <string name="two_step_optional_code_hint">Optional Data</string>
   <string name="section_title_user_authentication">User Authentication</string>
   <string name="section_title_authenticators">Authenticators</string>
   <string name="section_title_pin_authentication">Pin Authentication</string>

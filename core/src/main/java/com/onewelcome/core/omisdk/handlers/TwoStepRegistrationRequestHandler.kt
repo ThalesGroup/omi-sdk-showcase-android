@@ -14,13 +14,15 @@ class TwoStepRegistrationRequestHandler @Inject constructor() : OneginiCustomTwo
   private var registrationCallback: OneginiCustomRegistrationCallback? = null
   private val _startTwoStepInputFlow = MutableSharedFlow<TwoStepInputData>(replay = 1)
   val startTwoStepInputFlow: SharedFlow<TwoStepInputData> = _startTwoStepInputFlow.asSharedFlow()
+  var optionalData: String = ""
 
   override fun initRegistration(
     callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?
   ) {
     // In the first step, we send initial data to the Token Server
     // This could be any data required to initialize the registration
-    callback.returnSuccess("12345")
+    optionalData = if (optionalData.isBlank()) "12345" else optionalData
+    callback.returnSuccess(optionalData)
   }
 
   override fun finishRegistration(
@@ -28,7 +30,7 @@ class TwoStepRegistrationRequestHandler @Inject constructor() : OneginiCustomTwo
   ) {
     registrationCallback = callback
     // Emit event to navigate to input screen with challenge code
-    val challengeCode = customInfo?.data ?: "12345"
+    val challengeCode = optionalData
     _startTwoStepInputFlow.tryEmit(TwoStepInputData(challengeCode))
   }
 
