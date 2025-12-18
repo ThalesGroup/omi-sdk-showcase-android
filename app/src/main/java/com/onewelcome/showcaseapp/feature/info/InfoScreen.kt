@@ -82,6 +82,10 @@ private fun StatusList(uiState: State) {
       description = getAuthenticatedProfile(uiState.authenticatedUserProfileId)
     )
     ShowcaseStatusCard(
+      title = stringResource(R.string.implicit_authenticated_profile),
+      description = getImplicitlyAuthenticatedProfile(uiState.implicitlyAuthenticatedUserProfileId)
+    )
+    ShowcaseStatusCard(
       title = stringResource(R.string.stateless_session),
       status = uiState.isInStatelessSession
     )
@@ -154,6 +158,10 @@ private fun getUserProfiles(userProfiles: List<String>): String =
 @Composable
 private fun getAuthenticatedProfile(userProfile: String): String =
   userProfile.takeIf { it.isNotEmpty() } ?: stringResource(R.string.no_authenticated_user_profile)
+
+@Composable
+private fun getImplicitlyAuthenticatedProfile(userProfile: String): String =
+  userProfile.takeIf { it.isNotEmpty() } ?: stringResource(R.string.no_implicitly_authenticated_user_profile)
 
 private fun getAuthenticatorColumns(authenticatorsState: List<InfoViewModel.AuthenticatorsState>) =
   authenticatorsState
