@@ -50,7 +50,7 @@ import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.P
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
-import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepInputScreen
+import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepOptionalDataSubmitScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepVerificationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepRegistrationScreen
 
@@ -200,7 +200,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController, rootNavController) }
     composable(Screens.TwoStepRegistration.route) { TwoStepRegistrationScreen(homeNavController, rootNavController) }
-    composable(Screens.TwoStepInput.route) { TwoStepInputScreen(homeNavController) }
+    composable(Screens.TwoStepInput.route) { TwoStepOptionalDataSubmitScreen(homeNavController) }
     composable(Screens.TwoStepVerification.route) { TwoStepVerificationScreen(homeNavController, rootNavController) }
     composable(Screens.UserAuthentication.route) { UserAuthenticationScreen(homeNavController) }
     composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
