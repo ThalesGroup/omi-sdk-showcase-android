@@ -38,126 +38,156 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun TwoStepVerificationScreen(
-  navController: NavController, pinNavController: NavController
+    navController: NavController, pinNavController: NavController
 ) {
-  val parentEntry = remember(navController) {
-    navController.getBackStackEntry(Screens.TwoStepRegistration.route)
-  }
-  val viewModel: TwoStepRegistrationViewModel = hiltViewModel(parentEntry)
-  ListenForNavigationEvents(viewModel.navigationEvents, pinNavController, navController)
-  TwoStepVerificationScreenContent(challengeCode = viewModel.uiState.challengeCode, onNavigateBack = {
-    viewModel.onEvent(UiEvent.CancelRegistration)
-    navController.popBackStack()
-  }, onSubmit = { responseCode ->
-    viewModel.onEvent(UiEvent.SubmitResponseCode(responseCode))
-  }, onCancel = {
-    viewModel.onEvent(UiEvent.CancelRegistration)
-    navController.popBackStack(route = Screens.TwoStepRegistration.route, inclusive = false)
-  })
+    val parentEntry = remember(navController) {
+        navController.getBackStackEntry(Screens.TwoStepRegistration.route)
+    }
+    val viewModel: TwoStepRegistrationViewModel = hiltViewModel(parentEntry)
+    ListenForNavigationEvents(viewModel.navigationEvents, pinNavController, navController)
+    TwoStepVerificationScreenContent(
+        challengeCode = viewModel.uiState.challengeCode,
+        onNavigateBack = {
+            viewModel.onEvent(UiEvent.CancelRegistration)
+            navController.popBackStack(route = Screens.TwoStepRegistration.route, inclusive = false)
+        }, onSubmit = { responseCode ->
+            viewModel.onEvent(UiEvent.SubmitResponseCode(responseCode))
+        }, onCancel = {
+            viewModel.onEvent(UiEvent.CancelRegistration)
+            navController.popBackStack(route = Screens.TwoStepRegistration.route, inclusive = false)
+        })
 }
 
 @Composable
 private fun ListenForNavigationEvents(
-  navigationEvents: Flow<NavigationEvent>, pinNavController: NavController, navController: NavController
+    navigationEvents: Flow<NavigationEvent>,
+    pinNavController: NavController,
+    navController: NavController
 ) {
-  LaunchedEffect(Unit) {
-    navigationEvents.collect { event ->
-      if (event is NavigationEvent.ToPinScreen) {
-        pinNavController.navigate(Screens.CreatePinInput.route)
-      } else if (event is NavigationEvent.ToTwoStepRegistraionScreen) {
-        navController.popBackStack(route = Screens.TwoStepRegistration.route, inclusive = false)
-      }
+    LaunchedEffect(Unit) {
+        navigationEvents.collect { event ->
+            when (event) {
+                is NavigationEvent.ToPinScreen -> {
+                    pinNavController.navigate(Screens.CreatePinInput.route)
+                }
+
+                is NavigationEvent.ToTwoStepRegistrationScreen -> {
+                    navController.popBackStack(
+                        route = Screens.TwoStepRegistration.route,
+                        inclusive = false
+                    )
+                }
+
+                else -> { // Handle other events
+                }
+            }
+        }
     }
-  }
 }
 
 @Composable
 private fun TwoStepVerificationScreenContent(
-  challengeCode: String, onNavigateBack: () -> Unit, onSubmit: (String) -> Unit, onCancel: () -> Unit
+    challengeCode: String,
+    onNavigateBack: () -> Unit,
+    onSubmit: (String) -> Unit,
+    onCancel: () -> Unit
 ) {
-  var responseCode by remember { mutableStateOf("") }
+    var responseCode by remember { mutableStateOf("") }
 
-  Scaffold(
-    topBar = {
-      ShowcaseTopBar(stringResource(R.string.two_step_verification_title)) { onNavigateBack.invoke() }
-    }) { innerPadding ->
+    Scaffold(
+        topBar = {
+            ShowcaseTopBar(stringResource(R.string.two_step_verification_title)) { onNavigateBack.invoke() }
+        }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(Dimensions.mPadding),
+            verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+        ) {
+            ShowcaseCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.two_step_challenge_code_label),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(Dimensions.sPadding))
+                    Text(
+                        text = challengeCode,
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            ShowcaseCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.two_step_response_code_label),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(Dimensions.sPadding))
+                    OutlinedTextField(
+                        value = responseCode,
+                        onValueChange = { responseCode = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(R.string.two_step_response_code_hint)) },
+                        singleLine = true
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            ActionButtons(onSubmit, responseCode, onCancel)
+
+        }
+    }
+}
+
+@Composable
+fun ActionButtons(
+    onSubmit: (String) -> Unit,
+    responseCode: String,
+    onCancel: () -> Unit
+) {
     Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPadding)
-        .padding(Dimensions.mPadding),
-      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
     ) {
-      // Challenge Code Section
-      ShowcaseCard {
-        Column(
-          modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-          Text(
-            text = stringResource(R.string.two_step_challenge_code_label), style = MaterialTheme.typography.titleMedium
-          )
-          Spacer(modifier = Modifier.height(Dimensions.sPadding))
-          Text(
-            text = challengeCode,
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary
-          )
-        }
-      }
-
-      // Response Code Input Section
-      ShowcaseCard {
-        Column(
-          modifier = Modifier.fillMaxWidth()
-        ) {
-          Text(
-            text = stringResource(R.string.two_step_response_code_label), style = MaterialTheme.typography.titleMedium
-          )
-          Spacer(modifier = Modifier.height(Dimensions.sPadding))
-          OutlinedTextField(
-            value = responseCode,
-            onValueChange = { responseCode = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.two_step_response_code_hint)) },
-            singleLine = true
-          )
-        }
-      }
-
-      Spacer(modifier = Modifier.weight(1f))
-
-      // Action Buttons
-      Column(
-        modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
-      ) {
         Button(
-          modifier = Modifier
-            .fillMaxWidth()
-            .height(Dimensions.actionButtonHeight),
-          onClick = { onSubmit(responseCode) },
-          enabled = responseCode.isNotBlank()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.actionButtonHeight),
+            onClick = { onSubmit(responseCode) },
+            enabled = responseCode.isNotBlank()
         ) {
-          Text(stringResource(R.string.submit))
+            Text(stringResource(R.string.submit))
         }
         OutlinedButton(
-          modifier = Modifier
-            .fillMaxWidth()
-            .height(Dimensions.actionButtonHeight),
-          onClick = onCancel,
-          colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.error
-          )
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.actionButtonHeight),
+            onClick = onCancel,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error
+            )
         ) {
-          Text(stringResource(R.string.cancel))
+            Text(stringResource(R.string.cancel))
         }
-      }
     }
-  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun TwoStepVerificationScreenPreview() {
-  TwoStepVerificationScreenContent(challengeCode = "12345", onNavigateBack = {}, onSubmit = {}, onCancel = {})
+    TwoStepVerificationScreenContent(
+        challengeCode = "12345",
+        onNavigateBack = {},
+        onSubmit = {},
+        onCancel = {})
 }
