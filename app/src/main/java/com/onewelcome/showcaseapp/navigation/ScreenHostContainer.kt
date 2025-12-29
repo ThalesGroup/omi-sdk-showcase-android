@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.core.theme.isNotFullScreenRoute
+import com.onewelcome.core.usecase.ImplicitAuthenticationUseCase
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
@@ -46,6 +47,7 @@ import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionCon
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
@@ -206,6 +208,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.BiometricAuthentication.route) { BiometricAuthenticationScreen(homeNavController, rootNavController) }
+    composable(Screens.ImplicitAuthentication.route) { ImplicitAuthenticationScreen(homeNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
     composable(Screens.MobileAuthenticationEnrollment.route) { MobileAuthenticationEnrollmentScreen(homeNavController) }
