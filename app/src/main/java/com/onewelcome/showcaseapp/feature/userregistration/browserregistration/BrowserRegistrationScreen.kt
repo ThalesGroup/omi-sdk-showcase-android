@@ -334,7 +334,7 @@ private fun getUserProfilesText(userProfiles: List<String>): String {
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+private fun Preview() {
   BrowserRegistrationScreenContent(
     uiState = State(),
     onNavigateBack = {},
