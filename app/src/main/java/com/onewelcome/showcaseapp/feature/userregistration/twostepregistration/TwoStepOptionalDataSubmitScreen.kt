@@ -147,7 +147,6 @@ fun ListenForNavigationEvent(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun TwoStepInputScreenPreview() {
