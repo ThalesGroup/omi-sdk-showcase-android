@@ -110,8 +110,8 @@ private fun ListenForNavigationEvents(
             when (event) {
                 is NavigationEvent.ToPinScreen -> onNavigateToPinScreen.invoke()
                 is NavigationEvent.ToTwoStepInputScreen -> onNavigateToTwoStepInputScreen.invoke()
-                is NavigationEvent.ToTwoStepRegistraionScreen -> { /* no-op: intentionally do nothing */ }
-                is NavigationEvent.ToTwoStepVerficationScreen -> { /* no-op: intentionally do nothing */
+                is NavigationEvent.ToTwoStepRegistrationScreen -> { /* no-op: intentionally do nothing */ }
+                is NavigationEvent.ToTwoStepVerificationScreen -> { /* no-op: intentionally do nothing */
                 }
             }
         }
@@ -253,7 +253,7 @@ private fun RegistrationButton(onEvent: (UiEvent) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(Dimensions.actionButtonHeight),
-        onClick = { onEvent(UiEvent.EnterTwoStepInput) }
+        onClick = { onEvent(UiEvent.EnterOptionalData) }
     ) {
         Text(stringResource(R.string.register))
     }

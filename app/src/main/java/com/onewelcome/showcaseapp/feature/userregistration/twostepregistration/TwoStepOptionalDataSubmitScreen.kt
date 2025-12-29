@@ -70,9 +70,9 @@ private fun TwoStepInputScreenContent(
     navigationEvents: Flow<NavigationEvent>
 ) {
     var optionalData by remember { mutableStateOf("") }
-    ListenforNavigationEvent(navigationEvents, onNavigateToTwoStepVerificationScreen)
+    ListenForNavigationEvent(navigationEvents, onNavigateToTwoStepVerificationScreen)
     Scaffold(
-        topBar = { ShowcaseTopBar(stringResource(R.string.two_step_input_title)) { onNavigateBack.invoke() }}) { innerPadding ->
+        topBar = { ShowcaseTopBar(stringResource(R.string.two_step_input_title)) { onNavigateBack.invoke() } }) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,46 +97,51 @@ private fun TwoStepInputScreenContent(
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-
-            // Action Buttons
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
-            ) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(Dimensions.actionButtonHeight),
-                    onClick = { onSubmit(optionalData) }
-                ) {
-                    Text(stringResource(R.string.submit))
-                }
-                OutlinedButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(Dimensions.actionButtonHeight),
-                    onClick = onCancel,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-
+            ActionButtons(onSubmit, onCancel, optionalData)
         }
 
     }
 }
 
 @Composable
-fun ListenforNavigationEvent(
+fun ActionButtons(
+    onSubmit: (String) -> Unit,
+    onCancel: () -> Unit, optionalData: String
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
+    ) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.actionButtonHeight),
+            onClick = { onSubmit(optionalData) }
+        ) {
+            Text(stringResource(R.string.submit))
+        }
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.actionButtonHeight),
+            onClick = onCancel,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error
+            )
+        ) {
+            Text(stringResource(R.string.cancel))
+        }
+    }
+}
+
+@Composable
+fun ListenForNavigationEvent(
     navigationEvents: Flow<NavigationEvent>,
     onNavigateToTwoStepVerificationScreen: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         navigationEvents.collect { event ->
-            if (event is NavigationEvent.ToTwoStepVerficationScreen)
+            if (event is NavigationEvent.ToTwoStepVerificationScreen)
                 onNavigateToTwoStepVerificationScreen.invoke()
         }
     }

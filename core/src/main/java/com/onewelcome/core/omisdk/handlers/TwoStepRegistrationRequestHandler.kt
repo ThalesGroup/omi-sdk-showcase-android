@@ -1,5 +1,6 @@
 package com.onewelcome.core.omisdk.handlers
 
+import android.util.Log
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -11,43 +12,51 @@ import javax.inject.Singleton
 
 @Singleton
 class TwoStepRegistrationRequestHandler @Inject constructor() : OneginiCustomTwoStepRegistrationAction {
-  private var registrationCallback: OneginiCustomRegistrationCallback? = null
+  private var oneginiCustomRegistrationCallback: OneginiCustomRegistrationCallback? = null
+    private var initCallback: OneginiCustomRegistrationCallback? = null
+
   private val _startTwoStepInputFlow = MutableSharedFlow<TwoStepInputData>(replay = 1)
   val startTwoStepInputFlow: SharedFlow<TwoStepInputData> = _startTwoStepInputFlow.asSharedFlow()
-  var optionalData: String = ""
 
-  override fun initRegistration(
-    callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?
+     private var optionalData: String = ""
+
+    public fun setOptionalData(data : String){
+        optionalData = data
+    }
+
+    override fun initRegistration(
+      registrationCallback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?
   ) {
     // In the first step, we send initial data to the Token Server
-    // This could be any data required to initialize the registration
-    optionalData = if (optionalData.isBlank()) "12345" else optionalData
-    callback.returnSuccess(optionalData)
+      initCallback = registrationCallback
+      if(optionalData.isNullOrBlank()){
+          registrationCallback.returnSuccess("12345")
+      }else{
+          registrationCallback.returnSuccess(optionalData)
+      }
   }
 
   override fun finishRegistration(
     callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?
   ) {
-    registrationCallback = callback
-    // Emit event to navigate to input screen with challenge code
-    val challengeCode = optionalData
-    _startTwoStepInputFlow.tryEmit(TwoStepInputData(challengeCode))
+    oneginiCustomRegistrationCallback = callback
+    _startTwoStepInputFlow.tryEmit(TwoStepInputData(optionalData?.takeIf { it.isNotEmpty() } ?: "12345"))
   }
 
   fun submitResponseCode(responseCode: String) {
-    registrationCallback?.returnSuccess(responseCode)
+    oneginiCustomRegistrationCallback?.returnSuccess(responseCode)
     cleanUp()
   }
 
   fun cancelRegistration() {
-    registrationCallback?.returnError(Exception("Registration canceled by user"))
+    oneginiCustomRegistrationCallback?.returnError(Exception("Registration canceled by user"))
     cleanUp()
   }
 
   private fun cleanUp() {
-    registrationCallback = null
+    oneginiCustomRegistrationCallback = null
     _startTwoStepInputFlow.resetReplayCache()
   }
-
+    fun isTwoStepregistrationInProgress(): Boolean = oneginiCustomRegistrationCallback != null
   data class TwoStepInputData(val challengeCode: String)
 }
