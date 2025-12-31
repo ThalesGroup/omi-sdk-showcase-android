@@ -337,7 +337,7 @@ private fun getUserProfilesText(userProfiles: List<String>): String {
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+private fun Preview() {
     TwoStepRegistrationScreenContent(
         uiState = State(),
         onNavigateBack = {},
