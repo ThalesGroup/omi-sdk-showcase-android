@@ -77,6 +77,7 @@ class TwoStepRegistrationViewModel @Inject constructor(
     }
 
     private fun submitOptionalData(optionalData: String) {
+        uiState = uiState.copy(isOptionalDataSubmit = true)
         twoStepRegistrationRequestHandler.setOptionalData(optionalData)
         startRegistration()
     }
@@ -126,7 +127,7 @@ class TwoStepRegistrationViewModel @Inject constructor(
     private fun listenForTwoStepInputNavigationEvent() {
         viewModelScope.launch {
             twoStepRegistrationRequestHandler.startTwoStepInputFlow.collect { inputData ->
-                uiState = uiState.copy(challengeCode = inputData.challengeCode)
+                uiState = uiState.copy(challengeCode = inputData.challengeCode, isOptionalDataSubmit = false)
                 _navigationEvents.send(NavigationEvent.ToTwoStepVerificationScreen)
             }
         }
@@ -192,7 +193,8 @@ class TwoStepRegistrationViewModel @Inject constructor(
         val isRegistrationCancellationEnabled: Boolean = false,
         val isStatelessRegistration: Boolean = false,
         val challengeCode: String = "",
-        val responseCode: String = ""
+        val responseCode: String = "",
+        val isOptionalDataSubmit: Boolean = false,
     )
 
     sealed interface UiEvent {
