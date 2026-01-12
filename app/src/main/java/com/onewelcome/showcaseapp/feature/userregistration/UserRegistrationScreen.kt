@@ -62,7 +62,8 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 @ReadOnlyComposable
 private fun getSections(): List<SectionItem> {
   return listOf(
-    SectionItem(stringResource(R.string.section_title_browser_registration), Screens.BrowserRegistration)
+    SectionItem(stringResource(R.string.section_title_browser_registration), Screens.BrowserRegistration),
+    SectionItem(stringResource(R.string.section_title_two_step_registration), Screens.TwoStepRegistration)
   )
 }
 
