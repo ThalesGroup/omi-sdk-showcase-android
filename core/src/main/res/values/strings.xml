@@ -58,6 +58,7 @@
   <string name="section_title_sdk_reset">SDK Reset</string>
   <string name="section_title_logout">Logout</string>
   <string name="section_title_push_authentication">Push Authentication</string>
+  <string name="section_title_resource_calls">Resource Calls</string>
 
   <!-- SDK Reset -->
   <string name="sdk_reset_description">Resetting the Android SDK state implies the removal of cached data from memory. Access tokens will be removed and the user will be logged out. It won\'t, however delete the refresh token nor will it remove any saved data. The Android SDK will be in a similar state as after application restart</string>
