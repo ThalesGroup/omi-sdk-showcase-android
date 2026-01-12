@@ -66,6 +66,11 @@ dependencies {
   implementation(libs.kotlin.result)
   implementation(libs.kotlin.result.coroutines)
 
+  // Retrofit
+  implementation(libs.squareup.retrofit2)
+  implementation(libs.squareup.retrofit2.converter.gson)
+  implementation(libs.squareup.okhttp3)
+
   // OMI SDK
   debugApi(libs.omiSdk.developer) {
     artifact {
