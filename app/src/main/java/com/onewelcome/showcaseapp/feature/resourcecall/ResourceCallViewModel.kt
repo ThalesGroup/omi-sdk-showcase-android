@@ -227,7 +227,7 @@ class ResourceCallViewModel @Inject constructor(
 enum class ResourceType(val title: String, val description: String) {
     UNAUTHENTICATED(
         title = "Unauthenticated",
-        description = "No token required. For public endpoints like health check, terms of service."
+        description = "No token required."
     ),
     ANONYMOUS(
         title = "Anonymous (Device Auth)",

@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +29,8 @@ import androidx.navigation.NavController
 import com.onewelcome.core.components.SdkFeatureScreen
 import com.onewelcome.core.components.ShowcaseFeatureDescription
 import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.core.theme.success
+import com.onewelcome.core.theme.successContainer
 
 @Composable
 fun ResourceCallScreen(
@@ -180,7 +181,7 @@ private fun ResultSection(uiState: ResourceCallViewModel.State) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color(0xFF4CAF50).copy(alpha = 0.1f),
+                        color = MaterialTheme.colorScheme.successContainer,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(Dimensions.mPadding)
@@ -188,7 +189,7 @@ private fun ResultSection(uiState: ResourceCallViewModel.State) {
                 Text(
                     text = result,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF2E7D32)
+                    color = MaterialTheme.colorScheme.success
                 )
             }
         }
@@ -199,7 +200,7 @@ private fun ResultSection(uiState: ResourceCallViewModel.State) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color(0xFFF44336).copy(alpha = 0.1f),
+                        color = MaterialTheme.colorScheme.errorContainer,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(Dimensions.mPadding)
@@ -207,7 +208,7 @@ private fun ResultSection(uiState: ResourceCallViewModel.State) {
                 Text(
                     text = error,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFFC62828)
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         }
