@@ -52,6 +52,7 @@ import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.P
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
+import com.onewelcome.showcaseapp.feature.tokens.TokensScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepOptionalDataSubmitScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepVerificationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepRegistrationScreen
@@ -218,5 +219,6 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.SingleSignOn.route) { SingleSignOnScreen(homeNavController) }
     composable(Screens.SdkReset.route) { SdkResetScreen(homeNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
+    composable(Screens.Tokens.route) { TokensScreen(homeNavController) }
   }
 }
