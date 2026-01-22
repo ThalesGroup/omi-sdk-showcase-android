@@ -22,7 +22,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.onewelcome.core.theme.isNotFullScreenRoute
-import com.onewelcome.core.usecase.ImplicitAuthenticationUseCase
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
 import com.onewelcome.showcaseapp.feature.home.HomeScreen
@@ -118,6 +117,7 @@ private fun handleNavigationToTransactionResultScreen(rootNavController: NavHost
   val shouldPopBackStackOnNavigation =
     currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
   if (shouldPopBackStackOnNavigation) {
+    rootNavController.popBackStack(Screens.TransactionConfirmation.route,false)
     rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
       popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
     }
