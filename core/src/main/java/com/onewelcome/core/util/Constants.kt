@@ -31,6 +31,8 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-logout-user/index.html"
   const val DOCUMENTATION_SINGLE_SIGN_ON =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-sso/index.html"
+  const val DOCUMENTATION_ID_TOKENS =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-id-tokens/index.html"
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   const val FULLSCREEN_PAGE = "fullscreen"
   val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
