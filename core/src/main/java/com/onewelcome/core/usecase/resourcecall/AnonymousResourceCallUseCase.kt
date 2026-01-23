@@ -38,7 +38,6 @@ class AnonymousResourceCallUseCase @Inject constructor(
                                 )
 
                             }
-
                             else -> {
                                 continuation.resume(
                                     Err(
