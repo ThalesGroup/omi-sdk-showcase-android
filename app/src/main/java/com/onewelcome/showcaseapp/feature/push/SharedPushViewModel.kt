@@ -96,7 +96,7 @@ class SharedPushViewModel @Inject constructor(
       }
 
       is UiEvent.AcceptBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.userAuthenticatedSuccessfully()
-      is UiEvent.DeclineBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.onBiometricAuthenticationError(event.errorCode)
+      is UiEvent.DeclineBiometric -> handleBiometricError(event.errorCode)
     }
   }
 
@@ -136,6 +136,26 @@ class SharedPushViewModel @Inject constructor(
 
   private fun proceedWithAuthentication(pushRequest: OneginiMobileAuthWithPushRequest) {
     authenticateWithPushUseCase.execute(pushRequest)
+  }
+
+  private fun handleBiometricError(errorCode: Int) {
+    when (errorCode) {
+      BiometricPrompt.ERROR_LOCKOUT,
+      BiometricPrompt.ERROR_LOCKOUT_PERMANENT,
+      BiometricPrompt.ERROR_HW_UNAVAILABLE,
+      BiometricPrompt.ERROR_NO_BIOMETRICS,
+      BiometricPrompt.ERROR_USER_CANCELED -> {
+        mobileAuthWithBiometricRequestHandler.biometricCallback?.fallbackToPin()
+        _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
+      }
+
+      BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+      BiometricPrompt.ERROR_CANCELED -> {
+        mobileAuthWithBiometricRequestHandler.biometricCallback?.denyAuthenticationRequest()
+      }
+
+      else -> mobileAuthWithBiometricRequestHandler.biometricCallback?.onBiometricAuthenticationError(errorCode)
+    }
   }
 
   data class UiState(
