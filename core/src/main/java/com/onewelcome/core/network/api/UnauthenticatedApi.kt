@@ -7,3 +7,4 @@ interface UnauthenticatedApi {
     @GET("path-to-the-resource")
     suspend fun getPathToresource(): retrofit2.Response<ResponseBody>
 }
+
