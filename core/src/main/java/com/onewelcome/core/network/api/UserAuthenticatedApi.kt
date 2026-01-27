@@ -11,11 +11,11 @@ interface UserAuthenticatedApi {
 data class Device(
     val application: String,
     val id: String,
-    val mobile_authentication_enabled: Boolean,
+    val mobileAuthenticationEnabled: Boolean,
     val model: String,
     val name: String,
     val platform: String,
-    val push_authentication_enabled: Boolean
+    val pushAuthenticationEnabled: Boolean
 )
 data class Devices(
     val devices: List<Device>
