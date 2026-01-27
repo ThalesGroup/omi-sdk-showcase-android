@@ -12,7 +12,7 @@ class UnauthenticatedResourceCallUseCase @Inject constructor(
   suspend fun getPathResources(): Result<Boolean, Throwable> {
     return try {
       val api = retrofitServiceFactory.createUnauthenticatedApi()
-      val response = api.getPathToresource()
+      val response = api.getPathToResource()
       if (response.isSuccessful) {
         Ok(true)
       } else {
