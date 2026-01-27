@@ -4,9 +4,9 @@ import retrofit2.Response
 import retrofit2.http.GET
 
 interface ImplicitApi {
-    @GET("user-id-decorated")
-    suspend fun getDecoratedUserId(): Response<DecoratedIdModel>
+  @GET("user-id-decorated")
+  suspend fun getDecoratedUserId(): Response<DecoratedIdModel>
 }
 
-data class DecoratedIdModel(val decorated_user_id: String)
+data class DecoratedIdModel(val decoratedUserId: String)
 

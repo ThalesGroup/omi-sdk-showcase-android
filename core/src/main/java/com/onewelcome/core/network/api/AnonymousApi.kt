@@ -4,13 +4,11 @@ import retrofit2.Response
 import retrofit2.http.GET
 
 interface AnonymousApi {
-    @GET("application-details")
-    suspend fun getApplicationDetails(): Response<ApplicationDetails>
-
-
+  @GET("application-details")
+  suspend fun getApplicationDetails(): Response<ApplicationDetails>
 }
 data class ApplicationDetails(
-    val application_identifier: String,
-    val application_platform: String,
-    val application_version: String,
+  val applicationIdentifier: String,
+  val applicationPlatform: String,
+  val applicationVersion: String,
 )

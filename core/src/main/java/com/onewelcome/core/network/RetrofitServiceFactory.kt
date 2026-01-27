@@ -14,41 +14,42 @@ import javax.inject.Singleton
 
 @Singleton
 class RetrofitServiceFactory @Inject constructor(
-    val clientProvider: OmiSdkOkHttpClientProvider
+  val clientProvider: OmiSdkOkHttpClientProvider
 ) {
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.HEADERS
-    }
+  private val loggingInterceptor = HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.HEADERS
+  }
 
-    fun createUnauthenticatedApi(): UnauthenticatedApi {
-        return createRetrofit(createokhhtpClientWithInterceptor(clientProvider.getUnauthenticatedResourceClient()))
-            .create(UnauthenticatedApi::class.java)
-    }
+  fun createUnauthenticatedApi(): UnauthenticatedApi {
+    return createRetrofit(createokhhtpClientWithInterceptor(clientProvider.getUnauthenticatedResourceClient()))
+      .create(UnauthenticatedApi::class.java)
+  }
 
-    fun createAnonymousApi(): AnonymousApi {
-        return createRetrofit(clientProvider.getAnonymousResourceClient())
-            .create(AnonymousApi::class.java)
-    }
+  fun createAnonymousApi(): AnonymousApi {
+    return createRetrofit(clientProvider.getAnonymousResourceClient())
+      .create(AnonymousApi::class.java)
+  }
 
-    fun createUserAuthenticatedApi(): UserAuthenticatedApi {
-        return createRetrofit(clientProvider.getUserAuthenticatedResourceClient())
-            .create(UserAuthenticatedApi::class.java)
-    }
+  fun createUserAuthenticatedApi(): UserAuthenticatedApi {
+    return createRetrofit(clientProvider.getUserAuthenticatedResourceClient())
+      .create(UserAuthenticatedApi::class.java)
+  }
 
-    fun createImplicitApi(): ImplicitApi {
-        return createRetrofit(clientProvider.getImplicitUserResourceClient())
-            .create(ImplicitApi::class.java)
-    }
+  fun createImplicitApi(): ImplicitApi {
+    return createRetrofit(clientProvider.getImplicitUserResourceClient())
+      .create(ImplicitApi::class.java)
+  }
 
-    fun createokhhtpClientWithInterceptor(okHttpClient: OkHttpClient): OkHttpClient{
-        return okHttpClient.newBuilder().addInterceptor(loggingInterceptor).build()
-    }
-    fun createRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(clientProvider.getResourceBaseUrl())
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+  fun createokhhtpClientWithInterceptor(okHttpClient: OkHttpClient): OkHttpClient {
+    return okHttpClient.newBuilder().addInterceptor(loggingInterceptor).build()
+  }
+
+  fun createRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    return Retrofit.Builder()
+      .baseUrl(clientProvider.getResourceBaseUrl())
+      .client(okHttpClient)
+      .addConverterFactory(GsonConverterFactory.create())
+      .build()
+  }
 }
 

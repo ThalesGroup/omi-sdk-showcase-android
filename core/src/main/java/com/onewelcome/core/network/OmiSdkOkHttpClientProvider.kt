@@ -7,33 +7,33 @@ import javax.inject.Singleton
 
 @Singleton
 class OmiSdkOkHttpClientProvider @Inject constructor(
-    private val omiSdkFacade: OmiSdkFacade
+  private val omiSdkFacade: OmiSdkFacade
 ) {
-    fun getUnauthenticatedResourceClient(): OkHttpClient {
-        return omiSdkFacade.oneginiClient
-            .getDeviceClient()
-            .unauthenticatedResourceOkHttpClient
-    }
+  fun getUnauthenticatedResourceClient(): OkHttpClient {
+    return omiSdkFacade.oneginiClient
+      .getDeviceClient()
+      .unauthenticatedResourceOkHttpClient
+  }
 
-    fun getAnonymousResourceClient(): OkHttpClient {
-        return omiSdkFacade.oneginiClient
-            .getDeviceClient()
-            .anonymousResourceOkHttpClient
-    }
+  fun getAnonymousResourceClient(): OkHttpClient {
+    return omiSdkFacade.oneginiClient
+      .getDeviceClient()
+      .anonymousResourceOkHttpClient
+  }
 
-    fun getUserAuthenticatedResourceClient(): OkHttpClient {
-        return omiSdkFacade.oneginiClient
-            .getUserClient()
-            .resourceOkHttpClient
-    }
+  fun getUserAuthenticatedResourceClient(): OkHttpClient {
+    return omiSdkFacade.oneginiClient
+      .getUserClient()
+      .resourceOkHttpClient
+  }
 
-    fun getImplicitUserResourceClient(): OkHttpClient {
-        return omiSdkFacade.oneginiClient
-            .getUserClient()
-            .implicitResourceOkHttpClient
-    }
+  fun getImplicitUserResourceClient(): OkHttpClient {
+    return omiSdkFacade.oneginiClient
+      .getUserClient()
+      .implicitResourceOkHttpClient
+  }
 
-    fun getResourceBaseUrl(): String {
-        return omiSdkFacade.oneginiClient.configModel.resourceBaseUrl
-    }
+  fun getResourceBaseUrl(): String {
+    return omiSdkFacade.oneginiClient.configModel.resourceBaseUrl
+  }
 }
