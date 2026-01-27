@@ -1,317 +1,317 @@
 <resources>
-    <string name="app_name">Showcase App</string>
-    <string name="showcase_activity_name">Showcase App</string>
-    <string name="home_screen_name">Home</string>
-    <string name="info_screen_name">Info</string>
-    <string name="transactions_screen_name">Transactions</string>
-    <string name="os_compatibility_screen_name">OS Compatibility</string>
-    <string name="required">Required</string>
-    <string name="optional">Optional</string>
-    <string name="read_more">Read more</string>
-    <string name="here">here</string>
-    <string name="result">Result</string>
-    <string name="zero">Zero</string>
-    <string name="details">Details</string>
-    <string name="register">Register</string>
-    <string name="cancel">Cancel</string>
-    <string name="submit">Submit</string>
-    <string name="accept">Accept</string>
-    <string name="reject">Reject</string>
-    <string name="error">Error</string>
-    <string name="close">Close</string>
-    <string name="authenticate">Authenticate</string>
-    <string name="user_profile">User profile: %s</string>
-    <string name="custom_info">Custom info: %s</string>
-    <string name="token">Token</string>
+  <string name="app_name">Showcase App</string>
+  <string name="showcase_activity_name">Showcase App</string>
+  <string name="home_screen_name">Home</string>
+  <string name="info_screen_name">Info</string>
+  <string name="transactions_screen_name">Transactions</string>
+  <string name="os_compatibility_screen_name">OS Compatibility</string>
+  <string name="required">Required</string>
+  <string name="optional">Optional</string>
+  <string name="read_more">Read more</string>
+  <string name="here">here</string>
+  <string name="result">Result</string>
+  <string name="zero">Zero</string>
+  <string name="details">Details</string>
+  <string name="register">Register</string>
+  <string name="cancel">Cancel</string>
+  <string name="submit">Submit</string>
+  <string name="accept">Accept</string>
+  <string name="reject">Reject</string>
+  <string name="error">Error</string>
+  <string name="close">Close</string>
+  <string name="authenticate">Authenticate</string>
+  <string name="user_profile">User profile: %s</string>
+  <string name="custom_info">Custom info: %s</string>
+  <string name="token">Token</string>
 
-    <!-- Info Screen -->
-    <string name="title_sdk_status">OMI SDK Status</string>
-    <string name="status_sdk_initialized">SDK Initialized</string>
-    <string name="user_profiles">User profiles</string>
-    <string name="authenticated_profile">Authenticated user profile</string>
-    <string name="implicit_authenticated_profile">Implicitly authenticated user profile</string>
+  <!-- Info Screen -->
+  <string name="title_sdk_status">OMI SDK Status</string>
+  <string name="status_sdk_initialized">SDK Initialized</string>
+  <string name="user_profiles">User profiles</string>
+  <string name="authenticated_profile">Authenticated user profile</string>
+  <string name="implicit_authenticated_profile">Implicitly authenticated user profile</string>
   <string name="stateless_session">Stateless session</string>
-    <string name="no_user_profile_authenticated">No user profile authenticated</string>
-    <string name="user_profile_id">Profile ID: %s</string>
-    <string name="label_otp">OTP</string>
-    <string name="label_push">Push</string>
-    <string name="status_mobile_authentication_enrollment">Mobile authentication enrollment</string>
-    <string name="status_post_notifications_permission">Post notifications permission</string>
-    <string name="status_registered_authenticators">Registered authenticators</string>
+  <string name="no_user_profile_authenticated">No user profile authenticated</string>
+  <string name="user_profile_id">Profile ID: %s</string>
+  <string name="label_otp">OTP</string>
+  <string name="label_push">Push</string>
+  <string name="status_mobile_authentication_enrollment">Mobile authentication enrollment</string>
+  <string name="status_post_notifications_permission">Post notifications permission</string>
+  <string name="status_registered_authenticators">Registered authenticators</string>
 
-    <!-- Section titles -->
-    <string name="section_title_sdk_initialization">SDK Initialization</string>
-    <string name="section_title_user_registration">User Registration</string>
-    <string name="section_title_browser_registration">Browser Registration</string>
-    <string name="two_step_registration_description">Two-step registration allows users to complete registration using a custom two-step identity provider. The first step initializes the registration, and the second step requires entering a response code.</string>
-    <string name="two_step_input_title">Enter Optional data</string>
-    <string name="two_step_verification_title">Enter Response Code</string>
-    <string name="two_step_challenge_code_label">Challenge Code</string>
-    <string name="two_step_response_code_label">Response Code</string>
-    <string name="two_step_response_code_hint">Enter response code</string>
-    <string name="two_step_optional_code_hint">Optional Data</string>
-    <string name="section_title_user_authentication">User Authentication</string>
-    <string name="section_title_authenticators">Authenticators</string>
-    <string name="section_title_pin_authentication">Pin Authentication</string>
-    <string name="section_title_biometric_authentication">Biometric Authentication</string>
-    <string name="section_title_implicit_authentication">Implicit Authentication</string>
+  <!-- Section titles -->
+  <string name="section_title_sdk_initialization">SDK Initialization</string>
+  <string name="section_title_user_registration">User Registration</string>
+  <string name="section_title_browser_registration">Browser Registration</string>
+  <string name="two_step_registration_description">Two-step registration allows users to complete registration using a custom two-step identity provider. The first step initializes the registration, and the second step requires entering a response code.</string>
+  <string name="two_step_input_title">Enter Optional data</string>
+  <string name="two_step_verification_title">Enter Response Code</string>
+  <string name="two_step_challenge_code_label">Challenge Code</string>
+  <string name="two_step_response_code_label">Response Code</string>
+  <string name="two_step_response_code_hint">Enter response code</string>
+  <string name="two_step_optional_code_hint">Optional Data</string>
+  <string name="section_title_user_authentication">User Authentication</string>
+  <string name="section_title_authenticators">Authenticators</string>
+  <string name="section_title_pin_authentication">Pin Authentication</string>
+  <string name="section_title_biometric_authentication">Biometric Authentication</string>
+  <string name="section_title_implicit_authentication">Implicit Authentication</string>
   <string name="section_title_mobile_authentication">Mobile Authentication</string>
-    <string name="section_title_mobile_authentication_enrollment">Enroll for mobile authentication</string>
-    <string name="section_title_mobile_authentication_push_enrollment">Enroll for mobile authentication with push</string>
-    <string name="section_title_mobile_authentication_with_otp">Authentication with OTP</string>
-    <string name="section_title_user_deregistration">User Deregistration</string>
-    <string name="section_title_change_pin">Change PIN</string>
-    <string name="section_title_single_sign_on">App-to-web single sign-on (SSO)</string>
-    <string name="section_title_sdk_reset">SDK Reset</string>
-    <string name="section_title_logout">Logout</string>
-    <string name="section_title_push_authentication">Push Authentication</string>
+  <string name="section_title_mobile_authentication_enrollment">Enroll for mobile authentication</string>
+  <string name="section_title_mobile_authentication_push_enrollment">Enroll for mobile authentication with push</string>
+  <string name="section_title_mobile_authentication_with_otp">Authentication with OTP</string>
+  <string name="section_title_user_deregistration">User Deregistration</string>
+  <string name="section_title_change_pin">Change PIN</string>
+  <string name="section_title_single_sign_on">App-to-web single sign-on (SSO)</string>
+  <string name="section_title_sdk_reset">SDK Reset</string>
+  <string name="section_title_logout">Logout</string>
+  <string name="section_title_push_authentication">Push Authentication</string>
   <string name="section_title_resource_calls">Resource Calls</string>
 
-    <!-- SDK Reset -->
-    <string name="sdk_reset_description">Resetting the Android SDK state implies the removal of cached data from memory. Access tokens will be removed and the user will be logged out. It won\'t, however delete the refresh token nor will it remove any saved data. The Android SDK will be in a similar state as after application restart</string>
-    <string name="button_sdk_reset">Reset SDK</string>
-    <string name="sdk_reset_success">SDK Reset performed successfully</string>
-    <string name="sdk_needs_to_be_initialized_to_perform_reset_tooltip">SDK needs to be initialized to perform reset</string>
+  <!-- SDK Reset -->
+  <string name="sdk_reset_description">Resetting the Android SDK state implies the removal of cached data from memory. Access tokens will be removed and the user will be logged out. It won\'t, however delete the refresh token nor will it remove any saved data. The Android SDK will be in a similar state as after application restart</string>
+  <string name="button_sdk_reset">Reset SDK</string>
+  <string name="sdk_reset_success">SDK Reset performed successfully</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_reset_tooltip">SDK needs to be initialized to perform reset</string>
 
-    <!-- SDK Initialization -->
-    <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
-    <string name="button_initialize_sdk">Initialize SDK</string>
-    <string name="label_title_handlers">Registration &amp; Authentication handlers</string>
-    <string name="label_sdk_settings">SDK settings</string>
-    <string name="label_http_settings">Http settings</string>
-    <string name="label_custom_authenticators">Custom authenticators</string>
-    <string name="label_custom_identity_providers">Custom Identity Providers</string>
-    <string name="label_initialization_success">SDK Initialization success</string>
-    <string name="label_removed_profiles">Removed user profiles</string>
-    <string name="option_should_store_cookies">shouldStoreCookies</string>
-    <string name="option_set_http_connect_timeout">setHttpConnectTimeout</string>
-    <string name="option_set_http_read_timeout">setHttpReadTimeout</string>
-    <string name="option_set_device_config_cache_duration">setDeviceConfigCacheDurationSeconds</string>
-    <string name="documentation_should_store_cookies">Set if http client should store cookies between requests. The default value is TRUE.</string>
-    <string name="documentation_set_http_connect_timeout">Set the http client connect timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
-    <string name="documentation_set_http_read_timeout">Set the http client read timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
-    <string name="documentation_set_device_config_cache_duration">Set the device configuration cache duration in seconds. Default value is 300s (5min). After this time device configuration will be again fetched from the server.</string>
-    <string name="sdk_initialization_on_app_start">SDK initialization on app start</string>
+  <!-- SDK Initialization -->
+  <string name="sdk_initialization_description">This method initializes the SDK and connects the device with the server. It has to be called before using any of the SDK features. It returns a list of removed user profiles in case any profile got removed on the server.</string>
+  <string name="button_initialize_sdk">Initialize SDK</string>
+  <string name="label_title_handlers">Registration &amp; Authentication handlers</string>
+  <string name="label_sdk_settings">SDK settings</string>
+  <string name="label_http_settings">Http settings</string>
+  <string name="label_custom_authenticators">Custom authenticators</string>
+  <string name="label_custom_identity_providers">Custom Identity Providers</string>
+  <string name="label_initialization_success">SDK Initialization success</string>
+  <string name="label_removed_profiles">Removed user profiles</string>
+  <string name="option_should_store_cookies">shouldStoreCookies</string>
+  <string name="option_set_http_connect_timeout">setHttpConnectTimeout</string>
+  <string name="option_set_http_read_timeout">setHttpReadTimeout</string>
+  <string name="option_set_device_config_cache_duration">setDeviceConfigCacheDurationSeconds</string>
+  <string name="documentation_should_store_cookies">Set if http client should store cookies between requests. The default value is TRUE.</string>
+  <string name="documentation_set_http_connect_timeout">Set the http client connect timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
+  <string name="documentation_set_http_read_timeout">Set the http client read timeout in milliseconds. If set to a value &lt;= 0, then the default value of 60000 (60 seconds) is used.</string>
+  <string name="documentation_set_device_config_cache_duration">Set the device configuration cache duration in seconds. Default value is 300s (5min). After this time device configuration will be again fetched from the server.</string>
+  <string name="sdk_initialization_on_app_start">SDK initialization on app start</string>
 
-    <!-- Content descriptions-->
-    <string name="content_description_logo">Thales logo</string>
-    <string name="content_description_navigate_back">Navigate back</string>
-    <string name="content_description_expand_collapse">Expand or collapse card</string>
-    <string name="content_description_yes">Yes</string>
-    <string name="content_description_no">No</string>
+  <!-- Content descriptions-->
+  <string name="content_description_logo">Thales logo</string>
+  <string name="content_description_navigate_back">Navigate back</string>
+  <string name="content_description_expand_collapse">Expand or collapse card</string>
+  <string name="content_description_yes">Yes</string>
+  <string name="content_description_no">No</string>
 
-    <!-- OS Compatibility -->
-    <string name="codename_release">Codename: Release</string>
-    <string name="type_stable_release">Type: Stable release</string>
-    <string name="save_result">Save result</string>
-    <string name="run_tests">Run tests</string>
-    <string name="tests">Tests</string>
-    <string name="test_results">Test results</string>
-    <string name="android_os">Android OS</string>
-    <string name="preview_sdk">Android OS</string>
-    <string name="type_beta_preview_version">Type: Beta/Preview version %d</string>
-    <string name="sdk_version">SDK version: %s</string>
-    <string name="api_level">API level: %s</string>
-    <string name="codename">Codename: %s</string>
-    <string name="type">Type: %s</string>
-    <string name="version">Version: %s</string>
-    <string name="omi_sdk_version">OMI SDK version: %s</string>
-    <string name="test_result_saved">Test result saved into Downloads directory</string>
-    <string name="test_succeed">All of the tests succeed!</string>
-    <string name="tests_failed">Tests failed:%1$s%2$s</string>
-    <string name="tests_failed_emoji">Tests failed ❌</string>
-    <string name="pending">Pending</string>
-    <string name="failed">Failed</string>
-    <string name="passed">Passed</string>
-    <string name="all_test_passed">All tests passed successfully ✅</string>
+  <!-- OS Compatibility -->
+  <string name="codename_release">Codename: Release</string>
+  <string name="type_stable_release">Type: Stable release</string>
+  <string name="save_result">Save result</string>
+  <string name="run_tests">Run tests</string>
+  <string name="tests">Tests</string>
+  <string name="test_results">Test results</string>
+  <string name="android_os">Android OS</string>
+  <string name="preview_sdk">Android OS</string>
+  <string name="type_beta_preview_version">Type: Beta/Preview version %d</string>
+  <string name="sdk_version">SDK version: %s</string>
+  <string name="api_level">API level: %s</string>
+  <string name="codename">Codename: %s</string>
+  <string name="type">Type: %s</string>
+  <string name="version">Version: %s</string>
+  <string name="omi_sdk_version">OMI SDK version: %s</string>
+  <string name="test_result_saved">Test result saved into Downloads directory</string>
+  <string name="test_succeed">All of the tests succeed!</string>
+  <string name="tests_failed">Tests failed:%1$s%2$s</string>
+  <string name="tests_failed_emoji">Tests failed ❌</string>
+  <string name="pending">Pending</string>
+  <string name="failed">Failed</string>
+  <string name="passed">Passed</string>
+  <string name="all_test_passed">All tests passed successfully ✅</string>
 
-    <!-- Registration -->
-    <string name="user_registration_description">With our sdk you can register user in many ways. Click on each of them to learn more.</string>
-    <string name="user_registration">User registration</string>
+  <!-- Registration -->
+  <string name="user_registration_description">With our sdk you can register user in many ways. Click on each of them to learn more.</string>
+  <string name="user_registration">User registration</string>
 
-    <!-- Browser registration -->
-    <string name="browser_registration">Browser registration</string>
-    <string name="browser_registration_description">Browser based registration allows users to complete the registration process through a web browser flow. </string>
-    <string name="identity_providers">Identity providers</string>
-    <string name="registration_scopes">Registration scopes</string>
-    <string name="cancel_registration">Cancel registration</string>
-    <string name="default_identity_provider_tooltip_text">Default identity provider is set in configuration on the server side.</string>
-    <string name="use_default_identity_provider">Use default identity provider</string>
-    <string name="no_user_profiles">No user profiles</string>
-    <string name="no_authenticated_user_profile">No authenticated user profile</string>
-    <string name="no_implicitly_authenticated_user_profile">No implicitly authenticated user profile</string>
+  <!-- Browser registration -->
+  <string name="browser_registration">Browser registration</string>
+  <string name="browser_registration_description">Browser based registration allows users to complete the registration process through a web browser flow. </string>
+  <string name="identity_providers">Identity providers</string>
+  <string name="registration_scopes">Registration scopes</string>
+  <string name="cancel_registration">Cancel registration</string>
+  <string name="default_identity_provider_tooltip_text">Default identity provider is set in configuration on the server side.</string>
+  <string name="use_default_identity_provider">Use default identity provider</string>
+  <string name="no_user_profiles">No user profiles</string>
+  <string name="no_authenticated_user_profile">No authenticated user profile</string>
+  <string name="no_implicitly_authenticated_user_profile">No implicitly authenticated user profile</string>
   <string name="sdk_needs_to_be_initialized_to_perform_registration">SDK needs to be initialized to perform registration</string>
-    <string name="registration_successful">Registration successful</string>
-    <string name="del">Delete</string>
-    <string name="clear">Clear</string>
-    <string name="idp_item_label">Name: %s\nID: %s</string>
-    <string name="stateless_registration_label">Stateless registration</string>
-    <string name="stateless_registration_tooltip">Stateless registration does not create a user profile. Once the session expires user needs to register again.</string>
+  <string name="registration_successful">Registration successful</string>
+  <string name="del">Delete</string>
+  <string name="clear">Clear</string>
+  <string name="idp_item_label">Name: %s\nID: %s</string>
+  <string name="stateless_registration_label">Stateless registration</string>
+  <string name="stateless_registration_tooltip">Stateless registration does not create a user profile. Once the session expires user needs to register again.</string>
 
-    <!-- Authentication -->
-    <string name="user_authentication">User authentication</string>
-    <string name="pin_authentication">Pin authentication</string>
-    <string name="implicit_authentication">Implicit authentication</string>
+  <!-- Authentication -->
+  <string name="user_authentication">User authentication</string>
+  <string name="pin_authentication">Pin authentication</string>
+  <string name="implicit_authentication">Implicit authentication</string>
   <string name="sdk_needs_to_be_initialized_to_perform_authentication">SDK needs to be initialized to perform authentication</string>
-    <string name="user_needs_to_be_registered_to_perform_authentication">User needs to be registered to perform authentication</string>
-    <string name="cancel_authentication">Cancel authentication</string>
-    <string name="authentication_choose_user_profile">Select User Profile that will be authenticated.</string>
-    <string name="pin_authentication_description">When at least one user is registered, SDK offers a possibility to log in using PIN authentication. PIN is set during user registration.</string>
-    <string name="implicit_authentication_description">The Android SDK allows you to authenticate users implicitly (without user interaction) using the device credentials. You can use it only for regular authentication, mobile authentication is not supported. Before you start using the implicit authentication, you have to manually enable it in the client configuration in the IDAAS-core.</string>
+  <string name="user_needs_to_be_registered_to_perform_authentication">User needs to be registered to perform authentication</string>
+  <string name="cancel_authentication">Cancel authentication</string>
+  <string name="authentication_choose_user_profile">Select User Profile that will be authenticated.</string>
+  <string name="pin_authentication_description">When at least one user is registered, SDK offers a possibility to log in using PIN authentication. PIN is set during user registration.</string>
+  <string name="implicit_authentication_description">The Android SDK allows you to authenticate users implicitly (without user interaction) using the device credentials. You can use it only for regular authentication, mobile authentication is not supported. Before you start using the implicit authentication, you have to manually enable it in the client configuration in the IDAAS-core.</string>
   <string name="biometric_authentication_description">When at least one user is registered and has biometric authenticator registered, SDK offers a possibility to log in using biometrics. Biometric authenticator can be enabled in authenticator settings section.</string>
-    <string name="user_authentication_description">When at least one user is registered, SDK offers a possibility to log in using number of authenticators.</string>
-    <string name="authentication_successful">Authentication successful</string>
+  <string name="user_authentication_description">When at least one user is registered, SDK offers a possibility to log in using number of authenticators.</string>
+  <string name="authentication_successful">Authentication successful</string>
   <string name="implicit_authentication_successful">Implicit Authentication successful</string>
 
-    <string name="authentication_requirement_tooltip">At least one user profile needs to be registered to perform authentication</string>
-    <string name="biometric_authenticator_requirement_tooltip">Biometric authenticator has to be registered for selected user profile to perform biometric authentication</string>
-    <string name="biometric_prompt_title">Biometric authentication</string>
-    <string name="biometric_prompt_subtitle">Authenticate using biometrics</string>
-    <string name="biometric_prompt_negative_button">Fallback to PIN</string>
+  <string name="authentication_requirement_tooltip">At least one user profile needs to be registered to perform authentication</string>
+  <string name="biometric_authenticator_requirement_tooltip">Biometric authenticator has to be registered for selected user profile to perform biometric authentication</string>
+  <string name="biometric_prompt_title">Biometric authentication</string>
+  <string name="biometric_prompt_subtitle">Authenticate using biometrics</string>
+  <string name="biometric_prompt_negative_button">Fallback to PIN</string>
 
-    <!-- Authenticator settings -->
-    <string name="authenticator_settings_authenticators_header">Authenticators</string>
-    <string name="authenticator_settings_description">To enable or disable each authenticator, the user has to register or deregister the authenticator. If multiple user profiles are registered in the application, each user profile has its own set of registered authenticators.</string>
-    <string name="authenticator_settings_deregistration_success">Authenticator deregistered successfully</string>
-    <string name="authenticator_settings_registration_success">Authenticator registered successfully\nCustom info: %s</string>
-    <string name="authenticator_settings_authenticated_user_requirement_tooltip">User has to be authenticated to register/deregister authenticators</string>
-    <string name="authenticator_settings_sdk_initialized_requirement_tooltip">SDK needs to be initialized to perform authenticator registration/deregistration</string>
-    <string name="authenticator_settings_biometric_authenticator_name">Biometric</string>
-    <string name="authenticator_settings_biometrics_not_enrolled_description">Biometric log in is not available. Check if biometrics are enrolled or try locking and unlocking your device</string>
-    <string name="authenticator_settings_biometrics_reader_not_present_description">Eligible biometric reader is not available on this device</string>
+  <!-- Authenticator settings -->
+  <string name="authenticator_settings_authenticators_header">Authenticators</string>
+  <string name="authenticator_settings_description">To enable or disable each authenticator, the user has to register or deregister the authenticator. If multiple user profiles are registered in the application, each user profile has its own set of registered authenticators.</string>
+  <string name="authenticator_settings_deregistration_success">Authenticator deregistered successfully</string>
+  <string name="authenticator_settings_registration_success">Authenticator registered successfully\nCustom info: %s</string>
+  <string name="authenticator_settings_authenticated_user_requirement_tooltip">User has to be authenticated to register/deregister authenticators</string>
+  <string name="authenticator_settings_sdk_initialized_requirement_tooltip">SDK needs to be initialized to perform authenticator registration/deregistration</string>
+  <string name="authenticator_settings_biometric_authenticator_name">Biometric</string>
+  <string name="authenticator_settings_biometrics_not_enrolled_description">Biometric log in is not available. Check if biometrics are enrolled or try locking and unlocking your device</string>
+  <string name="authenticator_settings_biometrics_reader_not_present_description">Eligible biometric reader is not available on this device</string>
 
-    <!-- User Deregistration -->
-    <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
-    <string name="sdk_needs_to_be_initialized_to_perform_deregistration">SDK needs to be initialized to perform deregistration</string>
-    <string name="label_user_profile">User profile</string>
-    <string name="deregistration_choose_user_profile">Select User Profile that will be deregistered.</string>
-    <string name="button_deregister_user">Deregister user</string>
-    <string name="label_user_deregistration_success">User deregistration success</string>
-    <string name="deregistration_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
+  <!-- User Deregistration -->
+  <string name="user_deregistration_description">User deregistration removes all selected user\'s data from the device.</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_deregistration">SDK needs to be initialized to perform deregistration</string>
+  <string name="label_user_profile">User profile</string>
+  <string name="deregistration_choose_user_profile">Select User Profile that will be deregistered.</string>
+  <string name="button_deregister_user">Deregister user</string>
+  <string name="label_user_deregistration_success">User deregistration success</string>
+  <string name="deregistration_requirement_tooltip">At least one user profile needs to be registered to perform deregistration</string>
 
-    <!-- Mobile Authentication-->
-    <string name="mobile_authentication">Mobile authentication</string>
-    <string name="mobile_authentication_description">SDK provides secure and user-friendly two-factor authentication. It supports OTP and push based authentication. You need to first enroll for mobile authentication before handling any transactions.</string>
-    <string name="sdk_needs_to_be_initialized_to_perform_enrollment">SDK needs to be initialized to perform enrollment</string>
+  <!-- Mobile Authentication-->
+  <string name="mobile_authentication">Mobile authentication</string>
+  <string name="mobile_authentication_description">SDK provides secure and user-friendly two-factor authentication. It supports OTP and push based authentication. You need to first enroll for mobile authentication before handling any transactions.</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_enrollment">SDK needs to be initialized to perform enrollment</string>
 
-    <!-- Mobile Authentication Enrollment-->
-    <string name="label_mobile_authentication_enrollment_success">Mobile authentication enrollment success</string>
-    <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP.</string>
-    <string name="button_mobile_authentication_enrollment">Enroll</string>
-    <string name="mobile_auth_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
-    <string name="user_enrolled_for_mobile_authentication_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication</string>
-    <string name="status_user_enrolled_for_mobile_authentication">Enrolled for mobile authentication</string>
+  <!-- Mobile Authentication Enrollment-->
+  <string name="label_mobile_authentication_enrollment_success">Mobile authentication enrollment success</string>
+  <string name="mobile_authentication_enrollment_description">Enrolls currently authenticated user profile for mobile authentication. It\'s required to be performed before user authenticates with OTP.</string>
+  <string name="button_mobile_authentication_enrollment">Enroll</string>
+  <string name="mobile_auth_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication</string>
+  <string name="user_enrolled_for_mobile_authentication_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication</string>
+  <string name="status_user_enrolled_for_mobile_authentication">Enrolled for mobile authentication</string>
 
-    <!-- Mobile Authentication With Push Enrollment-->
-    <string name="label_mobile_authentication_push_enrollment_success">Mobile authentication with push enrollment success</string>
-    <string name="mobile_authentication_push_enrollment_description">Enables user to use mobile authentication with push messages. It is required to include correct Firebase\'s google-services.json file connected to your project to be able to receive push messages. More info on Firebase setup can be found in README file of this project.</string>
-    <string name="button_mobile_authentication_push_enrollment">Enroll</string>
-    <string name="mobile_auth_push_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication with push</string>
-    <string name="user_needs_to_be_enrolled_for_mobile_authentication">User profile has to be enrolled for mobile authentication (OTP) before it can be enrolled for mobile authentication with push</string>
-    <string name="status_user_enrolled_for_mobile_authentication_with_push">Enrolled for mobile authentication with push</string>
-    <string name="user_enrolled_for_mobile_authentication_with_push_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication with push</string>
-    <string name="post_notifications_permission_tooltip">Notification permission is not mandatory. Pushes will still be received, but the app won\'t be able to inform the user via system notification.</string>
-    <string name="post_notifications_permission_dialog_title">Post notifications permission</string>
-    <string name="post_notifications_permission_dialog_description">To change the post notifications permission you need to navigate to application settings.</string>
-    <string name="navigate_to_settings">Navigate to settings</string>
+  <!-- Mobile Authentication With Push Enrollment-->
+  <string name="label_mobile_authentication_push_enrollment_success">Mobile authentication with push enrollment success</string>
+  <string name="mobile_authentication_push_enrollment_description">Enables user to use mobile authentication with push messages. It is required to include correct Firebase\'s google-services.json file connected to your project to be able to receive push messages. More info on Firebase setup can be found in README file of this project.</string>
+  <string name="button_mobile_authentication_push_enrollment">Enroll</string>
+  <string name="mobile_auth_push_enrollment_authenticated_user_requirement_tooltip">User has to be authenticated to enroll for mobile authentication with push</string>
+  <string name="user_needs_to_be_enrolled_for_mobile_authentication">User profile has to be enrolled for mobile authentication (OTP) before it can be enrolled for mobile authentication with push</string>
+  <string name="status_user_enrolled_for_mobile_authentication_with_push">Enrolled for mobile authentication with push</string>
+  <string name="user_enrolled_for_mobile_authentication_with_push_tooltip">Indicates if currently authenticated user profile is already enrolled for mobile authentication with push</string>
+  <string name="post_notifications_permission_tooltip">Notification permission is not mandatory. Pushes will still be received, but the app won\'t be able to inform the user via system notification.</string>
+  <string name="post_notifications_permission_dialog_title">Post notifications permission</string>
+  <string name="post_notifications_permission_dialog_description">To change the post notifications permission you need to navigate to application settings.</string>
+  <string name="navigate_to_settings">Navigate to settings</string>
 
-    <!-- Mobile Authentication with OTP-->
-    <string name="mobile_authentication_with_otp">Mobile authentication with OTP</string>
-    <string name="mobile_authentication_with_otp_description">Authentication with One-Time Password allows users to perform secure two-factor authentication or single-factor authentication where no passwords are required.</string>
-    <string name="mobile_authentication_with_otp_authenticate">Authenticate</string>
-    <string name="mobile_authentication_with_otp_code">OTP code</string>
-    <string name="mobile_authentication_with_otp_code_tooltip">Enter the OTP code by typing, pasting, or scanning a QR code</string>
-    <string name="mobile_authentication_with_otp_sdk_initialized_tooltip">SDK needs to be initialized to perform mobile authentication with OTP</string>
-    <string name="mobile_authentication_with_otp_authenticated_user_requirement_tooltip">User has to be authenticated to perform mobile authentication with OTP</string>
-    <string name="mobile_authentication_with_otp_enrolled_tooltip">User profile has to be enrolled for mobile authentication with OTP</string>
-    <string name="mobile_authentication_with_otp_success">Mobile authentication with OTP success</string>
-    <string name="mobile_authentication_with_otp_request_dialog_title">Mobile authentication request</string>
-    <string name="mobile_authentication_with_otp_message">Message</string>
-    <string name="mobile_authentication_with_otp_type">Type</string>
-    <string name="mobile_authentication_with_otp_user_profile">User profile</string>
-    <string name="mobile_authentication_with_otp_transaction_id">Transaction ID</string>
-    <string name="mobile_authentication_with_otp_signing_data">Signing data</string>
+  <!-- Mobile Authentication with OTP-->
+  <string name="mobile_authentication_with_otp">Mobile authentication with OTP</string>
+  <string name="mobile_authentication_with_otp_description">Authentication with One-Time Password allows users to perform secure two-factor authentication or single-factor authentication where no passwords are required.</string>
+  <string name="mobile_authentication_with_otp_authenticate">Authenticate</string>
+  <string name="mobile_authentication_with_otp_code">OTP code</string>
+  <string name="mobile_authentication_with_otp_code_tooltip">Enter the OTP code by typing, pasting, or scanning a QR code</string>
+  <string name="mobile_authentication_with_otp_sdk_initialized_tooltip">SDK needs to be initialized to perform mobile authentication with OTP</string>
+  <string name="mobile_authentication_with_otp_authenticated_user_requirement_tooltip">User has to be authenticated to perform mobile authentication with OTP</string>
+  <string name="mobile_authentication_with_otp_enrolled_tooltip">User profile has to be enrolled for mobile authentication with OTP</string>
+  <string name="mobile_authentication_with_otp_success">Mobile authentication with OTP success</string>
+  <string name="mobile_authentication_with_otp_request_dialog_title">Mobile authentication request</string>
+  <string name="mobile_authentication_with_otp_message">Message</string>
+  <string name="mobile_authentication_with_otp_type">Type</string>
+  <string name="mobile_authentication_with_otp_user_profile">User profile</string>
+  <string name="mobile_authentication_with_otp_transaction_id">Transaction ID</string>
+  <string name="mobile_authentication_with_otp_signing_data">Signing data</string>
 
-    <!-- PIN -->
-    <string name="enter_pin">Enter PIN</string>
-    <string name="max_attempts">Max attempts: %s</string>
-    <string name="failed_attempts">Failed attempts: %s</string>
-    <string name="remaining_attempts">Remaining attempts: %s</string>
+  <!-- PIN -->
+  <string name="enter_pin">Enter PIN</string>
+  <string name="max_attempts">Max attempts: %s</string>
+  <string name="failed_attempts">Failed attempts: %s</string>
+  <string name="remaining_attempts">Remaining attempts: %s</string>
 
-    <!-- Change PIN -->
-    <string name="change_pin">Change PIN</string>
-    <string name="sdk_needs_to_be_initialized_to_perform_pin_change_tooltip">SDK needs to be initialized to perform PIN change</string>
-    <string name="user_needs_to_be_authenticated_to_perform_pin_change_tooltip">User needs to be authenticated to perform PIN change</string>
-    <string name="change_pin_description">SDK offers a way to change the PIN for the currently logged in user profile.</string>
-    <string name="pin_changed_successfully">PIN changed successfully</string>
+  <!-- Change PIN -->
+  <string name="change_pin">Change PIN</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_pin_change_tooltip">SDK needs to be initialized to perform PIN change</string>
+  <string name="user_needs_to_be_authenticated_to_perform_pin_change_tooltip">User needs to be authenticated to perform PIN change</string>
+  <string name="change_pin_description">SDK offers a way to change the PIN for the currently logged in user profile.</string>
+  <string name="pin_changed_successfully">PIN changed successfully</string>
 
-    <!-- Logout -->
-    <string name="logout_title">Logout</string>
-    <string name="user_needs_to_be_authenticated_to_perform_logout">Logout action does not fail in case if there is no authenticated user profile.</string>
-    <string name="sdk_needs_to_be_initialized_to_perform_logout_tooltip">SDK needs to be initialized to perform logout</string>
-    <string name="logout_performed_successfully">Logout performed successfully</string>
-    <string name="button_logout_user">Logout</string>
-    <string name="logout_description">SDK offers a way to logout currently logged in user profile. Logout does not fail if there is no authenticated user profile.</string>
+  <!-- Logout -->
+  <string name="logout_title">Logout</string>
+  <string name="user_needs_to_be_authenticated_to_perform_logout">Logout action does not fail in case if there is no authenticated user profile.</string>
+  <string name="sdk_needs_to_be_initialized_to_perform_logout_tooltip">SDK needs to be initialized to perform logout</string>
+  <string name="logout_performed_successfully">Logout performed successfully</string>
+  <string name="button_logout_user">Logout</string>
+  <string name="logout_description">SDK offers a way to logout currently logged in user profile. Logout does not fail if there is no authenticated user profile.</string>
 
-    <!-- Transaction Confirmation -->
-    <string name="transaction_screen">Transaction screen</string>
-    <string name="profile_id">Profile ID</string>
-    <string name="message_content">Message</string>
-    <string name="transaction_id">Transaction ID</string>
-    <string name="time_to_live_seconds">Time to live in seconds</string>
-    <string name="timestamp">Timestamp</string>
-    <string name="no_data_available">No data available</string>
+  <!-- Transaction Confirmation -->
+  <string name="transaction_screen">Transaction screen</string>
+  <string name="profile_id">Profile ID</string>
+  <string name="message_content">Message</string>
+  <string name="transaction_id">Transaction ID</string>
+  <string name="time_to_live_seconds">Time to live in seconds</string>
+  <string name="timestamp">Timestamp</string>
+  <string name="no_data_available">No data available</string>
 
-    <!-- Transaction Confirmation Result -->
-    <string name="transaction_result">Transaction result</string>
-    <string name="transaction_accepted_successfully">Transaction accepted successfully</string>
-    <string name="custom_info_plain">Custom info</string>
-    <string name="transaction_failed">Transaction failed</string>
+  <!-- Transaction Confirmation Result -->
+  <string name="transaction_result">Transaction result</string>
+  <string name="transaction_accepted_successfully">Transaction accepted successfully</string>
+  <string name="custom_info_plain">Custom info</string>
+  <string name="transaction_failed">Transaction failed</string>
 
-    <!-- Notifications -->
-    <string name="new_pending_transaction">New pending transaction</string>
-    <string name="transaction_waiting_for_confirmation">New pending transaction</string>
+  <!-- Notifications -->
+  <string name="new_pending_transaction">New pending transaction</string>
+  <string name="transaction_waiting_for_confirmation">New pending transaction</string>
 
-    <!-- QR Code Scanner -->
-    <string name="camera_permission_dialog_title">Camera permission</string>
-    <string name="camera_permission_dialog_description">To change the camera permission you need to navigate to application settings.</string>
-    <string name="qr_code_scanner_content_description">Open QR code scanner</string>
+  <!-- QR Code Scanner -->
+  <string name="camera_permission_dialog_title">Camera permission</string>
+  <string name="camera_permission_dialog_description">To change the camera permission you need to navigate to application settings.</string>
+  <string name="qr_code_scanner_content_description">Open QR code scanner</string>
 
-    <!-- Handlers -->
-    <string name="handler_browser_registration">Browser registration</string>
-    <string name="handler_two_step_registration">Two step registration</string>
-    <string name="handler_biometric_authentication">Biometric authentication</string>
-    <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
-    <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
-    <string name="handler_mobile_auth_with_push_and_pin">Mobile authentication with push and pin</string>
-    <string name="handler_mobile_auth_with_push_and_biometrics">Mobile authentication with push and biometrics</string>
+  <!-- Handlers -->
+  <string name="handler_browser_registration">Browser registration</string>
+  <string name="handler_two_step_registration">Two step registration</string>
+  <string name="handler_biometric_authentication">Biometric authentication</string>
+  <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
+  <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
+  <string name="handler_mobile_auth_with_push_and_pin">Mobile authentication with push and pin</string>
+  <string name="handler_mobile_auth_with_push_and_biometrics">Mobile authentication with push and biometrics</string>
 
-    <!-- SSO -->
-    <string name="single_sign_on_description">App-to-web single sign-on (SSO) allows you to take a session from your mobile application and extend it to a browser on the same device</string>
-    <string name="single_sign_on_redirect_url">Redirect url</string>
-    <string name="single_sign_on_button">Single sign-on</string>
+  <!-- SSO -->
+  <string name="single_sign_on_description">App-to-web single sign-on (SSO) allows you to take a session from your mobile application and extend it to a browser on the same device</string>
+  <string name="single_sign_on_redirect_url">Redirect url</string>
+  <string name="single_sign_on_button">Single sign-on</string>
 
-    <!-- two step registration -->
-    <string name="section_title_two_step_registration">Two Step Registration</string>
-    <string name="two_step_registration">Two Step Registration</string>
+  <!-- two step registration -->
+  <string name="section_title_two_step_registration">Two Step Registration</string>
+  <string name="two_step_registration">Two Step Registration</string>
 
-    <!-- Tokens -->
-    <string name="section_title_tokens">Tokens</string>
-    <string name="tokens_description">The ID token is a JSON Web Token (JWT) that contains user profile information such as name, email, and other claims. To obtain an ID token, the user must be registered with an OpenID scope and be authenticated.</string>
-    <string name="tokens_get_id_token_button">Get ID Token</string>
-    <string name="tokens_id_token_raw">Raw ID Token (JWT)</string>
-    <string name="tokens_id_token_decoded">Decoded Payload</string>
-    <string name="tokens_id_token_not_available">ID token is not available. User must be registered with OpenID scope and authenticated.</string>
+  <!-- Tokens -->
+  <string name="section_title_tokens">Tokens</string>
+  <string name="tokens_description">The ID token is a JSON Web Token (JWT) that contains user profile information such as name, email, and other claims. To obtain an ID token, the user must be registered with an OpenID scope and be authenticated.</string>
+  <string name="tokens_get_id_token_button">Get ID Token</string>
+  <string name="tokens_id_token_raw">Raw ID Token (JWT)</string>
+  <string name="tokens_id_token_decoded">Decoded Payload</string>
+  <string name="tokens_id_token_not_available">ID token is not available. User must be registered with OpenID scope and authenticated.</string>
 
-    <!-- Pending Transactions -->
-    <string name="pending_transactions_title">Pending Transactions</string>
-    <string name="pending_transactions_description">View and manage mobile authentication push requests that are waiting for your action. Pull down to refresh the list.</string>
-    <string name="no_pending_transactions">No Pending Transactions</string>
-    <string name="no_pending_transactions_hint">Pull down to refresh or wait for new authentication requests</string>
-    <string name="transaction_user_profile">User: %s</string>
-    <string name="transaction_expires_at">Expires at: %s</string>
-    <string name="deny">Deny</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="retry">Retry</string>
-    <string name="error_occurred">An error occurred</string>
+  <!-- Pending Transactions -->
+  <string name="pending_transactions_title">Pending Transactions</string>
+  <string name="pending_transactions_description">View and manage mobile authentication push requests that are waiting for your action. Pull down to refresh the list.</string>
+  <string name="no_pending_transactions">No Pending Transactions</string>
+  <string name="no_pending_transactions_hint">Pull down to refresh or wait for new authentication requests</string>
+  <string name="transaction_user_profile">User: %s</string>
+  <string name="transaction_expires_at">Expires at: %s</string>
+  <string name="deny">Deny</string>
+  <string name="dismiss">Dismiss</string>
+  <string name="retry">Retry</string>
+  <string name="error_occurred">An error occurred</string>
 </resources>
