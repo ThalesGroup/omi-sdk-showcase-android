@@ -15,7 +15,13 @@ val Pink40 = Color(0xFF7D5260)
 
 val successLight = Color(0xFF49672e)
 val successDark = Color(0xFFafd18c)
+val successContainerLight = Color(0xFFD4EDCD)
+val successContainerDark = Color(0xFF294317)
 
 val ColorScheme.success: Color
   @Composable
   get() = if (isSystemInDarkTheme()) successDark else successLight
+
+val ColorScheme.successContainer: Color
+  @Composable
+  get() = if (isSystemInDarkTheme()) successContainerDark else successContainerLight

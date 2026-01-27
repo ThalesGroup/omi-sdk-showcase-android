@@ -48,6 +48,7 @@ import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.Auth
 import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
+import com.onewelcome.showcaseapp.feature.resourcecall.ResourceCallScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
@@ -220,5 +221,6 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.SdkReset.route) { SdkResetScreen(homeNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
     composable(Screens.Tokens.route) { TokensScreen(homeNavController) }
+    composable(Screens.ResourceCalls.route) { ResourceCallScreen(homeNavController) }
   }
 }
