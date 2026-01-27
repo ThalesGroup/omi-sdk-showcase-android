@@ -294,4 +294,24 @@
     <!-- two step registration -->
     <string name="section_title_two_step_registration">Two Step Registration</string>
     <string name="two_step_registration">Two Step Registration</string>
+
+    <!-- Tokens -->
+    <string name="section_title_tokens">Tokens</string>
+    <string name="tokens_description">The ID token is a JSON Web Token (JWT) that contains user profile information such as name, email, and other claims. To obtain an ID token, the user must be registered with an OpenID scope and be authenticated.</string>
+    <string name="tokens_get_id_token_button">Get ID Token</string>
+    <string name="tokens_id_token_raw">Raw ID Token (JWT)</string>
+    <string name="tokens_id_token_decoded">Decoded Payload</string>
+    <string name="tokens_id_token_not_available">ID token is not available. User must be registered with OpenID scope and authenticated.</string>
+
+    <!-- Pending Transactions -->
+    <string name="pending_transactions_title">Pending Transactions</string>
+    <string name="pending_transactions_description">View and manage mobile authentication push requests that are waiting for your action. Pull down to refresh the list.</string>
+    <string name="no_pending_transactions">No Pending Transactions</string>
+    <string name="no_pending_transactions_hint">Pull down to refresh or wait for new authentication requests</string>
+    <string name="transaction_user_profile">User: %s</string>
+    <string name="transaction_expires_at">Expires at: %s</string>
+    <string name="deny">Deny</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="retry">Retry</string>
+    <string name="error_occurred">An error occurred</string>
 </resources>

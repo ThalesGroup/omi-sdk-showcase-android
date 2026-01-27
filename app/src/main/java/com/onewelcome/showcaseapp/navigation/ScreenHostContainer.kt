@@ -52,6 +52,7 @@ import com.onewelcome.showcaseapp.feature.resourcecall.ResourceCallScreen
 import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
+import com.onewelcome.showcaseapp.feature.tokens.TokensScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepOptionalDataSubmitScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepVerificationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepRegistrationScreen
@@ -117,6 +118,7 @@ private fun handleNavigationToTransactionResultScreen(rootNavController: NavHost
   val shouldPopBackStackOnNavigation =
     currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
   if (shouldPopBackStackOnNavigation) {
+    rootNavController.popBackStack(Screens.TransactionConfirmation.route,false)
     rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
       popUpTo(rootNavController.currentDestination?.id ?: return@navigate) { inclusive = true }
     }
@@ -218,6 +220,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.SingleSignOn.route) { SingleSignOnScreen(homeNavController) }
     composable(Screens.SdkReset.route) { SdkResetScreen(homeNavController) }
     composable(Screens.Logout.route) { LogoutScreen(homeNavController) }
+    composable(Screens.Tokens.route) { TokensScreen(homeNavController) }
     composable(Screens.ResourceCalls.route) { ResourceCallScreen(homeNavController) }
   }
 }
