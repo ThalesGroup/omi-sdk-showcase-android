@@ -16,6 +16,8 @@ import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler.CustomAuthenticationData
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
@@ -36,6 +38,7 @@ class SharedPushViewModel @Inject constructor(
   private val preferencesManager: PreferencesManager,
   private val sdkAutoInitializationManager: SdkAutoInitializationManager,
   private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
+  private val mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler
 ) : ViewModel() {
   var uiState by mutableStateOf(UiState())
 
@@ -66,6 +69,12 @@ class SharedPushViewModel @Inject constructor(
         }
       }
       launch {
+        mobileAuthWithPushCustomRequestHandler.startCustomAuthenticationFlow.collect { customData ->
+          uiState = uiState.copy(pushType = PushType.PUSH_CUSTOM, customAuthData = customData)
+          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthenticationScreen)
+        }
+      }
+      launch {
         notificationEventDispatcher.authenticationEvent.collect {
           uiState = uiState.copy(pushType = null, result = it)
           _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
@@ -81,6 +90,7 @@ class SharedPushViewModel @Inject constructor(
           PushType.PUSH -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.acceptAuthenticationRequest()
           PushType.PUSH_PIN -> _navigationEvents.trySend(NavigationEvent.NavigateToPinConfirmationScreen)
           PushType.PUSH_BIOMETRIC -> uiState.cryptoObject?.let { _biometricEvents.trySend(BiometricEvent.ShowBiometricPrompt(it)) }
+          PushType.PUSH_CUSTOM -> _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthenticationScreen)
           null -> {
             //no-op
           }
@@ -90,6 +100,7 @@ class SharedPushViewModel @Inject constructor(
         PushType.PUSH -> mobileAuthWithPushRequestHandler.acceptDenyCallback?.denyAuthenticationRequest()
         PushType.PUSH_PIN -> mobileAuthWithPushPinRequestHandler.pinCallback?.denyAuthenticationRequest()
         PushType.PUSH_BIOMETRIC -> mobileAuthWithBiometricRequestHandler.biometricCallback?.denyAuthenticationRequest()
+        PushType.PUSH_CUSTOM -> mobileAuthWithPushCustomRequestHandler.customCallback?.denyAuthenticationRequest()
         null -> {
           //no-op
         }
@@ -97,6 +108,9 @@ class SharedPushViewModel @Inject constructor(
 
       is UiEvent.AcceptBiometric -> mobileAuthWithBiometricRequestHandler.biometricCallback?.userAuthenticatedSuccessfully()
       is UiEvent.DeclineBiometric -> handleBiometricError(event.errorCode)
+
+      is UiEvent.SubmitCustomData -> mobileAuthWithPushCustomRequestHandler.customCallback?.acceptAuthenticationRequest()
+      is UiEvent.RejectCustomAuth -> mobileAuthWithPushCustomRequestHandler.customCallback?.denyAuthenticationRequest()
     }
   }
 
@@ -163,6 +177,7 @@ class SharedPushViewModel @Inject constructor(
     val result: Result<CustomInfo?, Throwable>? = null,
     val cryptoObject: BiometricPrompt.CryptoObject? = null,
     val pushType: PushType? = null,
+    val customAuthData: CustomAuthenticationData? = null,
   )
 
   sealed interface UiEvent {
@@ -170,12 +185,15 @@ class SharedPushViewModel @Inject constructor(
     data object Reject : UiEvent
     data object AcceptBiometric : UiEvent
     data class DeclineBiometric(val errorCode: Int) : UiEvent
+    data class SubmitCustomData(val data: String) : UiEvent
+    data object RejectCustomAuth : UiEvent
   }
 
   sealed interface NavigationEvent {
     data object NavigateToTransactionResultScreen : NavigationEvent
     data object NavigateToTransactionConfirmationScreen : NavigationEvent
     data object NavigateToPinConfirmationScreen : NavigationEvent
+    data object NavigateToCustomAuthenticationScreen : NavigationEvent
   }
 
   sealed interface BiometricEvent {
@@ -183,6 +201,6 @@ class SharedPushViewModel @Inject constructor(
   }
 
   enum class PushType {
-    PUSH, PUSH_PIN, PUSH_BIOMETRIC
+    PUSH, PUSH_PIN, PUSH_BIOMETRIC, PUSH_CUSTOM
   }
 }

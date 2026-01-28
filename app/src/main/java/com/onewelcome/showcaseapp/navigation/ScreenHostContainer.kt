@@ -41,6 +41,7 @@ import com.onewelcome.showcaseapp.feature.sdkinitialization.SdkInitializationScr
 import com.onewelcome.showcaseapp.feature.sdkreset.SdkResetScreen
 import com.onewelcome.showcaseapp.feature.singlesignon.SingleSignOnScreen
 import com.onewelcome.showcaseapp.feature.transaction.TransactionsScreen
+import com.onewelcome.showcaseapp.feature.transactionconfirmation.PushWithCustomAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationResultScreen
 import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionConfirmationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
@@ -98,6 +99,8 @@ private fun ListenForPushEvents(
         SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> handleNavigationToTransactionResultScreen(rootNavController)
         SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen ->
           handleNavigationToPushWithPinConfirmationScreen(rootNavController)
+        SharedPushViewModel.NavigationEvent.NavigateToCustomAuthenticationScreen ->
+          handleNavigationToCustomAuthenticationScreen(rootNavController)
       }
     }
   }
@@ -116,7 +119,9 @@ private fun handleNavigationToPushWithPinConfirmationScreen(rootNavController: N
 private fun handleNavigationToTransactionResultScreen(rootNavController: NavHostController) {
   val currentRoute = rootNavController.currentDestination?.route
   val shouldPopBackStackOnNavigation =
-    currentRoute == Screens.TransactionConfirmation.route || currentRoute == Screens.PushWithPinConfirmationInput.route
+    currentRoute == Screens.TransactionConfirmation.route ||
+    currentRoute == Screens.PushWithPinConfirmationInput.route ||
+    currentRoute == Screens.PushWithCustomAuthentication.route
   if (shouldPopBackStackOnNavigation) {
     rootNavController.popBackStack(Screens.TransactionConfirmation.route,false)
     rootNavController.navigate(Screens.TransactionConfirmationResult.route) {
@@ -127,12 +132,17 @@ private fun handleNavigationToTransactionResultScreen(rootNavController: NavHost
   }
 }
 
+private fun handleNavigationToCustomAuthenticationScreen(rootNavController: NavHostController) {
+  rootNavController.navigate(Screens.PushWithCustomAuthentication.route)
+}
+
 private fun NavGraphBuilder.pushScreens(
   rootNavController: NavHostController,
   sharedPushViewModel: SharedPushViewModel
 ) {
   composable(Screens.TransactionConfirmation.route) { TransactionConfirmationScreen(rootNavController, sharedPushViewModel) }
   composable(Screens.TransactionConfirmationResult.route) { TransactionConfirmationResultScreen(rootNavController, sharedPushViewModel) }
+  composable(Screens.PushWithCustomAuthentication.route) { PushWithCustomAuthenticationScreen(rootNavController, sharedPushViewModel) }
 }
 
 private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostController) {

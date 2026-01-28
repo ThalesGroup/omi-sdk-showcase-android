@@ -277,14 +277,22 @@
   <string name="camera_permission_dialog_description">To change the camera permission you need to navigate to application settings.</string>
   <string name="qr_code_scanner_content_description">Open QR code scanner</string>
 
-  <!-- Handlers -->
-  <string name="handler_browser_registration">Browser registration</string>
-  <string name="handler_two_step_registration">Two step registration</string>
-  <string name="handler_biometric_authentication">Biometric authentication</string>
-  <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
-  <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
-  <string name="handler_mobile_auth_with_push_and_pin">Mobile authentication with push and pin</string>
-  <string name="handler_mobile_auth_with_push_and_biometrics">Mobile authentication with push and biometrics</string>
+    <!-- Handlers -->
+    <string name="handler_browser_registration">Browser registration</string>
+    <string name="handler_two_step_registration">Two step registration</string>
+    <string name="handler_biometric_authentication">Biometric authentication</string>
+    <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
+    <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
+    <string name="handler_mobile_auth_with_push_and_pin">Mobile authentication with push and pin</string>
+    <string name="handler_mobile_auth_with_push_and_biometrics">Mobile authentication with push and biometrics</string>
+    <string name="handler_mobile_auth_with_push_and_custom">Mobile authentication with push and custom</string>
+
+    <!-- Custom Authentication -->
+    <string name="custom_authentication_title">Custom Authentication</string>
+    <string name="custom_authentication_challenge">Challenge</string>
+    <string name="custom_authentication_response_hint">Enter your response</string>
+    <string name="custom_authentication_submit">Submit</string>
+    <string name="custom_authentication_cancel">Cancel</string>
 
   <!-- SSO -->
   <string name="single_sign_on_description">App-to-web single sign-on (SSO) allows you to take a session from your mobile application and extend it to a browser on the same device</string>

@@ -15,6 +15,7 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
@@ -82,6 +83,9 @@ class SharedPushViewModelTest {
   @Inject
   lateinit var mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler
 
+  @Inject
+  lateinit var mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler
+
   lateinit var viewModel: SharedPushViewModel
 
   private val userClientMock: UserClient = mock()
@@ -106,6 +110,7 @@ class SharedPushViewModelTest {
       preferencesManager,
       sdkAutoInitializationManager,
       mobileAuthWithBiometricRequestHandler,
+      mobileAuthWithPushCustomRequestHandler
     )
   }
 
