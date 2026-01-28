@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
-import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
+import com.onewelcome.core.notification.PendingTransactionEventDispatcher
 import com.onewelcome.core.usecase.DenyPendingTransactionUseCase
 import com.onewelcome.core.usecase.GetPendingTransactionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
   private val getPendingTransactionsUseCase: GetPendingTransactionsUseCase,
-  private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
+  private val pendingTransactionEventDispatcher: PendingTransactionEventDispatcher,
   private val denyPendingTransactionUseCase: DenyPendingTransactionUseCase
 ) : ViewModel() {
 
@@ -50,7 +50,7 @@ class TransactionsViewModel @Inject constructor(
             TransactionItem(
               request = request,
               transactionId = request.transactionId,
-              message = request.message ?: "No message",
+              message = request.message,
               userProfileId = request.userProfileId,
               timestamp = formatTimestamp(request.timestamp),
               expiresAt = formatExpirationTime(request.timestamp, request.timeToLiveSeconds)
@@ -65,35 +65,58 @@ class TransactionsViewModel @Inject constructor(
         .onFailure { error ->
           uiState = uiState.copy(
             isLoading = false,
-            errorMessage = error.message ?: "Failed to fetch pending transactions"
+            errorMessage = error.message
           )
         }
     }
   }
 
   fun acceptTransaction(item: TransactionItem) {
-    uiState = uiState.copy(processingTransactionId = item.transactionId)
-    authenticateWithPushUseCase.execute(item.request)
-    // Note: The result is handled via NotificationEventDispatcher
-    // Remove from list after initiating
+    // Prevent concurrent operations - this is crucial as SDK doesn't allow parallel auth requests
+    if (uiState.isProcessingAction) {
+      uiState = uiState.copy(errorMessage = "Another action is already in progress. Please wait.")
+      return
+    }
+    
+    uiState = uiState.copy(
+      processingTransactionId = item.transactionId,
+      isProcessingAction = true
+    )
+    // Dispatch the push request to SharedPushViewModel via the event dispatcher.
+    // This ensures pushRequest is set in SharedPushViewModel before navigation,
+    // so TransactionConfirmationScreen can display the transaction details.
+    pendingTransactionEventDispatcher.dispatch(item.request)
+    // Remove from list after initiating and reset processing flag
     removeTransactionFromList(item.transactionId)
+    uiState = uiState.copy(isProcessingAction = false)
   }
 
   fun denyTransaction(item: TransactionItem) {
+    // Prevent concurrent operations - this is crucial as SDK doesn't allow parallel auth requests
+    if (uiState.isProcessingAction) {
+      uiState = uiState.copy(errorMessage = "Another action is already in progress. Please wait.")
+      return
+    }
+    
     viewModelScope.launch {
-      uiState = uiState.copy(processingTransactionId = item.transactionId)
+      uiState = uiState.copy(
+        processingTransactionId = item.transactionId,
+        isProcessingAction = true
+      )
       denyPendingTransactionUseCase.execute(item.request)
         .onSuccess {
           removeTransactionFromList(item.transactionId)
           uiState = uiState.copy(
             processingTransactionId = null,
+            isProcessingAction = false,
             successMessage = "Transaction denied successfully"
           )
         }
         .onFailure { error ->
           uiState = uiState.copy(
             processingTransactionId = null,
-            errorMessage = error.message ?: "Failed to deny transaction"
+            isProcessingAction = false,
+            errorMessage = error.message
           )
         }
     }
@@ -134,6 +157,7 @@ class TransactionsViewModel @Inject constructor(
     val isLoading: Boolean = false,
     val transactions: List<TransactionItem> = emptyList(),
     val processingTransactionId: String? = null,
+    val isProcessingAction: Boolean = false,
     val errorMessage: String? = null,
     val successMessage: String? = null
   )

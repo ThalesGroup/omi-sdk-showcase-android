@@ -15,6 +15,7 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onewelcome.core.manager.PreferencesManager
 import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
+import com.onewelcome.core.notification.PendingTransactionEventDispatcher
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
@@ -31,6 +32,7 @@ class SharedPushViewModel @Inject constructor(
   private val authenticateWithPushUseCase: AuthenticateWithPushUseCase,
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val notificationEventDispatcher: NotificationEventDispatcher,
+  private val pendingTransactionEventDispatcher: PendingTransactionEventDispatcher,
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
   private val isSdkInitializedUseCase: IsSdkInitializedUseCase,
   private val preferencesManager: PreferencesManager,
@@ -69,6 +71,11 @@ class SharedPushViewModel @Inject constructor(
         notificationEventDispatcher.authenticationEvent.collect {
           uiState = uiState.copy(pushType = null, result = it)
           _navigationEvents.trySend(NavigationEvent.NavigateToTransactionResultScreen)
+        }
+      }
+      launch {
+        pendingTransactionEventDispatcher.pendingTransactionEvent.collect { pushRequest ->
+          onNewPush(pushRequest)
         }
       }
     }
