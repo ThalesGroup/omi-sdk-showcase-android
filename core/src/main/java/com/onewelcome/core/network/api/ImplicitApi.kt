@@ -8,5 +8,5 @@ interface ImplicitApi {
   suspend fun getDecoratedUserId(): Response<DecoratedIdModel>
 }
 
-data class DecoratedIdModel(val decoratedUserId: String)
+data class DecoratedIdModel(val decorated_user_id: String)
 
