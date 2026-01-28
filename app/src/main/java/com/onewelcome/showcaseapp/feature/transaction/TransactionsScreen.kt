@@ -113,6 +113,7 @@ private fun TransactionsScreenContent(
               TransactionCard(
                 transaction = transaction,
                 isProcessing = uiState.processingTransactionId == transaction.transactionId,
+                isAnyActionInProgress = uiState.isProcessingAction,
                 onAccept = { onAccept(transaction) },
                 onDeny = { onDeny(transaction) }
               )
@@ -273,9 +274,13 @@ private fun ErrorState(errorMessage: String, onRetry: () -> Unit) {
 private fun TransactionCard(
   transaction: TransactionItem,
   isProcessing: Boolean,
+  isAnyActionInProgress: Boolean,
   onAccept: () -> Unit,
   onDeny: () -> Unit
 ) {
+  // Disable buttons if this transaction is processing OR if any other action is in progress
+  val buttonsEnabled = !isProcessing && !isAnyActionInProgress
+  
   Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(
@@ -333,7 +338,7 @@ private fun TransactionCard(
       ) {
         OutlinedButton(
           onClick = onDeny,
-          enabled = !isProcessing,
+          enabled = buttonsEnabled,
           modifier = Modifier.weight(1f),
           colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.error
@@ -357,7 +362,7 @@ private fun TransactionCard(
 
         Button(
           onClick = onAccept,
-          enabled = !isProcessing,
+          enabled = buttonsEnabled,
           modifier = Modifier.weight(1f)
         ) {
           if (isProcessing) {
