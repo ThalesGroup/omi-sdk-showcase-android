@@ -154,56 +154,38 @@ class ResourceCallViewModel @Inject constructor(
         isLoading = true,
         result = null,
         errorMessage = null,
-        currentStep = "Step 1: Checking registered user profiles..."
+        currentStep = "Step 1: Checking for implicitly authenticated user..."
       )
 
-      // Get available user profiles
-      val userProfiles = implicitUseCase.getUserProfiles()
+      // Check if a user is already implicitly authenticated
+      val implicitlyAuthenticatedUser = implicitUseCase.getImplicitlyAuthenticatedUserProfile()
 
-      if (userProfiles.isEmpty()) {
+      if (implicitlyAuthenticatedUser == null) {
         uiState = uiState.copy(
           isLoading = false,
-          errorMessage = "No Registered Users!\n\n" +
-              "Implicit resource calls require a registered user.\n" +
-              "User doesn't need to be logged in, but must have registered at least once.\n\n" +
-              "Please register a user first, then try again.",
+          errorMessage = "No Implicitly Authenticated User Found!\n\n" +
+              "No user is currently implicitly authenticated.\n" +
+              "Please authenticate a user implicitly first before making implicit resource calls.",
           currentStep = null
         )
         return@launch
       }
 
-      // Use the first available user profile
-      val userProfile = userProfiles.first()
+      uiState = uiState.copy(currentStep = "Step 2: Implicitly authenticated user found! Fetching user profile...")
 
-      uiState = uiState.copy(currentStep = "Step 2: Authenticating user implicitly (no PIN)...")
-
-      implicitUseCase.authenticateUserImplicitly(userProfile)
-        .onSuccess {
-          uiState = uiState.copy(currentStep = "Step 3: Implicit auth success! Fetching basic profile...")
-
-          implicitUseCase.getUserId()
-            .onSuccess { userId ->
-              uiState = uiState.copy(
-                isLoading = false,
-                result = "Implicit Call Success!\n\n" +
-                    "User Id:" + userId.decorated_user_id,
-                currentStep = null
-              )
-            }
-            .onFailure { error ->
-              uiState = uiState.copy(
-                isLoading = false,
-                errorMessage = "Implicit Resource Call Failed!\n\n" +
-                    "Implicit auth succeeded but API call failed.\n" +
-                    "Error: ${error.message}\n\n",
-                currentStep = null
-              )
-            }
+      implicitUseCase.getUserId()
+        .onSuccess { userId ->
+          uiState = uiState.copy(
+            isLoading = false,
+            result = "Implicit Call Success!\n\n" +
+                "User Id: " + userId.decorated_user_id,
+            currentStep = null
+          )
         }
         .onFailure { error ->
           uiState = uiState.copy(
             isLoading = false,
-            errorMessage = "Implicit Authentication Failed!\n\n" +
+            errorMessage = "Implicit Resource Call Failed!\n\n" +
                 "Error: ${error.message}\n\n",
             currentStep = null
           )
