@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onewelcome.core.components.ShowcaseTopBar
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler.CustomAuthenticationData
 import com.onewelcome.core.theme.Dimensions
@@ -37,232 +38,232 @@ import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiEvent
 
 @Composable
 fun PushWithCustomAuthenticationScreen(
-    navController: NavHostController,
-    viewModel: SharedPushViewModel,
+  navController: NavHostController,
+  viewModel: SharedPushViewModel,
 ) {
-    PushWithCustomAuthenticationScreenContent(
-        onNavigateBack = { navController.popBackStack() },
-        onEvent = { viewModel.onEvent(it) },
-        customAuthData = viewModel.uiState.customAuthData,
-    )
+  PushWithCustomAuthenticationScreenContent(
+    onNavigateBack = { navController.popBackStack() },
+    onEvent = { viewModel.onEvent(it) },
+    customAuthData = viewModel.uiState.customAuthData,
+  )
 }
 
 @Composable
 private fun PushWithCustomAuthenticationScreenContent(
-    onNavigateBack: () -> Unit,
-    onEvent: (UiEvent) -> Unit,
-    customAuthData: CustomAuthenticationData?,
+  onNavigateBack: () -> Unit,
+  onEvent: (UiEvent) -> Unit,
+  customAuthData: CustomAuthenticationData?,
 ) {
-    var inputText by remember { mutableStateOf("") }
+  var inputText by remember { mutableStateOf("") }
 
-    Scaffold(
-        topBar = { ShowcaseTopBar(stringResource(R.string.custom_authentication_title), onNavigateBack) }
-    ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .padding(contentPadding)
-                .padding(horizontal = Dimensions.mPadding)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
-        ) {
-            // Transaction Info Card
-            TransactionInfoCard(customAuthData)
+  Scaffold(
+    topBar = { ShowcaseTopBar(stringResource(R.string.custom_authentication_title), onNavigateBack) }
+  ) { contentPadding ->
+    Column(
+      modifier = Modifier
+        .padding(contentPadding)
+        .padding(horizontal = Dimensions.mPadding)
+        .fillMaxHeight(),
+      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+    ) {
+      // Transaction Info Card
+      TransactionInfoCard(customAuthData)
 
-            Spacer(modifier = Modifier.height(Dimensions.mPadding))
+      Spacer(modifier = Modifier.height(Dimensions.mPadding))
 
-            // Challenge Section
-            ChallengeSection(customAuthData)
+      // Challenge Section
+      ChallengeSection(customAuthData)
 
-            Spacer(modifier = Modifier.height(Dimensions.mPadding))
+      Spacer(modifier = Modifier.height(Dimensions.mPadding))
 
-            // Input Section
-            InputSection(
-                inputText = inputText,
-                onInputChange = { inputText = it }
-            )
+      // Input Section
+      InputSection(
+        inputText = inputText,
+        onInputChange = { inputText = it }
+      )
 
-            Spacer(modifier = Modifier.weight(1f))
+      Spacer(modifier = Modifier.weight(1f))
 
-            // Buttons Section
-            ButtonsSection(
-                inputText = inputText,
-                onSubmit = { onEvent(UiEvent.SubmitCustomData(inputText)) },
-                onCancel = { onEvent(UiEvent.RejectCustomAuth) }
-            )
-        }
+      // Buttons Section
+      ButtonsSection(
+        inputText = inputText,
+        onSubmit = { onEvent(UiEvent.SubmitCustomData(inputText)) },
+        onCancel = { onEvent(UiEvent.RejectCustomAuth) }
+      )
     }
+  }
 }
 
 @Composable
 private fun TransactionInfoCard(customAuthData: CustomAuthenticationData?) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+  Card(
+    modifier = Modifier.fillMaxWidth(),
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.surfaceVariant
+    )
+  ) {
+    Column(
+      modifier = Modifier.padding(Dimensions.mPadding),
+      verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
     ) {
-        Column(
-            modifier = Modifier.padding(Dimensions.mPadding),
-            verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
-        ) {
-            Text(
-                text = stringResource(R.string.transaction_screen),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
+      Text(
+        text = stringResource(R.string.transaction_screen),
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold
+      )
 
-            customAuthData?.let { data ->
-                // User Profile
-                Row {
-                    Text(
-                        text = stringResource(R.string.profile_id) + ": ",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = data.userProfileId,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                // Message
-                data.message?.let { message ->
-                    Row {
-                        Text(
-                            text = stringResource(R.string.message_content) + ": ",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Text(
-                            text = message,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
+      customAuthData?.let { data ->
+        // User Profile
+        Row {
+          Text(
+            text = stringResource(R.string.profile_id) + ": ",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium
+          )
+          Text(
+            text = UserProfile.default.toString(),
+            style = MaterialTheme.typography.bodyMedium
+          )
         }
+
+        // Message
+        data.message?.let { message ->
+          Row {
+            Text(
+              text = stringResource(R.string.message_content) + ": ",
+              style = MaterialTheme.typography.bodyMedium,
+              fontWeight = FontWeight.Medium
+            )
+            Text(
+              text = message,
+              style = MaterialTheme.typography.bodyMedium
+            )
+          }
+        }
+      }
     }
+  }
 }
 
 @Composable
 private fun ChallengeSection(customAuthData: CustomAuthenticationData?) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+  Column(
+    verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+  ) {
+    Text(
+      text = stringResource(R.string.custom_authentication_challenge),
+      style = MaterialTheme.typography.titleMedium,
+      fontWeight = FontWeight.Bold
+    )
+
+    Card(
+      modifier = Modifier.fillMaxWidth(),
+      colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+      )
     ) {
-        Text(
-            text = stringResource(R.string.custom_authentication_challenge),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
-        ) {
-            Text(
-                text = customAuthData?.challengeData ?: stringResource(R.string.no_data_available),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(Dimensions.mPadding)
-            )
-        }
-
-        // Show challenge status if available
-        customAuthData?.challengeStatus?.let { status ->
-            Text(
-                text = "Status: $status",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+      Text(
+        text = customAuthData?.challengeData ?: stringResource(R.string.no_data_available),
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.padding(Dimensions.mPadding)
+      )
     }
+
+    // Show challenge status if available
+    customAuthData?.challengeStatus?.let { status ->
+      Text(
+        text = "Status: $status",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    }
+  }
 }
 
 @Composable
 private fun InputSection(
-    inputText: String,
-    onInputChange: (String) -> Unit
+  inputText: String,
+  onInputChange: (String) -> Unit
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
-    ) {
-        Text(
-            text = stringResource(R.string.custom_authentication_response_hint),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
+  Column(
+    verticalArrangement = Arrangement.spacedBy(Dimensions.sPadding)
+  ) {
+    Text(
+      text = stringResource(R.string.custom_authentication_response_hint),
+      style = MaterialTheme.typography.titleMedium,
+      fontWeight = FontWeight.Bold
+    )
 
-        OutlinedTextField(
-            value = inputText,
-            onValueChange = onInputChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.custom_authentication_response_hint)) },
-            singleLine = false,
-            minLines = 2,
-            maxLines = 4
-        )
-    }
+    OutlinedTextField(
+      value = inputText,
+      onValueChange = onInputChange,
+      modifier = Modifier.fillMaxWidth(),
+      placeholder = { Text(stringResource(R.string.custom_authentication_response_hint)) },
+      singleLine = false,
+      minLines = 2,
+      maxLines = 4
+    )
+  }
 }
 
 @Composable
 private fun ButtonsSection(
-    inputText: String,
-    onSubmit: () -> Unit,
-    onCancel: () -> Unit
+  inputText: String,
+  onSubmit: () -> Unit,
+  onCancel: () -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing),
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = Dimensions.mPadding)
+  Row(
+    horizontalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing),
+    verticalAlignment = Alignment.Bottom,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(bottom = Dimensions.mPadding)
+  ) {
+    OutlinedButton(
+      modifier = Modifier
+        .height(Dimensions.actionButtonHeight)
+        .weight(1f),
+      onClick = onCancel,
+      colors = ButtonDefaults.outlinedButtonColors(
+        contentColor = MaterialTheme.colorScheme.error
+      )
     ) {
-        OutlinedButton(
-            modifier = Modifier
-                .height(Dimensions.actionButtonHeight)
-                .weight(1f),
-            onClick = onCancel,
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.error
-            )
-        ) {
-            Text(stringResource(R.string.custom_authentication_cancel))
-        }
-
-        Button(
-            modifier = Modifier
-                .height(Dimensions.actionButtonHeight)
-                .weight(1f),
-            onClick = onSubmit,
-            enabled = inputText.isNotBlank()
-        ) {
-            Text(stringResource(R.string.custom_authentication_submit))
-        }
+      Text(stringResource(R.string.reject))
     }
+
+    Button(
+      modifier = Modifier
+        .height(Dimensions.actionButtonHeight)
+        .weight(1f),
+      onClick = onSubmit,
+      enabled = inputText.isNotBlank()
+    ) {
+      Text(stringResource(R.string.accept))
+    }
+  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PushWithCustomAuthenticationScreenPreview() {
-    PushWithCustomAuthenticationScreenContent(
-        onNavigateBack = {},
-        onEvent = {},
-        customAuthData = CustomAuthenticationData(
-            message = "Please confirm the transaction",
-            userProfileId = "user123",
-            challengeData = "Enter the code shown on your security device",
-            challengeStatus = 0
-        )
+  PushWithCustomAuthenticationScreenContent(
+    onNavigateBack = {},
+    onEvent = {},
+    customAuthData = CustomAuthenticationData(
+      message = "Please confirm the transaction",
+      userProfileId = UserProfile.default,
+      challengeData = "Enter the code shown on your security device",
+      challengeStatus = 0
     )
+  )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PushWithCustomAuthenticationScreenEmptyPreview() {
-    PushWithCustomAuthenticationScreenContent(
-        onNavigateBack = {},
-        onEvent = {},
-        customAuthData = null
-    )
+  PushWithCustomAuthenticationScreenContent(
+    onNavigateBack = {},
+    onEvent = {},
+    customAuthData = null
+  )
 }
