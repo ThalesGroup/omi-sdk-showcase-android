@@ -8,7 +8,7 @@ interface AnonymousApi {
   suspend fun getApplicationDetails(): Response<ApplicationDetails>
 }
 data class ApplicationDetails(
-  val applicationIdentifier: String,
-  val applicationPlatform: String,
-  val applicationVersion: String,
+  val application_identifier: String,
+  val application_platform: String,
+  val application_version: String,
 )
