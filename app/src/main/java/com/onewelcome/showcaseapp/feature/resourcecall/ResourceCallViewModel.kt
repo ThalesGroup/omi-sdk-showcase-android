@@ -89,9 +89,9 @@ class ResourceCallViewModel @Inject constructor(
               uiState = uiState.copy(
                 isLoading = false,
                 result = "Anonymous Call Success!\n\n" +
-                    "Version: ${appDetails.applicationVersion}\n" +
-                    "Platform: ${appDetails.applicationPlatform}\n" +
-                    "Identifier: ${appDetails.applicationIdentifier}",
+                    "Version: ${appDetails.application_version}\n" +
+                    "Platform: ${appDetails.application_platform}\n" +
+                    "Identifier: ${appDetails.application_identifier}",
                 currentStep = null
               )
             }
@@ -186,7 +186,7 @@ class ResourceCallViewModel @Inject constructor(
               uiState = uiState.copy(
                 isLoading = false,
                 result = "Implicit Call Success!\n\n" +
-                    "User Id:" + userId.decoratedUserId,
+                    "User Id:" + userId.decorated_user_id,
                 currentStep = null
               )
             }
