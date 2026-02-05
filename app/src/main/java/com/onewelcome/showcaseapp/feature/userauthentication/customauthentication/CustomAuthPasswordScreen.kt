@@ -8,31 +8,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.onewelcome.core.R
+import com.onewelcome.core.components.ShowcaseCard
+import com.onewelcome.core.components.ShowcaseTopBar
+import com.onewelcome.core.theme.Dimensions
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomAuthPasswordScreen(
   navController: NavHostController,
@@ -55,99 +53,165 @@ fun CustomAuthPasswordScreen(
     }
   }
 
+  CustomAuthPasswordContent(
+    uiState = uiState,
+    onPasswordChanged = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.PasswordChanged(it)) },
+    onConfirmPasswordChanged = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.ConfirmPasswordChanged(it)) },
+    onSubmitClicked = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.SubmitClicked) },
+    onCancelClicked = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.CancelClicked) }
+  )
+}
+
+@Composable
+private fun CustomAuthPasswordContent(
+  uiState: CustomAuthPasswordViewModel.UiState,
+  onPasswordChanged: (String) -> Unit,
+  onConfirmPasswordChanged: (String) -> Unit,
+  onSubmitClicked: () -> Unit,
+  onCancelClicked: () -> Unit
+) {
   Scaffold(
     topBar = {
-      TopAppBar(
-        title = {
-          Text(
-            text = if (uiState.isRegistrationMode) {
-              "Set Custom Auth Password"
-            } else {
-              "Enter Custom Auth Password"
-            }
-          )
+      ShowcaseTopBar(
+        title = if (uiState.isRegistrationMode) {
+          stringResource(R.string.custom_auth_password_title_register)
+        } else {
+          stringResource(R.string.custom_auth_password_title_authenticate)
         },
-        navigationIcon = {
-          IconButton(onClick = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.CancelClicked) }) {
-            Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = "Back"
-            )
-          }
-        }
+        onNavigateBack = onCancelClicked
       )
     }
-  ) { paddingValues ->
+  ) { innerPadding ->
     Column(
       modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues)
-        .padding(horizontal = 16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center
+        .padding(innerPadding)
+        .padding(Dimensions.mPadding),
+      verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
-      Text(
-        text = if (uiState.isRegistrationMode) {
-          "Create a password for custom authentication.\nThis password will be used to authenticate you when using the custom authenticator."
-        } else {
-          "Enter your custom authentication password to continue."
-        },
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.padding(bottom = 24.dp)
-      )
-
-      OutlinedTextField(
-        value = uiState.password,
-        onValueChange = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.PasswordChanged(it)) },
-        label = { Text("Password") },
-        visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        singleLine = true,
-        isError = uiState.errorMessage != null,
-        modifier = Modifier.fillMaxWidth()
-      )
-
-      if (uiState.isRegistrationMode) {
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-          value = uiState.confirmPassword,
-          onValueChange = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.ConfirmPasswordChanged(it)) },
-          label = { Text("Confirm Password") },
-          visualTransformation = PasswordVisualTransformation(),
-          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-          singleLine = true,
-          isError = uiState.errorMessage != null,
-          modifier = Modifier.fillMaxWidth()
-        )
-      }
-
-      if (uiState.errorMessage != null) {
-        Spacer(modifier = Modifier.height(8.dp))
+      // Description Card
+      ShowcaseCard {
         Text(
-          text = uiState.errorMessage!!,
-          color = MaterialTheme.colorScheme.error,
-          style = MaterialTheme.typography.bodySmall
+          text = if (uiState.isRegistrationMode) {
+            stringResource(R.string.custom_auth_password_description_register)
+          } else {
+            stringResource(R.string.custom_auth_password_description_authenticate)
+          },
+          style = MaterialTheme.typography.bodyMedium
         )
       }
 
-      Spacer(modifier = Modifier.height(32.dp))
+      // Password Input Card
+      ShowcaseCard {
+        Column(
+          modifier = Modifier.fillMaxWidth(),
+          verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
+        ) {
+          OutlinedTextField(
+            value = uiState.password,
+            onValueChange = onPasswordChanged,
+            label = { Text(stringResource(R.string.custom_auth_password_label)) },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            singleLine = true,
+            isError = uiState.errorMessage != null,
+            modifier = Modifier.fillMaxWidth()
+          )
 
-      Button(
-        onClick = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.SubmitClicked) },
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        Text(if (uiState.isRegistrationMode) "Register" else "Authenticate")
+          if (uiState.isRegistrationMode) {
+            OutlinedTextField(
+              value = uiState.confirmPassword,
+              onValueChange = onConfirmPasswordChanged,
+              label = { Text(stringResource(R.string.custom_auth_password_confirm_label)) },
+              visualTransformation = PasswordVisualTransformation(),
+              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+              singleLine = true,
+              isError = uiState.errorMessage != null,
+              modifier = Modifier.fillMaxWidth()
+            )
+          }
+
+          if (uiState.errorMessage != null) {
+            Text(
+              text = uiState.errorMessage,
+              color = MaterialTheme.colorScheme.error,
+              style = MaterialTheme.typography.bodySmall
+            )
+          }
+        }
       }
 
-      Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.weight(1f))
 
-      OutlinedButton(
-        onClick = { viewModel.onEvent(CustomAuthPasswordViewModel.UiEvent.CancelClicked) },
-        modifier = Modifier.fillMaxWidth()
-      ) {
-        Text("Cancel")
-      }
+      // Action Buttons
+      ActionButtons(
+        isRegistrationMode = uiState.isRegistrationMode,
+        onSubmitClicked = onSubmitClicked,
+        onCancelClicked = onCancelClicked
+      )
     }
   }
+}
+
+@Composable
+private fun ActionButtons(
+  isRegistrationMode: Boolean,
+  onSubmitClicked: () -> Unit,
+  onCancelClicked: () -> Unit
+) {
+  Column(
+    modifier = Modifier.fillMaxWidth(),
+    verticalArrangement = Arrangement.spacedBy(Dimensions.mPadding)
+  ) {
+    Button(
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(Dimensions.actionButtonHeight),
+      onClick = onSubmitClicked
+    ) {
+      Text(
+        if (isRegistrationMode) {
+          stringResource(R.string.register)
+        } else {
+          stringResource(R.string.authenticate)
+        }
+      )
+    }
+
+    OutlinedButton(
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(Dimensions.actionButtonHeight),
+      onClick = onCancelClicked,
+      colors = ButtonDefaults.outlinedButtonColors(
+        contentColor = MaterialTheme.colorScheme.error
+      )
+    ) {
+      Text(stringResource(R.string.cancel))
+    }
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CustomAuthPasswordScreenPreviewRegister() {
+  CustomAuthPasswordContent(
+    uiState = CustomAuthPasswordViewModel.UiState(isRegistrationMode = true),
+    onPasswordChanged = {},
+    onConfirmPasswordChanged = {},
+    onSubmitClicked = {},
+    onCancelClicked = {}
+  )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CustomAuthPasswordScreenPreviewAuthenticate() {
+  CustomAuthPasswordContent(
+    uiState = CustomAuthPasswordViewModel.UiState(isRegistrationMode = false),
+    onPasswordChanged = {},
+    onConfirmPasswordChanged = {},
+    onSubmitClicked = {},
+    onCancelClicked = {}
+  )
 }
