@@ -16,6 +16,8 @@ object Constants {
 
   const val DOCUMENTATION_BIOMETRIC_AUTHENTICATION =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-user-with-biometrics"
+  const val DOCUMENTATION_CUSTOM_AUTHENTICATION =
+    "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticator-interface/index.html#authenticate-user-with-custom-authenticator"
   const val DOCUMENTATION_USER_AUTHENTICATION = "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/index.html"
   const val DOCUMENTATION_MOBILE_AUTHENTICATION =
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-authenticating-users/android-sdk-mobile-authentication/index.html#enrollment"
