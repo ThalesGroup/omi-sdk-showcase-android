@@ -1,16 +1,22 @@
 package com.onewelcome.core.omisdk
 
 import android.content.Context
+import android.util.Log
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
 import com.onewelcome.core.entity.HandlerType
+import com.onewelcome.core.omisdk.entity.CustomAuthenticator
 import com.onewelcome.core.omisdk.entity.OmiSdkInitializationSettings
 import com.onewelcome.core.omisdk.entity.TwoStepIdentityProvider
 import com.onewelcome.core.omisdk.facade.OmiSdkFacade
 import com.onewelcome.core.omisdk.handlers.BiometricAuthenticationHandler
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
+import com.onewelcome.core.omisdk.handlers.CustomAuthAuthenticationAction
+import com.onewelcome.core.omisdk.handlers.CustomAuthDeregistrationAction
+import com.onewelcome.core.omisdk.handlers.CustomAuthRegistrationAction
+import com.onewelcome.core.omisdk.handlers.CustomAuthenticationRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
@@ -33,8 +39,16 @@ class OmiSdkEngine @Inject constructor(
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
   private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler,
-  private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler
+  private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler,
+  private val customAuthRequestHandler: CustomAuthenticationRequestHandler,
+  private val customAuthRegistrationAction: CustomAuthRegistrationAction,
+  private val customAuthDeregistrationAction: CustomAuthDeregistrationAction,
+  private val customAuthAuthenticationAction: CustomAuthAuthenticationAction
 ) : OmiSdkFacade {
+
+  private var _isCustomAuthHandlerRegistered = false
+  override val isCustomAuthHandlerRegistered: Boolean
+    get() = _isCustomAuthHandlerRegistered
 
   override val oneginiClient
     get() = OneginiClient.instance ?: throw IllegalStateException("Onegini SDK instance not yet initialized")
@@ -47,6 +61,7 @@ class OmiSdkEngine @Inject constructor(
         settings.httpConnectTimeout?.let { setHttpConnectTimeout(it) }
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }
         settings.deviceConfigCacheDuration?.let { setDeviceConfigCacheDurationSeconds(it) }
+        Log.d("prabhat","Initialising"+customAuthenticationRequestHandler+"   "+twoStepRegistrationRequestHandler)
         setOptionalHandlers(settings)
       }.build()
   }
@@ -56,6 +71,17 @@ class OmiSdkEngine @Inject constructor(
       when (it) {
         HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
         HandlerType.BIOMETRIC_AUTHENTICATION -> setBiometricAuthenticationRequestHandler(biometricAuthenticationHandler)
+        HandlerType.CUSTOM_AUTHENTICATION -> {
+          val customAuthenticator = CustomAuthenticator(
+            customAuthRegistrationAction,
+            customAuthDeregistrationAction,
+            customAuthAuthenticationAction
+          )
+          setCustomAuthenticators(setOf(customAuthenticator))
+          setCustomAuthenticationRequestHandler(CustomAuthenticationRequestHandler())
+          setCustomAuthenticationRequestHandler(customAuthRequestHandler)
+          _isCustomAuthHandlerRegistered = true
+        }
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)

@@ -18,6 +18,7 @@ sealed class Screens(val route: String) {
   data object PinAuthentication : Screens("pin_authentication")
   data object BiometricAuthentication : Screens("biometric_authentication")
   data object ImplicitAuthentication : Screens("implicit_authentication")
+  data object CustomAuthentication : Screens("custom_authentication")
   data object UserDeregistration : Screens("user_deregistration")
   data object MobileAuthentication : Screens("mobile_authentication")
   data object MobileAuthenticationEnrollment : Screens("mobile_authentication_enrollment")
@@ -35,4 +36,5 @@ sealed class Screens(val route: String) {
   data object TransactionConfirmation : Screens("transaction_confirmation")
   data object TransactionConfirmationResult : Screens("transaction_confirmation_result")
   data object QrCodeScanner : Screens("qr_code_scanner_${Constants.FULLSCREEN_PAGE}")
+  data object CustomAuthPassword : Screens("custom_auth_password_${Constants.FULLSCREEN_PAGE}")
 }
