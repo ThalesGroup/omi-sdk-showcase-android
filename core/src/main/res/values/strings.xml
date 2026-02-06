@@ -281,10 +281,38 @@
   <string name="handler_browser_registration">Browser registration</string>
   <string name="handler_two_step_registration">Two step registration</string>
   <string name="handler_biometric_authentication">Biometric authentication</string>
+  <string name="handler_custom_authentication">Custom authentication</string>
   <string name="handler_mobile_auth_with_push">Mobile authentication with push</string>
   <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
   <string name="handler_mobile_auth_with_push_and_pin">Mobile authentication with push and pin</string>
   <string name="handler_mobile_auth_with_push_and_biometrics">Mobile authentication with push and biometrics</string>
+
+  <!-- Custom Authentication -->
+  <string name="section_title_custom_authentication">Custom Authentication</string>
+  <string name="custom_authentication_description">Custom authentication allows you to authenticate users using a custom authenticator. You can implement your own authentication logic such as QR code scanning, voice recognition, or any other custom method.</string>
+  <string name="custom_authenticator_registration_title">Register Custom Authenticator</string>
+  <string name="custom_authenticator_authentication_title">Authenticate with Custom Authenticator</string>
+  <string name="custom_authenticator_input_hint">Enter authentication data</string>
+  <string name="custom_authenticator_registration_success">Custom authenticator registered successfully</string>
+  <string name="custom_authenticator_authentication_success">Custom authentication successful</string>
+  <string name="custom_authenticator_fallback_to_pin">Fallback to PIN</string>
+  <string name="custom_authenticator_not_registered">Custom authenticator is not registered for this user</string>
+  <string name="custom_authenticator_data_label">Custom Data (Optional)</string>
+  <string name="custom_authenticator_status_title">Custom authenticator registered for selected user</string>
+  <string name="custom_authenticator_requirement_tooltip">Custom authenticator has to be registered for selected user profile to perform custom authentication</string>
+  <string name="custom_auth_handler_not_registered_title">Custom Auth Handler Not Registered</string>
+  <string name="custom_auth_handler_not_registered_message">The Custom Authentication handler was not registered during SDK initialization. To use custom authentication, you need to re-initialize the SDK with the Custom Authentication handler enabled.</string>
+  <string name="custom_auth_handler_status_title">Custom Auth Handler Registered</string>
+  <string name="custom_auth_handler_requirement_tooltip">The Custom Authentication handler must be registered during SDK initialization to use custom authentication features</string>
+  <string name="go_to_sdk_initialization">Go to SDK Initialization</string>
+
+  <!-- Custom Auth Password -->
+  <string name="custom_auth_password_title_register">Set Custom Auth Password</string>
+  <string name="custom_auth_password_title_authenticate">Enter Custom Auth Password</string>
+  <string name="custom_auth_password_description_register">Create a password for custom authentication. This password will be used to authenticate you when using the custom authenticator.</string>
+  <string name="custom_auth_password_description_authenticate">Enter your custom authentication password to continue.</string>
+  <string name="custom_auth_password_label">Password</string>
+  <string name="custom_auth_password_confirm_label">Confirm Password</string>
 
   <!-- SSO -->
   <string name="single_sign_on_description">App-to-web single sign-on (SSO) allows you to take a session from your mobile application and extend it to a browser on the same device</string>

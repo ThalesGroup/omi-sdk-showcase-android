@@ -7,5 +7,7 @@ interface OmiSdkFacade {
 
   val oneginiClient: OneginiClient
 
+  val isCustomAuthHandlerRegistered: Boolean
+
   fun initialize(settings: OmiSdkInitializationSettings): OneginiClient
 }

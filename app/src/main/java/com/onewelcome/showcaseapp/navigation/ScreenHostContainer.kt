@@ -18,9 +18,11 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.onewelcome.core.theme.isNotFullScreenRoute
 import com.onewelcome.internal.OsCompatibilityScreen
 import com.onewelcome.showcaseapp.feature.changepin.ChangePinScreen
@@ -46,6 +48,7 @@ import com.onewelcome.showcaseapp.feature.transactionconfirmation.TransactionCon
 import com.onewelcome.showcaseapp.feature.userauthentication.UserAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.authenticators.AuthenticatorsScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.biometricauthentication.BiometricAuthenticationScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.customauthentication.CustomAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.implicitauthentication.ImplicitAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.pinauthentication.PinAuthenticationScreen
 import com.onewelcome.showcaseapp.feature.resourcecall.ResourceCallScreen
@@ -56,6 +59,8 @@ import com.onewelcome.showcaseapp.feature.tokens.TokensScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepOptionalDataSubmitScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepVerificationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepRegistrationScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.customauthentication.CustomAuthPasswordScreen
+import com.onewelcome.showcaseapp.feature.userauthentication.customauthentication.SharedCustomAuthViewModel
 
 @Composable
 fun ScreenHostContainer() {
@@ -64,7 +69,9 @@ fun ScreenHostContainer() {
   val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
   val currentRootDestination = rootNavBackStackEntry?.destination
   val sharedPushViewModel: SharedPushViewModel = hiltViewModel()
+  val sharedCustomAuthViewModel: SharedCustomAuthViewModel = hiltViewModel()
   ListenForPushEvents(rootNavController, sharedPushViewModel)
+  ListenForCustomAuthEvents(rootNavController, sharedCustomAuthViewModel)
   Scaffold(
     modifier = Modifier.fillMaxSize(),
     bottomBar = {
@@ -82,6 +89,7 @@ fun ScreenHostContainer() {
       pinFullScreenPages(rootNavController)
       pushScreens(rootNavController, sharedPushViewModel)
       qrCodeScanner(rootNavController)
+      customAuthPasswordScreen(rootNavController)
     }
   }
 }
@@ -98,6 +106,27 @@ private fun ListenForPushEvents(
         SharedPushViewModel.NavigationEvent.NavigateToTransactionResultScreen -> handleNavigationToTransactionResultScreen(rootNavController)
         SharedPushViewModel.NavigationEvent.NavigateToPinConfirmationScreen ->
           handleNavigationToPushWithPinConfirmationScreen(rootNavController)
+      }
+    }
+  }
+}
+
+@Composable
+private fun ListenForCustomAuthEvents(
+  rootNavController: NavHostController,
+  sharedCustomAuthViewModel: SharedCustomAuthViewModel,
+) {
+  LaunchedEffect(Unit) {
+    sharedCustomAuthViewModel.navigationEvents.collect { event ->
+      when (event) {
+        is SharedCustomAuthViewModel.NavigationEvent.NavigateToCustomAuthPasswordScreen -> {
+          rootNavController.navigate(
+            Screens.CustomAuthPassword.route + "?isRegistration=${event.isRegistration}"
+          ){
+            launchSingleTop = true
+            restoreState = true
+          }
+        }
       }
     }
   }
@@ -145,6 +174,24 @@ private fun NavGraphBuilder.pinFullScreenPages(rootNavController: NavHostControl
 
 private fun NavGraphBuilder.qrCodeScanner(rootNavController: NavHostController) {
   composable(Screens.QrCodeScanner.route) { QrCodeScannerScreen(rootNavController) }
+}
+
+private fun NavGraphBuilder.customAuthPasswordScreen(rootNavController: NavHostController) {
+  composable(
+    route = Screens.CustomAuthPassword.route + "?isRegistration={isRegistration}",
+    arguments = listOf(
+      navArgument("isRegistration") {
+        type = NavType.BoolType
+        defaultValue = true
+      }
+    )
+  ) { backStackEntry ->
+    val isRegistration = backStackEntry.arguments?.getBoolean("isRegistration") ?: true
+    CustomAuthPasswordScreen(
+      navController = rootNavController,
+      isRegistrationMode = isRegistration
+    )
+  }
 }
 
 private fun NavGraphBuilder.bottomNavigationScreens(
@@ -210,6 +257,7 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.Authenticators.route) { AuthenticatorsScreen(homeNavController, rootNavController) }
     composable(Screens.PinAuthentication.route) { PinAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.BiometricAuthentication.route) { BiometricAuthenticationScreen(homeNavController, rootNavController) }
+    composable(Screens.CustomAuthentication.route) { CustomAuthenticationScreen(homeNavController, rootNavController) }
     composable(Screens.ImplicitAuthentication.route) { ImplicitAuthenticationScreen(homeNavController) }
     composable(Screens.UserDeregistration.route) { UserDeregistrationScreen(homeNavController) }
     composable(Screens.MobileAuthentication.route) { MobileAuthenticationScreen(homeNavController) }
