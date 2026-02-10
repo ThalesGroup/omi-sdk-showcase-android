@@ -286,6 +286,7 @@
   <string name="handler_mobile_auth_with_otp">Mobile authentication with OTP</string>
   <string name="handler_mobile_auth_with_push_and_pin">Mobile authentication with push and pin</string>
   <string name="handler_mobile_auth_with_push_and_biometrics">Mobile authentication with push and biometrics</string>
+  <string name="handler_mobile_auth_with_push_and_custom">Mobile authentication with push and custom</string>
 
   <!-- Custom Authentication -->
   <string name="section_title_custom_authentication">Custom Authentication</string>
