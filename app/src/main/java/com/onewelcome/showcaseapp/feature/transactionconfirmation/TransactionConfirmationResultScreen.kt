@@ -53,7 +53,12 @@ fun TransactionConfirmationResultScreenContent(uiState: UiState, popBackStack: (
           Text(stringResource(R.string.transaction_failed), style = MaterialTheme.typography.titleLarge)
           Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
             Text(stringResource(R.string.error), style = MaterialTheme.typography.titleMedium)
-            Text(it.toString())
+            val errorDetails = if (it is com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError) {
+              "Code: ${it.errorType}\nMessage: ${it.message}"
+            } else {
+              it.toString()
+            }
+            Text(errorDetails)
           }
         }
       Row(

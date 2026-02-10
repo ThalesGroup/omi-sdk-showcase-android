@@ -16,17 +16,29 @@ class CustomAuthAuthenticationAction @Inject constructor() : OneginiCustomAuthAu
   var authenticationCallback: OneginiCustomAuthAuthenticationCallback? = null
     private set
 
+  var pendingAuthenticationData: String? = null
+    private set
+
   override fun finishAuthentication(
     callback: OneginiCustomAuthAuthenticationCallback,
     optionalData: String?
   ) {
     authenticationCallback = callback
-    _authenticationRequestFlow.trySend(AuthenticationRequest(optionalData))
+    if (pendingAuthenticationData != null) {
+      returnSuccess(pendingAuthenticationData)
+      pendingAuthenticationData = null
+    } else {
+      _authenticationRequestFlow.trySend(AuthenticationRequest(optionalData))
+    }
   }
 
   fun returnSuccess(optionalAuthenticationData: String? = null) {
-    authenticationCallback?.returnSuccess(optionalAuthenticationData)
-    authenticationCallback = null
+    if (authenticationCallback != null) {
+      authenticationCallback?.returnSuccess(optionalAuthenticationData)
+      authenticationCallback = null
+    } else {
+      pendingAuthenticationData = optionalAuthenticationData
+    }
   }
 
   fun returnError(exception: Exception) {
