@@ -14,6 +14,8 @@ import com.google.firebase.messaging.RemoteMessage
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.facade.JsonFacade
 import com.onewelcome.core.manager.PreferencesManager
+import com.onewelcome.core.usecase.DenyPendingTransactionUseCase
+import com.onewelcome.core.usecase.GetAuthenticatedUserProfileUseCase
 import com.onewelcome.core.usecase.IsSdkInitializedUseCase
 import com.onewelcome.core.usecase.RefreshMobileAuthPushTokenUseCase
 import com.onewelcome.core.util.Constants.MESSAGE_KEY
@@ -38,10 +40,12 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
 
   @Inject
   lateinit var jsonFacade: JsonFacade
-
+  @Inject
+  lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
   @Inject
   lateinit var preferencesManager: PreferencesManager
-
+  @Inject
+  lateinit var denyPendingTransactionUseCase: DenyPendingTransactionUseCase
   @Inject
   lateinit var notificationSender: NotificationSender
 
@@ -55,12 +59,6 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
     }
   }
 
-  override fun onMessageReceived(message: RemoteMessage) {
-    parseRemoteMessage(message)
-      .onSuccess { notificationSender.showNewTransactionNotification(createBundleForNotification(it)) }
-      .onFailure { Log.e("ShowcaseAppFirebaseMessagingService::onMessageReceived", "Failure on parsing remote message: $it") }
-  }
-
   private fun createBundleForNotification(mobileAuthRequest: OneginiMobileAuthWithPushRequest): Bundle {
     return bundleOf(
       MESSAGE_KEY to mobileAuthRequest.message,
@@ -69,6 +67,25 @@ class ShowcaseAppFirebaseMessagingService : FirebaseMessagingService() {
       TIMESTAMP_KEY to mobileAuthRequest.timestamp,
       TIME_TO_LIVE_SECONDS_KEY to mobileAuthRequest.timeToLiveSeconds,
     )
+  }
+  override fun onMessageReceived(message: RemoteMessage) {
+    if (isSdkInitializedUseCase.execute()) {
+      parseRemoteMessage(message)
+        .onSuccess { pushRequest ->
+          getAuthenticatedUserProfileUseCase.execute().onSuccess { userProfile ->
+            if (userProfile != null && pushRequest.userProfileId == userProfile.profileId) {
+              notificationSender.showNewTransactionNotification(createBundleForNotification(pushRequest))
+            } else {
+              CoroutineScope(Dispatchers.IO).launch {
+                  denyPendingTransactionUseCase.execute(pushRequest)
+              }
+            }
+          }
+        }
+        .onFailure {
+          Log.e("ShowcaseAppFirebaseMessagingService::onMessageReceived", "Failure on parsing remote message: $it")
+        }
+    }
   }
 
   private fun parseRemoteMessage(remoteMessage: RemoteMessage): Result<OneginiMobileAuthWithPushRequest, Throwable> {
