@@ -3,6 +3,7 @@ import com.onewelcome.buildsrc.AndroidConfig.COMPILE_SDK
 import com.onewelcome.buildsrc.AndroidConfig.CORE_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.DATA_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.ENVIRONMENT_FLAVOR_DIMENSION
+import com.onewelcome.buildsrc.AndroidConfig.FIDO2_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.INTERNAL_MODULE
 import com.onewelcome.buildsrc.AndroidConfig.MIN_SDK
 import com.onewelcome.buildsrc.AndroidConfig.SOURCE_COMPATIBILITY
@@ -74,6 +75,21 @@ android {
       isIncludeAndroidResources = true
     }
   }
+
+
+
+
+
+  packaging {
+    resources {
+      // Keep one copy of any duplicates under this folder
+      pickFirsts += "org/bouncycastle/x509/**"
+    }
+  }
+
+
+
+
 }
 
 dependencies {
@@ -81,6 +97,8 @@ dependencies {
   implementation(project(CORE_MODULE))
   implementation(project(INTERNAL_MODULE))
   testImplementation(project(DATA_MODULE))
+  implementation(project(FIDO2_MODULE))
+
 
   // Android
   implementation(libs.androidx.core.ktx)
@@ -145,6 +163,11 @@ dependencies {
   //Kotlin Result
   implementation(libs.kotlin.result)
   implementation(libs.kotlin.result.coroutines)
+
+  implementation("androidx.credentials:credentials:1.2.2")
+// Android 13 and below.
+  implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+  implementation("com.google.android.gms:play-services-safetynet:18.0.1")
 
   // Test
   testImplementation(libs.androidx.junit)

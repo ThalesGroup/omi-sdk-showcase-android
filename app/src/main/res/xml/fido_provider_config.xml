@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fido-provider-config>
+
+    <create-passkey-accounts>
+
+        <account
+            accountId="gemalto_primary_user"
+            displayName="My Gemalto Demo Login" />
+
+        <account
+            accountId="gemalto_business_profile"
+            displayName="Gemalto Business Profile" />
+
+        <account
+            accountId="primary_user"
+            displayName="My Demo Login"
+            icon="@mipmap/ic_launcher"
+            customData="some_value_for_this_account" />
+    </create-passkey-accounts>
+
+</fido-provider-config>

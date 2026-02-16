@@ -3,6 +3,8 @@ include(":app")
 include(":data")
 include(":internal")
 include(":core")
+include (":lib:fido2ui")
+
 
 pluginManagement {
   repositories {
