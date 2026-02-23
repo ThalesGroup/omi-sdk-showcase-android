@@ -23,6 +23,8 @@
     <string name="user_profile">User profile: %s</string>
     <string name="custom_info">Custom info: %s</string>
     <string name="token">Token</string>
+    <string name="sampletest">sampletest</string>
+    
 
     <!-- Info Screen -->
     <string name="title_sdk_status">OMI SDK Status</string>
