@@ -43,7 +43,7 @@ class BrowserRegistrationViewModel @Inject constructor(
 ) : ViewModel() {
   var uiState by mutableStateOf(State())
     private set
-
+private val sample="test"
   private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
   val navigationEvents = _navigationEvents.receiveAsFlow()
 
