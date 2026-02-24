@@ -39,10 +39,10 @@ class SharedCustomAuthViewModel @Inject constructor(
       }
       launch {
         // Listen for registration requests (when user enables custom authenticator)
-//        customAuthRegistrationAction.registrationRequestFlow.collect {
-//
-//          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = true))
-//        }
+        customAuthRegistrationAction.registrationRequestFlow.collect {
+
+          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = true))
+        }
       }
       launch {
         // Listen for authentication requests via CustomAuthenticationRequestHandler
