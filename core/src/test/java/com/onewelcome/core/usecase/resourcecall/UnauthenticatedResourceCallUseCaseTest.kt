@@ -2,6 +2,7 @@ package com.onewelcome.core.usecase.resourcecall
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.unwrapError
 import com.onewelcome.core.network.RetrofitServiceFactory
 import com.onewelcome.core.network.api.UnauthenticatedApi
 import kotlinx.coroutines.test.runTest
@@ -51,8 +52,8 @@ class UnauthenticatedResourceCallUseCaseTest {
 
         val result = useCase.getPathResources()
 
-        assertThat(result).isInstanceOf(Err::class.java)
-        val error = (result as Err).error
+        assertThat(result.isErr).isTrue()
+        val error = result.unwrapError()
         assertThat(error).isInstanceOf(ResourceCallException::class.java)
         assertThat((error as ResourceCallException).code).isEqualTo(500)
     }

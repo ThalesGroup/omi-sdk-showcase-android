@@ -2,6 +2,7 @@ package com.onewelcome.core.usecase.resourcecall
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.unwrapError
 import com.onewelcome.core.network.RetrofitServiceFactory
 import com.onewelcome.core.network.api.Device
 import com.onewelcome.core.network.api.Devices
@@ -62,8 +63,8 @@ class UserAuthenticatedResourceCallUseCaseTest {
 
         val result = useCase.getDeviceList()
 
-        assertThat(result).isInstanceOf(Err::class.java)
-        assertThat((result as Err).error).isInstanceOf(UserAuthenticationRequiredException::class.java)
+        assertThat(result.isErr).isTrue()
+        assertThat(result.unwrapError()).isInstanceOf(UserAuthenticationRequiredException::class.java)
     }
 
     @Test
@@ -73,8 +74,8 @@ class UserAuthenticatedResourceCallUseCaseTest {
 
         val result = useCase.getDeviceList()
 
-        assertThat(result).isInstanceOf(Err::class.java)
-        val error = (result as Err).error
+        assertThat(result.isErr).isTrue()
+        val error = result.unwrapError()
         assertThat(error).isInstanceOf(ResourceCallException::class.java)
         assertThat((error as ResourceCallException).code).isEqualTo(500)
     }
