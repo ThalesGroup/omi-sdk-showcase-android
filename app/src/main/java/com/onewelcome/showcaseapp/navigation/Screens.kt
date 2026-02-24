@@ -37,4 +37,5 @@ sealed class Screens(val route: String) {
   data object TransactionConfirmationResult : Screens("transaction_confirmation_result")
   data object QrCodeScanner : Screens("qr_code_scanner_${Constants.FULLSCREEN_PAGE}")
   data object CustomAuthPassword : Screens("custom_auth_password_${Constants.FULLSCREEN_PAGE}")
+  data object PushWithCustomAuthConfirmation : Screens("push_with_custom_auth_confirmation_${Constants.FULLSCREEN_PAGE}")
 }

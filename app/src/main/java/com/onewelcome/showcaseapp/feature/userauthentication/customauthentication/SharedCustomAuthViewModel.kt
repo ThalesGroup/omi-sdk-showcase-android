@@ -6,6 +6,7 @@ import com.onewelcome.core.omisdk.handlers.CustomAuthAuthenticationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthDeregistrationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthRegistrationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthenticationRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -22,7 +23,8 @@ class SharedCustomAuthViewModel @Inject constructor(
   private val customAuthRegistrationAction: CustomAuthRegistrationAction,
   private val customAuthAuthenticationAction: CustomAuthAuthenticationAction,
   private val customAuthenticationRequestHandler: CustomAuthenticationRequestHandler,
-  private val customAuthDeregistrationAction: CustomAuthDeregistrationAction
+  private val customAuthDeregistrationAction: CustomAuthDeregistrationAction,
+  private val mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler
 ) : ViewModel() {
 
   private val _navigationEvents = Channel<NavigationEvent>(Channel.BUFFERED)
@@ -37,22 +39,18 @@ class SharedCustomAuthViewModel @Inject constructor(
       }
       launch {
         // Listen for registration requests (when user enables custom authenticator)
-        customAuthRegistrationAction.registrationRequestFlow.collect {
-
-          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = true))
-        }
-      }
-      launch {
-        // Listen for authentication requests via CustomAuthAuthenticationAction
-        customAuthAuthenticationAction.authenticationRequestFlow.collect {
-          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = false))
-        }
+//        customAuthRegistrationAction.registrationRequestFlow.collect {
+//
+//          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = true))
+//        }
       }
       launch {
         // Listen for authentication requests via CustomAuthenticationRequestHandler
         customAuthenticationRequestHandler.startAuthenticationFlow.collect {
-          customAuthenticationRequestHandler.acceptAuthenticationRequest()
-          _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = false))
+           if (mobileAuthWithPushCustomRequestHandler.currentRequest == null) {
+             customAuthenticationRequestHandler.acceptAuthenticationRequest()
+             _navigationEvents.trySend(NavigationEvent.NavigateToCustomAuthPasswordScreen(isRegistration = false))
+           }
         }
       }
     }

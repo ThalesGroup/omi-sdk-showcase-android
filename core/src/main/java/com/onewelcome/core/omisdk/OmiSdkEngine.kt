@@ -19,6 +19,7 @@ import com.onewelcome.core.omisdk.handlers.CustomAuthRegistrationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthenticationRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
@@ -38,6 +39,7 @@ class OmiSdkEngine @Inject constructor(
   private val mobileAuthWithPushRequestHandler: MobileAuthWithPushRequestHandler,
   private val mobileAuthWithPushPinRequestHandler: MobileAuthWithPushPinRequestHandler,
   private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
+  private val mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler,
   private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler,
   private val customAuthRequestHandler: CustomAuthenticationRequestHandler,
@@ -61,7 +63,6 @@ class OmiSdkEngine @Inject constructor(
         settings.httpConnectTimeout?.let { setHttpConnectTimeout(it) }
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }
         settings.deviceConfigCacheDuration?.let { setDeviceConfigCacheDurationSeconds(it) }
-        Log.d("prabhat","Initialising"+customAuthenticationRequestHandler+"   "+twoStepRegistrationRequestHandler)
         setOptionalHandlers(settings)
       }.build()
   }
@@ -78,7 +79,6 @@ class OmiSdkEngine @Inject constructor(
             customAuthAuthenticationAction
           )
           setCustomAuthenticators(setOf(customAuthenticator))
-          setCustomAuthenticationRequestHandler(CustomAuthenticationRequestHandler())
           setCustomAuthenticationRequestHandler(customAuthRequestHandler)
           _isCustomAuthHandlerRegistered = true
         }
@@ -86,6 +86,7 @@ class OmiSdkEngine @Inject constructor(
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_BIOMETRIC -> setMobileAuthWithPushBiometricRequestHandler(mobileAuthWithBiometricRequestHandler)
+        HandlerType.MOBILE_AUTH_WITH_PUSH_CUSTOM -> setMobileAuthWithPushCustomRequestHandler(mobileAuthWithPushCustomRequestHandler)
         HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(setOf(TwoStepIdentityProvider(twoStepRegistrationRequestHandler)))
       }
     }
