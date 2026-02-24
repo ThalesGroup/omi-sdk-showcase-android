@@ -10,6 +10,8 @@ class OmiSdkEngineFake(private val oneginiClientMock: OneginiClient) : OmiSdkFac
 
   override val oneginiClient: OneginiClient
     get() = if (isInitialized) oneginiClientMock else throw IllegalStateException("Onegini SDK instance not yet initialized")
+  override val isCustomAuthHandlerRegistered: Boolean
+    get() = TODO("Not yet implemented")
 
 
   override fun initialize(settings: OmiSdkInitializationSettings): OneginiClient {
