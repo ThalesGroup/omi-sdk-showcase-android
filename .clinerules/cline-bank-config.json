@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "setupDate": "2026-02-17T06:46:00Z",
+  "lastUpdate": "2026-02-17T06:46:00Z",
+  "platform": "android",
+  "platformStatus": "existing",
+  "project": "showcaseThales",
+  "projectFullName": "Showcase Thales",
+  "projectStatus": "existing",
+  "projectType": "application",
+  "rules": {
+    "common": [
+      "memory-bank-location.md"
+    ],
+    "platform": [
+      "kotlin-android-condensed-rules.md",
+      "compose-condensed-rules.md"
+    ],
+    "security": []
+  },
+  "workflows": {
+    "global": [],
+    "project": "showcaseThales",
+    "projectWorkflowsGenerated": false
+  },
+  "fileMapping": {
+    "rules/android/kotlin-android-condensed-rules.md": "Rules/android/condensed/kotlin-android-condensed-rules.md",
+    "rules/android/compose-condensed-rules.md": "Rules/android/condensed/compose-condensed-rules.md",
+    "workflows/project/build-app.md": "Workflows/projects/android/showcaseThales/build-app.md",
+    "workflows/project/clean-build.md": "Workflows/projects/android/showcaseThales/clean-build.md",
+    "workflows/project/run-quality-checks.md": "Workflows/projects/android/showcaseThales/run-quality-checks.md",
+    "workflows/project/run-tests.md": "Workflows/projects/android/showcaseThales/run-tests.md",
+    "workflows/project/README.md": "Workflows/projects/android/showcaseThales/README.md",
+    "workflows/configuration/cline-bank-setup.md": "Workflows/configuration/cline-bank-setup.md",
+    "workflows/configuration/cline-bank-update.md": "Workflows/configuration/cline-bank-update.md",
+    "workflows/configuration/cline-bank-modify.md": "Workflows/configuration/cline-bank-modify.md",
+    "workflows/configuration/cline-bank-review.md": "Workflows/configuration/cline-bank-review.md"
+  },
+  "submodulePath": "mobile-cline-bank",
+  "requiresRepoUpdate": false,
+  "pendingActions": []
+}
