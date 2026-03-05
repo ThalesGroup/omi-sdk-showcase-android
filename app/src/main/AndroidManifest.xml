@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.CAMERA" />
+
+  <uses-feature
+      android:name="android.hardware.camera"
+      android:required="false" />
+
   <application
       android:name=".ShowcaseApplication"
       android:icon="@mipmap/ic_launcher"
@@ -12,11 +19,37 @@
         android:name=".ShowcaseActivity"
         android:exported="true"
         android:label="@string/showcase_activity_name"
-        android:theme="@style/Theme.ShowcaseApp">
+        android:theme="@style/Theme.ShowcaseApp"
+        android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <!-- scheme should match redirect URI scheme configured on the backend -->
+        <!-- scheme is also displayed as part of result using sdk configurator -->
+        <data android:scheme="oneginiexample" />
+      </intent-filter>
     </activity>
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/file_paths" />
+    </provider>
+    <service
+        android:name="com.onewelcome.showcaseapp.fcm.ShowcaseAppFirebaseMessagingService"
+        android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
   </application>
 </manifest>

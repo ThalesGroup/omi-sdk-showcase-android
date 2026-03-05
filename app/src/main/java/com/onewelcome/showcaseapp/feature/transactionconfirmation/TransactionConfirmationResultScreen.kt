@@ -1,0 +1,88 @@
+package com.onewelcome.showcaseapp.feature.transactionconfirmation
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
+import com.onewelcome.core.components.ShowcaseTopBar
+import com.onewelcome.core.theme.Dimensions
+import com.onewelcome.showcaseapp.R
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel
+import com.onewelcome.showcaseapp.feature.push.SharedPushViewModel.UiState
+
+@Composable
+fun TransactionConfirmationResultScreen(navController: NavController, viewModel: SharedPushViewModel) {
+  TransactionConfirmationResultScreenContent(viewModel.uiState) { navController.popBackStack() }
+}
+
+@Composable
+fun TransactionConfirmationResultScreenContent(uiState: UiState, popBackStack: () -> Unit) {
+  Scaffold(
+    topBar = { ShowcaseTopBar(stringResource(R.string.transaction_result), popBackStack) }
+  ) { contentPadding ->
+    Column(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(contentPadding)
+        .padding(horizontal = Dimensions.mPadding),
+    ) {
+      uiState.result
+        ?.onSuccess {
+          Text(stringResource(R.string.transaction_accepted_successfully), style = MaterialTheme.typography.titleLarge)
+          Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
+            Text(stringResource(R.string.custom_info_plain), style = MaterialTheme.typography.titleMedium)
+            Text(it.toString())
+          }
+        }
+        ?.onFailure {
+          Text(stringResource(R.string.transaction_failed), style = MaterialTheme.typography.titleLarge)
+          Column(modifier = Modifier.padding(top = Dimensions.mPadding)) {
+            Text(stringResource(R.string.error), style = MaterialTheme.typography.titleMedium)
+            val errorDetails = if (it is com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError) {
+              "Code: ${it.errorType}\nMessage: ${it.message}"
+            } else {
+              it.toString()
+            }
+            Text(errorDetails)
+          }
+        }
+      Row(
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+          .weight(1f)
+          .fillMaxWidth()
+      ) {
+        Button(
+          modifier = Modifier
+            .fillMaxWidth()
+            .height(Dimensions.actionButtonHeight),
+          onClick = popBackStack
+        ) {
+          Text(stringResource(R.string.close))
+        }
+      }
+    }
+  }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+  TransactionConfirmationResultScreenContent(UiState()) {}
+}

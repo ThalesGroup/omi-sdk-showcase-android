@@ -1,3 +1,9 @@
+rootProject.name = "OMI SDK Showcase App"
+include(":app")
+include(":data")
+include(":internal")
+include(":core")
+
 pluginManagement {
   repositories {
     google {
@@ -11,14 +17,31 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
+
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
     google()
     mavenCentral()
+    mavenLocal()
+    setupOmiSdkRepo()
   }
 }
 
-rootProject.name = "Showcase App"
-include(":app")
-include(":data")
+private fun RepositoryHandler.setupOmiSdkRepo() {
+  try {
+    val artifactoryUser = providers.gradleProperty("artifactory_user").get()
+    val artifactoryPassword = providers.gradleProperty("artifactory_password").get()
+    maven {
+      url = uri("https://thalescpliam.jfrog.io/artifactory/onegini-sdk")
+      credentials {
+        username = artifactoryUser
+        password = artifactoryPassword
+      }
+    }
+  } catch (_: Throwable) {
+    throw InvalidUserDataException(
+      "You must configure the 'artifactory_user' and 'artifactory_password' properties in your project before you can build it."
+    )
+  }
+}
