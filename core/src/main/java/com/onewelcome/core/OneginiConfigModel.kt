@@ -12,10 +12,10 @@ class OneginiConfigModel @Inject constructor() : OneginiClientConfigModel {
   override val appVersion = "7.13.0"
   override val baseUrl = "https://mobile-security-proxy.in.prod.onewelcome.net"
   override val resourceBaseUrl = "https://mobile-security-proxy.in.prod.onewelcome.net/resources/"
-  override val keyStoreHash = "061d804872348aac140b735eb176350c5e24e3ebdf152f253f9748329b5a7755"
+  override val keyStoreHash = "cfd53a501d2680069873bc1aacd9a30b71af2571675f1020289069430b8f2133"
   override val serverPublicKey: String? = null
   override val serverType = "access"
-  override val serverVersion = "1.74.2"
+  override val serverVersion = "1.75.3"
   override val certificatePinningKeyStore = R.raw.keystore
   override val deviceName = "${Build.BRAND} ${Build.MODEL}"
 
