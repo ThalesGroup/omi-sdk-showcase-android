@@ -4,7 +4,7 @@
   <string name="home_screen_name">Home</string>
   <string name="info_screen_name">Info</string>
   <string name="transactions_screen_name">Transactions</string>
-  <string name="os_compatibility_screen_name">OS Compatibility</string>
+  <string name="os_validation_screen_name">OS Validation</string>
   <string name="required">Required</string>
   <string name="optional">Optional</string>
   <string name="read_more">Read more</string>
@@ -14,6 +14,7 @@
   <string name="details">Details</string>
   <string name="register">Register</string>
   <string name="cancel">Cancel</string>
+  <string name="proceed">Proceed</string>
   <string name="submit">Submit</string>
   <string name="accept">Accept</string>
   <string name="reject">Reject</string>
@@ -27,6 +28,7 @@
   <!-- Info Screen -->
   <string name="title_sdk_status">OMI SDK Status</string>
   <string name="status_sdk_initialized">SDK Initialized</string>
+  <string name="status_omi_sdk_version">OMI SDK Version</string>
   <string name="user_profiles">User profiles</string>
   <string name="authenticated_profile">Authenticated user profile</string>
   <string name="implicit_authenticated_profile">Implicitly authenticated user profile</string>
@@ -43,6 +45,7 @@
   <string name="section_title_sdk_initialization">SDK Initialization</string>
   <string name="section_title_user_registration">User Registration</string>
   <string name="section_title_browser_registration">Browser Registration</string>
+  <string name="section_title_one_step_registration">One-step registration</string>
   <string name="two_step_registration_description">Two-step registration allows users to complete registration using a custom two-step identity provider. The first step initializes the registration, and the second step requires entering a response code.</string>
   <string name="two_step_input_title">Enter Optional data</string>
   <string name="two_step_verification_title">Enter Response Code</string>
@@ -117,6 +120,7 @@
   <string name="version">Version: %s</string>
   <string name="omi_sdk_version">OMI SDK version: %s</string>
   <string name="test_result_saved">Test result saved into Downloads directory</string>
+  <string name="test_result_save_failed">Failed to save test result</string>
   <string name="test_succeed">All of the tests succeed!</string>
   <string name="tests_failed">Tests failed:%1$s%2$s</string>
   <string name="tests_failed_emoji">Tests failed ❌</string>
@@ -132,6 +136,10 @@
   <!-- Browser registration -->
   <string name="browser_registration">Browser registration</string>
   <string name="browser_registration_description">Browser based registration allows users to complete the registration process through a web browser flow. </string>
+
+  <!-- One-step registration -->
+  <string name="one_step_registration">One step registration</string>
+  <string name="one_step_registration_description">One-step registration is a flow that completes the registration process in a single step using script present on the backend.\n\n In this example we use OTP optionally scanned with QR code</string>
   <string name="identity_providers">Identity providers</string>
   <string name="registration_scopes">Registration scopes</string>
   <string name="cancel_registration">Cancel registration</string>
@@ -273,6 +281,8 @@
   <string name="transaction_waiting_for_confirmation">New pending transaction</string>
 
   <!-- QR Code Scanner -->
+  <string name="qr_code_scanning">QR Code Scanning</string>
+  <string name="qr_code_scanning_description">For testing purposes, we utilize QR code registration as a one-step registration flow.</string>
   <string name="camera_permission_dialog_title">Camera permission</string>
   <string name="camera_permission_dialog_description">To change the camera permission you need to navigate to application settings.</string>
   <string name="qr_code_scanner_content_description">Open QR code scanner</string>
@@ -323,6 +333,20 @@
   <!-- two step registration -->
   <string name="section_title_two_step_registration">Two Step Registration</string>
   <string name="two_step_registration">Two Step Registration</string>
+
+  <!-- POC - START -->
+  <!-- DigiD registration -->
+  <string name="section_title_digid_registration">DigiD Registration</string>
+  <string name="digid_registration">DigiD Registration</string>
+  <string name="digid_registration_description">DigiD registration allows users to complete registration using the DigiD identity provider.</string>
+  <!-- fido registration -->
+  <string name="handler_fido_registration">Fido registration</string>
+  <string name="handler_fido_authentication">Fido authentication</string>
+  <string name="handler_digid_app2app_registration">DigiD App2App registration</string>
+  <string name="section_title_fido_registration">Fido Registration</string>
+  <string name="fido_registration">Fido Registration</string>
+  <string name="fido_registration_description">Fido registration allows users to complete registration using a Fido identity provider. This process is simplified and does not require manual input.</string>
+  <!--POC - END-->
 
   <!-- Tokens -->
   <string name="section_title_tokens">Tokens</string>

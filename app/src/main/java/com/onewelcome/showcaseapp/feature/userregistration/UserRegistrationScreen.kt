@@ -63,8 +63,13 @@ private fun Sections(onNavigateToSection: (String) -> Unit) {
 private fun getSections(): List<SectionItem> {
   return listOf(
     SectionItem(stringResource(R.string.section_title_browser_registration), Screens.BrowserRegistration),
+    //POC-START
+    SectionItem(stringResource(R.string.section_title_fido_registration), Screens.FidoRegistration),
+    SectionItem(stringResource(R.string.section_title_digid_registration), Screens.DigidRegistration),
+    //POC-END
+    SectionItem(stringResource(R.string.section_title_one_step_registration), Screens.OneStepRegistration),
     SectionItem(stringResource(R.string.section_title_two_step_registration), Screens.TwoStepRegistration)
-  )
+    )
 }
 
 @Preview(showBackground = true)

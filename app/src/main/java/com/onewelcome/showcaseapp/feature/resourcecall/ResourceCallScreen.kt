@@ -1,5 +1,9 @@
 package com.onewelcome.showcaseapp.feature.resourcecall
 
+import android.net.Uri
+import android.provider.OpenableColumns
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,17 +15,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +59,24 @@ private fun ResourceCallScreenContent(
   onNavigateBack: () -> Unit,
   onEvent: (ResourceCallViewModel.UiEvent) -> Unit
 ) {
+  val context = LocalContext.current
+
+  val filePickerLauncher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.GetContent()
+  ) { uri: Uri? ->
+    uri ?: return@rememberLauncherForActivityResult
+    val fileName = context.contentResolver
+      .query(uri, null, null, null, null)
+      ?.use { cursor ->
+        val col = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        cursor.moveToFirst()
+        cursor.getString(col)
+      } ?: "attachment"
+    val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+      ?: return@rememberLauncherForActivityResult
+    onEvent(ResourceCallViewModel.UiEvent.UpdateSelectedFile(fileName, bytes))
+  }
+
   SdkFeatureScreen(
     title = "Resource Calls",
     onNavigateBack = onNavigateBack,
@@ -57,11 +84,22 @@ private fun ResourceCallScreenContent(
       ShowcaseFeatureDescription(
         description = "Demonstrates all three types of resource calls: " +
             "Unauthenticated (no token), Anonymous (device token), " +
-            "and User Authenticated (user token).",
+            "User Authenticated (user token), and Multipart Upload (user token).",
         link = "https://thalesdocs.com/oip/omi-sdk/android-sdk/android-sdk-using/android-sdk-performing-resource-calls/"
       )
     },
-    settings = { ResourceTypeSelector(uiState, onEvent) },
+    settings = {
+      Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
+        ResourceTypeSelector(uiState, onEvent)
+        if (uiState.selectedResourceType == ResourceType.MULTIPART_USER_AUTHENTICATED) {
+          MultipartInputSection(
+            uiState = uiState,
+            onEvent = onEvent,
+            onPickFile = { filePickerLauncher.launch("*/*") }
+          )
+        }
+      }
+    },
     result = if (uiState.result != null || uiState.errorMessage != null || uiState.currentStep != null) {
       { ResultSection(uiState) }
     } else null,
@@ -146,9 +184,52 @@ private fun ResourceTypeCard(
 }
 
 @Composable
+private fun MultipartInputSection(
+  uiState: ResourceCallViewModel.State,
+  onEvent: (ResourceCallViewModel.UiEvent) -> Unit,
+  onPickFile: () -> Unit
+) {
+  Column(verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)) {
+    Text(
+      text = "Upload Fields:",
+      style = MaterialTheme.typography.titleMedium,
+      fontWeight = FontWeight.Bold
+    )
+
+    OutlinedTextField(
+      value = uiState.multipartName,
+      onValueChange = { onEvent(ResourceCallViewModel.UiEvent.UpdateMultipartName(it)) },
+      label = { Text("name") },
+      modifier = Modifier.fillMaxWidth(),
+      singleLine = true
+    )
+
+    OutlinedTextField(
+      value = uiState.multipartEmail,
+      onValueChange = { onEvent(ResourceCallViewModel.UiEvent.UpdateMultipartEmail(it)) },
+      label = { Text("email") },
+      modifier = Modifier.fillMaxWidth(),
+      singleLine = true,
+      keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+    )
+
+    OutlinedButton(
+      onClick = onPickFile,
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      Text(
+        text = if (uiState.selectedFileName != null)
+          "attachments: ${uiState.selectedFileName}"
+        else
+          "Pick attachment file..."
+      )
+    }
+  }
+}
+
+@Composable
 private fun ResultSection(uiState: ResourceCallViewModel.State) {
   Column {
-    // Show current step if loading
     uiState.currentStep?.let { step ->
       Box(
         modifier = Modifier
@@ -175,7 +256,6 @@ private fun ResultSection(uiState: ResourceCallViewModel.State) {
       }
     }
 
-    // Show success result
     uiState.result?.let { result ->
       Box(
         modifier = Modifier
@@ -194,7 +274,6 @@ private fun ResultSection(uiState: ResourceCallViewModel.State) {
       }
     }
 
-    // Show error
     uiState.errorMessage?.let { error ->
       Box(
         modifier = Modifier
@@ -220,21 +299,24 @@ private fun ExecuteButton(
   uiState: ResourceCallViewModel.State,
   onEvent: (ResourceCallViewModel.UiEvent) -> Unit
 ) {
+  val isEnabled = !uiState.isLoading &&
+      (uiState.selectedResourceType != ResourceType.MULTIPART_USER_AUTHENTICATED ||
+          uiState.isMultipartReady)
+
   Button(
     modifier = Modifier
       .fillMaxWidth()
       .height(Dimensions.actionButtonHeight),
     onClick = {
-      if (!uiState.isLoading) {
-        when (uiState.selectedResourceType) {
-          ResourceType.UNAUTHENTICATED -> onEvent(ResourceCallViewModel.UiEvent.ExecuteUnauthenticatedCall)
-          ResourceType.ANONYMOUS -> onEvent(ResourceCallViewModel.UiEvent.ExecuteAnonymousCall)
-          ResourceType.USER_AUTHENTICATED -> onEvent(ResourceCallViewModel.UiEvent.ExecuteUserAuthenticatedCall)
-          ResourceType.IMPLICIT -> onEvent(ResourceCallViewModel.UiEvent.ExecuteImplicitCall)
-        }
+      when (uiState.selectedResourceType) {
+        ResourceType.UNAUTHENTICATED -> onEvent(ResourceCallViewModel.UiEvent.ExecuteUnauthenticatedCall)
+        ResourceType.ANONYMOUS -> onEvent(ResourceCallViewModel.UiEvent.ExecuteAnonymousCall)
+        ResourceType.USER_AUTHENTICATED -> onEvent(ResourceCallViewModel.UiEvent.ExecuteUserAuthenticatedCall)
+        ResourceType.IMPLICIT -> onEvent(ResourceCallViewModel.UiEvent.ExecuteImplicitCall)
+        ResourceType.MULTIPART_USER_AUTHENTICATED -> onEvent(ResourceCallViewModel.UiEvent.ExecuteMultipartCall)
       }
     },
-    enabled = !uiState.isLoading
+    enabled = isEnabled
   ) {
     if (uiState.isLoading) {
       CircularProgressIndicator(
@@ -242,7 +324,7 @@ private fun ExecuteButton(
         modifier = Modifier.height(24.dp)
       )
     } else {
-      Text("Execute ${uiState.selectedResourceType.title} Call")
+      Text("Execute ${uiState.selectedResourceType.title}")
     }
   }
 }

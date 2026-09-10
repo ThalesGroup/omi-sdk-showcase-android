@@ -10,6 +10,7 @@ import com.github.michaelbull.result.onSuccess
 import com.onewelcome.core.usecase.resourcecall.AnonymousResourceCallUseCase
 import com.onewelcome.core.usecase.resourcecall.ImplicitResourceCallUseCase
 import com.onewelcome.core.usecase.resourcecall.UnauthenticatedResourceCallUseCase
+import com.onewelcome.core.usecase.resourcecall.UserAuthenticatedMultipartResourceCallUseCase
 import com.onewelcome.core.usecase.resourcecall.UserAuthenticatedResourceCallUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,7 +21,8 @@ class ResourceCallViewModel @Inject constructor(
   private val unauthenticatedUseCase: UnauthenticatedResourceCallUseCase,
   private val anonymousUseCase: AnonymousResourceCallUseCase,
   private val userAuthenticatedUseCase: UserAuthenticatedResourceCallUseCase,
-  private val implicitUseCase: ImplicitResourceCallUseCase
+  private val implicitUseCase: ImplicitResourceCallUseCase,
+  private val multipartUseCase: UserAuthenticatedMultipartResourceCallUseCase
 ) : ViewModel() {
 
   var uiState by mutableStateOf(State())
@@ -36,6 +38,13 @@ class ResourceCallViewModel @Inject constructor(
       is UiEvent.ExecuteAnonymousCall -> executeAnonymousCall()
       is UiEvent.ExecuteUserAuthenticatedCall -> executeUserAuthenticatedCall()
       is UiEvent.ExecuteImplicitCall -> executeImplicitCall()
+      is UiEvent.ExecuteMultipartCall -> executeMultipartCall()
+      is UiEvent.UpdateMultipartName -> uiState = uiState.copy(multipartName = event.name)
+      is UiEvent.UpdateMultipartEmail -> uiState = uiState.copy(multipartEmail = event.email)
+      is UiEvent.UpdateSelectedFile -> uiState = uiState.copy(
+        selectedFileName = event.fileName,
+        selectedFileBytes = event.bytes
+      )
       is UiEvent.ClearResult -> uiState = uiState.copy(result = null, errorMessage = null)
     }
   }
@@ -157,7 +166,6 @@ class ResourceCallViewModel @Inject constructor(
         currentStep = "Step 1: Checking for implicitly authenticated user..."
       )
 
-      // Check if a user is already implicitly authenticated
       val implicitlyAuthenticatedUser = implicitUseCase.getImplicitlyAuthenticatedUserProfile()
 
       if (implicitlyAuthenticatedUser == null) {
@@ -193,13 +201,68 @@ class ResourceCallViewModel @Inject constructor(
     }
   }
 
+  private fun executeMultipartCall() {
+    val bytes = uiState.selectedFileBytes
+    val fileName = uiState.selectedFileName
+    val name = uiState.multipartName.trim()
+    val email = uiState.multipartEmail.trim()
+
+    if (bytes == null || fileName == null) {
+      uiState = uiState.copy(errorMessage = "Please select a file before uploading.")
+      return
+    }
+    if (name.isBlank() || email.isBlank()) {
+      uiState = uiState.copy(errorMessage = "Name and email are required.")
+      return
+    }
+
+    viewModelScope.launch {
+      uiState = uiState.copy(
+        isLoading = true,
+        result = null,
+        errorMessage = null,
+        currentStep = "Step 1: Preparing multipart request..."
+      )
+      uiState = uiState.copy(currentStep = "Step 2: Attaching user token and uploading...")
+
+      multipartUseCase.uploadAttachment(bytes, fileName, name, email)
+        .onSuccess { response ->
+          uiState = uiState.copy(
+            isLoading = false,
+            result = "Multipart Upload Success!\n\n" +
+                "File: $fileName\n" +
+                "Name: $name\n" +
+                "Email: $email\n" +
+                "Server response: ${response.message ?: response.status ?: "OK"}",
+            currentStep = null
+          )
+        }
+        .onFailure { error ->
+          uiState = uiState.copy(
+            isLoading = false,
+            errorMessage = "Multipart Upload Failed!\n\nError: ${error.message}",
+            currentStep = null
+          )
+        }
+    }
+  }
+
   data class State(
     val selectedResourceType: ResourceType = ResourceType.UNAUTHENTICATED,
     val isLoading: Boolean = false,
     val currentStep: String? = null,
     val result: String? = null,
-    val errorMessage: String? = null
-  )
+    val errorMessage: String? = null,
+    val multipartName: String = "",
+    val multipartEmail: String = "",
+    val selectedFileName: String? = null,
+    val selectedFileBytes: ByteArray? = null
+  ) {
+    val isMultipartReady: Boolean
+      get() = multipartName.isNotBlank() &&
+          multipartEmail.isNotBlank() &&
+          selectedFileBytes != null
+  }
 
   sealed interface UiEvent {
     data class SelectResourceType(val type: ResourceType) : UiEvent
@@ -207,6 +270,10 @@ class ResourceCallViewModel @Inject constructor(
     data object ExecuteAnonymousCall : UiEvent
     data object ExecuteUserAuthenticatedCall : UiEvent
     data object ExecuteImplicitCall : UiEvent
+    data object ExecuteMultipartCall : UiEvent
+    data class UpdateMultipartName(val name: String) : UiEvent
+    data class UpdateMultipartEmail(val email: String) : UiEvent
+    data class UpdateSelectedFile(val fileName: String, val bytes: ByteArray) : UiEvent
     data object ClearResult : UiEvent
   }
 }
@@ -227,5 +294,9 @@ enum class ResourceType(val title: String, val description: String) {
   IMPLICIT(
     title = "Implicit (User Registered)",
     description = "Implicit token. User must be registered but NO PIN required. For read-only data."
+  ),
+  MULTIPART_USER_AUTHENTICATED(
+    title = "Multipart Upload (User Auth)",
+    description = "User token required. Uploads a file with name and email as multipart/form-data to POST file-upload."
   )
 }

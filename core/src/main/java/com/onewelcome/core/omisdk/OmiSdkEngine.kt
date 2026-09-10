@@ -1,7 +1,6 @@
 package com.onewelcome.core.omisdk
 
 import android.content.Context
-import android.util.Log
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onewelcome.core.OneginiConfigModel
@@ -17,12 +16,21 @@ import com.onewelcome.core.omisdk.handlers.CustomAuthAuthenticationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthDeregistrationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthRegistrationAction
 import com.onewelcome.core.omisdk.handlers.CustomAuthenticationRequestHandler
+//POC-START
+import com.onewelcome.core.omisdk.entity.FidoAuthenticationIdentityProvider
+import com.onewelcome.core.omisdk.entity.FidoIdentityProvider
+import com.onewelcome.core.omisdk.entity.DigiDIdentityProvider
+import com.onewelcome.core.omisdk.handlers.FidoAuthenticationRequestHandler
+import com.onewelcome.core.omisdk.handlers.FidoRegistrationRequestHandler
+import com.onewelcome.core.omisdk.handlers.DigiDRegistrationRequestHandler
+//POC-END
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithOtpRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.omisdk.handlers.PinAuthenticationRequestHandler
+import com.onewelcome.core.omisdk.identityproviders.QrCodeIdentityProvider
 import com.onewelcome.core.omisdk.handlers.TwoStepRegistrationRequestHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -41,7 +49,13 @@ class OmiSdkEngine @Inject constructor(
   private val mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler,
   private val mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthWithOtpRequestHandler,
+  private val qrCodeIdentityProvider: QrCodeIdentityProvider,
   private val twoStepRegistrationRequestHandler: TwoStepRegistrationRequestHandler,
+  //POC-START
+  private val fidoRegistrationRequestHandler: FidoRegistrationRequestHandler,
+  private val fidoAuthenticationRequestHandler: FidoAuthenticationRequestHandler,
+  private val digiDRegistrationRequestHandler: DigiDRegistrationRequestHandler,
+  //POC-END
   private val customAuthRequestHandler: CustomAuthenticationRequestHandler,
   private val customAuthRegistrationAction: CustomAuthRegistrationAction,
   private val customAuthDeregistrationAction: CustomAuthDeregistrationAction,
@@ -64,10 +78,17 @@ class OmiSdkEngine @Inject constructor(
         settings.httpReadTimeout?.let { setHttpReadTimeout(it) }
         settings.deviceConfigCacheDuration?.let { setDeviceConfigCacheDurationSeconds(it) }
         setOptionalHandlers(settings)
+        addCustomIdentityProvider(qrCodeIdentityProvider)
       }.build()
   }
 
   private fun OneginiClientBuilder.setOptionalHandlers(settings: OmiSdkInitializationSettings) {
+    //POC-START
+    // Collect all custom identity providers first, then register them in a single call.
+    // Multiple calls to setCustomIdentityProviders() would overwrite each other.
+    val customIdentityProviders = mutableSetOf<com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider>()
+
+    //POC-END
     settings.handlers.forEach {
       when (it) {
         HandlerType.BROWSER_REGISTRATION -> setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
@@ -82,13 +103,25 @@ class OmiSdkEngine @Inject constructor(
           setCustomAuthenticationRequestHandler(customAuthRequestHandler)
           _isCustomAuthHandlerRegistered = true
         }
+
         HandlerType.MOBILE_AUTH_WITH_PUSH -> setMobileAuthWithPushRequestHandler(mobileAuthWithPushRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_OTP -> setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_PIN -> setMobileAuthWithPushPinRequestHandler(mobileAuthWithPushPinRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_BIOMETRIC -> setMobileAuthWithPushBiometricRequestHandler(mobileAuthWithBiometricRequestHandler)
         HandlerType.MOBILE_AUTH_WITH_PUSH_CUSTOM -> setMobileAuthWithPushCustomRequestHandler(mobileAuthWithPushCustomRequestHandler)
         HandlerType.TWO_STEP_REGISTRATION -> setCustomIdentityProviders(setOf(TwoStepIdentityProvider(twoStepRegistrationRequestHandler)))
+        //POC-START
+        HandlerType.FIDO_REGISTRATION -> customIdentityProviders.add(FidoIdentityProvider(fidoRegistrationRequestHandler))
+        HandlerType.FIDO_AUTHENTICATION -> customIdentityProviders.add(FidoAuthenticationIdentityProvider(fidoAuthenticationRequestHandler))
+        HandlerType.DIGID_APP2APP_REGISTRATION -> setCustomIdentityProviders(setOf(DigiDIdentityProvider(digiDRegistrationRequestHandler)))
+        // POC - END
       }
     }
+
+    //POC - START
+    if (customIdentityProviders.isNotEmpty()) {
+      setCustomIdentityProviders(customIdentityProviders)
+    }
+    //POC-END
   }
 }

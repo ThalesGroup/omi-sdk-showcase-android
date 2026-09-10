@@ -1,6 +1,10 @@
 package com.onewelcome.showcaseapp.feature.userregistration.browserregistration
 
 import android.content.Intent
+//POC-START
+import android.os.Build
+import androidx.annotation.RequiresApi
+//POC-END
 import android.os.Parcel
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
@@ -179,6 +183,9 @@ private fun IdentityProvidersSection(
   }
 }
 
+//POC-START
+@RequiresApi(Build.VERSION_CODES.N)
+//POC-END
 @Composable
 private fun IdentityProvidersList(
   chosenIdentityProvider: OneginiIdentityProvider?,

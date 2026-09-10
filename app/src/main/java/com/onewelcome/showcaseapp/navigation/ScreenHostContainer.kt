@@ -57,11 +57,19 @@ import com.onewelcome.showcaseapp.feature.userderegistration.UserDeregistrationS
 import com.onewelcome.showcaseapp.feature.userregistration.UserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.browserregistration.BrowserRegistrationScreen
 import com.onewelcome.showcaseapp.feature.tokens.TokensScreen
+import com.onewelcome.showcaseapp.feature.userregistration.onestepregistration.OneStepRegistrationOtpScreen
+import com.onewelcome.showcaseapp.feature.userregistration.onestepregistration.OneStepRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepOptionalDataSubmitScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepVerificationScreen
 import com.onewelcome.showcaseapp.feature.userregistration.twostepregistration.TwoStepRegistrationScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.customauthentication.CustomAuthPasswordScreen
 import com.onewelcome.showcaseapp.feature.userauthentication.customauthentication.SharedCustomAuthViewModel
+// POC - START
+import com.onewelcome.showcaseapp.feature.userregistration.fidoregistration.Fido2BiometricAuthenticationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.fidoregistration.Fido2BiometricRegistrationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.fidoregistration.FidoRegistrationScreen
+import com.onewelcome.showcaseapp.feature.userregistration.digidregistration.DigidRegistrationScreen
+// POC - END
 
 @Composable
 fun ScreenHostContainer() {
@@ -265,6 +273,14 @@ private fun HomeScreenNavHost(homeNavController: NavHostController, rootNavContr
     composable(Screens.SdkInitialization.route) { SdkInitializationScreen(homeNavController) }
     composable(Screens.UserRegistration.route) { UserRegistrationScreen(homeNavController) }
     composable(Screens.BrowserRegistration.route) { BrowserRegistrationScreen(homeNavController, rootNavController) }
+    //POC-START
+    composable(Screens.FidoRegistration.route) { FidoRegistrationScreen(homeNavController, rootNavController) }
+    composable(Screens.Fido2BiometricRegistration.route) { Fido2BiometricRegistrationScreen(homeNavController) }
+    composable(Screens.Fido2BiometricAuthentication.route) { Fido2BiometricAuthenticationScreen(homeNavController) }
+    composable(Screens.DigidRegistration.route) { DigidRegistrationScreen(homeNavController, rootNavController) }
+    //POC-END
+    composable(Screens.OneStepRegistration.route) { OneStepRegistrationScreen(homeNavController, rootNavController) }
+    composable(Screens.OneStepRegistrationOtpScreen.route) { OneStepRegistrationOtpScreen(homeNavController, rootNavController) }
     composable(Screens.TwoStepRegistration.route) { TwoStepRegistrationScreen(homeNavController, rootNavController) }
     composable(Screens.TwoStepInput.route) { TwoStepOptionalDataSubmitScreen(homeNavController) }
     composable(Screens.TwoStepVerification.route) { TwoStepVerificationScreen(homeNavController, rootNavController) }

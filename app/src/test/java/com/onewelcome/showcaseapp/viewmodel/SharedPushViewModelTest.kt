@@ -14,7 +14,10 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallba
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onewelcome.core.manager.SdkAutoInitializationManager
 import com.onewelcome.core.notification.NotificationEventDispatcher
+import com.onewelcome.core.notification.PendingTransactionEventDispatcher
+import com.onewelcome.core.omisdk.handlers.CustomAuthAuthenticationAction
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithBiometricRequestHandler
+import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushCustomRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushPinRequestHandler
 import com.onewelcome.core.omisdk.handlers.MobileAuthWithPushRequestHandler
 import com.onewelcome.core.usecase.AuthenticateWithPushUseCase
@@ -68,6 +71,9 @@ class SharedPushViewModelTest {
   lateinit var notificationEventDispatcher: NotificationEventDispatcher
 
   @Inject
+  lateinit var pendingTransactionEventDispatcher: PendingTransactionEventDispatcher
+
+  @Inject
   lateinit var isSdkInitializedUseCase: IsSdkInitializedUseCase
 
   @Inject
@@ -81,6 +87,12 @@ class SharedPushViewModelTest {
 
   @Inject
   lateinit var mobileAuthWithBiometricRequestHandler: MobileAuthWithBiometricRequestHandler
+
+  @Inject
+  lateinit var mobileAuthWithPushCustomRequestHandler: MobileAuthWithPushCustomRequestHandler
+
+  @Inject
+  lateinit var customAuthAuthenticationAction: CustomAuthAuthenticationAction
 
   lateinit var viewModel: SharedPushViewModel
 
@@ -101,11 +113,14 @@ class SharedPushViewModelTest {
       authenticateWithPushUseCase,
       mobileAuthWithPushRequestHandler,
       notificationEventDispatcher,
+      pendingTransactionEventDispatcher,
       mobileAuthWithPushPinRequestHandler,
       isSdkInitializedUseCase,
       preferencesManager,
       sdkAutoInitializationManager,
       mobileAuthWithBiometricRequestHandler,
+      mobileAuthWithPushCustomRequestHandler,
+      customAuthAuthenticationAction
     )
   }
 

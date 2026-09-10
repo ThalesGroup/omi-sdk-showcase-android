@@ -2,6 +2,7 @@ package com.onewelcome.showcaseapp.di
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onewelcome.core.omisdk.actions.QrCodeRegistrationAction
 import com.onewelcome.core.omisdk.handlers.BrowserRegistrationRequestHandler
 import com.onewelcome.core.omisdk.handlers.CreatePinRequestHandler
 import com.onewelcome.showcaseapp.fakes.OmiSdkEngineFake
@@ -23,6 +24,8 @@ class MockModule {
 
   private val createPinRequestHandler = CreatePinRequestHandler()
 
+  private val qrCodeRegistrationAction = spy(QrCodeRegistrationAction())
+
   @Provides
   fun provideOneginiClientMock(): OneginiClient {
     return oneginiClientMock
@@ -36,6 +39,11 @@ class MockModule {
   @Provides
   fun provideCreatePinRequestHandler(): CreatePinRequestHandler {
     return createPinRequestHandler
+  }
+
+  @Provides
+  fun provideQrCodeRegistrationAction(): QrCodeRegistrationAction {
+    return qrCodeRegistrationAction
   }
 
   @Provides

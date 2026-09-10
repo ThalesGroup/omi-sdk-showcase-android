@@ -57,6 +57,41 @@ object TestConstants {
     }
   }
 
+  val OneginiApiIdentityProvider1 = object : OneginiIdentityProvider {
+    override val id: String
+      get() = "Api-identity-provider-id-1"
+    override val name: String
+      get() = "Api identity provider name 1"
+
+    override fun describeContents(): Int {
+      return 0
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+      dest.writeString(id)
+      dest.writeString(name)
+    }
+  }
+
+  val OneginiApiIdentityProvider2 = object : OneginiIdentityProvider {
+    override val id: String
+      get() = "Api-identity-provider-id-2"
+    override val name: String
+      get() = "Api identity provider name 2"
+
+    override fun describeContents(): Int {
+      return 0
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+      dest.writeString(id)
+      dest.writeString(name)
+    }
+  }
+
+  val TEST_API_IDENTITY_PROVIDERS = setOf(OneginiApiIdentityProvider1, OneginiApiIdentityProvider2)
+  val TEST_SELECTED_API_IDENTITY_PROVIDER = TEST_API_IDENTITY_PROVIDERS.first()
+
   val TEST_IDENTITY_PROVIDERS = setOf(OneginiBrowserIdentityProvider1, OneginiBrowserIdentityProvider2)
   val TEST_SELECTED_IDENTITY_PROVIDER = TEST_IDENTITY_PROVIDERS.first()
   val TEST_PIN = charArrayOf('1', '2', '3', '4', '5')

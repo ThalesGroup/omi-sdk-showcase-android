@@ -67,7 +67,6 @@ class TwoStepRegistrationViewModel @Inject constructor(
             is UiEvent.UpdateSelectedScopes -> uiState = uiState.copy(selectedScopes = event.scopes)
             is UiEvent.CancelRegistration -> cancelRegistration()
             is UiEvent.SetStatelessRegistration -> {
-                startRegistration()
                 uiState = uiState.copy(isStatelessRegistration = event.isStateless)
             }
             is UiEvent.SubmitResponseCode -> submitResponseCode(event.responseCode)
@@ -115,10 +114,10 @@ class TwoStepRegistrationViewModel @Inject constructor(
     }
 
     private fun startRegistration() {
+        listenForTwoStepInputNavigationEvent()
         if (uiState.isStatelessRegistration) {
             registerStatelessUser()
         } else {
-            listenForTwoStepInputNavigationEvent()
             listenForPinScreenNavigationEvent()
             registerUser()
         }

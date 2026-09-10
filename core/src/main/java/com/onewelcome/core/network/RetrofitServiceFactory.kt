@@ -4,6 +4,7 @@ import com.onewelcome.core.network.api.AnonymousApi
 import com.onewelcome.core.network.api.ImplicitApi
 import com.onewelcome.core.network.api.UnauthenticatedApi
 import com.onewelcome.core.network.api.UserAuthenticatedApi
+import com.onewelcome.core.network.api.UserAuthenticatedMultipartApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -38,6 +39,11 @@ class RetrofitServiceFactory @Inject constructor(
   fun createImplicitApi(): ImplicitApi {
     return createRetrofit(clientProvider.getImplicitUserResourceClient())
       .create(ImplicitApi::class.java)
+  }
+
+  fun createUserAuthenticatedMultipartApi(): UserAuthenticatedMultipartApi {
+    return createRetrofit(clientProvider.getUserAuthenticatedResourceClient())
+      .create(UserAuthenticatedMultipartApi::class.java)
   }
 
   fun createokhhtpClientWithInterceptor(okHttpClient: OkHttpClient): OkHttpClient {

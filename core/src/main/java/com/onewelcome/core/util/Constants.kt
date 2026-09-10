@@ -37,7 +37,7 @@ object Constants {
     "$DOCUMENTATION_BASE_URL/android-sdk-using/android-sdk-id-tokens/index.html"
   const val OS_COMPATIBILITY_TEST_RESULT_FILE_NAME = "os_compatibility_test_results.txt"
   const val FULLSCREEN_PAGE = "fullscreen"
-  val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email")
+  val DEFAULT_SCOPES = listOf("read", "openid", "profile", "phone", "email","write")
   const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss"
   val NOTIFICATION_VIBRATION_PATTERN = longArrayOf(0, 500, 500, 500)
 
@@ -54,4 +54,12 @@ object Constants {
 
   //SSO url
   const val SSO_URL = "https://login-mobile.in.prod.onewelcome.net/personal/dashboard"
+
+//POC-START
+
+  // FIDO
+  const val IDP_FIDO_CHECK = "poc_fido_reg_2_step"
+  const val IDP_FIDO_AUTH = "poc_fido_auth_2_step"
+
+//POC-END
 }

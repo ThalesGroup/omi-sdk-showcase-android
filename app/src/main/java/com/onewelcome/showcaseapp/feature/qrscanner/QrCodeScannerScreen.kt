@@ -147,7 +147,7 @@ private fun ShowPermissionSettingsAlertDialog(onEvent: (UiEvent) -> Unit) {
   )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun Preview() {
   QrCodeScannerContent(
