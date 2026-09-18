@@ -23,7 +23,7 @@ android {
 
   buildTypes {
     release {
-      isMinifyEnabled = true
+      isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
@@ -42,6 +42,16 @@ android {
   }
 }
 
+//POC-START
+configurations.all {
+  resolutionStrategy {
+    dependencySubstitution {
+      substitute(module("fido2.android.lib:fido2")).using(module("com.thalesgroup.gemalto.fido2:fido2:4.1.0"))
+    }
+  }
+}
+
+//POC-END
 dependencies {
   // Project modules
   implementation(project(DATA_MODULE))
@@ -85,6 +95,12 @@ dependencies {
     }
   }
 
+  //POC-START
+  // FIDO SDK
+  implementation(libs.fido.sdk)
+  implementation(libs.fido.ui)
+
+  //POC-END
   //Firebase
   api(platform(libs.firebase.bom))
   api(libs.firebase.messaging)

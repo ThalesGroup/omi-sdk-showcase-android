@@ -212,7 +212,7 @@ private fun Header() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Preview() {
+private fun Preview() {
   PinScreenContent(
     onNavigateBack = {},
     onEvent = {},

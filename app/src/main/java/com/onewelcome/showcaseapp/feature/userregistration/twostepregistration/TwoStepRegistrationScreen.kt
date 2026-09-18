@@ -1,5 +1,8 @@
 package com.onewelcome.showcaseapp.feature.userregistration.twostepregistration
 
+//POC-START
+import android.annotation.SuppressLint
+//POC-END
 import android.os.Parcel
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +51,9 @@ import com.onewelcome.showcaseapp.navigation.Screens
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
+//POC-START
+@SuppressLint("UnrememberedGetBackStackEntry")
+//POC-END
 @Composable
 fun TwoStepRegistrationScreen(
     navController: NavController,

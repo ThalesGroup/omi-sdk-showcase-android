@@ -23,7 +23,7 @@ class UserDeregistrationTestCases @Inject constructor(
   )
 
   private suspend fun deregisterUser(): TestStatus {
-    val userClient = getUserProfilesUseCase.execute().value.first()
+    val userClient = getUserProfilesUseCase.execute().value.firstOrNull() ?: return TestStatus.Failed
     val result = deregisterUserUseCase.execute(userClient)
     return if (result.isOk) {
       TestStatus.Passed

@@ -1,5 +1,6 @@
-package com.onewelcome.core.usecase
+package com.onewelcome.core.manager
 
+import com.onewelcome.core.usecase.OmiSdkInitializationUseCase
 import com.onewelcome.data.datastore.ShowcaseDataStore
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -15,37 +16,38 @@ import org.mockito.kotlin.whenever
 
 
 @RunWith(MockitoJUnitRunner::class)
-class SdkAutoInitializationUseCaseTest {
-
-  @Mock
-  private lateinit var dataStore: ShowcaseDataStore
+class SdkAutoInitializationManagerTest {
 
   @Mock
   private lateinit var sdkInitializationUseCase: OmiSdkInitializationUseCase
 
-  private lateinit var useCase: SdkAutoInitializationUseCase
+  @Mock
+  private lateinit var dataStore: ShowcaseDataStore
+
+  private lateinit var manager: SdkAutoInitializationManager
 
   @Before
   fun setup() {
-    useCase = SdkAutoInitializationUseCase(dataStore, sdkInitializationUseCase)
+    manager = SdkAutoInitializationManager(sdkInitializationUseCase, dataStore)
   }
 
   @Test
-  fun `Given SDK auto initialization is enabled, When usecase is executed, Then omi sdk should be initialized`() {
+  fun `Given SDK auto initialization is enabled, When manager is executed, Then omi sdk should be initialized`() {
     whenever(dataStore.isSdkAutoInitializationEnabled()).thenReturn(flowOf(true))
 
     runTest {
-      useCase.execute()
+      manager.execute()
+      manager.deferredResult?.await()
       verify(sdkInitializationUseCase).initialize(any())
     }
   }
 
   @Test
-  fun `Given SDK auto initialization is disabled, When usecase is executed, Then omi sdk should not be initialized`() {
+  fun `Given SDK auto initialization is disabled, When manager is executed, Then omi sdk should not be initialized`() {
     whenever(dataStore.isSdkAutoInitializationEnabled()).thenReturn(flowOf(false))
 
     runTest {
-      useCase.execute()
+      manager.execute()
     }
 
     verifyNoInteractions(sdkInitializationUseCase)

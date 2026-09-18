@@ -31,6 +31,7 @@ android {
     versionCode = VERSION_CODE
     versionName = VERSION_NAME
     testInstrumentationRunner = TEST_INSTRUMENTATION_RUNNER
+    buildConfigField("String", "OMI_SDK_VERSION", "\"${libs.versions.omiSdk.get()}\"")
   }
 
   buildTypes {
@@ -74,13 +75,50 @@ android {
       isIncludeAndroidResources = true
     }
   }
+
+  packaging {
+    resources {
+      excludes += setOf(
+        //POC-START
+        "org/bouncycastle/x509/CertPathReviewerMessages_de.properties",
+        "org/bouncycastle/x509/CertPathReviewerMessages.properties",
+        "META-INF/DEPENDENCIES",
+        "META-INF/LICENSE",
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE",
+        "META-INF/NOTICE.txt",
+        "META-INF/*.kotlin_module",
+        //POC-END
+        "META-INF/LICENSE.md",
+        "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+      )
+      //POC-START
+      // Keep one copy of any duplicates under this folder
+      pickFirsts += "org/bouncycastle/x509/**"
+      //POC-END
+    }
+  }
+
 }
+
+//POC-START
+configurations.all {
+  resolutionStrategy {
+    dependencySubstitution {
+      substitute(module("fido2.android.lib:fido2")).using(module("com.thalesgroup.gemalto.fido2:fido2:4.1.0"))
+    }
+  }
+}
+//POC-END
 
 dependencies {
   // Project modules
   implementation(project(CORE_MODULE))
   implementation(project(INTERNAL_MODULE))
   testImplementation(project(DATA_MODULE))
+  //POC-START
+  implementation(project(DATA_MODULE))
+  //POC-END
 
   // Android
   implementation(libs.androidx.core.ktx)
@@ -141,11 +179,20 @@ dependencies {
       isTransitive = true
     }
   }
+  //POC-START
+  // FIDO2 SDK (Thales/Gemalto) and Passkey / Credentials dependencies
+  implementation("com.thalesgroup.gemalto.fido2:fido2:4.1.0")
+  implementation("androidx.credentials:credentials:1.2.2")
+
+  // The dependencies below were introduced in feature/fido-poc branch for Google Play Services-based platform passkeys (Android Credential Manager).
+  // Uncomment them if you intend to use PLATFORM (passkey) authenticators via Google Play Services.
+  implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+  implementation("com.google.android.gms:play-services-safetynet:18.0.1")
+  //POC-END
 
   //Kotlin Result
   implementation(libs.kotlin.result)
   implementation(libs.kotlin.result.coroutines)
-
   // Test
   testImplementation(libs.androidx.junit)
   testImplementation(libs.robolectric)

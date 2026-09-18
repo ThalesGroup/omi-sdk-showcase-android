@@ -13,10 +13,16 @@ import com.onewelcome.internal.entity.TestCase
 import com.onewelcome.internal.entity.TestCategory
 import com.onewelcome.internal.entity.TestStatus
 import com.onewelcome.internal.testcases.authentication.PinAuthenticationTestCases
+import com.onewelcome.internal.testcases.biometric.BiometricTestCases
 import com.onewelcome.internal.testcases.browserregistation.BrowserRegistrationTestCases
+import com.onewelcome.internal.testcases.implicitauth.ImplicitAuthTestCases
+import com.onewelcome.internal.testcases.mobileauth.MobileAuthTestCases
+import com.onewelcome.internal.testcases.singlesignon.SingleSignOnTestCases
+import com.onewelcome.internal.testcases.resourcecall.ResourceCallTestCases
 import com.onewelcome.internal.testcases.deregistration.UserDeregistrationTestCases
 import com.onewelcome.internal.testcases.initialization.SdkInitializationTestCases
 import com.onewelcome.internal.testcases.logout.LogoutTestCases
+import com.onewelcome.internal.testcases.registration.UserRegistrationTestCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,17 +35,31 @@ class OsCompatibilityViewModel @Inject constructor(
   sdkInitializationTestCases: SdkInitializationTestCases,
   userDeregistrationTestCases: UserDeregistrationTestCases,
   pinAuthenticationTestCases: PinAuthenticationTestCases,
-  logoutTestCases: LogoutTestCases
+  logoutTestCases: LogoutTestCases,
+  userRegistrationTestCases: UserRegistrationTestCases,
+  biometricTestCases: BiometricTestCases,
+  mobileAuthTestCases: MobileAuthTestCases,
+  resourceCallTestCases: ResourceCallTestCases,
+  implicitAuthTestCases: ImplicitAuthTestCases,
+  singleSignOnTestCases: SingleSignOnTestCases,
 ) : ViewModel() {
   private val testCategories = listOf(
     sdkInitializationTestCases.tests,
     browserRegistrationTestCases.tests,
+    userRegistrationTestCases.tests,
+    pinAuthenticationTestCases.tests,
+    biometricTestCases.tests,
+    mobileAuthTestCases.tests,
+    resourceCallTestCases.tests,
+    implicitAuthTestCases.tests,
+    singleSignOnTestCases.tests,
     logoutTestCases.tests,
-//    userDeregistrationTestCases.tests,
-//    pinAuthenticationTestCases.tests
+    userDeregistrationTestCases.tests,
   )
 
-  var uiState by mutableStateOf(State(testCategories = testCategories))
+  private val totalTests = testCategories.flatMap { it.testCases }.size
+
+  var uiState by mutableStateOf(State(testCategories = testCategories, totalTests = totalTests))
     private set
 
   fun onEvent(event: UiEvent) {
@@ -49,7 +69,7 @@ class OsCompatibilityViewModel @Inject constructor(
   }
 
   private fun runTests() {
-    uiState = uiState.copy(isLoading = true)
+    uiState = uiState.copy(isLoading = true, completedTests = 0)
     markAllTestsAsRunning()
     viewModelScope.launch {
       runTestsSequentially()
@@ -81,7 +101,7 @@ class OsCompatibilityViewModel @Inject constructor(
     val updatedCategories = uiState.testCategories.toMutableList().apply {
       this[featureIndex] = currentCategory.copy(testCases = updatedCases)
     }
-    uiState = uiState.copy(testCategories = updatedCategories)
+    uiState = uiState.copy(testCategories = updatedCategories, completedTests = uiState.completedTests + 1)
   }
 
   private fun evaluateResult() {
@@ -112,6 +132,8 @@ class OsCompatibilityViewModel @Inject constructor(
     val testCategories: List<TestCategory>,
     val testResult: Result<Unit, String>? = null,
     val isLoading: Boolean = false,
+    val completedTests: Int = 0,
+    val totalTests: Int = 0,
   )
 
   sealed interface UiEvent {

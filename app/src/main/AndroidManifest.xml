@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <uses-sdk tools:overrideLibrary="com.thalesgroup.gemalto.fido2.ui,com.thalesgroup.gemalto.fido2" />
 
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <uses-permission android:name="android.permission.CAMERA" />
@@ -32,24 +35,102 @@
         <category android:name="android.intent.category.BROWSABLE" />
         <!-- scheme should match redirect URI scheme configured on the backend -->
         <!-- scheme is also displayed as part of result using sdk configurator -->
-        <data android:scheme="oneginiexample" />
+        <!-- POC - START -->
+
+         <data android:scheme="showcase" />
+        <!-- <data android:scheme="oneginiexample" /> -->
+
+         <!-- POC - END -->
+      </intent-filter>
+      <!-- POC - START -->
+      <!-- DigiD App2App return intent filter -->
+      <!-- The DigiD app will redirect back to our app using this scheme after authentication -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <!-- scheme for DigiD App2Appturn - should match the return URL configured in the DigiD identity provider -->
+        <!--<data android:scheme="oneginiexample" android:host="digid"-->
+        <data android:scheme="https" android:host="genuflecto.github.io" android:pathPrefix="/owshowcase"/>
+      </intent-filter>
+      <!-- POC - END -->
+    </activity>
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+  <meta-data
+      android:name="android.support.FILE_PROVIDER_PATHS"
+      android:resource="@xml/file_paths" />
+</provider>
+<service
+    android:name="com.onewelcome.showcaseapp.fcm.ShowcaseAppFirebaseMessagingService"
+    android:exported="false">
+  <intent-filter>
+    <action android:name="com.google.firebase.MESSAGING_EVENT" />
+  </intent-filter>
+</service>
+
+    <!-- POC - START -->
+<!-- Hybrid Transport / Credential Provider Components -->
+
+    <!--
+        CredentialProviderService: Entry point for Android's Credential Manager.
+        This service responds to CreateCredentialRequest or GetCredentialRequest
+        and delegates the actual logic to the PasskeyHandlerActivity.
+    -->
+    <service
+        android:name="com.thalesgroup.gemalto.fido2.ui.CredentialProviderService"
+        android:enabled="true"
+        android:exported="true"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:permission="android.permission.BIND_CREDENTIAL_PROVIDER_SERVICE"
+        tools:targetApi="35">
+
+      <intent-filter>
+        <action android:name="android.service.credentials.CredentialProviderService" />
+      </intent-filter>
+
+      <!-- Provider capabilities configuration -->
+      <meta-data
+          android:name="android.credentials.provider"
+          android:resource="@xml/provider" />
+
+      <!-- FIDO provider configuration for account types -->
+      <meta-data
+          android:name="com.thalesgroup.gemalto.fido2ui.CONFIGURATION"
+          android:resource="@xml/fido_provider_config" />
+    </service>
+
+    <!--
+        PasskeyHandlerActivity: UI component responsible for handling user interaction
+        during the passkey ceremony.
+    -->
+    <activity
+        android:name="com.thalesgroup.gemalto.fido2.ui.PasskeyHandlerActivity"
+        android:exported="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        tools:replace="android:theme"
+        tools:targetApi="35">
+
+      <!-- Intent filter for passkey creation (registration) -->
+      <intent-filter>
+        <action android:name="com.thalesgroup.gemalto.fido2ui.action.CREATE_PASSKEY" />
+        <category android:name="android.intent.category.DEFAULT" />
+      </intent-filter>
+
+      <!-- Intent filter for passkey authentication (login) -->
+      <intent-filter>
+        <action android:name="com.thalesgroup.gemalto.fido2ui.action.GET_PASSKEY" />
+        <category android:name="android.intent.category.DEFAULT" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
       </intent-filter>
     </activity>
-    <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="${applicationId}.fileprovider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/file_paths" />
-    </provider>
-    <service
-        android:name="com.onewelcome.showcaseapp.fcm.ShowcaseAppFirebaseMessagingService"
-        android:exported="false">
-      <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT" />
-      </intent-filter>
-    </service>
+    <!-- POC - END -->
+
   </application>
 </manifest>

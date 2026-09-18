@@ -51,7 +51,6 @@ fun TwoStepOptionalDataSubmitScreen(navController: NavController) {
     }
     val viewModel: TwoStepRegistrationViewModel = hiltViewModel(parentEntry)
     val state = viewModel.uiState
-    Log.d("Prabhat","Recomposing    "+viewModel)
     TwoStepInputScreenContent(
         onNavigateBack = {
             viewModel.onEvent(UiEvent.CancelRegistration)

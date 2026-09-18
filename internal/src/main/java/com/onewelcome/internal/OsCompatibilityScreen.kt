@@ -1,6 +1,9 @@
 package com.onewelcome.internal
 
+import android.content.ContentValues
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +21,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +61,7 @@ fun OsCompatibilityScreen(viewModel: OsCompatibilityViewModel = hiltViewModel())
       AndroidVersionInfoSection()
       AppInfoSection()
       RunTestsButton(viewModel)
+      TestProgressBar(viewModel.uiState.completedTests, viewModel.uiState.totalTests, viewModel.uiState.isLoading)
       TestResults(viewModel.uiState.testResult, viewModel)
       Text(
         modifier = Modifier.padding(top = Dimensions.mPadding),
@@ -97,6 +102,33 @@ private fun RunTestsButton(viewModel: OsCompatibilityViewModel) {
     } else {
       Text(stringResource(R.string.run_tests))
     }
+  }
+}
+
+@Composable
+private fun TestProgressBar(completed: Int, total: Int, isLoading: Boolean) {
+  if (total == 0 || (completed == 0 && !isLoading)) return
+  Column(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(top = Dimensions.mPadding)
+  ) {
+    if (isLoading && completed == 0) {
+      LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    } else {
+      LinearProgressIndicator(
+        progress = { completed.toFloat() / total.toFloat() },
+        modifier = Modifier.fillMaxWidth(),
+        drawStopIndicator = {},
+      )
+    }
+    Text(
+      text = "$completed / $total",
+      modifier = Modifier
+        .align(Alignment.End)
+        .padding(top = Dimensions.sPadding),
+      style = MaterialTheme.typography.bodySmall,
+    )
   }
 }
 
@@ -156,6 +188,7 @@ private fun SaveResultsButton(testResult: Result<Unit, String>?) {
   val androidVersionInfo = osVersionInfo()
   val appVersionInfo = appVersionInfo()
   val testResultSavedText = stringResource(R.string.test_result_saved)
+  val testResultSaveFailedText = stringResource(R.string.test_result_save_failed)
   val testResultValue = getResultValue(testResult)
   val testResultFileContent = TestResultFileCreator.getFileContent(appVersionInfo, androidVersionInfo, testResultValue)
   Button(
@@ -164,12 +197,24 @@ private fun SaveResultsButton(testResult: Result<Unit, String>?) {
       .padding(top = Dimensions.mPadding)
       .height(Dimensions.actionButtonHeight),
     onClick = {
-      File(
-        (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)),
-        Constants.OS_COMPATIBILITY_TEST_RESULT_FILE_NAME
-      )
-        .writeText(testResultFileContent)
-      Toast.makeText(context, testResultSavedText, Toast.LENGTH_LONG).show()
+      val saved = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val contentValues = ContentValues().apply {
+          put(MediaStore.Downloads.DISPLAY_NAME, Constants.OS_COMPATIBILITY_TEST_RESULT_FILE_NAME)
+          put(MediaStore.Downloads.MIME_TYPE, "text/plain")
+        }
+        val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+        uri != null && context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+          outputStream.write(testResultFileContent.toByteArray())
+        } != null
+      } else {
+        File(
+          Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+          Constants.OS_COMPATIBILITY_TEST_RESULT_FILE_NAME
+        ).writeText(testResultFileContent)
+        true
+      }
+      val message = if (saved) testResultSavedText else testResultSaveFailedText
+      Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
   ) {
     Text(stringResource(R.string.save_result))

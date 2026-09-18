@@ -1,5 +1,8 @@
 package com.onewelcome.core.usecase
 
+//POC-START
+import android.util.Log
+//POC-END
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
@@ -20,6 +23,9 @@ class UserRegistrationUseCase @Inject constructor(private val omiSdkFacade: OmiS
     identityProvider: OneginiIdentityProvider?,
     scopes: List<String>
   ): Result<Pair<UserProfile, CustomInfo?>, Throwable> {
+    //POC-START
+    Log.d("FidoRegistration", "UserRegistrationUseCase: calling SDK registerUser - IDP=${identityProvider?.id}, scopes=$scopes")
+    //POC-END
     return suspendCancellableCoroutine { continuation ->
       runCatching {
         omiSdkFacade.oneginiClient.getUserClient().registerUser(
@@ -30,15 +36,24 @@ class UserRegistrationUseCase @Inject constructor(private val omiSdkFacade: OmiS
               userProfile: UserProfile,
               customInfo: CustomInfo?
             ) {
+              //POC-START
+              Log.d("FidoRegistration", "SDK registerUser onSuccess: profileId=${userProfile.profileId}, customInfo status=${customInfo?.status}, data=${customInfo?.data}")
+              //POC-END
               continuation.resume(Ok(Pair(userProfile, customInfo)))
             }
 
             override fun onError(error: OneginiRegistrationError) {
+              //POC-START
+              Log.e("FidoRegistration", "SDK registerUser onError: errorType=${error.errorType}, message=${error.message}")
+              //POC-END
               continuation.resume(Err(error))
             }
           }
         )
       }.onFailure {
+        //POC-START
+        Log.e("FidoRegistration", "SDK registerUser exception: ${it.message}", it)
+        //POC-END
         continuation.resume(Err(it))
       }
     }

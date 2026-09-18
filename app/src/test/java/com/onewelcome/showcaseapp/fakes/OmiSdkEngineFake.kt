@@ -16,4 +16,6 @@ class OmiSdkEngineFake(private val oneginiClientMock: OneginiClient) : OmiSdkFac
     isInitialized = true
     return oneginiClientMock
   }
+
+  override val isCustomAuthHandlerRegistered: Boolean = false
 }
