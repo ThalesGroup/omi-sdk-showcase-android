@@ -11,6 +11,7 @@ class ShowcaseDataStoreFake @Inject constructor() : ShowcaseDataStore {
 
   var isFirebaseTokenUpdateNeeded: Boolean = false
   var isSdkAutoInitializedEnabled: Boolean = true
+  var fidoUserId: String? = null
 
   override fun isFirebaseTokenUpdateNeeded(): Flow<Boolean> {
     return flowOf(isFirebaseTokenUpdateNeeded)
@@ -26,5 +27,13 @@ class ShowcaseDataStoreFake @Inject constructor() : ShowcaseDataStore {
 
   override suspend fun setSdkAutoInitializationEnabled(value: Boolean) {
     isSdkAutoInitializedEnabled = value
+  }
+
+  override fun getFidoUserId(): Flow<String?> {
+    return flowOf(fidoUserId)
+  }
+
+  override suspend fun setFidoUserId(userId: String?) {
+    fidoUserId = userId
   }
 }

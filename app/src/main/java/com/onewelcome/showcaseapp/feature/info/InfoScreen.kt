@@ -58,7 +58,7 @@ private fun InfoScreenContent(
 private fun TopBar() {
   TopAppBar(
     windowInsets = WindowInsets(0.dp),
-    title = { Text(stringResource(R.string.title_sdk_status)) })
+    title = { Text(stringResource(R.string.title_sdk_status)+" ("+com.onewelcome.showcaseapp.BuildConfig.OMI_SDK_VERSION+")") })
 }
 
 @Composable

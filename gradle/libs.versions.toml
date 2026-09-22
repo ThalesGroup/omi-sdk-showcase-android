@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.0"
+agp = "8.10.1"
 kotlin = "2.1.0"
 hilt = "2.56.1"
 coreKtx = "1.15.0"
@@ -19,7 +19,10 @@ navigation = "2.8.9"
 kotlinCompilerExtensionVersion = "1.5.15"
 ksp = "2.1.0-1.0.29"
 hiltCompose = "1.2.0"
-omiSdk = "13.1.0"
+omiSdk = "13.3.0"
+#POC - START
+fido = "4.1.0"
+#POC - END
 kotlinResult = "2.0.1"
 robolectic = "4.14.1"
 mockito-kotlin = "5.4.0"
@@ -73,6 +76,14 @@ hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", ver
 # OMI SDK
 omiSdk-secure = { group = "com.onegini.mobile.sdk.android", name = "onegini-sdk", version.ref = "omiSdk" }
 omiSdk-developer = { group = "com.onegini.mobile.sdk.android", name = "onegini-sdk-developer", version.ref = "omiSdk" }
+
+#POC - START
+
+# FIDO SDK
+fido-sdk = { group = "com.thalesgroup.gemalto.fido2", name = "fido2", version.ref = "fido" }
+fido-ui = { group = "com.thalesgroup.gemalto.fido2", name = "fido2ui", version.ref = "fido" }
+
+#POC - END
 
 # Kotlin Result
 kotlin-result = { group = "com.michael-bull.kotlin-result", name = "kotlin-result", version.ref = "kotlinResult" }

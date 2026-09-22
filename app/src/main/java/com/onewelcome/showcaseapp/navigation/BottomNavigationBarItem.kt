@@ -41,7 +41,7 @@ data class BottomNavigationBarItem(
       if (BuildConfig.IS_INTERNAL_VARIANT) {
         add(
           BottomNavigationBarItem(
-            label = context.getString(R.string.os_compatibility_screen_name),
+            label = context.getString(R.string.os_validation_screen_name),
             icon = Icons.Filled.Face,
             route = Screens.OsCompatibility.route
           )

@@ -10,7 +10,17 @@ sealed class Screens(val route: String) {
   data object OsCompatibility : Screens("os_compatibility")
   data object UserRegistration : Screens("user_registration")
   data object BrowserRegistration : Screens("browser_registration")
+  data object OneStepRegistration : Screens("one_step_registration")
+  data object OneStepRegistrationOtpScreen : Screens("one_step_registration_otp_screen")
+  //POC-START
+  data object FidoRegistration : Screens("fido_registration")
+  data object Fido2BiometricRegistration : Screens("fido2_biometric_registration")
+  data object Fido2BiometricAuthentication : Screens("fido2_biometric_authentication")
+  //POC-END
   data object TwoStepRegistration : Screens("two_step_registration")
+  // POC - START
+  data object DigidRegistration : Screens("digid_registration")
+  // POC - END
   data object TwoStepInput : Screens("two_step_input")
   data object TwoStepVerification : Screens("two_step_Verification")
   data object UserAuthentication : Screens("user_authentication")
